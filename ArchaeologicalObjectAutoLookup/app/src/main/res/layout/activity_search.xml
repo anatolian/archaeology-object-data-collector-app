@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/lib/com.baato.cis350.archeaologylookup"
+                android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <WebView
+            android:id="@+id/webview"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+
+    </WebView>
+
+    <android.support.design.widget.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/abc_btn_rating_star_on_mtrl_alpha"
+            app:fabSize="normal"
+            android:backgroundTint="#971c20"
+            android:id="@+id/floatingActionButton2"
+            android:layout_gravity="center"
+            android:layout_marginBottom="10dp"
+            />
+
+
+
+</RelativeLayout>

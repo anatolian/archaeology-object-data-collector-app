@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:weightSum="2"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_weight="1"
+        android:weightSum="2" >
+
+        <Button
+            android:text="Set Parsing Style"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/jsonparse"
+            android:onClick="jsonparse"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true" />
+
+        <EditText
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:text="object_name"
+            android:ems="10"
+            android:layout_below="@+id/jsonparse"
+            android:layout_marginTop="21dp"
+            android:id="@+id/textname"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_width="match_parent" />
+
+        <EditText
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:text="url"
+            android:ems="10"
+            android:layout_below="@+id/jsonparse"
+            android:layout_marginTop="21dp"
+            android:id="@+id/texturl"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_width="match_parent" />
+
+        <EditText
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:text="provenience"
+            android:ems="10"
+            android:layout_below="@+id/jsonparse"
+            android:layout_marginTop="21dp"
+            android:id="@+id/textplace"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_width="match_parent" />
+
+        <EditText
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:text="material"
+            android:ems="10"
+            android:layout_below="@+id/jsonparse"
+            android:layout_marginTop="21dp"
+            android:id="@+id/textmaterial"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_width="match_parent" />
+
+        <EditText
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:text="{"
+            android:ems="10"
+            android:layout_below="@+id/jsonparse"
+            android:layout_marginTop="21dp"
+            android:id="@+id/textobjectDelim"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_width="match_parent" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/mainscreen"
+            android:text="Main Screen"
+            android:onClick="mainscreen" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_weight="1" >
+
+        <EditText
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:text="object_number"
+            android:ems="10"
+            android:layout_below="@+id/jsonparse"
+            android:layout_marginTop="21dp"
+            android:id="@+id/textnum"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_width="match_parent" />
+
+        <EditText
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:text="description"
+            android:ems="10"
+            android:layout_below="@+id/jsonparse"
+            android:layout_marginTop="21dp"
+            android:id="@+id/textdesc"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_width="match_parent" />
+
+        <EditText
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:text="section"
+            android:ems="10"
+            android:layout_below="@+id/jsonparse"
+            android:layout_marginTop="21dp"
+            android:id="@+id/textsection"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_width="match_parent" />
+
+        <EditText
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:text="["
+            android:ems="10"
+            android:layout_below="@+id/jsonparse"
+            android:layout_marginTop="21dp"
+            android:id="@+id/textlistDelimFront"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_width="match_parent" />
+
+        <EditText
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:text="]"
+            android:ems="10"
+            android:layout_below="@+id/jsonparse"
+            android:layout_marginTop="21dp"
+            android:id="@+id/textlistDelimBack"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_width="match_parent" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:text="testjson.txt"
+            android:ems="10"
+            android:layout_below="@+id/jsonparse"
+            android:layout_marginTop="21dp"
+            android:id="@+id/textfile"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"/>
+    </LinearLayout>
+
+
+</LinearLayout>

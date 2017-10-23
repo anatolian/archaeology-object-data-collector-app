@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.baato.cis350.archeaologylookup">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.FLASHLIGHT" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE" />
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.camera.autofocus"
+        android:required="false" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity android:name=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+                android:name=".FavoriteActivity"
+
+                android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".ManualActivity" />
+        <activity
+            android:name=".SearchActivity"
+            android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
+        <activity
+                android:name=".CameraUiActivity"
+                android:theme="@style/Theme.AppCompat.NoActionBar"/>
+
+        <activity android:name=".HistoryActivity"
+                  android:theme="@style/AppTheme.NoActionBar"/>
+
+    </application>
+
+</manifest>
