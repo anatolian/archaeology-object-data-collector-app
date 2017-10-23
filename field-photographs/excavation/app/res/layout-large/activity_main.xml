@@ -1,0 +1,176 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@color/cream"
+        android:paddingBottom="5dp"
+        android:paddingLeft="7dp"
+        android:paddingRight="7dp"
+        android:paddingTop="5dp" >
+
+        <TextView
+            android:id="@+id/header"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text=" Context Photo"
+            android:textColor="@color/butterflyblue"
+            android:textSize="12sp"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:id="@+id/linearLayout1"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/header"
+            android:layout_marginTop="5dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:weightSum="2" >
+
+            <Spinner
+                android:id="@+id/areaEasting"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.45"
+                android:background="@drawable/spin_bg"
+                android:gravity="center_vertical"
+                android:paddingRight="10dp"
+                 />
+
+            <Spinner
+                android:id="@+id/areaNorting"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_weight="0.45"
+                android:background="@drawable/spin_bg"
+                android:gravity="center_vertical"
+                android:paddingTop="10dp"
+                 />
+
+            <TextView
+                android:id="@+id/textViewReplacephotphoto"
+                android:layout_width="fill_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="5dp"
+                android:layout_weight="0.55"
+                android:background="@drawable/button_en_di"
+                android:clickable="false"
+                android:enabled="false"
+                android:gravity="center"
+                android:text="Replace\nPhoto"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textViewnextphoto"
+                android:layout_width="fill_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="5dp"
+                android:layout_weight="0.55"
+                android:background="@drawable/button_en_di"
+                android:clickable="false"
+                android:enabled="false"
+                android:gravity="center"
+                android:text="Next\nPhoto"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+       <ImageView
+            android:id="@+id/imageView1"
+            android:layout_width="430dp"
+            android:layout_height="530dp"
+          
+          
+            android:layout_centerInParent="true"
+            android:layout_marginTop="5dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/camera" />
+
+        <RelativeLayout
+            android:id="@+id/rr"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="12dp"
+            android:layout_marginTop="5dp" >
+
+            <TextView
+                android:id="@+id/textViewcontext"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Context:"
+                android:textColor="@color/coffee"
+                android:textSize="20sp" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/LinearLayout1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="12dp"
+            android:layout_toRightOf="@+id/rr"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/textViewdisp"
+                android:layout_width="fill_parent"
+                android:layout_height="20dp"
+                android:background="@drawable/bg_item1"
+                android:paddingLeft="5dp"
+                android:text=""
+                android:textColor="@color/coffee"
+                android:textSize="11sp"
+                android:visibility="gone" />
+
+            <ListView
+                android:id="@+id/listViewContext"
+                android:layout_width="150dp"
+                android:layout_height="50dp"
+                android:background="@drawable/bg_item1"
+                android:visibility="gone" >
+            </ListView>
+
+            <Spinner
+                android:id="@+id/spnContext"
+                android:layout_width="fill_parent"
+                android:layout_height="30dp"
+                android:layout_weight="0.45"
+                android:background="@drawable/spin_bg"
+                android:gravity="center_vertical"
+                android:paddingRight="10dp"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/progressBar1"
+            style="?android:attr/progressBarStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/LinearLayout1"
+            android:layout_centerHorizontal="true"
+            android:visibility="gone" />
+
+        <ProgressBar
+            android:id="@+id/progressBar2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignTop="@+id/linearLayout1"
+            android:layout_centerHorizontal="true"
+            android:visibility="gone" />
+
+       
+    </RelativeLayout>
+
+</RelativeLayout>

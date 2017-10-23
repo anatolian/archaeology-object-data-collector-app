@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/350S17-15-WiDaC.iml" filepath="$PROJECT_DIR$/350S17-15-WiDaC.iml" />
+      <module fileurl="file://$PROJECT_DIR$/WiDaC.iml" filepath="$PROJECT_DIR$/WiDaC.iml" />
+      <module fileurl="file://$PROJECT_DIR$/WiDaC-Wireless-Data-Collector.iml" filepath="$PROJECT_DIR$/WiDaC-Wireless-Data-Collector.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+    </modules>
+  </component>
+</project>

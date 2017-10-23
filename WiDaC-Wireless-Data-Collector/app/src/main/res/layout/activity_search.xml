@@ -1,0 +1,135 @@
+<?xml version = "1.0" encoding = "utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android = "http://schemas.android.com/apk/res/android"
+    xmlns:app = "http://schemas.android.com/apk/res-auto"
+    xmlns:tools = "http://schemas.android.com/tools"
+    android:layout_width = "match_parent"
+    android:layout_height = "match_parent"
+    android:fitsSystemWindows = "true"
+    tools:context = "widac.cis350.upenn.edu.widac.SearchActivity">
+    <RelativeLayout
+        android:id = "@+id/content_search"
+        android:layout_width = "match_parent"
+        android:layout_height = "match_parent"
+        android:paddingBottom = "@dimen/activity_vertical_margin"
+        android:paddingLeft = "@dimen/activity_horizontal_margin"
+        android:paddingRight = "@dimen/activity_horizontal_margin"
+        android:paddingTop = "@dimen/activity_vertical_margin"
+        app:layout_behavior = "@string/appbar_scrolling_view_behavior">
+        <ProgressBar
+            android:id = "@+id/progress_bar"
+            android:layout_centerHorizontal = "true"
+            android:layout_centerVertical = "true"
+            android:layout_centerInParent = "true"
+            android:visibility = "invisible"
+            style = "@style/Widget.AppCompat.ProgressBar"
+            android:layout_width = "wrap_content"
+            android:layout_height = "wrap_content"/>
+        <LinearLayout
+            android:id = "@+id/search_layout"
+            android:layout_width = "match_parent"
+            android:layout_height = "wrap_content"
+            android:orientation = "vertical"
+            android:layout_alignParentTop = "true"
+            android:weightSum = "1">
+            <LinearLayout
+                android:layout_width = "match_parent"
+                android:layout_height = "wrap_content"
+                android:orientation = "horizontal"
+                android:baselineAligned = "false">
+                <Button
+                    android:id = "@+id/prev_item"
+                    style = "?android:textAppearanceSmall"
+                    android:layout_width = "wrap_content"
+                    android:layout_height = "wrap_content"
+                    android:text = "Prev"
+                    android:textStyle = "bold"
+                    android:layout_weight = "50"/>
+                <Button
+                    android:id = "@+id/next_item"
+                    style = "?android:textAppearanceSmall"
+                    android:layout_width = "wrap_content"
+                    android:layout_height = "wrap_content"
+                    android:text = "Next"
+                    android:textStyle = "bold"
+                    android:layout_weight = "50"/>
+            </LinearLayout>
+            <widac.cis350.upenn.edu.widac.DBSpinner
+                android:id = "@+id/area_easting"
+                android:layout_width = "match_parent"
+                android:layout_height = "40dp"
+                android:background = "@android:drawable/btn_dropdown"
+                android:spinnerMode = "dropdown"/>
+            <widac.cis350.upenn.edu.widac.DBSpinner
+                android:id = "@+id/area_northing"
+                android:layout_width = "match_parent"
+                android:layout_height = "40dp"
+                android:background = "@android:drawable/btn_dropdown"
+                android:spinnerMode = "dropdown"/>
+            <widac.cis350.upenn.edu.widac.DBSpinner
+                android:id = "@+id/context_number"
+                android:layout_width = "match_parent"
+                android:layout_height = "40dp"
+                android:background = "@android:drawable/btn_dropdown"
+                android:spinnerMode = "dropdown"/>
+            <widac.cis350.upenn.edu.widac.DBSpinner
+                android:id = "@+id/sample_number"
+                android:layout_width = "match_parent"
+                android:layout_height = "40dp"
+                android:background = "@android:drawable/btn_dropdown"
+                android:spinnerMode = "dropdown"/>
+            <ImageView
+                android:layout_width = "match_parent"
+                android:layout_height = "wrap_content"
+                android:src = "@drawable/shard"
+                android:layout_below = "@+id/textView"
+                android:layout_centerHorizontal = "true"
+                android:layout_marginTop = "10dp"
+                android:id = "@+id/imageView"/>
+            <TextView
+                android:text = "Weight: Not yet recorded"
+                android:layout_width = "match_parent"
+                android:layout_height = "wrap_content"
+                android:gravity = "center_horizontal"
+                android:textSize = "12pt"
+                android:id = "@+id/itemWeight"
+                android:layout_marginBottom = "@dimen/snackbar_text_size"/>
+            <TextView
+                android:text = "@string/update_weight"
+                android:layout_width = "match_parent"
+                android:layout_height = "match_parent"
+                android:textSize="18dp"/>
+            <LinearLayout
+                android:layout_width = "match_parent"
+                android:layout_height = "match_parent"
+                android:orientation = "horizontal">
+                <Button
+                    android:id = "@+id/update_bluetooth"
+                    style = "?android:textAppearanceSmall"
+                    android:layout_width = "wrap_content"
+                    android:layout_height = "wrap_content"
+                    android:text = "@string/update_bluetooth"
+                    android:textStyle = "bold"
+                    android:layout_weight = "75"/>
+                <Button
+                    android:id = "@+id/update_manual"
+                    style = "?android:textAppearanceSmall"
+                    android:layout_width = "wrap_content"
+                    android:layout_height = "wrap_content"
+                    android:text = "@string/update_manual"
+                    android:textStyle = "bold"
+                    android:layout_weight = "5"/>
+            </LinearLayout>
+        </LinearLayout>
+    </RelativeLayout>
+    <android.support.design.widget.AppBarLayout
+        android:layout_width = "match_parent"
+        android:layout_height = "wrap_content"
+        android:theme = "@style/AppTheme.AppBarOverlay">
+        <android.support.v7.widget.Toolbar
+            android:id = "@+id/toolbar"
+            android:layout_width = "match_parent"
+            android:layout_height = "match_parent"
+            android:background = "@color/colorPrimary"
+            app:popupTheme = "@style/AppTheme.PopupOverlay" />
+    </android.support.design.widget.AppBarLayout>
+</android.support.design.widget.CoordinatorLayout>

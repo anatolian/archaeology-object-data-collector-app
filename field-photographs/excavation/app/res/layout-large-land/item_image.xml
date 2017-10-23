@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:paddingLeft="8dp"
+    android:paddingRight="5dp"
+    android:paddingTop="5dp" >
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" >
+
+        <ImageView
+            android:id="@+id/imageViewImageAlbum"
+            android:layout_width="170dp"
+            android:layout_height="160dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:padding="2dp"
+            
+            android:src="@drawable/no_img_prv2" />
+
+        <CheckBox
+            android:id="@+id/checkBoxAlbum"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignRight="@+id/imageViewImageAlbum"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="3dp"
+            android:button="@drawable/deletelarge" />
+
+        <TextView
+            android:id="@+id/textViewLAble"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/imageViewImageAlbum"
+            android:layout_centerHorizontal="true"
+            android:text=""
+            android:textSize="25sp" />
+
+        <ProgressBar
+            android:id="@+id/progressBar1"
+            style="?android:attr/progressBarStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/checkBoxAlbum"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="29dp" />
+
+    </RelativeLayout>
+
+</RelativeLayout>

@@ -1,0 +1,5 @@
+## Archaeological Excavation Photo App
+
+This app was designed for archaeological excavation and incorporates three different program flows. The first takes individual photographs of excavated archaeological contexts, the second collects a batch of photographs for 3d photogrammetry processing, and the third enables multiple photographs of archaeological samples, such as ceramics or lithics. The app depends on the php webservice both to provide the archaeological metadata for users to select, as well as to upload the resultant photograph files. Network connectivity is assumed at all times.
+
+This webservice can be deployed to a php server which has access to the PostgresQL database.  The database structure can be recreated using the db.sql script. The include/config.inc.php file must be updated with the connection parameters, and the server's url. 

@@ -1,0 +1,223 @@
+<RelativeLayout xmlns:android = "http://schemas.android.com/apk/res/android"
+    xmlns:tools = "http://schemas.android.com/tools" android:layout_width = "match_parent"
+    android:layout_height = "match_parent"
+    tools:context = "objectphotography2.com.object.photography.objectphotography_app.ObjectDetail2Activity">
+    <ScrollView
+        android:layout_width = "match_parent"
+        android:layout_height = "match_parent">
+        <RelativeLayout
+            android:layout_width = "match_parent"
+            android:layout_height = "wrap_content" android:paddingLeft = "@dimen/activity_horizontal_margin"
+            android:paddingRight = "@dimen/activity_horizontal_margin"
+            android:paddingTop = "@dimen/activity_vertical_margin"
+            android:paddingBottom = "@dimen/activity_vertical_margin">
+            <TextView
+                android:layout_width = "wrap_content"
+                android:layout_height = "wrap_content"
+                android:textAppearance = "?android:attr/textAppearanceLarge"
+                android:background = "#d7c474"
+                android:text = "@string/sample"
+                android:id = "@+id/sampleNumberLabel"
+                android:layout_alignParentTop = "true"
+                android:layout_alignParentStart = "true"
+                android:textStyle = "bold"
+                android:layout_marginBottom = "10dp"/>
+            <TextView
+                android:layout_width = "wrap_content"
+                android:layout_height = "wrap_content"
+                android:textAppearance = "?android:attr/textAppearanceLarge"
+                android:background = "#d7c474"
+                android:textStyle = "bold"
+                android:text = ""
+                android:id = "@+id/sampleInfo"
+                android:layout_alignParentTop = "true"
+                android:layout_toEndOf = "@+id/sampleNumberLabel"/>
+            <Spinner
+                android:layout_width = "wrap_content"
+                android:layout_height = "wrap_content"
+                android:layout_toEndOf = "@+id/sampleInfo"
+                android:layout_alignParentTop = "true"
+                android:id = "@+id/sample_spinner"/>
+            <Button
+                android:layout_width = "wrap_content"
+                android:layout_height = "wrap_content"
+                android:text = "@string/next"
+                android:id = "@+id/nextObjectButton"
+                android:layout_toEndOf = "@+id/sample_spinner"
+                android:layout_alignParentTop = "true"
+                android:onClick = "goToNextItemIfAvaiable"/>
+            <TextView
+                android:layout_width = "150dp"
+                android:layout_height = "wrap_content"
+                android:textAppearance = "?android:attr/textAppearanceMedium"
+                android:id = "@+id/weightInput"
+                android:layout_toStartOf = "@+id/textView26"
+                android:gravity = "end"/>
+            <TextView
+                android:layout_width = "wrap_content"
+                android:layout_height = "wrap_content"
+                android:textAppearance = "?android:attr/textAppearanceMedium"
+                android:text = "@string/gram"
+                android:layout_toStartOf = "@+id/button16"
+                android:id = "@+id/textView26"/>
+            <Button
+                android:layout_width = "wrap_content"
+                android:layout_height = "wrap_content"
+                android:text = "@string/record_weight"
+                android:id = "@+id/button16"
+                android:layout_alignParentEnd = "true"
+                android:layout_alignParentTop = "true"
+                android:onClick = "startRecordWieght"/>
+            <TableLayout
+                android:layout_width = "match_parent"
+                android:layout_height = "match_parent"
+                android:layout_below = "@+id/sampleNumberLabel"
+                android:layout_alignParentStart = "true"
+                android:stretchColumns = "*"
+                android:layout_marginTop = "30dp"
+                android:id = "@+id/tableLayout">
+                <TableRow
+                    android:layout_width = "match_parent"
+                    android:layout_height = "match_parent">
+                    <TextView
+                        android:layout_width = "1dp"
+                        android:layout_height = "wrap_content"
+                        android:textAppearance = "?android:attr/textAppearanceMedium"
+                        android:text = "@string/surface"
+                        android:id = "@+id/textView2"
+                        android:textStyle = "bold"/>
+                    <TextView
+                        android:layout_width = "1dp"
+                        android:layout_height = "wrap_content"
+                        android:textAppearance = "?android:attr/textAppearanceMedium"
+                        android:text = "@string/hue"
+                        android:id = "@+id/textView28"
+                        android:textStyle = "bold"/>
+                    <TextView
+                        android:layout_width = "1dp"
+                        android:layout_height = "wrap_content"
+                        android:textAppearance = "?android:attr/textAppearanceMedium"
+                        android:text = "@string/lightness"
+                        android:id = "@+id/textView29"
+                        android:textStyle = "bold"/>
+                    <TextView
+                        android:layout_width = "1dp"
+                        android:layout_height = "wrap_content"
+                        android:textAppearance = "?android:attr/textAppearanceMedium"
+                        android:text = "@string/chroma"
+                        android:id = "@+id/textView30"
+                        android:textStyle = "bold"/>
+                </TableRow>
+                <TableRow
+                    android:layout_width = "match_parent"
+                    android:layout_height = "match_parent"
+                    android:id = "@+id/exteriorColorRow">
+                    <TextView
+                        android:layout_width = "1dp"
+                        android:layout_height = "wrap_content"
+                        android:textAppearance = "?android:attr/textAppearanceMedium"
+                        android:text = "@string/exterior_color"
+                        android:id = "@+id/textView31"
+                        android:textStyle = "italic"/>
+                    <TextView
+                        android:layout_width = "1dp"
+                        android:layout_height = "wrap_content"
+                        android:textAppearance = "?android:attr/textAppearanceMedium"
+                        android:id = "@+id/exterior_color_hue"
+                        android:layout_column = "1"/>
+                    <TextView
+                        android:layout_width = "1dp"
+                        android:layout_height = "wrap_content"
+                        android:textAppearance = "?android:attr/textAppearanceMedium"
+                        android:id = "@+id/exterior_color_lightness"
+                        android:layout_column = "2"/>
+                    <TextView
+                        android:layout_width = "1dp"
+                        android:layout_height = "wrap_content"
+                        android:textAppearance = "?android:attr/textAppearanceMedium"
+                        android:id = "@+id/exterior_color_chroma"
+                        android:layout_column = "3"/>
+                </TableRow>
+                <TableRow
+                    android:layout_width = "match_parent"
+                    android:layout_height = "match_parent"
+                    android:id = "@+id/interiorColorRow">
+                    <TextView
+                        android:layout_width = "1dp"
+                        android:layout_height = "wrap_content"
+                        android:textAppearance = "?android:attr/textAppearanceMedium"
+                        android:text = "@string/interior_color"
+                        android:id = "@+id/textView35"
+                        android:textStyle = "italic"/>
+                    <TextView
+                        android:layout_width = "1dp"
+                        android:layout_height = "wrap_content"
+                        android:textAppearance = "?android:attr/textAppearanceMedium"
+                        android:id = "@+id/interior_color_hue"
+                        android:layout_column = "1"/>
+                    <TextView
+                        android:layout_width = "1dp"
+                        android:layout_height = "wrap_content"
+                        android:textAppearance = "?android:attr/textAppearanceMedium"
+                        android:id = "@+id/interior_color_lightness"
+                        android:layout_column = "2"/>
+                    <TextView
+                        android:layout_width = "1dp"
+                        android:layout_height = "wrap_content"
+                        android:textAppearance = "?android:attr/textAppearanceMedium"
+                        android:id = "@+id/interior_color_chroma"
+                        android:layout_column = "3"/>
+                </TableRow>
+            </TableLayout>
+            <Button
+                android:layout_width = "wrap_content"
+                android:layout_height = "wrap_content"
+                android:text = "@string/no_remote_camera"
+                android:id = "@+id/connectToCameraButton"
+                android:onClick = "connectToRemoteCamera"
+                android:enabled = "false"
+                android:layout_alignParentStart = "true"
+                android:layout_below = "@id/tableLayout"/>
+            <Button
+                android:layout_width = "wrap_content"
+                android:layout_height = "wrap_content"
+                android:text = "@string/add_photo"
+                android:id = "@+id/button26"
+                android:layout_below = "@+id/tableLayout"
+                android:layout_alignParentEnd = "true"
+                android:onClick = "addPhotoAction"/>
+            <HorizontalScrollView
+                android:layout_width = "match_parent"
+                android:layout_height = "200dp"
+                android:id = "@+id/photoScrollWrapper"
+                android:layout_below = "@+id/connectToCameraButton">
+                <fragment
+                    android:layout_width = "wrap_content"
+                    android:layout_height = "wrap_content"
+                    android:name = "objectphotography2.com.object.photography.objectphotography_app.PhotoFragment"
+                    android:id = "@+id/fragment"
+                    tools:layout = "@layout/photo_fragment"/>
+            </HorizontalScrollView>
+
+            <Button
+                android:text = "@string/correct_color"
+                android:layout_width = "wrap_content"
+                android:layout_height = "wrap_content"
+                android:layout_below = "@+id/connectToCameraButton"
+                android:layout_marginTop = "187dp"
+                android:id = "@+id/correct_color"
+                android:layout_alignParentBottom = "true"
+                android:layout_alignParentStart = "true"
+                android:onClick = "goToImageGallery"/>
+            <Button
+                android:text = ""
+                android:layout_width = "wrap_content"
+                android:layout_height = "wrap_content"
+                android:layout_alignParentBottom = "true"
+                android:layout_alignParentEnd = "true"
+                android:layout_marginEnd = "71dp"
+                android:onClick = "goToWifiActivity"
+                android:id = "@+id/wifiActivity"/>
+        </RelativeLayout>
+    </ScrollView>
+</RelativeLayout>

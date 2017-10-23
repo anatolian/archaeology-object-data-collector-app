@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <!--
+        <EditText
+            android:id="@+id/editTextAlbumName"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_margin="5dp"
+            android:layout_weight="0.3"
+            android:ems="10" 
+            android:textSize="12sp"
+            android:hint="Enter Your Album Name">
+		
+          
+        </EditText>
+    -->
+
+    <Button
+        android:id="@+id/ButtonCreateAlbum"
+        android:layout_width="wrap_content"
+        android:layout_height="55dp"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="5dp"
+        android:background="@drawable/creat_album"
+        android:text="Add"
+        android:textColor="@color/white"
+        android:textSize="25sp"
+        android:textStyle="bold" />
+
+    <GridView
+        android:id="@+id/gridView_upload"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/ButtonCreateAlbum"
+        android:layout_marginTop="5dp"
+        android:horizontalSpacing="2dp"
+        android:numColumns="2"
+        android:verticalSpacing="2dp" >
+    </GridView>
+
+</RelativeLayout>

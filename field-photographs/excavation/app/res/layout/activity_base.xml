@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <LinearLayout
+        android:id="@+id/linearLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:weightSum="3"
+        android:background="@color/Black" >
+
+        <TextView
+            android:id="@+id/TextViewContext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:padding="10dp"
+            android:text="Context" 
+            android:gravity="center"
+            android:textColor="@color/white"/>
+
+        <TextView
+            android:id="@+id/TextView3d"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:padding="10dp"
+             android:text="3d" 
+            android:gravity="center"
+            
+            android:textColor="@color/white" />
+
+        <TextView
+            android:id="@+id/TextViewSample"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:padding="10dp"
+             android:text="Sample" 
+            android:gravity="center"
+            android:textColor="@color/white" />
+         <!--  <TextView
+            android:id="@+id/TextViewSample"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1.2"
+            android:padding="10dp"
+             android:text=":" 
+            android:gravity="center"
+            android:textColor="@color/white" />-->
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/wrapper"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_above="@+id/linearLayout2"
+      	android:layout_below="@+id/textViewheader"
+        >
+
+       
+
+    </RelativeLayout>
+ 	<TextView
+            android:id="@+id/textViewheader"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+     	 	android:textColor="@color/butterflyblue"
+     	 	android:paddingLeft="10dp"
+     	 	android:paddingTop="10dp"
+            android:text="" />
+
+ 	<ImageView
+ 	    android:id="@+id/imageView1"
+ 	    android:layout_width="20dp"
+ 	    android:layout_height="20dp"
+ 	    android:layout_alignBottom="@+id/textViewheader"
+ 	    android:layout_alignParentRight="true"
+ 	    android:layout_marginRight="19dp"
+ 	    android:src="@drawable/setimg12" />
+
+</RelativeLayout>

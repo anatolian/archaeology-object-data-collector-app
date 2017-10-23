@@ -1,0 +1,46 @@
+<RelativeLayout xmlns:android = "http://schemas.android.com/apk/res/android"
+    xmlns:tools = "http://schemas.android.com/tools" android:layout_width = "match_parent"
+    android:layout_height = "match_parent" android:paddingLeft = "@dimen/activity_horizontal_margin"
+    android:paddingRight = "@dimen/activity_horizontal_margin"
+    android:paddingTop = "@dimen/activity_vertical_margin"
+    android:paddingBottom = "@dimen/activity_vertical_margin"
+    tools:context = "org.archaeology.surveyphotography.Settings">
+    <CheckBox
+        android:layout_width = "wrap_content"
+        android:layout_height = "wrap_content"
+        android:text = "Thumbnail Creation"
+        android:id = "@+id/checkBox"
+        android:layout_alignParentTop = "true"
+        android:layout_centerHorizontal = "true"
+        android:checked = "true"/>
+    <Button
+        android:layout_width = "wrap_content"
+        android:layout_height = "wrap_content"
+        android:text = "Save Settings"
+        android:id = "@+id/button3"
+        android:onClick = "saveAndReturn"
+        android:layout_below = "@+id/savePathInput"
+        android:layout_centerHorizontal = "true"/>
+    <EditText
+        android:layout_width = "wrap_content"
+        android:layout_height = "wrap_content"
+        android:id = "@+id/savePathInput"
+        android:layout_below = "@+id/textView4"
+        android:layout_alignLeft = "@+id/checkBox"
+        android:layout_alignStart = "@+id/checkBox"
+        android:layout_alignRight = "@+id/checkBox"
+        android:layout_alignEnd = "@+id/checkBox"
+        android:paddingLeft = "5dp"/>
+    <TextView
+        android:layout_width = "wrap_content"
+        android:layout_height = "wrap_content"
+        android:textAppearance = "?android:attr/textAppearanceMedium"
+        android:text = "Save Path:"
+        android:id = "@+id/textView4"
+        android:layout_below = "@+id/checkBox"
+        android:layout_alignLeft = "@+id/savePathInput"
+        android:layout_alignStart = "@+id/savePathInput"
+        android:layout_alignRight = "@+id/savePathInput"
+        android:layout_alignEnd = "@+id/savePathInput"
+        android:paddingLeft = "6dp"/>
+</RelativeLayout>

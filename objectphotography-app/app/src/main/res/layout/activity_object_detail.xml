@@ -1,0 +1,143 @@
+<RelativeLayout xmlns:android = "http://schemas.android.com/apk/res/android"
+    xmlns:tools = "http://schemas.android.com/tools" android:layout_width = "match_parent"
+    android:layout_height = "wrap_content"
+    tools:context = "objectphotography2.com.object.photography.objectphotography_app.ObjectDetailActivity">
+    <ScrollView
+        android:layout_width = "match_parent"
+        android:layout_height = "match_parent">
+        <RelativeLayout
+            android:layout_width = "match_parent"
+            android:layout_height = "wrap_content" android:paddingLeft = "@dimen/activity_horizontal_margin"
+            android:paddingRight = "@dimen/activity_horizontal_margin"
+            android:paddingTop = "@dimen/activity_vertical_margin"
+            android:paddingBottom = "@dimen/activity_vertical_margin">
+            <EditText
+                android:layout_width = "wrap_content"
+                android:layout_height = "38dp"
+                android:id = "@+id/objectID"
+                android:minWidth = "100dp"
+                android:maxLines = "1"
+                android:lines = "1"
+                android:layout_alignTop = "@+id/textView7"
+                android:layout_toEndOf = "@+id/textView7"
+                android:layout_marginStart = "28dp"
+                style = "@style/EditText"/>
+            <RelativeLayout
+                android:layout_width = "fill_parent"
+                android:layout_height = "2dp"
+                android:background = "#000000"
+                android:layout_below = "@+id/objectID"
+                android:layout_alignParentEnd = "true"
+                android:layout_marginTop = "5dp"
+                android:id = "@+id/hr"/>
+            <Button
+                android:layout_width = "145dp"
+                android:layout_height = "wrap_content"
+                android:text = "@string/add_photo"
+                android:id = "@+id/button8"
+                android:layout_below = "@+id/hr"
+                android:layout_alignParentStart = "true"
+                android:onClick = "addPhotoAction"
+                android:enabled = "true"/>
+            <HorizontalScrollView
+                android:layout_width = "650dp"
+                android:layout_height = "200dp"
+                android:id = "@+id/photoScrollWrapper"
+                android:layout_alignTop = "@+id/hr"
+                android:layout_alignParentEnd = "true"
+                android:layout_marginTop = "5dp"
+                android:layout_toEndOf = "@+id/button8">
+                <fragment
+                    android:layout_width = "wrap_content"
+                    android:layout_height = "wrap_content"
+                    android:name = "objectphotography2.com.object.photography.objectphotography_app.PhotoFragment"
+                    android:id = "@+id/fragment"
+                    tools:layout = "@layout/photo_fragment"/>
+            </HorizontalScrollView>
+            <Button
+                android:layout_width = "145dp"
+                android:layout_height = "wrap_content"
+                android:text = "@string/record_weight"
+                android:id = "@+id/button9"
+                android:layout_below = "@+id/photoScrollWrapper"
+                android:layout_alignParentStart = "true"
+                android:enabled = "false"
+                android:onClick = "startRecordWieght"/>
+            <ScrollView
+                android:layout_width = "fill_parent"
+                android:layout_height = "200dp"
+                android:id = "@+id/scrollView"
+                android:layout_alignParentStart = "true"
+                android:layout_marginTop = "15dp"
+                android:layout_alignParentBottom = "true"
+                android:layout_below = "@+id/button9">
+                <TableLayout
+                    android:layout_width = "fill_parent"
+                    android:layout_height = "wrap_content"
+                    android:stretchColumns = "*"
+                    android:id = "@+id/colorTable">
+                </TableLayout>
+            </ScrollView>
+            <TextView
+                android:layout_width = "70dp"
+                android:layout_height = "45dp"
+                android:ems = "10"
+                android:id = "@+id/weightInput"
+                android:textAppearance = "?android:attr/textAppearanceMedium"
+                android:layout_toEndOf = "@+id/button9"
+                android:layout_alignParentBottom = "false"
+                android:layout_alignParentStart = "false"
+                android:layout_alignParentTop = "false"
+                android:layout_alignWithParentIfMissing = "false"
+                android:layout_alignParentEnd = "false"
+                android:layout_alignTop = "@+id/button9"
+                android:gravity = "center|end"/>
+            <TextView
+                android:layout_width = "wrap_content"
+                android:layout_height = "45dp"
+                android:text = "@string/gram"
+                android:id = "@+id/textView9"
+                android:layout_toEndOf = "@+id/weightInput"
+                android:layout_alignTop = "@+id/weightInput"
+                android:gravity = "fill_vertical"
+                android:textAppearance = "?android:attr/textAppearanceMedium"/>
+            <ProgressBar
+                android:layout_width = "wrap_content"
+                android:layout_height = "wrap_content"
+                android:id = "@+id/progressBar1"
+                android:layout_alignParentTop = "true"
+                android:layout_alignParentEnd = "true"
+                android:animationResolution = "100"
+                android:indeterminateOnly = "true"/>
+            <Button
+                android:layout_width = "wrap_content"
+                android:layout_height = "wrap_content"
+                android:text = "@string/delete_photos"
+                android:id = "@+id/button10"
+                android:layout_below = "@+id/button8"
+                android:layout_alignEnd = "@+id/button8"
+                android:visibility = "invisible"
+                android:layout_alignParentStart = "true"
+                android:onClick = "deletePhotosButtonAction"/>
+            <Button
+                android:layout_width = "wrap_content"
+                android:layout_height = "wrap_content"
+                android:text = "@string/async"
+                android:id = "@+id/button17"
+                android:layout_alignBottom = "@+id/textView7"
+                android:layout_toEndOf = "@+id/objectID"
+                android:onClick = "printAsyncState"/>
+            <TextView
+                android:layout_width = "wrap_content"
+                android:layout_height = "38dp"
+                android:textAppearance = "?android:attr/textAppearanceMedium"
+                android:text = "@string/current"
+                android:id = "@+id/textView7"
+                android:gravity = "center"
+                android:textIsSelectable = "true"
+                android:textStyle = "bold"
+                android:layout_alignParentTop = "true"
+                android:layout_alignParentStart = "true"/>
+        </RelativeLayout>
+    </ScrollView>
+</RelativeLayout>

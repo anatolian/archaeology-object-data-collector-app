@@ -1,0 +1,22 @@
+<?xml version = "1.0" encoding = "utf-8"?>
+<resources>
+    <string name="app_name">Survey Unit Photographs</string>
+    <string name="action_settings">Settings</string>
+    <string name="edit_message">Enter a message</string>
+    <string name="button_send">Send</string>
+    <string name="title_activity_display_message">DisplayMessageActivity</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="year">Year</string>
+    <string name="title_activity_settings">Settings</string>
+    <string name="take_bag_photo">Take First Bag Photo</string>
+    <string name="take_field_photo">Take Field Photo</string>
+    <string name="field_photo_number">Field Photo Number</string>
+    <string name="surveyunit">SurveyUnit</string>
+    <string name = "wrong_year">wrong year</string>
+    <string name = "wrong_su">wrong SU Number</string>
+    <string name = "wrong_field_photo_number">wrong Field Photo number</string>
+    <string name = "field_photo_number_frmt">%d</string>
+    <string name = "save_path">Save Path:</string>
+    <string name = "save_settings">Save Settings</string>
+    <string name = "thumbnail">Thumbnail Creation</string>
+</resources>

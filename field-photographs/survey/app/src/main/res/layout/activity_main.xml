@@ -1,0 +1,103 @@
+<ScrollView xmlns:android = "http://schemas.android.com/apk/res/android"
+    xmlns:tools = "http://schemas.android.com/tools" android:layout_width = "match_parent"
+    android:layout_height = "match_parent" android:paddingLeft = "@dimen/activity_horizontal_margin"
+    android:paddingRight = "@dimen/activity_horizontal_margin"
+    android:paddingTop = "@dimen/activity_vertical_margin"
+    android:paddingBottom = "@dimen/activity_vertical_margin"
+    tools:context = "org.archaeology.surveyphotography.MainActivity">
+        <RelativeLayout
+            android:layout_width = "fill_parent"
+            android:layout_height = "fill_parent"
+            android:id = "@+id/mainLayout"
+            android:nestedScrollingEnabled = "false">
+            <TextView
+                android:layout_width = "wrap_content"
+                android:layout_height = "wrap_content"
+                android:textAppearance = "?android:attr/textAppearanceLarge"
+                android:text = "@string/year"
+                android:id = "@+id/textView"
+                android:layout_alignParentTop = "true"
+                android:layout_centerHorizontal = "true"/>
+            <Spinner
+                android:layout_width = "wrap_content"
+                android:layout_height = "wrap_content"
+                android:id = "@+id/spinner2"
+                android:layout_below = "@+id/textView"
+                android:layout_centerHorizontal = "true"
+                android:spinnerMode = "dialog"/>
+            <TextView
+                android:layout_width = "wrap_content"
+                android:layout_height = "wrap_content"
+                android:textAppearance = "?android:attr/textAppearanceLarge"
+                android:text = "SurveyUnit"
+                android:id = "@+id/textView2"
+                android:layout_below = "@+id/spinner2"
+                android:layout_centerHorizontal = "true"/>
+            <EditText
+                android:layout_width = "wrap_content"
+                android:layout_height = "wrap_content"
+                android:id = "@+id/suSeqNum2"
+                android:layout_below = "@+id/textView2"
+                android:autoText = "false"
+                android:singleLine = "true"
+                android:layout_alignLeft = "@+id/fieldPhotoNumber2"
+                android:layout_alignStart = "@+id/fieldPhotoNumber2"
+                android:layout_alignRight = "@+id/fieldPhotoNumber2"
+                android:layout_alignEnd = "@+id/fieldPhotoNumber2"
+                android:inputType = "numberDecimal"/>
+            <TextView
+                android:layout_width = "wrap_content"
+                android:layout_height = "wrap_content"
+                android:textAppearance = "?android:attr/textAppearanceLarge"
+                android:text = "Field Photo Number"
+                android:id = "@+id/textView3"
+                android:layout_below = "@+id/suSeqNum2"
+                android:layout_centerHorizontal = "true"/>
+            <EditText
+                android:layout_width = "wrap_content"
+                android:layout_height = "wrap_content"
+                android:inputType = "numberDecimal"
+                android:ems = "10"
+                android:id = "@+id/fieldPhotoNumber2"
+                android:layout_below = "@+id/textView3"
+                android:layout_centerHorizontal = "true"
+                android:editable = "false"/>
+            <Button
+                android:layout_width = "wrap_content"
+                android:layout_height = "50dp"
+                android:text = "Take Field Photo"
+                android:id = "@+id/button"
+                android:layout_below = "@+id/space2"
+                android:layout_alignRight = "@+id/button2"
+                android:layout_alignEnd = "@+id/button2"
+                android:layout_alignLeft = "@+id/button2"
+                android:layout_alignStart = "@+id/button2"
+                android:onClick = "takeFieldPhoto"/>
+            <Button
+                android:layout_width = "wrap_content"
+                android:layout_height = "50dp"
+                android:text = "Take First Bag Photo"
+                android:id = "@+id/button2"
+                android:layout_below = "@+id/space"
+                android:layout_centerHorizontal = "true"
+                android:onClick = "takeBagPhoto"/>
+            <Space
+                android:layout_width = "20px"
+                android:layout_height = "20px"
+                android:layout_below = "@+id/button"
+                android:layout_centerHorizontal = "true"
+                android:id = "@+id/space"/>
+            <Space
+                android:layout_width = "20px"
+                android:layout_height = "20px"
+                android:layout_below = "@+id/fieldPhotoNumber2"
+                android:layout_centerHorizontal = "true"
+                android:id = "@+id/space2"/>
+            <Space
+                android:layout_width = "20px"
+                android:layout_height = "20px"
+                android:layout_below = "@+id/button2"
+                android:layout_centerHorizontal = "true"
+                android:id = "@+id/space3"/>
+        </RelativeLayout>
+</ScrollView>

@@ -1,0 +1,207 @@
+<?xml version = "1.0" encoding = "utf-8"?>
+<LinearLayout xmlns:android = "http://schemas.android.com/apk/res/android"
+    android:orientation = "vertical" android:layout_width = "match_parent"
+    android:layout_height = "match_parent">
+    <TableLayout
+        xmlns:android = "http://schemas.android.com/apk/res/android"
+        android:id = "@+id/tableLayout1"
+        android:layout_width = "match_parent"
+        android:layout_height = "match_parent"
+        android:shrinkColumns = "*"
+        android:stretchColumns = "*">
+        <TableRow
+            android:id = "@+id/titleRow"
+            android:layout_height = "wrap_content"
+            android:layout_width = "match_parent"
+            android:gravity = "center_horizontal">
+            <TextView
+                android:id = "@+id/textView9"
+                android:layout_width = "match_parent"
+                android:layout_height = "wrap_content"
+                android:textStyle = "bold"
+                android:typeface = "serif"
+                android:textSize = "18dp"
+                android:text = "Session Report"
+                android:gravity = "center"
+                android:layout_span = "6"/>
+        </TableRow>
+        <TableRow
+            android:id = "@+id/tableRow1"
+            android:layout_height = "wrap_content"
+            android:layout_width = "match_parent">
+            <TextView
+                android:id = "@+id/TotalNum"
+                android:text = ""/>
+            <TextView
+                android:id = "@+id/TypeA"
+                android:text = "Glass"
+                android:textStyle = "bold"
+                android:typeface = "serif"/>
+            <TextView
+                android:id = "@+id/TypeB"
+                android:text = "Ceramic"
+                android:textStyle = "bold"
+                android:typeface = "serif"/>
+            <TextView
+                android:id = "@+id/TypeC"
+                android:text = "Metal"
+                android:textStyle = "bold"
+                android:typeface = "serif"/>
+            <TextView
+                android:id = "@+id/TypeD"
+                android:text = "Stone"
+                android:textStyle = "bold"
+                android:typeface = "serif"/>
+            <TextView
+                android:id = "@+id/TypeE"
+                android:text = "Organic"
+                android:textStyle = "bold"
+                android:typeface = "serif"/>
+        </TableRow>
+        <TableRow
+            android:layout_height = "wrap_content"
+            android:id = "@+id/tableRow2"
+            android:layout_width = "match_parent">
+            <TextView
+                android:text = "# Collected"
+                android:id = "@+id/textView2"
+                android:textStyle = "bold"/>
+            <TextView
+                android:id = "@+id/NumA"
+                android:text = "0"
+                android:gravity = "center_horizontal"/>
+            <TextView
+                android:text = "0"
+                android:id = "@+id/NumB"
+                android:gravity = "center_horizontal"/>
+            <TextView
+                android:text = "0"
+                android:id = "@+id/NumC"
+                android:gravity = "center_horizontal"/>
+            <TextView
+                android:text = "0"
+                android:id = "@+id/NumD"
+                android:gravity = "center_horizontal"/>
+            <TextView
+                android:text = "0"
+                android:id = "@+id/NumE"
+                android:gravity = "center_horizontal"/>
+        </TableRow>
+        <TableRow
+            android:layout_height = "wrap_content"
+            android:id = "@+id/tableRow3"
+            android:layout_width = "match_parent">
+            <TextView
+                android:text = "Average Size"
+                android:id = "@+id/AvgSize"
+                android:textStyle = "bold"/>
+            <TextView
+                android:text = "0"
+                android:id = "@+id/AvgSizeA"
+                android:gravity = "center_horizontal"/>
+            <TextView
+                android:text = "0"
+                android:id = "@+id/AvgSizeB"
+                android:gravity = "center_horizontal"/>
+            <TextView
+                android:text = "0"
+                android:id = "@+id/AvgSizeC"
+                android:gravity = "center_horizontal"/>
+            <TextView
+                android:text = "0"
+                android:id = "@+id/AvgSizeD"
+                android:gravity = "center_horizontal"/>
+            <TextView
+                android:text = "0"
+                android:id = "@+id/AvgSizeE"
+                android:gravity = "center_horizontal"/>
+        </TableRow>
+        <TableRow
+            android:layout_height = "wrap_content"
+            android:id = "@+id/tableRow4"
+            android:layout_width = "match_parent">
+            <TextView
+                android:text = "Std. Deviation"
+                android:id = "@+id/DevSize"
+                android:textStyle = "bold"/>
+            <TextView
+                android:text = "0"
+                android:id = "@+id/DevAvgSizeA"
+                android:gravity = "center_horizontal"/>
+            <TextView
+                android:text = "0"
+                android:id = "@+id/DevAvgSizeB"
+                android:gravity = "center_horizontal"/>
+            <TextView
+                android:text = "0"
+                android:id = "@+id/DevAvgSizeC"
+                android:gravity = "center_horizontal"/>
+            <TextView
+                android:text = "0"
+                android:id = "@+id/DevAvgSizeD"
+                android:gravity = "center_horizontal"/>
+            <TextView
+                android:text = "0"
+                android:id = "@+id/DevAvgSizeE"
+                android:gravity = "center_horizontal"/>
+        </TableRow>
+        <TableRow
+            android:layout_height = "wrap_content"
+            android:id = "@+id/tableRow5"
+            android:layout_width = "match_parent">
+            <TextView
+                android:text = "Average Weight"
+                android:id = "@+id/avgWt"
+                android:textStyle = "bold"/>
+            <TextView
+                android:text = "0"
+                android:id = "@+id/AvgWtA"
+                android:gravity = "center_horizontal"/>
+            <TextView
+                android:text = "0"
+                android:id = "@+id/AvgWtB"
+                android:gravity = "center_horizontal"/>
+            <TextView
+                android:text = "0"
+                android:id = "@+id/AvgWtC"
+                android:gravity = "center_horizontal"/>
+            <TextView
+                android:text = "0"
+                android:id = "@+id/AvgWtD"
+                android:gravity = "center_horizontal"/>
+            <TextView
+                android:text = "0"
+                android:id = "@+id/AvgWtE"
+                android:gravity = "center_horizontal"/>
+        </TableRow>
+        <TableRow
+            android:layout_height = "wrap_content"
+            android:id = "@+id/tableRow6"
+            android:layout_width = "match_parent">
+            <TextView
+                android:text = "Std. Deviation"
+                android:id = "@+id/DevAvgWt"
+                android:textStyle = "bold"/>
+            <TextView
+                android:text = "0"
+                android:id = "@+id/DevAvgWtA"
+                android:gravity = "center_horizontal"/>
+            <TextView
+                android:text = "0"
+                android:id = "@+id/DevAvgWtB"
+                android:gravity = "center_horizontal"/>
+            <TextView
+                android:text = "0"
+                android:id = "@+id/DevAvgWtC"
+                android:gravity = "center_horizontal"/>
+            <TextView
+                android:text = "0"
+                android:id = "@+id/DevAvgWtD"
+                android:gravity = "center_horizontal"/>
+            <TextView
+                android:text = "0"
+                android:id = "@+id/DevAvgWtE"
+                android:gravity = "center_horizontal"/>
+        </TableRow>
+    </TableLayout>
+</LinearLayout>
