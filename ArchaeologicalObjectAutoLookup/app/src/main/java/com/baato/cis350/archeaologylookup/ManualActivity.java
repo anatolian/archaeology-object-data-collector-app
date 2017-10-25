@@ -12,21 +12,25 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import static com.baato.cis350.archeaologylookup.MainActivity.localRetreiver;
 public class ManualActivity extends AppCompatActivity
 {
-
     HistoryHelper mydatabase;
-//    JSONObject json;
-
-
+    private LocalRetriever localRetriever;
+    /**
+     * Launch the activity
+     * @param savedInstanceState - state from memory
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manual);
+        updateDatabase uD = new updateDatabaseMuseum();
+        if (!uD.updateNecessary())
+        {
+            uD.doUpdate(this);
+        }
         mydatabase = new HistoryHelper(this);
-
         if (getIntent() != null)
         {
             Bitmap bmp = getIntent().getParcelableExtra("preview");
@@ -38,30 +42,32 @@ public class ManualActivity extends AppCompatActivity
             et.requestFocus();
         }
         String[] allCodes = new String[0];
-        //Creating the instance of ArrayAdapter containing list of language names
+        // Creating the instance of ArrayAdapter containing list of language names
         ArrayAdapter<String> adapter =
                 new ArrayAdapter<String>(this, android.R.layout.select_dialog_item, allCodes);
-        //Getting the instance of AutoCompleteTextView
+        // Getting the instance of AutoCompleteTextView
         AutoCompleteTextView autocomplete = (AutoCompleteTextView) findViewById(R.id.autocomplete);
-        autocomplete.setThreshold(1);//will start working from first character
-        autocomplete.setAdapter(adapter);//setting the adapter data into the AutoCompleteTextView
+        // will start working from first character
+        autocomplete.setThreshold(1);
+        // setting the adapter data into the AutoCompleteTextView
+        autocomplete.setAdapter(adapter);
         autocomplete.setTextColor(Color.BLACK);
-
+        localRetriever = new LocalRetriever(getApplicationContext(), uD.getDatabaseLocation());
     }
 
-
+    /**
+     * Click the screen
+     * @param view - window
+     */
     public void onClick(View view)
     {
         EditText t = (EditText) findViewById(R.id.editText);
         Button button = (Button) findViewById(R.id.button);
         Intent intent = new Intent(this, SearchActivity.class);
         String search = t.getText().toString();
-
-        //Abstract data retrieval
-        LocalRetreiver x = localRetreiver;
-        //x.stringjson = jsonstring;
-        String[] list = x.search(search);
-        //Add all possible search features
+        // Abstract data retrieval
+        String[] list = localRetriever.search(search);
+        // Add all possible search features
         intent.putExtra("search", list[2]);
         intent.putExtra("searchnumber", list[0]);
         intent.putExtra("searchname", list[1]);
@@ -69,11 +75,8 @@ public class ManualActivity extends AppCompatActivity
         intent.putExtra("searchprovenience", list[4]);
         intent.putExtra("searchmaterial", list[5]);
         intent.putExtra("searchcuratorial_section", list[6]);
-        //Add to history
-        mydatabase.insertSearch(t.getText().toString(), list[1], list[2], list[3], list[4], list[5],
-                list[6]);
+        // Add to history
+        mydatabase.insertSearch(t.getText().toString(), list[1], list[2], list[3], list[4], list[5], list[6]);
         startActivity(intent);
     }
-
-
 }

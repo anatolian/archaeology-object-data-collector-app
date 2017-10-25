@@ -102,11 +102,11 @@ public class MainActivity extends AppCompatActivity
         });
         visualization = (Button) findViewById(R.id.visualization_button);
         visualization.setOnClickListener(new View.OnClickListener() {
-            @Override
             /**
              * User clicked Visualization
              * @param view - button view
              */
+            @Override
             public void onClick(View view)
             {
                 onVisualizationButtonClick();
@@ -492,7 +492,7 @@ public class MainActivity extends AppCompatActivity
     {
         String areaEastingCustom = customAreaEasting.getText().toString();
         String areaEasting, areaNorthing, contextNumber, sampleNumber;
-        if ((areaEastingCustom == null || areaEastingCustom.isEmpty()) &&
+        if (areaEastingCustom.isEmpty() &&
                 (areaEastingSelection == null || areaEastingSelection.equalsIgnoreCase(AREA_EASTING_HINT)))
         {
             Toast toast = Toast.makeText(getApplicationContext(), "Please Select Values from " +
@@ -500,23 +500,23 @@ public class MainActivity extends AppCompatActivity
             toast.show();
             return;
         }
-        else if (areaEastingCustom == null || areaEastingCustom.isEmpty()) {
+        else if (areaEastingCustom.isEmpty())
+        {
             areaEasting = areaEastingSelection;
             areaNorthing = areaNorthingSelection;
             contextNumber = contextNumberSelection;
             sampleNumber = sampleNumberSelection;
         }
         else
-            {
+        {
             areaEasting = areaEastingCustom;
             areaNorthing = customAreaNorthing.getText().toString();
             contextNumber = customContextNumber.getText().toString();
             sampleNumber = customSampleNumber.getText().toString();
         }
-        if (areaEasting == null || areaEasting.isEmpty() ||
-                areaNorthing == null || areaNorthing.isEmpty() ||
-                contextNumber == null || contextNumber.isEmpty() ||
-                sampleNumber == null || sampleNumber.isEmpty()) {
+        if (areaEasting == null || areaEasting.isEmpty() || areaNorthing == null || areaNorthing.isEmpty() ||
+                contextNumber == null || contextNumber.isEmpty() || sampleNumber == null || sampleNumber.isEmpty())
+        {
             Toast toast = Toast.makeText(getApplicationContext(), "Please Select Values from " +
                     "Dropdown or Enter Custom Composite Key", Toast.LENGTH_SHORT);
             toast.show();

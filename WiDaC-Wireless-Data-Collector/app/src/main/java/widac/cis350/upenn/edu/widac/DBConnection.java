@@ -2,13 +2,8 @@
 // @author: ashutosh
 package widac.cis350.upenn.edu.widac;
 import android.util.Log;
-import android.widget.Toast;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import retrofit2.Call;
 import retrofit2.Callback;
-import retrofit2.Response;
 import retrofit2.Retrofit;
 import widac.cis350.upenn.edu.widac.data.remote.RetrofitClient;
 import widac.cis350.upenn.edu.widac.data.remote.WidacService;

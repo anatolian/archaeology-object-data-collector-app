@@ -16,7 +16,7 @@ import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-public class WebRetreiver extends AppCompatActivity implements Retreiver
+public class WebRetriever extends AppCompatActivity implements Retriever
 {
     String stringjson;
     JSONObject json;
@@ -25,13 +25,22 @@ public class WebRetreiver extends AppCompatActivity implements Retreiver
     String location;
     InputStream is;
     int mode;
-
-    public WebRetreiver(Context context, String location)
+    /**
+     * Constructor
+     * @param context - calling context
+     * @param location - db location
+     */
+    public WebRetriever(Context context, String location)
     {
         this.context = context;
         this.location = location;
     }
 
+    /**
+     * Fetch the db
+     * @param location - db location
+     * @return Returns a db reader
+     */
     @Override
     public InputStream retrieve(String location)
     {
@@ -39,12 +48,12 @@ public class WebRetreiver extends AppCompatActivity implements Retreiver
         try
         {
             run("http://triton11.github.io/testjson.txt");
-        } catch (IOException e)
+        }
+        catch (IOException e)
         {
             e.printStackTrace();
         }
-        //Count sheep to sleep
-        //Count cows to wait for a download to finish
+        // Count sheep to sleep. Count cows to wait for a download to finish
         while (stringjson == null)
         {
             System.out.println("cow");
@@ -53,20 +62,33 @@ public class WebRetreiver extends AppCompatActivity implements Retreiver
         return is;
     }
 
-    //Opens HTTP connection and downloads db
+    /**
+     * Opens HTTP connection and downloads db
+     * @param url - database url
+     * @throws IOException if a read fails
+     */
     public void run(String url) throws IOException
     {
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder().url(url).build();
-
-        client.newCall(request).enqueue(new Callback()
-        {
+        client.newCall(request).enqueue(new Callback() {
+            /**
+             * Call failed
+             * @param call - failing call
+             * @param e - failure
+             */
             @Override
             public void onFailure(Call call, IOException e)
             {
                 e.printStackTrace();
             }
 
+            /**
+             * Response received
+             * @param call - client request
+             * @param response - server response
+             * @throws IOException if the response is malformed
+             */
             @Override
             public void onResponse(Call call, Response response) throws IOException
             {
@@ -74,7 +96,6 @@ public class WebRetreiver extends AppCompatActivity implements Retreiver
                 {
                     throw new IOException("Unexpected code " + response);
                 }
-
                 String i = response.body().string();
                 String filename = "newjson.txt";
                 FileOutputStream outputStream;
@@ -83,7 +104,8 @@ public class WebRetreiver extends AppCompatActivity implements Retreiver
                     outputStream = openFileOutput(filename, mode);
                     outputStream.write(i.getBytes());
                     outputStream.close();
-                } catch (Exception e)
+                }
+                catch (Exception e)
                 {
                     e.printStackTrace();
                 }
@@ -91,16 +113,20 @@ public class WebRetreiver extends AppCompatActivity implements Retreiver
         });
     }
 
-    //Calls run to download db
+    /**
+     * Calls run to download db
+     * @param url - db location
+     */
     @Override
     public void download(String url)
     {
         client = new OkHttpClient();
-        mode = this.MODE_PRIVATE;
+        mode = MODE_PRIVATE;
         try
         {
             run("https://s3.us-east-2.amazonaws.com/archaeology-lookup/test.json");
-        } catch (IOException e)
+        }
+        catch (IOException e)
         {
             e.printStackTrace();
         }
@@ -110,7 +136,11 @@ public class WebRetreiver extends AppCompatActivity implements Retreiver
         }
     }
 
-    //Search for item
+    /**
+     * Search for item
+     * @param item - key
+     * @return Returns the results
+     */
     @Override
     public String[] search(String item)
     {
@@ -125,13 +155,13 @@ public class WebRetreiver extends AppCompatActivity implements Retreiver
             System.out.println(fixed);
             json = new JSONObject(fixed);
             System.out.println(json.names().toString());
-        } catch (Exception e)
+        }
+        catch (Exception e)
         {
             e.printStackTrace();
         }
         System.out.println(json.toString());
-        //Now have db as a JSON object
-        //Search begins below
+        // Now have db as a JSON object. Search begins below
         JSONObject translatedsearch;
         String searchitem = "";
         String searchurl;
@@ -141,17 +171,17 @@ public class WebRetreiver extends AppCompatActivity implements Retreiver
         String searchcuratorial_section = "";
         try
         {
-            //fix JSON
+            // fix JSON
             translatedsearch = json.getJSONObject(item);
-            //Add features
+            // Add features
             searchurl = translatedsearch.getString("url");
             searchitem = translatedsearch.getString("object_name");
             searchdescription = translatedsearch.getString("description");
             searchprovenience = translatedsearch.getString("provenience");
             searchmaterial = translatedsearch.getString("material");
             searchcuratorial_section = translatedsearch.getString("curatorial_section");
-
-        } catch (JSONException e)
+        }
+        catch (JSONException e)
         {
             searchurl = "https://www.penn.museum/collections/object/";
         }
@@ -167,7 +197,10 @@ public class WebRetreiver extends AppCompatActivity implements Retreiver
         return endresult;
     }
 
-    //Turns Penn museum "json" into actual json
+    /**
+     * Turns Penn museum "json" into actual json
+     * @return Returns the json
+     */
     public String loadJSONFromAsset()
     {
         String json = stringjson;
@@ -184,7 +217,6 @@ public class WebRetreiver extends AppCompatActivity implements Retreiver
                 System.out.format("'%s'\n", id_number);
             }
             String fixed = id_number + " : {";
-
             jsonArr[i] = jsonArr[i].replaceAll(Pattern.quote("{"), fixed);
             jsonfixed += jsonArr[i];
         }

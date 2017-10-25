@@ -37,46 +37,39 @@ import eu.livotov.labs.android.camview.camera.LiveDataProcessingCallback;
 public class CameraUiActivity extends AppCompatActivity
 {
     HistoryHelper myDatabase;
-
-    //anton's stuff for OCR
+    // anton's stuff for OCR
     public static final String PACKAGE_NAME = "com.baato.cis350.archeaologylookup";
     public static final String DATA_PATH =
             Environment.getExternalStorageDirectory().toString() + "/SimpleAndroidOCR/";
-
     public static final String lang = "eng";
     protected Button _button;
     protected EditText _field;
     protected String _path;
     protected boolean _taken;
     protected static final String PHOTO_TAKEN = "photo_taken";
-
-
     //camera view and scanner view stuff:
     private float x1;
     static final int MIN_DISTANCE = 150;
-
     int flag = -1;
     private static final String TAG = "QRCode.java";
-
     private FloatingActionButton shutter;
     private CameraLiveView cam = null;
     private RelativeLayout parent;
     private ScannerLiveView scan = null;
     private FloatingActionButton fab;
-
+    /**
+     * Activity is launched
+     * @param savedInstanceState - state from memory
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_ui);
         myDatabase = new HistoryHelper(this);
-
         // OCR-only stuff
-
-
         String[] paths = new String[]{DATA_PATH, DATA_PATH + "tessdata/"};
-
-        for (String path : paths)
+        for (String path: paths)
         {
             File dir = new File(path);
             if (!dir.exists())
@@ -91,20 +84,16 @@ public class CameraUiActivity extends AppCompatActivity
                     Log.v(TAG, "Created directory " + path + " on sdcard");
                 }
             }
-
         }
-
         if (!(new File(DATA_PATH + "tessdata/" + lang + ".traineddata")).exists())
         {
             try
             {
-
                 AssetManager assetManager = getAssets();
                 InputStream in = assetManager.open("tessdata/" + lang + ".traineddata");
                 //GZIPInputStream gin = new GZIPInputStream(in);
                 OutputStream out =
                         new FileOutputStream(DATA_PATH + "tessdata/" + lang + ".traineddata");
-
                 // Transfer bytes from in to out
                 byte[] buf = new byte[1024];
                 int len;
@@ -116,141 +105,147 @@ public class CameraUiActivity extends AppCompatActivity
                 in.close();
                 //gin.close();
                 out.close();
-
                 Log.v(TAG, "Copied " + lang + " traineddata");
-            } catch (IOException e)
+            }
+            catch (IOException e)
             {
                 Log.e(TAG, "Was unable to copy " + lang + " traineddata " + e.toString());
             }
         }
-
-
         // setting up CameraView
-
-
         parent = (RelativeLayout) findViewById(R.id.parent);
         fab = (FloatingActionButton) findViewById(R.id.fab);
         shutter = (FloatingActionButton) findViewById(R.id.shutter);
         fab.setImageResource(R.mipmap.qr);
         createCamera();
-
-
     }
 
+    /**
+     * User pressed screen
+     * @param event - touch event
+     * @return Returns whether the event was handled
+     */
     @Override
     public boolean onTouchEvent(MotionEvent event)
     {
-
         switch (event.getAction())
         {
-        case MotionEvent.ACTION_DOWN:
-            x1 = event.getX();
-            break;
-        case MotionEvent.ACTION_UP:
-            float x2 = event.getX();
-            float deltaX = x2 - x1;
-
-            if (Math.abs(deltaX) > 150)
-            {
-                // Left to Right swipe action
-                if (x2 < x1)
+            case MotionEvent.ACTION_DOWN:
+                x1 = event.getX();
+                break;
+            case MotionEvent.ACTION_UP:
+                float x2 = event.getX();
+                float deltaX = x2 - x1;
+                if (Math.abs(deltaX) > 150)
                 {
-                    Intent intent = new Intent(this, FavoriteActivity.class);
-                    startActivity(intent);
-                    overridePendingTransition(R.anim.anim_slide_in_left,
-                            R.anim.anim_slide_out_left);
+                    // Left to Right swipe action
+                    if (x2 < x1)
+                    {
+                        Intent intent = new Intent(this, FavoriteActivity.class);
+                        startActivity(intent);
+                        overridePendingTransition(R.anim.anim_slide_in_left, R.anim.anim_slide_out_left);
+
+                    }
+
+                    // Right to left swipe action
+                    else
+                    {
+                        Intent intent = new Intent(this, HistoryActivity.class);
+                        startActivity(intent);
+                        overridePendingTransition(R.anim.anim_slide_in_right,
+                                R.anim.anim_slide_out_right);
+                    }
 
                 }
-
-                // Right to left swipe action
                 else
                 {
-                    Intent intent = new Intent(this, HistoryActivity.class);
-                    startActivity(intent);
-                    overridePendingTransition(R.anim.anim_slide_in_right,
-                            R.anim.anim_slide_out_right);
+                    // consider as something else - a screen tap for example
                 }
-
-            }
-            else
-            {
-                // consider as something else - a screen tap for example
-            }
-            break;
+                break;
         }
         return super.onTouchEvent(event);
     }
 
+    /**
+     * Open the camera
+     */
     private void createCamera()
     {
-
         if (scan != null)
         {
             scan.stopScanner();
-
         }
         parent.removeAllViews();
         cam = new CameraLiveView(this);
-        cam.setLayoutParams(
-                new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
-                        RelativeLayout.LayoutParams.MATCH_PARENT));
+        cam.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
+                RelativeLayout.LayoutParams.MATCH_PARENT));
         cam.setBackgroundColor(0x233069);
         parent.addView(cam);
-
         cam.startCamera();
         shutter.setVisibility(View.VISIBLE);
-
-
     }
 
+    /**
+     * Open a scanner
+     */
     private void createScanner()
     {
         if (cam != null)
         {
             cam.stopCamera();
-
         }
         parent.removeAllViews();
         scan = new ScannerLiveView(this);
-        scan.setLayoutParams(
-                new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
+        scan.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
                         RelativeLayout.LayoutParams.MATCH_PARENT));
         scan.setBackgroundColor(0x233069);
-
         parent.addView(scan);
         scan.setScannerViewEventListener(new ScannerLiveView.ScannerViewEventListener()
         {
+            /**
+             * Scanner opened
+             * @param scanner - file scanner
+             */
             @Override
             public void onScannerStarted(ScannerLiveView scanner)
             {
-
             }
 
+            /**
+             * Scanner stopped
+             * @param scanner - file scanner
+             */
             @Override
             public void onScannerStopped(ScannerLiveView scanner)
             {
-
             }
 
+            /**
+             * Scanner failed
+             * @param err - error
+             */
             @Override
             public void onScannerError(Throwable err)
             {
-
             }
 
+            /**
+             * Data found
+             * @param data - located data
+             */
             @Override
             public void onCodeScanned(String data)
             {
-//from manual search
+                // from manual search
                 JSONObject json = null;
-
                 String search = data;
                 String jsonstring = loadJSONFromAsset();
                 try
                 {
                     json = new JSONObject(jsonstring);
                     System.out.println(json.names().toString());
-                } catch (Exception e)
+                }
+                catch (Exception e)
                 {
                     e.printStackTrace();
                 }
@@ -271,13 +266,12 @@ public class CameraUiActivity extends AppCompatActivity
                     searchprovenience = translatedsearch.getString("provenience");
                     searchmaterial = translatedsearch.getString("material");
                     searchcuratorial_section = translatedsearch.getString("curatorial_section");
-
-                } catch (JSONException e)
+                }
+                catch (JSONException e)
                 {
                     searchurl = "https://www.penn.museum/collections/object/" + data;
                 }
                 Intent intent = new Intent(getApplicationContext(), SearchActivity.class);
-
                 intent.putExtra("search", searchurl);
                 intent.putExtra("searchnumber", search);
                 intent.putExtra("searchname", searchitem);
@@ -288,93 +282,87 @@ public class CameraUiActivity extends AppCompatActivity
                 myDatabase.insertSearch(data, searchitem, searchurl, searchdescription,
                         searchprovenience, searchmaterial, searchcuratorial_section);
                 startActivity(intent);
-
             }
         });
         scan.startScanner();
         shutter.setVisibility(View.GONE);
     }
 
+    /**
+     * Take a picture
+     * @param v - camera view
+     */
     public void takePic(View v)
     {
-
-
         cam.getController().requestLiveData(new LiveDataProcessingCallback()
         {
-
+            /**
+             * Process a frame
+             * @param data - frame
+             * @param width - frame width
+             * @param height - frame height
+             * @return Returns null
+             */
             @Override
             public Object onProcessCameraFrame(byte[] data, int width, int height)
             {
-
                 YuvImage yuvimage = new YuvImage(data, ImageFormat.NV21, width, height, null);
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 yuvimage.compressToJpeg(new Rect(0, 0, width, height), 80, baos);
                 byte[] jdata = baos.toByteArray();
-
                 // Convert to Bitmap
                 Bitmap bitmap = BitmapFactory.decodeByteArray(jdata, 0, jdata.length);
                 bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
-
-
                 handleImage(bitmap);
-
                 return null;
             }
 
+            /**
+             * Process processed frame
+             * @param data - frame
+             */
             @Override
             public void onReceiveProcessedCameraFrame(Object data)
             {
-
             }
         });
-
-        //      cam.stopCamera();
     }
 
+    /**
+     * Picture taken
+     * @param bitmap - image
+     */
     private void handleImage(Bitmap bitmap)
     {
-
-
         Log.v(TAG, "Before baseApi");
-
-        Bitmap toSend =
-                Bitmap.createScaledBitmap(bitmap, bitmap.getWidth() / 10, bitmap.getHeight() / 10,
-                        false);
+        Bitmap toSend = Bitmap.createScaledBitmap(bitmap, bitmap.getWidth() / 10, bitmap.getHeight() / 10, false);
         TessBaseAPI baseApi = new TessBaseAPI();
         baseApi.setDebug(true);
         baseApi.init(DATA_PATH, lang);
         baseApi.setImage(toSend);
-
         String recognizedText = baseApi.getUTF8Text();
-
         baseApi.end();
-
         // You now have the text in recognizedText var, you can do anything with it.
         // We will display a stripped out trimmed alpha-numeric version of it (if lang is eng)
         // so that garbage doesn't make it to the display.
-
         Log.v(TAG, "OCRED TEXT: " + recognizedText);
-
         if (lang.equalsIgnoreCase("eng"))
         {
             recognizedText = recognizedText.replaceAll("[^a-zA-Z0-9]+", " ");
         }
-
         recognizedText = recognizedText.trim();
-
         cam.stopCamera();
         cam.startCamera();
-
         Intent intent = new Intent(getApplicationContext(), ManualActivity.class);
         intent.putExtra("search", recognizedText);
         intent.putExtra("preview", toSend);
-        // myDatabase.insertSearch("recognized text", "", "", "", "", "", "");
         startActivity(intent);
-
-
     }
 
-
+    /**
+     * Crossfade effect
+     * @param view - camera view
+     */
     public void crossfade(View view)
     {
         if (flag < 0)
@@ -385,19 +373,26 @@ public class CameraUiActivity extends AppCompatActivity
         }
         else
         {
-
             createCamera();
             fab.setImageResource(R.mipmap.qr);
             flag *= -1;
         }
     }
 
+    /**
+     * Manual entry
+     * @param view - button
+     */
     public void manual(View view)
     {
         Intent intent = new Intent(this, ManualActivity.class);
         startActivity(intent);
     }
 
+    /**
+     * Fetch a JSON from file
+     * @return
+     */
     @TargetApi(Build.VERSION_CODES.KITKAT)
     public String loadJSONFromAsset()
     {
@@ -410,7 +405,8 @@ public class CameraUiActivity extends AppCompatActivity
             is.read(buffer);
             is.close();
             json = new String(buffer, "UTF-8");
-        } catch (IOException ex)
+        }
+        catch (IOException ex)
         {
             ex.printStackTrace();
             return null;
@@ -433,19 +429,25 @@ public class CameraUiActivity extends AppCompatActivity
             jsonfixed += jsonArr[i];
         }
         jsonfixed = jsonfixed.replaceAll(Pattern.quote("}"), "\\},");
-        //System.out.println(jsonfixed);
         jsonfixed = jsonfixed.substring(0, jsonfixed.length() - 1);
         jsonfixed += "}";
         System.out.println(jsonfixed);
         return jsonfixed;
     }
 
+    /**
+     * Push an update
+     * @param view - button
+     */
     public void updateDatabase(View view)
     {
         updateDatabase updater = new updateDatabaseMuseum();
         updater.doUpdate(this);
     }
 
+    /**
+     * User pressed back
+     */
     @Override
     public void onBackPressed()
     {

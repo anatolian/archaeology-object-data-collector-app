@@ -1,22 +1,36 @@
 <resources>
-    <string name="app_name">ArcheaologyLookup</string>
-    <string name="ocr">OCR</string>
-    <string name="manual_lookup">Manual Lookup</string>
-    <string name="qr_code">QR Code</string>
-    <string name="bookmark">Bookmark</string>
-    <string name="history">History</string>
-    <string name="title_activity_simple_android_ocr">SimpleAndroidOCRActivity</string>
-    <string name="button_text">OCR!</string>
-    <string name="text_hint">OCRed Text will appear here</string>
-    <string name="search">Search</string>
-    <string name="id_number">ID</string>
-    <string name="fav_menu">:</string>
-    <string name="fav">Favorite</string>
-    <string name="try_again">Try Again</string>
-    <string name="intro_text">Intro Text?</string>
-    <string name="database">Database Management</string>
-    <string name="qr_scanned_text_will_appear_here">QR Scanned Text Will Appear Here</string>
-
+    <string name = "app_name">ArcheaologyLookup</string>
+    <string name = "ocr">OCR</string>
+    <string name = "manual_lookup">Manual Lookup</string>
+    <string name = "qr_code">QR Code</string>
+    <string name = "bookmark">Bookmark</string>
+    <string name = "history">History</string>
+    <string name = "title_activity_simple_android_ocr">SimpleAndroidOCRActivity</string>
+    <string name = "button_text">OCR!</string>
+    <string name = "text_hint">OCRed Text will appear here</string>
+    <string name = "search">Search</string>
+    <string name = "id_number">ID</string>
+    <string name = "fav_menu">:</string>
+    <string name = "fav">Favorite</string>
+    <string name = "try_again">Try Again</string>
+    <string name = "intro_text">Intro Text?</string>
+    <string name = "database">Database Management</string>
+    <string name = "qr_scanned_text_will_appear_here">QR Scanned Text Will Appear Here</string>
+    <string name = "bookmarks">Bookmarks</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name = "hello_blank_fragment">Hello blank fragment</string>
+    <string name = "parsing">Set Parsing Style</string>
+    <string name = "object_name">object_name</string>
+    <string name = "url">url</string>
+    <string name = "provenience">provenience</string>
+    <string name = "material">material</string>
+    <string name = "left_brace">{</string>
+    <string name = "main_screen">Main Screen</string>
+    <string name = "object_number">object_number</string>
+    <string name = "description">description</string>
+    <string name = "section">section</string>
+    <string name = "left_bracket">[</string>
+    <string name = "right_bracket">]</string>
+    <string name = "test">testjson.txt</string>
+    <string name = "search_history">Search history</string>
 </resources>

@@ -8,7 +8,6 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 public class PennMuseumArtifactStrategy extends AppCompatActivity implements Strategy
 {
-
     String searchitem;
     String searchnumber;
     String searchdesc;
@@ -16,7 +15,10 @@ public class PennMuseumArtifactStrategy extends AppCompatActivity implements Str
     String searchmat;
     String searchcur;
     String s;
-
+    /**
+     * Constructor
+     * @param searchBundle - app parameters
+     */
     public PennMuseumArtifactStrategy(Bundle searchBundle)
     {
         searchitem = searchBundle.getString("searchname");
@@ -28,6 +30,9 @@ public class PennMuseumArtifactStrategy extends AppCompatActivity implements Str
         s = searchBundle.getString("search");
     }
 
+    /**
+     * Draw the view
+     */
     public void displayView()
     {
         WebView myWebView = (WebView) findViewById(R.id.webview);
@@ -35,12 +40,13 @@ public class PennMuseumArtifactStrategy extends AppCompatActivity implements Str
         myWebView.loadUrl(s);
     }
 
+    /**
+     * Add favorite
+     * @param activity - calling activity
+     */
     public void insertFavorite(Activity activity)
     {
         HistoryHelper myDatabase = new HistoryHelper(activity);
-        myDatabase.insertFav(searchnumber, searchitem, s, searchdesc, searchprov, searchmat,
-                searchcur);
+        myDatabase.insertFav(searchnumber, searchitem, s, searchdesc, searchprov, searchmat, searchcur);
     }
-
-
 }

@@ -12,7 +12,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 import java.util.Set;
 import widac.cis350.upenn.edu.widac.data.remote.WidacService;
 public class SettingsActivity extends AppCompatActivity
@@ -30,9 +29,10 @@ public class SettingsActivity extends AppCompatActivity
         setContentView(R.layout.activity_settings);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        // Populate the currenlty paired devices list. Add currently paired devices to list
+        // Populate the currently paired devices list. Add currently paired devices to list
         getPairedDevices();
-        if (devices != null) {
+        if (devices != null)
+        {
             ListView list = (ListView) findViewById(R.id.paired_devices_list);
             ArrayAdapter<String> adapter = new ArrayAdapter<>(list.getContext(),
                     android.R.layout.simple_list_item_1, devices);
@@ -40,7 +40,6 @@ public class SettingsActivity extends AppCompatActivity
             list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 /**
                  * An item was selected
-                 *
                  * @param parent   - the spinner
                  * @param view     - the container view
                  * @param position - the selected item
@@ -51,23 +50,27 @@ public class SettingsActivity extends AppCompatActivity
                     Set<BluetoothDevice> pairedDevices = BluetoothAdapter.getDefaultAdapter().getBondedDevices();
                     if (pairedDevices.size() > 0) {
                         // There are paired devices. Get the name and address of each paired device.
-                        for (BluetoothDevice device : pairedDevices) {
+                        for (BluetoothDevice device: pairedDevices)
+                        {
                             String deviceName = device.getName();
-                            if (deviceName.equals(devices[position])) {
+                            if (deviceName.equals(devices[position]))
+                            {
                                 Session.deviceName = deviceName;
                             }
                             TextView connectedDevice = (TextView) findViewById(R.id.connected_device);
-                            if (Session.deviceName != null) {
-                                connectedDevice.setText("Device: " + Session.deviceName);
+                            if (Session.deviceName != null)
+                            {
+                                connectedDevice.setText(getString(R.string.device_frmt, Session.deviceName));
                             }
                         }
                     }
                 }
             });
             TextView connectedDB = (TextView) findViewById(R.id.connectedDB);
-            connectedDB.setText("Database: " + WidacService.ENDPOINT);
+            connectedDB.setText(getString(R.string.database_frmt, WidacService.ENDPOINT));
             TextView connectedDevice = (TextView) findViewById(R.id.connected_device);
-            if (Session.deviceName != null) {
+            if (Session.deviceName != null)
+            {
                 connectedDevice.setText(Session.deviceName);
             }
         }
@@ -79,13 +82,16 @@ public class SettingsActivity extends AppCompatActivity
     private void getPairedDevices()
     {
         BluetoothAdapter ba = BluetoothAdapter.getDefaultAdapter();
-        if (ba != null) {
+        if (ba != null)
+        {
             Set<BluetoothDevice> pairedDevices = ba.getBondedDevices();
-            if (pairedDevices.size() > 0) {
+            if (pairedDevices.size() > 0)
+            {
                 // There are paired devices. Get the name and address of each paired device.
                 devices = new String[pairedDevices.size()];
                 int index = 0;
-                for (BluetoothDevice device : pairedDevices) {
+                for (BluetoothDevice device: pairedDevices)
+                {
                     String deviceName = device.getName();
                     devices[index] = deviceName;
                     index++;

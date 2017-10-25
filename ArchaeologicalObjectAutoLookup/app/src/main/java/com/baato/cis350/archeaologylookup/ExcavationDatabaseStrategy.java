@@ -7,31 +7,38 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 public class ExcavationDatabaseStrategy extends AppCompatActivity implements Strategy
 {
-
     TextView text;
-
+    /**
+     * Constructor
+     * @param searchBundle - search data
+     */
     public ExcavationDatabaseStrategy(Bundle searchBundle)
     {
     }
 
+    /**
+     * Draw the view
+     */
     public void displayView()
     {
         text = new TextView(this);
-
-        SqlRetreiver retriever = new SqlRetreiver();
+        SqlRetriever retriever = new SqlRetriever();
         String[] arr = retriever.search("634110");
-
         StringBuilder sb = new StringBuilder("");
-        for (int i = 0; i < arr.length; i++)
+        for (String s: arr)
         {
-            sb.append(arr[i] + "\n");
+            sb.append(s).append("\n");
         }
 
         text.setText(sb.toString());
     }
 
+    /**
+     * Add favorite
+     * @param activity - calling activity
+     */
     public void insertFavorite(Activity activity)
     {
-        // unimplemented
+        // TODO: unimplemented
     }
 }

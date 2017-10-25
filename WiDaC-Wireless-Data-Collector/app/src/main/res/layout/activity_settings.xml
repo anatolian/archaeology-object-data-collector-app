@@ -44,19 +44,19 @@
                 android:layout_height = "wrap_content"
                 android:textSize = "12pt"/>
             <TextView
-                android:text = "No device connected"
+                android:text = "@string/no_device"
                 android:layout_width = "match_parent"
                 android:layout_height = "wrap_content"
                 android:textSize = "10pt"
                 android:id="@+id/connected_device"/>
             <TextView
-                android:text = "No database connected"
+                android:text = "@string/no_db"
                 android:layout_width = "match_parent"
                 android:layout_height = "wrap_content"
                 android:textSize = "10pt"
                 android:id = "@+id/connectedDB"/>
             <TextView
-                android:text = "Paired Devices"
+                android:text = "@string/paired"
                 android:layout_width = "match_parent"
                 android:layout_height = "wrap_content"
                 android:layout_marginTop = "10dp"
@@ -74,7 +74,7 @@
                 <Button
                     android:id = "@+id/pair_new_device"
                     style = "?android:textAppearanceSmall"
-                    android:layout_width = "wrap_content"
+                    android:layout_width = "0dp"
                     android:layout_height = "wrap_content"
                     android:layout_marginTop = "16dp"
                     android:onClick = "onPairDeviceClick"

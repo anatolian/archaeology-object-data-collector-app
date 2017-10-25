@@ -41,7 +41,7 @@
                     style = "?android:textAppearanceSmall"
                     android:layout_width = "wrap_content"
                     android:layout_height = "wrap_content"
-                    android:text = "Prev"
+                    android:text = "@string/prev"
                     android:textStyle = "bold"
                     android:layout_weight = "50"/>
                 <Button
@@ -49,7 +49,7 @@
                     style = "?android:textAppearanceSmall"
                     android:layout_width = "wrap_content"
                     android:layout_height = "wrap_content"
-                    android:text = "Next"
+                    android:text = "@string/next"
                     android:textStyle = "bold"
                     android:layout_weight = "50"/>
             </LinearLayout>
@@ -81,12 +81,10 @@
                 android:layout_width = "match_parent"
                 android:layout_height = "wrap_content"
                 android:src = "@drawable/shard"
-                android:layout_below = "@+id/textView"
-                android:layout_centerHorizontal = "true"
                 android:layout_marginTop = "10dp"
                 android:id = "@+id/imageView"/>
             <TextView
-                android:text = "Weight: Not yet recorded"
+                android:text = "@string/weight_empty"
                 android:layout_width = "match_parent"
                 android:layout_height = "wrap_content"
                 android:gravity = "center_horizontal"
@@ -97,7 +95,7 @@
                 android:text = "@string/update_weight"
                 android:layout_width = "match_parent"
                 android:layout_height = "match_parent"
-                android:textSize="18dp"/>
+                android:textSize="18sp"/>
             <LinearLayout
                 android:layout_width = "match_parent"
                 android:layout_height = "match_parent"
@@ -130,6 +128,6 @@
             android:layout_width = "match_parent"
             android:layout_height = "match_parent"
             android:background = "@color/colorPrimary"
-            app:popupTheme = "@style/AppTheme.PopupOverlay" />
+            app:popupTheme = "@style/AppTheme.PopupOverlay"/>
     </android.support.design.widget.AppBarLayout>
 </android.support.design.widget.CoordinatorLayout>

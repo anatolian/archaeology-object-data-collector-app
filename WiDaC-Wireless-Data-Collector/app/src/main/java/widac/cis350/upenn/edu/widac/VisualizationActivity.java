@@ -5,15 +5,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
-import com.github.mikephil.charting.utils.ColorTemplate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -112,10 +109,8 @@ public class VisualizationActivity extends AppCompatActivity
     private void parseArtifacts(Set<Sample> artifacts)
     {
         Log.d("VisualizationActivity", "parseArtifacts: " + artifacts.size());
-        Iterator<Sample> i = artifacts.iterator();
-        while (i.hasNext())
+        for (Sample d: artifacts)
         {
-            Sample d = i.next();
             if (chartData.containsKey(d.getMaterial()))
             {
                 chartData.put(d.getMaterial(), chartData.get(d.getMaterial()) + 1);

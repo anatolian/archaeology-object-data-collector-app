@@ -18,10 +18,12 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 public class updateDatabaseMuseum implements updateDatabase
 {
-
     private final String FILE = "/museumjson.csv";
     private final String LINK = "http://www.penn.museum/collections/assets/data/all-csv-latest.zip";
-
+    /**
+     * Is an update necessary
+     * @return - Returns if an update is necessary
+     */
     @Override
     public boolean updateNecessary()
     {
@@ -29,12 +31,19 @@ public class updateDatabaseMuseum implements updateDatabase
         return !file.exists();
     }
 
+    /**
+     * Update database
+     * @param activity - calling activity
+     */
     @Override
     public void doUpdate(Activity activity)
     {
         final Activity toastActivity = activity;
-        new databaseUpdater(new databaseUpdater.AsyncResponse()
-        {
+        new databaseUpdater(new databaseUpdater.AsyncResponse() {
+            /**
+             * Update finished
+             * @param output - whether there was output
+             */
             public void processFinish(Boolean output)
             {
                 Toast.makeText(toastActivity, "Database Update Complete", Toast.LENGTH_LONG).show();
@@ -42,36 +51,47 @@ public class updateDatabaseMuseum implements updateDatabase
         }).execute(LINK);
     }
 
+    /**
+     * Get the database location
+     * @return - Returns the database location
+     */
     @Override
-    public String getDatabaseLoction()
+    public String getDatabaseLocation()
     {
         return Environment.getExternalStorageDirectory().getPath() + FILE;
     }
-
 }
 
 class databaseUpdater extends AsyncTask<String, Object, Void>
 {
+    AsyncResponse asyncResponse = null;
     public interface AsyncResponse
     {
+        /**
+         * Finish the process
+         * @param output - whether there is output
+         */
         void processFinish(Boolean output);
     }
-
-    AsyncResponse asyncResponse = null;
-
+    /**
+     * Constructor
+     * @param asyncResponse - background response
+     */
     public databaseUpdater(AsyncResponse asyncResponse)
     {
         this.asyncResponse = asyncResponse;
     }
 
+    /**
+     * Background process
+     * @param urls - urls to update
+     * @return Returns nothing
+     */
     protected Void doInBackground(String... urls)
     {
         String responseBody = null;
         OkHttpClient client = new OkHttpClient();
-        Request request =
-                new Request.Builder().url(urls[0]).addHeader("Content-Type", "application/zip")
-                        .build();
-
+        Request request = new Request.Builder().url(urls[0]).addHeader("Content-Type", "application/zip").build();
         okhttp3.Response response = null;
         try
         {
@@ -84,24 +104,33 @@ class databaseUpdater extends AsyncTask<String, Object, Void>
             int readLen = 0;
             while ((len = inputStream.read(buffer)) != -1)
             {
-                //System.out.println("download loop " + Thread.currentThread().getName());
                 outputStream.write(buffer, 0, len);
             }
-            //System.out.println(responseBody);
             unpackZip(Environment.getExternalStorageDirectory().getPath(), "/a.zip");
-        } catch (IOException e)
+        }
+        catch (IOException e)
         {
             e.printStackTrace();
         }
         return null;
     }
 
+    /**
+     * Issue POST request
+     * @param zipResponse - response
+     */
     protected void onPostExecute(Void zipResponse)
     {
         super.onPostExecute(zipResponse);
         asyncResponse.processFinish(true);
     }
 
+    /**
+     * Unzip folder
+     * @param path - folder path
+     * @param zipname - name of zip file
+     * @return Returns whether the unzip succeeded
+     */
     private boolean unpackZip(String path, String zipname)
     {
         InputStream is;
@@ -114,13 +143,11 @@ class databaseUpdater extends AsyncTask<String, Object, Void>
             ZipEntry ze;
             byte[] buffer = new byte[1024];
             int count;
-
             while ((ze = zis.getNextEntry()) != null)
             {
                 // zapis do souboru
                 filename = "/museumjson.csv";
                 System.out.println(ze.getName());
-
                 // Need to create directories if not exists, or
                 // it will generate an Exception...
                 if (ze.isDirectory())
@@ -129,26 +156,22 @@ class databaseUpdater extends AsyncTask<String, Object, Void>
                     fmd.mkdirs();
                     continue;
                 }
-
                 FileOutputStream fout = new FileOutputStream(path + filename);
-
                 // cteni zipu a zapis
                 while ((count = zis.read(buffer)) != -1)
                 {
                     fout.write(buffer, 0, count);
                 }
-
                 fout.close();
                 zis.closeEntry();
             }
-
             zis.close();
-        } catch (IOException e)
+        }
+        catch (IOException e)
         {
             e.printStackTrace();
             return false;
         }
-
         return true;
     }
 }

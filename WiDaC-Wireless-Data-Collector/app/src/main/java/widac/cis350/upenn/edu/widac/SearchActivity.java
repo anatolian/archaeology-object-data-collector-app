@@ -40,6 +40,7 @@ public class SearchActivity extends AppCompatActivity
     private ProgressBar progressBar;
     private List<String> areaEastingData, areaNorthingData, contextNumberData, sampleNumberData;
     private String areaEastingSelection, areaNorthingSelection, contextNumberSelection, sampleNumberSelection;
+    private IntentFilter filter;
     ArrayAdapter<String> areaEastingAdapter, areaNorthingAdapter, contextNumberAdapter, sampleNumberAdapter;
     WidacService service;
     private Sample sample;
@@ -127,11 +128,31 @@ public class SearchActivity extends AppCompatActivity
             }
         }
         Toast.makeText(this, "Connected to: " + Session.deviceName, Toast.LENGTH_SHORT).show();
-        IntentFilter filter = new IntentFilter();
+        filter = new IntentFilter();
         filter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
         filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED);
         filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);
         this.registerReceiver(mReceiver, filter);
+    }
+
+    /**
+     * Activity resumes
+     */
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        registerReceiver(mReceiver, filter);
+    }
+
+    /**
+     * User pressed back
+     */
+    @Override
+    public void onPause()
+    {
+        super.onPause();
+        unregisterReceiver(mReceiver);
     }
 
     /**
@@ -144,7 +165,8 @@ public class SearchActivity extends AppCompatActivity
     /**
      * Create the buttons
      */
-    private void initializeButtons() {
+    private void initializeButtons()
+    {
         next = (Button) findViewById(R.id.next_item);
         next.setOnClickListener(new View.OnClickListener() {
             /**
@@ -181,6 +203,10 @@ public class SearchActivity extends AppCompatActivity
                 onUpdateBluetoothButtonClick();
             }
         });
+        if (bluetoothService == null)
+        {
+            bluetooth.setVisibility(View.GONE);
+        }
         manual = (Button) findViewById(R.id.update_manual);
         manual.setOnClickListener(new View.OnClickListener() {
             /**
@@ -577,7 +603,7 @@ public class SearchActivity extends AppCompatActivity
      */
     public void onUpdateBluetoothButtonClick()
     {
-        ((TextView) findViewById(R.id.itemWeight)).setText("Weight: 234g");
+        ((TextView) findViewById(R.id.itemWeight)).setText(getString(R.string.default_weight));
         runBluetooth();
         Toast.makeText(this, "Weight updated", Toast.LENGTH_SHORT).show();
     }
@@ -632,7 +658,7 @@ public class SearchActivity extends AppCompatActivity
     public void onPrevButtonClick()
     {
         TextView weightText = (TextView) findViewById(R.id.itemWeight);
-        weightText.setText("Weight: 121g");
+        weightText.setText(getString(R.string.default_weight2));
     }
 
     /**
@@ -641,7 +667,7 @@ public class SearchActivity extends AppCompatActivity
     public void onNextButtonClick()
     {
         TextView weightText = (TextView) findViewById(R.id.itemWeight);
-        weightText.setText("Weight: 235g");
+        weightText.setText(getString(R.string.default_weight));
     }
 
     /**
@@ -653,6 +679,7 @@ public class SearchActivity extends AppCompatActivity
         TextView weightText = (TextView) findViewById(R.id.itemWeight);
         weightText.setText("Weight: " + BluetoothService.currWeight + "g");
     }
+
     Callback sampleCallback = new Callback<Sample>() {
         /**
          * Response received

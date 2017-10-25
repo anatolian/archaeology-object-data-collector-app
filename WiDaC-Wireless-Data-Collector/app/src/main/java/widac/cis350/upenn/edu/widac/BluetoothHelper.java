@@ -1,7 +1,6 @@
 // Communicate with the scale over bluetooth
 // @author: J. Patrick Taggart
 package widac.cis350.upenn.edu.widac;
-import static android.R.attr.x;
 public class BluetoothHelper
 {
     /**

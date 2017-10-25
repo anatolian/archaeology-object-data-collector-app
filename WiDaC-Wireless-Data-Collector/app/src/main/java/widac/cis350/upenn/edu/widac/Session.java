@@ -7,13 +7,8 @@
  * Follows Singleton class pattern
  */
 package widac.cis350.upenn.edu.widac;
-import android.bluetooth.BluetoothDevice;
 import android.util.Log;
-import android.widget.TextView;
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 import retrofit2.Call;
 import retrofit2.Callback;

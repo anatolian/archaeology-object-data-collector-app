@@ -4,9 +4,21 @@ package com.baato.cis350.archeaologylookup;
 import android.app.Activity;
 public interface updateDatabase
 {
+    /**
+     * Returns whether an update is needed
+     * @return Returns whether an update is needed
+     */
     public boolean updateNecessary();
 
-    public void doUpdate(Activity activity); // for toasting on complete
+    /**
+     * for toasting on complete
+     * @param activity - calling activity
+     */
+    public void doUpdate(Activity activity);
 
-    public String getDatabaseLoction();
+    /**
+     * Get the database path
+     * @return Returns the database path
+     */
+    public String getDatabaseLocation();
 }

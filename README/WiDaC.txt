@@ -1,0 +1,33 @@
+WiDaC README:
+
+The WiDaC app communicates with a reflex scale over the phone's Bluetooth and writes the measured weights to the database.
+
+Main Screen: SplashActivity.java
+	SplashActivity quickly displays the splash logo then launches MainActivity.
+
+Other Activities: MainActivity.java
+	MainActivity prompts the user to query the database for a particular artifact. The user can either use a series of spinners to select a pre-loaded item
+or manually search for one using a series of textboxes. Once either the textboxes or spinners are filled out (precedence resolved in that order) and the user
+presses "Search", the user is taken to SearchActivity. Below "Search", if the user presses "Settings" they are taken to SettingsActivity. If the user presses
+"Visualization", they are taken to VisualizationActivity, and below that if the user presses "Session Report", they are taken to SessionReportActivity.
+
+SearchActivity.java
+	SearchActivity displays a picture of the artifact, and below it displays its most recent weight taken. At the top of the screen, the user can cycle through
+the registered weights using the "PREV" and "NEXT" buttons, as well as switch to a different artifact by selecting a different Northing, Easting, Context
+Number, and Sample Number through another series of spinners. At the bottom are two buttons allowing the user to add a new weight either through reading directly
+from the scale over Bluetooth or manual entry.
+
+SettingsActivity.java
+	SettingsActivity displays the currently connected bluetooth scale and the database URL to connect to when the service is running. Below are a list of all
+paired Bluetooth devices (not necessarily scales) that the user can tap to connect to. The "Pair New Device" button launches Android's native Bluetooth screen
+to connect to a new device.
+
+VisualizationActivity.java
+	VisualizationActivity displays information about the artifacts stored in the database.
+
+SessionReportActivity.java
+	SessionReportActivity displays the # collected, average size, average weight, and standard deviations of the glass, ceramic, metal, stone, and organic artifacts
+registered.
+
+Used APIs/External Libraries:
+	VisualizationActivity uses com.github.mikephil.charting to generate a pie chart of the artifacts.

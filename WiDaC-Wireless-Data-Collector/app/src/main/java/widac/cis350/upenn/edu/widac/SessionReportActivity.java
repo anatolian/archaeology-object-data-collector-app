@@ -13,6 +13,7 @@ import android.util.Log;
 import android.widget.TextView;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import retrofit2.Call;
@@ -117,7 +118,7 @@ public class SessionReportActivity extends AppCompatActivity
                            + types.get("Organic").num;
         // Add number of items collected to table
         TextView tv = (TextView)findViewById(R.id.TotalNum);
-        tv.setText("Total:" + itemsCollected);
+        tv.setText(getString(R.string.total_frmt, itemsCollected));
         // Calculate statistics
         setNumCollected();
         setAvgSize();
@@ -147,25 +148,25 @@ public class SessionReportActivity extends AppCompatActivity
     private void setAvgSize()
     {
         TextView tv = (TextView)findViewById(R.id.AvgSizeA);
-        tv.setText(String.format("%.2f", types.get("Glass").avgSize));
+        tv.setText(String.format(Locale.ENGLISH, "%.2f", types.get("Glass").avgSize));
         tv = (TextView)findViewById(R.id.AvgSizeB);
-        tv.setText(String.format("%.2f", types.get("Ceramic").avgSize));
+        tv.setText(String.format(Locale.ENGLISH, "%.2f", types.get("Ceramic").avgSize));
         tv = (TextView)findViewById(R.id.AvgSizeC);
-        tv.setText(String.format("%.2f", types.get("Metal").avgSize));
+        tv.setText(String.format(Locale.ENGLISH, "%.2f", types.get("Metal").avgSize));
         tv = (TextView)findViewById(R.id.AvgSizeD);
-        tv.setText(String.format("%.2f", types.get("Stone").avgSize));
+        tv.setText(String.format(Locale.ENGLISH, "%.2f", types.get("Stone").avgSize));
         tv = (TextView)findViewById(R.id.AvgSizeE);
-        tv.setText(String.format("%.2f", types.get("Organic").avgSize));
+        tv.setText(String.format(Locale.ENGLISH, "%.2f", types.get("Organic").avgSize));
         tv = (TextView)findViewById(R.id.DevAvgSizeA);
-        tv.setText(String.format("%.2f", types.get("Glass").stdDevSize()));
+        tv.setText(String.format(Locale.ENGLISH, "%.2f", types.get("Glass").stdDevSize()));
         tv = (TextView)findViewById(R.id.DevAvgSizeB);
-        tv.setText(String.format("%.2f", types.get("Ceramic").stdDevSize()));
+        tv.setText(String.format(Locale.ENGLISH, "%.2f", types.get("Ceramic").stdDevSize()));
         tv = (TextView)findViewById(R.id.DevAvgSizeC);
-        tv.setText(String.format("%.2f", types.get("Metal").stdDevSize()));
+        tv.setText(String.format(Locale.ENGLISH, "%.2f", types.get("Metal").stdDevSize()));
         tv = (TextView)findViewById(R.id.DevAvgSizeD);
-        tv.setText(String.format("%.2f", types.get("Stone").stdDevSize()));
+        tv.setText(String.format(Locale.ENGLISH, "%.2f", types.get("Stone").stdDevSize()));
         tv = (TextView)findViewById(R.id.DevAvgSizeE);
-        tv.setText(String.format("%.2f", types.get("Organic").stdDevSize()));
+        tv.setText(String.format(Locale.ENGLISH, "%.2f", types.get("Organic").stdDevSize()));
     }
 
     /**
@@ -174,25 +175,25 @@ public class SessionReportActivity extends AppCompatActivity
     private void setAvgWt()
     {
         TextView tv = (TextView)findViewById(R.id.AvgWtA);
-        tv.setText(String.format("%.2f", types.get("Glass").avgWt));
+        tv.setText(String.format(Locale.ENGLISH, "%.2f", types.get("Glass").avgWt));
         tv = (TextView)findViewById(R.id.AvgWtB);
-        tv.setText(String.format("%.2f", types.get("Ceramic").avgWt));
+        tv.setText(String.format(Locale.ENGLISH, "%.2f", types.get("Ceramic").avgWt));
         tv = (TextView)findViewById(R.id.AvgWtC);
-        tv.setText(String.format("%.2f", types.get("Metal").avgWt));
+        tv.setText(String.format(Locale.ENGLISH, "%.2f", types.get("Metal").avgWt));
         tv = (TextView)findViewById(R.id.AvgWtD);
-        tv.setText(String.format("%.2f", types.get("Stone").avgWt));
+        tv.setText(String.format(Locale.ENGLISH, "%.2f", types.get("Stone").avgWt));
         tv = (TextView)findViewById(R.id.AvgWtE);
-        tv.setText(String.format("%.2f", types.get("Organic").avgWt));
+        tv.setText(String.format(Locale.ENGLISH, "%.2f", types.get("Organic").avgWt));
         tv = (TextView)findViewById(R.id.DevAvgWtA);
-        tv.setText(String.format("%.2f", types.get("Glass").stdDevWeight()));
+        tv.setText(String.format(Locale.ENGLISH, "%.2f", types.get("Glass").stdDevWeight()));
         tv = (TextView)findViewById(R.id.DevAvgWtB);
-        tv.setText(String.format("%.2f", types.get("Ceramic").stdDevWeight()));
+        tv.setText(String.format(Locale.ENGLISH, "%.2f", types.get("Ceramic").stdDevWeight()));
         tv = (TextView)findViewById(R.id.DevAvgWtC);
-        tv.setText(String.format("%.2f", types.get("Metal").stdDevWeight()));
+        tv.setText(String.format(Locale.ENGLISH, "%.2f", types.get("Metal").stdDevWeight()));
         tv = (TextView)findViewById(R.id.DevAvgWtD);
-        tv.setText(String.format("%.2f", types.get("Stone").stdDevWeight()));
+        tv.setText(String.format(Locale.ENGLISH, "%.2f", types.get("Stone").stdDevWeight()));
         tv = (TextView)findViewById(R.id.DevAvgWtE);
-        tv.setText(String.format("%.2f", types.get("Organic").stdDevWeight()));
+        tv.setText(String.format(Locale.ENGLISH, "%.2f", types.get("Organic").stdDevWeight()));
     }
 
     // Class for working with data recovered from the database
