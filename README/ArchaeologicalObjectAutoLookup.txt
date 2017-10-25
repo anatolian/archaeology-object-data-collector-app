@@ -112,3 +112,4 @@ for usage in the rest of the program. On complete, the ui this was called from i
 
 External Libraries:
 	postgresql-42.0.0 - JAR file for handling postgres SQL queries
+	eu.livotov.labs.android.camview - live view from camera

@@ -26,10 +26,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 public class MainActivity extends Activity
 {
-    public final static String SU_YEAR = "org.archaeology.surveyphotography.SU_YEAR";
-    public final static String SU_SEQNUM = "org.archaeology.surveyphotography.SU_SEQNUM";
-    public final static String FIELDPHOTONUMBER = "org.archaeology.surveyphotography.FIELDPHOTONUMBER";
-    public final static String FIELDORBAG = "org.archaeology.surveyphotography.FIELDORBAG";
+    public final static String SU_YEAR = "surveyphotography.archaeology.org.survey.SU_YEAR";
+    public final static String SU_SEQNUM = "surveyphotography.archaeology.org.survey.SU_SEQNUM";
+    public final static String FIELDPHOTONUMBER = "surveyphotography.archaeology.org.survey.FIELDPHOTONUMBER";
+    public final static String FIELDORBAG = "surveyphotography.archaeology.org.survey.FIELDORBAG";
     public final static String FIELD = "field";
     public final static String BAG = "bag";
     public final static String THUMBNAIL = "thumbnail";

@@ -6,10 +6,12 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.support.v4.app.NavUtils;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 import java.io.File;
@@ -71,6 +73,8 @@ public class TakePhotographActivity extends Activity
             setContentView(textView);
             return;
         }
+        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+        StrictMode.setVmPolicy(builder.build());
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // create a file to save the video
         fileUri = getOutputMediaFileUri(fieldOrBag);
@@ -88,16 +92,15 @@ public class TakePhotographActivity extends Activity
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
-        switch (item.getItemId())
+        if (item.getItemId() == android.R.id.home)
         {
-            case android.R.id.home:
-                // This ID represents the Home or Up button. In the case of this
-                // activity, the Up button is shown. Use NavUtils to allow users
-                // to navigate up one level in the application structure. For
-                // more details, see the Navigation pattern on Android Design:
-                // http://developer.android.com/design/patterns/navigation.html#up-vs-back
-                NavUtils.navigateUpFromSameTask(this);
-                return true;
+            // This ID represents the Home or Up button. In the case of this
+            // activity, the Up button is shown. Use NavUtils to allow users
+            // to navigate up one level in the application structure. For
+            // more details, see the Navigation pattern on Android Design:
+            // http://developer.android.com/design/patterns/navigation.html#up-vs-back
+            NavUtils.navigateUpFromSameTask(this);
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -116,7 +119,6 @@ public class TakePhotographActivity extends Activity
             {
                 // Image captured and saved to fileUri specified in the Intent
                 Toast.makeText(this, "Image saved to:\n" + fileUri.getPath(), Toast.LENGTH_LONG).show();
-                // getIntent().putExtra("result", true);
                 this.setResult(RESULT_OK);
             }
             else if (resultCode == RESULT_CANCELED)
@@ -145,32 +147,18 @@ public class TakePhotographActivity extends Activity
 
     /**
      * Create a File for saving an image or video
-     * @param fieldOrBag of file
+     * @param fieldOrBag - of file
      * @return Returns the file
      */
     private File getOutputMediaFile(String fieldOrBag)
     {
-        // To be safe, you should check that the SDCard is mounted
-        // using Environment.getExternalStorageState() before doing this.
         String suYear = getIntent().getStringExtra(MainActivity.SU_YEAR);
         String suSeqNum = getIntent().getStringExtra(MainActivity.SU_SEQNUM);
         String fieldPhotoNumber = getIntent().getStringExtra(MainActivity.FIELDPHOTONUMBER);
-        File mediaStorageDir = null;
-        File thumbMediaStorageDir = null;
-        if (fieldOrBag.equals(MainActivity.FIELD))
-        {
-            mediaStorageDir = new File(Environment.getExternalStorageDirectory().getPath()
-                    + photoSavePath + suYear + "/" + suSeqNum + "/fld");
-            thumbMediaStorageDir = new File(Environment.getExternalStorageDirectory().getPath()
-                    + photoSavePath + "tmb/" + suYear + "/" + suSeqNum + "/fld");
-        }
-        else if (fieldOrBag.equals(MainActivity.BAG))
-        {
-            mediaStorageDir = new File(Environment.getExternalStorageDirectory().getPath()
-                    + photoSavePath + suYear + "/" + suSeqNum + "/fnd");
-            thumbMediaStorageDir = new File(Environment.getExternalStorageDirectory().getPath()
-                    + photoSavePath + "/tmb/" + suYear + "/" + suSeqNum + "/fnd");
-        }
+        File mediaStorageDir = new File(Environment.getExternalStorageDirectory().getPath()
+                + photoSavePath + suYear + "/" + suSeqNum + "/fld");
+        File thumbMediaStorageDir = new File(Environment.getExternalStorageDirectory().getPath()
+                + photoSavePath + "tmb/" + suYear + "/" + suSeqNum + "/fld");
         // This location works best if you want the created images to be shared
         // between applications and persist after your app has been uninstalled.
         // Create the storage directory if it does not exist
@@ -191,15 +179,26 @@ public class TakePhotographActivity extends Activity
             }
         }
         // Create a media file name
-        File mediaFile = null;
         if (fieldOrBag.equals(MainActivity.FIELD))
         {
-            mediaFile = new File(mediaStorageDir.getPath() + File.separator + "1_pic_" + fieldPhotoNumber + ".jpg");
+            return new File(mediaStorageDir.getPath() + File.separator + "1_pic_" + fieldPhotoNumber + ".jpg");
         }
-        else if (fieldOrBag.equals(MainActivity.BAG))
-        {
-            mediaFile = new File(mediaStorageDir.getPath() + File.separator + "1_bag_1.jpg");
-        }
-        return mediaFile;
+        return new File(mediaStorageDir.getPath() + File.separator + "1_bag_1.jpg");
+    }
+
+    /**
+     * Dummy function to make AndroidStudio stop complaining
+     * @param v - useless
+     */
+    public void takeFieldPhoto(View v)
+    {
+    }
+
+    /**
+     * Dummy function to make AndroidStudio stop complaining
+     * @param v - useless
+     */
+    public void takeBagPhoto(View v)
+    {
     }
 }
