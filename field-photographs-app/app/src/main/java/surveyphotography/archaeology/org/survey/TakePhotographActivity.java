@@ -19,7 +19,7 @@ public class TakePhotographActivity extends Activity
     private String photoSavePath = "";
     public static int PHOTOCODE = 100;
     /**
-     * Activity lanuched
+     * Activity launched
      * @param savedInstanceState - state from memory
      */
     @Override

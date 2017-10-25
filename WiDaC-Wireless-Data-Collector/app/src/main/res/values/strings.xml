@@ -44,4 +44,5 @@
     <string name = "average_size">Average Size</string>
     <string name = "deviation">Std. Deviation</string>
     <string name = "average_weight">Average Weight</string>
+    <string name = "num_frmt">%d</string>
 </resources>

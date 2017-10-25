@@ -16,7 +16,6 @@ import java.util.Set;
 import widac.cis350.upenn.edu.widac.data.remote.WidacService;
 public class SettingsActivity extends AppCompatActivity
 {
-    int REQUEST_PAIR_DEVICE = 1;
     String[] devices;
     /**
      * Launch the activity

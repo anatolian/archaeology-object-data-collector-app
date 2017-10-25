@@ -34,12 +34,9 @@ import widac.cis350.upenn.edu.widac.models.Samples;
 public class SearchActivity extends AppCompatActivity
 {
     public final static String TAG = "SearchActivity";
-    private TextView weight;
-    private Button next, prev, bluetooth, manual;
-    private DBSpinner area_easting, area_northing, context_number, sample_number;
     private ProgressBar progressBar;
     private List<String> areaEastingData, areaNorthingData, contextNumberData, sampleNumberData;
-    private String areaEastingSelection, areaNorthingSelection, contextNumberSelection, sampleNumberSelection;
+    private String areaEastingSelection, areaNorthingSelection, contextNumberSelection;
     private IntentFilter filter;
     ArrayAdapter<String> areaEastingAdapter, areaNorthingAdapter, contextNumberAdapter, sampleNumberAdapter;
     WidacService service;
@@ -65,7 +62,7 @@ public class SearchActivity extends AppCompatActivity
         areaEastingSelection = i.getStringExtra("Area Easting");
         areaNorthingSelection = i.getStringExtra("Area Northing");
         contextNumberSelection = i.getStringExtra("Context Number");
-        sampleNumberSelection = i.getStringExtra("Sample Number");
+        String sampleNumberSelection = i.getStringExtra("Sample Number");
         Toast toast = Toast.makeText(getApplicationContext(), "Selected composite key: " +
                 areaEastingSelection + "-" + areaNorthingSelection + "-"
                 + contextNumberSelection + "-" + sampleNumberSelection, Toast.LENGTH_SHORT);
@@ -167,7 +164,7 @@ public class SearchActivity extends AppCompatActivity
      */
     private void initializeButtons()
     {
-        next = (Button) findViewById(R.id.next_item);
+        Button next = (Button) findViewById(R.id.next_item);
         next.setOnClickListener(new View.OnClickListener() {
             /**
              * User pressed next
@@ -179,7 +176,7 @@ public class SearchActivity extends AppCompatActivity
                 onNextButtonClick();
             }
         });
-        prev = (Button) findViewById(R.id.prev_item);
+        Button prev = (Button) findViewById(R.id.prev_item);
         prev.setOnClickListener(new View.OnClickListener() {
             /**
              * User pressed prev
@@ -191,7 +188,7 @@ public class SearchActivity extends AppCompatActivity
                 onPrevButtonClick();
             }
         });
-        bluetooth = (Button) findViewById(R.id.update_bluetooth);
+        Button bluetooth = (Button) findViewById(R.id.update_bluetooth);
         bluetooth.setOnClickListener(new View.OnClickListener() {
             /**
              * User pressed Connect to Bluetooth
@@ -207,7 +204,7 @@ public class SearchActivity extends AppCompatActivity
         {
             bluetooth.setVisibility(View.GONE);
         }
-        manual = (Button) findViewById(R.id.update_manual);
+        Button manual = (Button) findViewById(R.id.update_manual);
         manual.setOnClickListener(new View.OnClickListener() {
             /**
              * User pressed manual update
@@ -235,11 +232,11 @@ public class SearchActivity extends AppCompatActivity
      */
     private void initializeSpinners()
     {
-        sample_number = (DBSpinner) findViewById(R.id.sample_number);
+        DBSpinner sampleNumber = (DBSpinner) findViewById(R.id.sample_number);
         sampleNumberAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_dropdown_item, sampleNumberData);
-        sample_number.setAdapter(sampleNumberAdapter);
-        sample_number.setOnItemSelectedEvenIfUnchangedListener(new AdapterView.OnItemSelectedListener() {
+        sampleNumber.setAdapter(sampleNumberAdapter);
+        sampleNumber.setOnItemSelectedEvenIfUnchangedListener(new AdapterView.OnItemSelectedListener() {
             /**
              * An item was selected
              * @param adapterView - the spinner
@@ -261,11 +258,11 @@ public class SearchActivity extends AppCompatActivity
             {
             }
         });
-        context_number = (DBSpinner) findViewById(R.id.context_number);
+        DBSpinner contextNumber = (DBSpinner) findViewById(R.id.context_number);
         contextNumberAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_dropdown_item, contextNumberData);
-        context_number.setAdapter(contextNumberAdapter);
-        context_number.setOnItemSelectedEvenIfUnchangedListener(new AdapterView.OnItemSelectedListener() {
+        contextNumber.setAdapter(contextNumberAdapter);
+        contextNumber.setOnItemSelectedEvenIfUnchangedListener(new AdapterView.OnItemSelectedListener() {
             /**
              * An item was selected
              * @param adapterView - the spinner
@@ -293,11 +290,11 @@ public class SearchActivity extends AppCompatActivity
             {
             }
         });
-        area_northing = (DBSpinner) findViewById(R.id.area_northing);
+        DBSpinner areaNorthing = (DBSpinner) findViewById(R.id.area_northing);
         areaNorthingAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_dropdown_item, areaNorthingData);
-        area_northing.setAdapter(areaNorthingAdapter);
-        area_northing.setOnItemSelectedEvenIfUnchangedListener(new AdapterView.OnItemSelectedListener() {
+        areaNorthing.setAdapter(areaNorthingAdapter);
+        areaNorthing.setOnItemSelectedEvenIfUnchangedListener(new AdapterView.OnItemSelectedListener() {
             /**
              * An item was selected
              * @param adapterView - the spinner
@@ -328,7 +325,7 @@ public class SearchActivity extends AppCompatActivity
             }
         });
         // initialize the area_easting spinner and load initial data
-        area_easting = (DBSpinner) findViewById(R.id.area_easting);
+        DBSpinner area_easting = (DBSpinner) findViewById(R.id.area_easting);
         progressBar.setVisibility(ProgressBar.VISIBLE);
         areaEastingAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_dropdown_item, areaEastingData);
@@ -571,18 +568,10 @@ public class SearchActivity extends AppCompatActivity
         {
             String action = intent.getAction();
             BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-            if (BluetoothDevice.ACTION_FOUND.equals(action))
-            {
-                //... //Device found
-            }
-            else if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action))
+            if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action))
             {
                 // Device is now connected
                 Toast.makeText(context, "Connected", Toast.LENGTH_SHORT).show();
-            }
-            else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action))
-            {
-                //... //Done searching
             }
             else if (BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED.equals(action))
             {
@@ -629,7 +618,6 @@ public class SearchActivity extends AppCompatActivity
                 String newWeight = input.getText().toString();
                 try
                 {
-                    Double.parseDouble(newWeight);
                     ((TextView) findViewById(R.id.itemWeight)).setText("Weight: " + newWeight + "g");
                 }
                 catch (Exception e)

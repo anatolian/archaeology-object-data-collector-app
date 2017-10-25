@@ -40,58 +40,12 @@ public class Session
     }
 
     /**
-     * ENTRY METHODS
-     * @param id - entry to add
-     * @return Returns true
-     */
-    public static boolean addEntry(String id)
-    {
-        entries.add(id);
-        return true;
-    }
-
-    /**
-     * Update an entry
-     * @param oldID - old id
-     * @param newID - new id
-     * @return - Returns the success code
-     */
-    public static boolean updateEntry(String oldID, String newID)
-    {
-        if (entries.contains(oldID))
-        {
-            entries.remove(oldID);
-            entries.add(newID);
-            return true;
-        }
-        return false;
-    }
-
-    /**
      * Get the entries in current session
      * @return Returns current session entries
      */
     public static Set<String> getCurrentSessionIDs()
     {
         return entries;
-    }
-
-    /**
-     * DATABASE INTERACTIONS
-     * @return Returns the connection
-     */
-    public static DBConnection getDBC()
-    {
-        return DBC;
-    }
-
-    /**
-     * CHANGING CONNECTION
-     * @param newDBC - the new connection
-     */
-    public static void changeDBC(String newDBC)
-    {
-        // Somehow update DBC
     }
 
     /**
@@ -125,24 +79,6 @@ public class Session
         {
             DBC.getSample(id, cb);
         }
-    }
-
-    /**
-     * Pull an entry from the database
-     * @param id - item from the database
-     */
-    public static Sample pullNewEntryFromDB(String id)
-    {
-        // add entry to current session and return data
-        Log.d("Session", "Id: " + id);
-        Log.d("Session", "Session size: " + entries.size());
-        // Add sample to session if exists
-        Sample s = DBC.retrieveSample(id);
-        if (s != null)
-        {
-            entries.add(id);
-        }
-        return s;
     }
 
     /**
@@ -206,25 +142,4 @@ public class Session
             Log.d("DBConnection", "Get sample failure");
         }
     };
-
-    /**
-     * TESTING-ONLY METHOD TO POPULATE SESSION WITH DUMMY DATA
-     */
-    public static void initalizeTest()
-    {
-        Log.d("Session", "initializeTest: initializing");
-        entries.clear();
-        entries.add("a1");
-        entries.add("b1");
-        entries.add("a2");
-        entries.add("c1");
-        entries.add("x1");
-        entries.add("e1");
-        entries.add("r2");
-        entries.add("t1");
-        entries.add("y1");
-        entries.add("u1");
-        entries.add("i2");
-        entries.add("o1");
-    }
 }

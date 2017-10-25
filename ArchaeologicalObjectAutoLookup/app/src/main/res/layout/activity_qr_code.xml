@@ -24,7 +24,6 @@
             android:layout_height = "wrap_content"
             android:layout_gravity = "bottom"
             android:text = "@string/search"
-            android:gravity = "bottom|center_horizontal"
-            android:onClick = "search"/>
+            android:gravity = "bottom|center_horizontal"/>
     </LinearLayout>
 </RelativeLayout>

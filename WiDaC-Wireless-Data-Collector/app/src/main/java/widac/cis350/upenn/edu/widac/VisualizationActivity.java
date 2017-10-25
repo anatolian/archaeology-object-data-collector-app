@@ -121,24 +121,4 @@ public class VisualizationActivity extends AppCompatActivity
             }
         }
     }
-
-    /**
-     * TODO: Assume this function will be abstracted into an api in the future
-     * @param ids - ids to fetch
-     * @return Returns the items
-     */
-    private Set<DummyEntry> pullFromDatabase(Set<String> ids)
-    {
-        // Dummy Data for testing
-        String[] types = {"A", "B", "C"};
-        Set<DummyEntry> entries = new HashSet<DummyEntry>();
-        for (String id: ids)
-        {
-            String type = types[(int) (Math.random() * 3)];
-            DummyEntry d = new DummyEntry(id, type, "DUMMY", -1, -1);
-            Log.d("Visualization", "pullFromDatabase: entry created of type: " + type);
-            entries.add(d);
-        }
-        return entries;
-    }
 }

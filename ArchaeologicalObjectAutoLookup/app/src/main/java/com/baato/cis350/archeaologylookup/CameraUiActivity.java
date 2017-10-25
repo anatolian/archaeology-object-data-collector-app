@@ -7,8 +7,10 @@ import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
+import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.graphics.YuvImage;
+import android.media.ExifInterface;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -17,8 +19,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.RelativeLayout;
 import com.googlecode.tesseract.android.TessBaseAPI;
 import org.json.JSONException;
@@ -38,18 +38,11 @@ public class CameraUiActivity extends AppCompatActivity
 {
     HistoryHelper myDatabase;
     // anton's stuff for OCR
-    public static final String PACKAGE_NAME = "com.baato.cis350.archeaologylookup";
     public static final String DATA_PATH =
             Environment.getExternalStorageDirectory().toString() + "/SimpleAndroidOCR/";
     public static final String lang = "eng";
-    protected Button _button;
-    protected EditText _field;
-    protected String _path;
-    protected boolean _taken;
-    protected static final String PHOTO_TAKEN = "photo_taken";
-    //camera view and scanner view stuff:
+    // camera view and scanner view stuff:
     private float x1;
-    static final int MIN_DISTANCE = 150;
     int flag = -1;
     private static final String TAG = "QRCode.java";
     private FloatingActionButton shutter;
@@ -91,19 +84,16 @@ public class CameraUiActivity extends AppCompatActivity
             {
                 AssetManager assetManager = getAssets();
                 InputStream in = assetManager.open("tessdata/" + lang + ".traineddata");
-                //GZIPInputStream gin = new GZIPInputStream(in);
                 OutputStream out =
                         new FileOutputStream(DATA_PATH + "tessdata/" + lang + ".traineddata");
                 // Transfer bytes from in to out
                 byte[] buf = new byte[1024];
                 int len;
-                //while ((lenf = gin.read(buff)) > 0) {
                 while ((len = in.read(buf)) > 0)
                 {
                     out.write(buf, 0, len);
                 }
                 in.close();
-                //gin.close();
                 out.close();
                 Log.v(TAG, "Copied " + lang + " traineddata");
             }
@@ -144,9 +134,7 @@ public class CameraUiActivity extends AppCompatActivity
                         Intent intent = new Intent(this, FavoriteActivity.class);
                         startActivity(intent);
                         overridePendingTransition(R.anim.anim_slide_in_left, R.anim.anim_slide_out_left);
-
                     }
-
                     // Right to left swipe action
                     else
                     {
@@ -155,11 +143,6 @@ public class CameraUiActivity extends AppCompatActivity
                         overridePendingTransition(R.anim.anim_slide_in_right,
                                 R.anim.anim_slide_out_right);
                     }
-
-                }
-                else
-                {
-                    // consider as something else - a screen tap for example
                 }
                 break;
         }
@@ -238,7 +221,6 @@ public class CameraUiActivity extends AppCompatActivity
             {
                 // from manual search
                 JSONObject json = null;
-                String search = data;
                 String jsonstring = loadJSONFromAsset();
                 try
                 {
@@ -258,7 +240,7 @@ public class CameraUiActivity extends AppCompatActivity
                 String searchcuratorial_section = "";
                 try
                 {
-                    translatedsearch = json.getJSONObject(search);
+                    translatedsearch = json.getJSONObject(data);
                     System.out.println(translatedsearch);
                     searchurl = translatedsearch.getString("url");
                     searchitem = translatedsearch.getString("object_name");
@@ -273,7 +255,7 @@ public class CameraUiActivity extends AppCompatActivity
                 }
                 Intent intent = new Intent(getApplicationContext(), SearchActivity.class);
                 intent.putExtra("search", searchurl);
-                intent.putExtra("searchnumber", search);
+                intent.putExtra("searchnumber", data);
                 intent.putExtra("searchname", searchitem);
                 intent.putExtra("searchdescription", searchdescription);
                 intent.putExtra("searchprovenience", searchprovenience);
@@ -309,9 +291,45 @@ public class CameraUiActivity extends AppCompatActivity
                 YuvImage yuvimage = new YuvImage(data, ImageFormat.NV21, width, height, null);
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 yuvimage.compressToJpeg(new Rect(0, 0, width, height), 80, baos);
+                // have to write camera frame to file to see if it is rotated
+                File f = new File(Environment.getExternalStorageDirectory() + "/archaeology/");
+                ExifInterface ei = null;
+                if (!f.exists())
+                {
+                    f.mkdirs();
+                }
+                File file = new File(Environment.getExternalStorageDirectory() + "/archaeology/temp.jpeg");
+                try
+                {
+                    OutputStream out = new FileOutputStream(file);
+                    baos.writeTo(out);
+                    out.close();
+                    ei = new ExifInterface(Environment.getExternalStorageDirectory() + "/archaeology/temp.jpeg");
+                    file.delete();
+                    f.delete();
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
                 byte[] jdata = baos.toByteArray();
                 // Convert to Bitmap
                 Bitmap bitmap = BitmapFactory.decodeByteArray(jdata, 0, jdata.length);
+                int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION,
+                        ExifInterface.ORIENTATION_UNDEFINED);
+                Log.v("ROTATION", "" + orientation);
+                if (orientation == ExifInterface.ORIENTATION_ROTATE_90)
+                {
+                    bitmap = rotateImage(bitmap, 90);
+                }
+                else if (orientation == ExifInterface.ORIENTATION_ROTATE_180)
+                {
+                    bitmap = rotateImage(bitmap, 180);
+                }
+                else if (orientation == ExifInterface.ORIENTATION_ROTATE_270)
+                {
+                    bitmap = rotateImage(bitmap, 270);
+                }
                 bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
                 handleImage(bitmap);
                 return null;
@@ -360,6 +378,19 @@ public class CameraUiActivity extends AppCompatActivity
     }
 
     /**
+     * Rotate an image
+     * @param source - image
+     * @param angle - angle to rotate
+     * @return Returns the rotated image
+     */
+    public static Bitmap rotateImage(Bitmap source, float angle)
+    {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(angle);
+        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
+    }
+
+    /**
      * Crossfade effect
      * @param view - camera view
      */
@@ -396,7 +427,7 @@ public class CameraUiActivity extends AppCompatActivity
     @TargetApi(Build.VERSION_CODES.KITKAT)
     public String loadJSONFromAsset()
     {
-        String json = null;
+        String json;
         try
         {
             InputStream is = openFileInput("newjson.txt");
@@ -424,7 +455,6 @@ public class CameraUiActivity extends AppCompatActivity
                 System.out.format("'%s'\n", id_number);
             }
             String fixed = id_number + " : {";
-
             jsonArr[i] = jsonArr[i].replaceAll(Pattern.quote("{"), fixed);
             jsonfixed += jsonArr[i];
         }

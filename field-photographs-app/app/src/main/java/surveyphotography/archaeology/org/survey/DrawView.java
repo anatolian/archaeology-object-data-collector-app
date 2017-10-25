@@ -8,9 +8,10 @@ import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatImageView;
-import android.util.AttributeSet;
 class DrawView extends AppCompatImageView
 {
+    Paint paint = new Paint();
+    Paint textPaint = new Paint();
     /**
      * Constructor
      * @param context - app context
@@ -21,27 +22,6 @@ class DrawView extends AppCompatImageView
     }
 
     /**
-     * Constructor
-     * @param context - app context
-     * @param attrs - context attributes
-     */
-    DrawView(Context context, AttributeSet attrs)
-    {
-        super(context, attrs);
-    }
-
-    /**
-     * Constructor
-     * @param context - app context
-     * @param attrs - context attributes
-     * @param defStyle - view style
-     */
-    DrawView(Context context, AttributeSet attrs, int defStyle)
-    {
-        super(context, attrs, defStyle);
-    }
-
-    /**
      * Draw the view
      * @param canvas - canvas to draw on
      */
@@ -49,7 +29,6 @@ class DrawView extends AppCompatImageView
     public void onDraw(Canvas canvas)
     {
         super.onDraw(canvas);
-        Paint paint = new Paint();
         paint.setColor(ContextCompat.getColor(getContext(), R.color.material_deep_teal_500));
         paint.setStyle(Paint.Style.FILL_AND_STROKE);
         paint.setStrokeWidth(10);
@@ -58,7 +37,6 @@ class DrawView extends AppCompatImageView
         float bottomy = canvas.getHeight();
         float  topy = canvas.getHeight() - 50;
         canvas.drawRect(leftx, topy, rightx, bottomy, paint);
-        Paint textPaint = new Paint();
         textPaint.setColor(Color.DKGRAY);
         textPaint.setTextSize(24);
         textPaint.setAntiAlias(true);

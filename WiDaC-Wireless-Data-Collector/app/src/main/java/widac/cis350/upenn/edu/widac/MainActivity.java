@@ -29,9 +29,7 @@ public class MainActivity extends AppCompatActivity
     private final static String AREA_NORTHING_HINT = "Area Northing";
     private final static String CONTEXT_NUMBER_HINT = "Context Number";
     private final static String SAMPLE_NUMBER_HINT = "Sample Number";
-    private DBSpinner area_easting, area_northing, context_number, sample_number;
     private ProgressBar progressBar;
-    private Button search, settings, visualization, sessionsReport;
     private EditText customAreaEasting, customAreaNorthing, customContextNumber, customSampleNumber;
     private List<String> areaEastingData, areaNorthingData, contextNumberData, sampleNumberData;
     private String areaEastingSelection, areaNorthingSelection, contextNumberSelection;
@@ -76,7 +74,7 @@ public class MainActivity extends AppCompatActivity
      */
     private void initializeButtons()
     {
-        search = (Button) findViewById(R.id.search_button);
+        Button search = (Button) findViewById(R.id.search_button);
         search.setOnClickListener(new View.OnClickListener() {
             /**
              * User clicked Search
@@ -88,7 +86,7 @@ public class MainActivity extends AppCompatActivity
                 onSearchButtonClick();
             }
         });
-        settings = (Button) findViewById(R.id.settings_button);
+        Button settings = (Button) findViewById(R.id.settings_button);
         settings.setOnClickListener(new View.OnClickListener() {
             /**
              * User clicked Settings
@@ -100,7 +98,7 @@ public class MainActivity extends AppCompatActivity
                 onSettingsButtonClick();
             }
         });
-        visualization = (Button) findViewById(R.id.visualization_button);
+        Button visualization = (Button) findViewById(R.id.visualization_button);
         visualization.setOnClickListener(new View.OnClickListener() {
             /**
              * User clicked Visualization
@@ -112,7 +110,7 @@ public class MainActivity extends AppCompatActivity
                 onVisualizationButtonClick();
             }
         });
-        sessionsReport = (Button) findViewById(R.id.sessionReport_button);
+        Button sessionsReport = (Button) findViewById(R.id.sessionReport_button);
         sessionsReport.setOnClickListener(new View.OnClickListener() {
             /**
              * User clicked Sessions
@@ -140,11 +138,11 @@ public class MainActivity extends AppCompatActivity
      */
     private void initializeSpinners()
     {
-        sample_number = (DBSpinner) findViewById(R.id.sample_number_main);
+        DBSpinner sampleNumber = (DBSpinner) findViewById(R.id.sample_number_main);
         sampleNumberAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_dropdown_item, sampleNumberData);
-        sample_number.setAdapter(sampleNumberAdapter);
-        sample_number.setOnItemSelectedEvenIfUnchangedListener(new AdapterView.OnItemSelectedListener() {
+        sampleNumber.setAdapter(sampleNumberAdapter);
+        sampleNumber.setOnItemSelectedEvenIfUnchangedListener(new AdapterView.OnItemSelectedListener() {
             /**
              * An item was selected
              * @param adapterView - the spinner view
@@ -173,11 +171,11 @@ public class MainActivity extends AppCompatActivity
             {
             }
         });
-        context_number = (DBSpinner) findViewById(R.id.context_number_main);
+        DBSpinner contextNumber = (DBSpinner) findViewById(R.id.context_number_main);
         contextNumberAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_dropdown_item, contextNumberData);
-        context_number.setAdapter(contextNumberAdapter);
-        context_number.setOnItemSelectedEvenIfUnchangedListener(new AdapterView.OnItemSelectedListener() {
+        contextNumber.setAdapter(contextNumberAdapter);
+        contextNumber.setOnItemSelectedEvenIfUnchangedListener(new AdapterView.OnItemSelectedListener() {
             /**
              * An item was selected
              * @param adapterView - the spinner view
@@ -208,11 +206,11 @@ public class MainActivity extends AppCompatActivity
             {
             }
         });
-        area_northing = (DBSpinner) findViewById(R.id.area_northing_main);
+        DBSpinner areaNorthing = (DBSpinner) findViewById(R.id.area_northing_main);
         areaNorthingAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_dropdown_item, areaNorthingData);
-        area_northing.setAdapter(areaNorthingAdapter);
-        area_northing.setOnItemSelectedEvenIfUnchangedListener(new AdapterView.OnItemSelectedListener() {
+        areaNorthing.setAdapter(areaNorthingAdapter);
+        areaNorthing.setOnItemSelectedEvenIfUnchangedListener(new AdapterView.OnItemSelectedListener() {
             /**
              * An item was selected
              * @param adapterView - the spinner
@@ -246,11 +244,11 @@ public class MainActivity extends AppCompatActivity
             }
         });
         // initialize the area_easting spinner and load initial data
-        area_easting = (DBSpinner) findViewById(R.id.area_easting_main);
+        DBSpinner areaEasting = (DBSpinner) findViewById(R.id.area_easting_main);
         progressBar.setVisibility(ProgressBar.VISIBLE);
         areaEastingAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_dropdown_item, areaEastingData);
-        area_easting.setAdapter(areaEastingAdapter);
+        areaEasting.setAdapter(areaEastingAdapter);
         Call<Samples> call = service.getAllSamples();
         call.enqueue(new Callback<Samples>() {
             /**
@@ -292,7 +290,7 @@ public class MainActivity extends AppCompatActivity
             }
         });
         // on selecting an area_easting, clear subsequent spinners and load data for area_northing
-        area_easting.setOnItemSelectedEvenIfUnchangedListener(new AdapterView.OnItemSelectedListener() {
+        areaEasting.setOnItemSelectedEvenIfUnchangedListener(new AdapterView.OnItemSelectedListener() {
             /**
              * An item was selected
              * @param adapterView - the spinner

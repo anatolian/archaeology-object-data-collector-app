@@ -22,13 +22,6 @@ public class BluetoothService
     public static ConnectedThread connectedThread = null;
     public static int currWeight;
     // Defines several constants used when transmitting messages between the service and the UI.
-    private interface MessageConstants {
-        public static final int MESSAGE_READ = 0;
-        public static final int MESSAGE_WRITE = 1;
-        public static final int MESSAGE_TOAST = 2;
-        // ... (Add other message types here as needed.)
-    }
-
     /**
      * Constructor
      * @param context - current app context
@@ -100,12 +93,11 @@ public class BluetoothService
             UUID DEFAULT_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
             try
             {
-                // Use the UUID of the device that discovered // TODO Maybe need extra device object
+                // Use the UUID of the device that discovered. TODO Maybe need extra device object
                 if (mmDevice != null)
                 {
                     Log.i(TAG, "Device Name: " + mmDevice.getName());
                     Log.i(TAG, "Device UUID: " + mmDevice.getUuids()[0].getUuid());
-                    //tmp = device.createInsecureRfcommSocketToServiceRecord(mmDevice.getUuids()[0].getUuid());
                     try
                     {
                         // MAGIC CODE: http://stackoverflow.com/a/3397739
@@ -248,13 +240,15 @@ public class BluetoothService
                 }
                 else
                 {
-                    Toast.makeText(context, "No change detected. Please check if the scale is on and re-weigh the item.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "No change detected. Please check if the scale is on and re-weigh the item.",
+                            Toast.LENGTH_SHORT).show();
                 }
             }
             catch (IOException e)
             {
                 Log.d(TAG, "Input stream was disconnected", e);
-                Toast.makeText(context, "Disconnected from scale: please restart the scale", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Disconnected from scale: please restart the scale",
+                        Toast.LENGTH_SHORT).show();
                 connectedThread.cancel();
                 connectedThread = null;
             }

@@ -24,7 +24,6 @@ import widac.cis350.upenn.edu.widac.models.SampleStaging;
 public class SessionReportActivity extends AppCompatActivity
 {
     // List of ids
-    private Set<String> currentSession;
     private Map<String, TypeData> types = new HashMap<String, TypeData>();
     /**
      * Activity is launched
@@ -36,7 +35,7 @@ public class SessionReportActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.session_report);
         // Get Session data and create table from it
-        currentSession = Session.getCurrentSessionIDs();
+        Session.getCurrentSessionIDs();
         // Put in a request for data from the database
         Session.asyncPullFromDB(collectEntries);
     }
@@ -131,15 +130,15 @@ public class SessionReportActivity extends AppCompatActivity
     private void setNumCollected()
     {
         TextView tv = (TextView)findViewById(R.id.NumA);
-        tv.setText("" + types.get("Glass").num);
+        tv.setText(getString(R.string.num_frmt, types.get("Glass").num));
         tv = (TextView)findViewById(R.id.NumB);
-        tv.setText("" + types.get("Ceramic").num);
+        tv.setText(getString(R.string.num_frmt, types.get("Ceramic").num));
         tv = (TextView)findViewById(R.id.NumC);
-        tv.setText("" + types.get("Metal").num);
+        tv.setText(getString(R.string.num_frmt, types.get("Metal").num));
         tv = (TextView)findViewById(R.id.NumD);
-        tv.setText("" + types.get("Stone").num);
+        tv.setText(getString(R.string.num_frmt, types.get("Stone").num));
         tv = (TextView)findViewById(R.id.NumE);
-        tv.setText("" + types.get("Organic").num);
+        tv.setText(getString(R.string.num_frmt, types.get("Organic").num));
     }
 
     /**
@@ -209,45 +208,12 @@ public class SessionReportActivity extends AppCompatActivity
         Set<Sample> instances;
         /**
          * Constructor
-         */
-        TypeData()
-        {
-            instances = new HashSet<Sample>();
-        }
-
-        /**
-         * Constructor
          * @param type - the type of the data
          */
         TypeData(String type)
         {
             this.type = type;
             instances = new HashSet<Sample>();
-        }
-
-        /**
-         * Constructor
-         * @param type - the type of the data
-         * @param instances - the items
-         */
-        TypeData(String type, Set<Sample> instances)
-        {
-            this.type = type;
-            this.instances = instances;
-            // TODO: Could move this to recalculate method
-            double wt = 0, sz = 0;
-            if (!instances.isEmpty())
-            {
-                for (Sample d: instances)
-                {
-                    wt += d.getWeight();
-                    sz += d.getSize();
-                }
-                num = instances.size();
-                avgWt = wt/num;
-                avgSize = sz/num;
-            }
-            changed = true;
         }
 
         /**
