@@ -1,1 +1,79 @@
+objectphotography-app README
+Author: Kevin Trinh
 
+GENERAL SUMMARY
+---------------
+This app handles a myriad of functionality regarding photographing objects and their documentation.
+-?
+
+USER INTERACTION
+----------------
+-?
+
+TECHNICAL DETAILS (BY CLASS/ACTIVITY(33))
+-------------------------------------
+AddChangeColorActivity - 
+
+AfterImageSavedMethodWrapper - abstract, used for processing saved image(s)
+
+AsyncHttpCallbackWrapper - implemented when connecting with server
+
+AsyncHttpWrapper - sends photograph to database
+
+BlueToothStaticWrapper - handles bluetooth pairing/sychronization/connections, presumably to connect to WiDac
+
+CameraDialog - handles connection to Sony QX1 camera, mini camera app that allows you to use camera functions (take photo, start liveview, stop liveview, zoom in, zoom out)
+
+CeramicInput2Activity - pulls item information from the database using spinners to select easting, northing, context number, and sample number
+
+CeramicInputActivity - 
+
+CheatSheet
+
+ImageResponseWrapper
+
+InitialActivity
+
+JSONArrayResponseWrapper
+
+JSONObjectResponseWrapper
+
+JSONParser
+
+MainActivity
+
+MyWiFiActivity
+
+NutriScaleBroadcastReceiver
+
+ObjectDetail2Activity
+
+ObjectDetailActivity
+
+PhotoFragment
+
+PhotosActivity
+
+PicassoWrapper
+
+SettingsActivity
+
+SimpleLiveviewSlicer
+
+SimpleStreamSurfaceView
+
+StateStatic
+
+StringResponseWrapper
+
+Syncable
+
+Taggable
+
+TaggedImageView
+
+Utils
+
+VolleyWrapper
+
+WiFiDirectBroadcastReceiver
