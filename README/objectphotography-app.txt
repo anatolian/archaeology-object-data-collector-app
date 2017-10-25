@@ -16,9 +16,9 @@ AddChangeColorActivity -
 
 AfterImageSavedMethodWrapper - abstract, used for processing saved image(s)
 
-AsyncHttpCallbackWrapper - implemented when connecting with server
+AsyncHttpCallbackWrapper - abstract, implemented when connecting with server
 
-AsyncHttpWrapper - sends photograph to database
+AsyncHttpWrapper - abstract, sends photograph to database
 
 BlueToothStaticWrapper - handles bluetooth pairing/sychronization/connections, presumably to connect to WiDac
 
@@ -34,11 +34,11 @@ ImageResponseWrapper - abstract, implemented in the VolleyWrapper class
 
 InitialActivity - first screen, attempts to connect to web service base URL, settings button (see SettingsActivity)
 
-JSONArrayResponseWrapper
+JSONArrayResponseWrapper - abstract, -?
 
-JSONObjectResponseWrapper
+JSONObjectResponseWrapper - abstract, interaction with the camera device
 
-JSONParser
+JSONParser - gets json object from URL or by making http post or get method
 
 MainActivity
 
