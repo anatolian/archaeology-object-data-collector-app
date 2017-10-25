@@ -50,11 +50,11 @@ ObjectDetail2Activity - "meat of the app"; checks/handles connections to bluetoo
 
 ObjectDetailActivity - more confusing version of ObjectDetail2Activity -?
 
-PhotoFragment
+PhotoFragment - photo management, loads all photos, user selects photos for deletion, -?
 
 PhotosActivity - photo manipulation/editor, scroll around to select photo from gallery, resizing/scaling, attempts to locate color calibrator grid and extract colors from it, "calls" color correction method
 
-PicassoWrapper
+PicassoWrapper - resizes photo based on source size and upscaling ratio (stretch to fit image placeholder?)
 
 SettingsActivity - handles setting changes for web service base URL, camera device, camera IP, camera calibration interval(?), data structure type(?)
 
