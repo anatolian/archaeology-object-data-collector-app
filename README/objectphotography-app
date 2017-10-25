@@ -32,7 +32,7 @@ CheatSheet - photo viewer/browser, propagates spinner fields for items (creates 
 
 ImageResponseWrapper - abstract, implemented in the VolleyWrapper class
 
-InitialActivity
+InitialActivity - first screen, attempts to connect to web service base URL, settings button (see SettingsActivity)
 
 JSONArrayResponseWrapper
 
@@ -56,7 +56,7 @@ PhotosActivity
 
 PicassoWrapper
 
-SettingsActivity
+SettingsActivity - handles setting changes for web service base URL, camera device, camera IP, camera calibration interval(?), data structure type(?)
 
 SimpleLiveviewSlicer
 
