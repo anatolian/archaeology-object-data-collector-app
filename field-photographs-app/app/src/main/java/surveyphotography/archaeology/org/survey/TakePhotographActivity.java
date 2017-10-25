@@ -142,7 +142,14 @@ public class TakePhotographActivity extends Activity
      */
     private Uri getOutputMediaFileUri(String fieldOrBag)
     {
-        return Uri.fromFile(getOutputMediaFile(fieldOrBag));
+        File path = getOutputMediaFile(fieldOrBag);
+        if (path == null)
+        {
+            Toast.makeText(this, "Specified directory not writable. Using default directory.", Toast.LENGTH_LONG).show();
+            photoSavePath = MainActivity.DEFAULTSAVEPATH;
+            path = getOutputMediaFile(fieldOrBag);
+        }
+        return Uri.fromFile(path);
     }
 
     /**

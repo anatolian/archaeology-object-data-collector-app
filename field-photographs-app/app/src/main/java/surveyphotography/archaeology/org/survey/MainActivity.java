@@ -256,7 +256,6 @@ public class MainActivity extends Activity
         for (ImageView aPhoto: photos)
         {
             aLayout.removeView(aPhoto);
-            aPhoto = null;
         }
         clearBagPhoto(aLayout);
         photoIdCounter = PHOTOCOUNTERDEFAULT;
@@ -401,7 +400,7 @@ public class MainActivity extends Activity
                 arrangePhotoListInLayout(mainLayout, photoList, findViewById(R.id.space3));
             }
             // bag photo
-            else if(requestCode == BAGCODE)
+            else if (requestCode == BAGCODE)
             {
                 Log.v("ActivityResulty", getSave_path());
                 String path = Environment.getExternalStorageDirectory().getPath()

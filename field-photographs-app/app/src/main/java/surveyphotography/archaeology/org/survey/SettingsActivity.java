@@ -38,7 +38,6 @@ public class SettingsActivity extends Activity
                 if (isChecked)
                 {
                     Log.v("Survey App", "Thumbnail setting checked");
-
                 }
                 else
                 {
