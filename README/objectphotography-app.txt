@@ -40,19 +40,19 @@ JSONObjectResponseWrapper - abstract, interaction with the camera device
 
 JSONParser - gets json object from URL or by making http post or get method
 
-MainActivity
+MainActivity - usability features: take picture (see ObjectDetail2Activity -?), go to photos (see PhotosActivity), reconnect to scale (and related bluetooth functions), get item weight, -?
 
 MyWiFiActivity
 
 NutriScaleBroadcastReceiver
 
-ObjectDetail2Activity
+ObjectDetail2Activity - "meat of the app"; checks/handles connections to bluetooth scale and wifi camera device; retrieves fields (internal/external color, weight, photo) from database using easting, northing, context number, and sample number (spinners); allows adding/editing these fields
 
-ObjectDetailActivity
+ObjectDetailActivity - more confusing version of ObjectDetail2Activity -?
 
 PhotoFragment
 
-PhotosActivity
+PhotosActivity - photo manipulation/editor, scroll around to select photo from gallery, resizing/scaling, attempts to locate color calibrator grid and extract colors from it, "calls" color correction method
 
 PicassoWrapper
 
