@@ -26,11 +26,11 @@ CameraDialog - handles connection to Sony QX1 camera, mini camera app that allow
 
 CeramicInput2Activity - pulls item information from the database using spinners to select easting, northing, context number, and sample number
 
-CeramicInputActivity - 
+CeramicInputActivity - pulls item information from the database using spinner for site name and manual entry for item number
 
-CheatSheet
+CheatSheet - photo viewer/browser, propagates spinner fields for items (creates thumbnails), retrieves photo, option to delete photo from directory/SD card, clear photos directory
 
-ImageResponseWrapper
+ImageResponseWrapper - abstract, implemented in the VolleyWrapper class
 
 InitialActivity
 
