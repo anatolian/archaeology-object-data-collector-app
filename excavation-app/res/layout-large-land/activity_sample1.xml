@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/RelativeLayout1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:id="@+id/RelativeLayout2"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:background="@color/Lavender"
+        android:paddingLeft="7dp"
+        android:paddingRight="7dp"
+        android:paddingTop="5dp" >
+
+        <TextView
+            android:id="@+id/header"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="header"
+            android:textColor="@color/butterflyblue"
+            android:textSize="12sp"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:id="@+id/linearLayout1"
+            android:layout_width="fill_parent"
+            android:layout_height="30dp"
+            android:layout_below="@+id/header"
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            android:weightSum="1" >
+
+            <!--  -->
+
+            <TextView
+                android:id="@+id/samplephoto"
+                android:layout_width="fill_parent"
+                android:layout_height="20dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginRight="5dp"
+                android:layout_weight="0.5"
+                android:background="@color/white"
+                android:gravity="center_vertical"
+                android:paddingLeft="5dp"
+                android:text=""
+                android:textSize="11dp" />
+
+            <Spinner
+                android:id="@+id/samplematerial"
+                android:layout_width="fill_parent"
+                android:layout_height="30dp"
+                android:layout_weight="0.5"
+                android:background="@drawable/spin_bg"
+                android:gravity="center_vertical"
+                android:paddingBottom="2dp"
+                android:paddingRight="10dp"
+                android:paddingTop="2dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linearLayout2"
+            android:layout_width="fill_parent"
+            android:layout_height="50dp"
+            android:layout_below="@+id/linearLayout1"
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal"
+            android:weightSum="1.5" >
+
+            <Spinner
+                android:id="@+id/areaEasting"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:background="@drawable/spin_bg"
+                android:gravity="center_vertical"
+                android:paddingRight="10dp" />
+
+            <Spinner
+                android:id="@+id/areaNorting"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_weight="0.5"
+                android:background="@drawable/spin_bg"
+                android:gravity="center_vertical"
+                android:paddingRight="10dp" />
+
+            <Spinner
+                android:id="@+id/Type"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_weight="0.5"
+                android:background="@drawable/spin_bg"
+                android:gravity="center_vertical"
+                android:paddingRight="10dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linearLayout3"
+            android:layout_width="fill_parent"
+            android:layout_height="50dp"
+            android:layout_below="@+id/linearLayout2"
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal"
+            android:weightSum="2" >
+
+            <Spinner
+                android:id="@+id/contextNo"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:background="@drawable/spin_bg"
+                android:gravity="center_vertical"
+                android:paddingRight="20dp" />
+
+            <Spinner
+                android:id="@+id/sampleNo"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_weight="0.5"
+                android:background="@drawable/spin_bg"
+                android:gravity="center_vertical"
+                android:paddingRight="15dp" />
+
+            <TextView
+                android:id="@+id/textviewtakephoto"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginLeft="5dp"
+                android:layout_weight="0.5"
+                android:background="@color/darkblue"
+                android:gravity="center"
+                android:text="Take Photo"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textviewclothmaterial"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginLeft="5dp"
+                android:layout_weight="0.5"
+                android:background="@drawable/top_part"
+                android:gravity="center"
+                android:text="Cloth material"
+                android:textColor="@color/coffee"
+                android:textSize="10sp"
+                android:visibility="gone" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="0.5" >
+
+                <ListView
+                    android:id="@+id/clothmaterial"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_marginLeft="5dp"
+                    android:gravity="center_vertical"
+                    android:paddingBottom="2dp"
+                    android:paddingRight="10dp"
+                    android:paddingTop="2dp" />
+
+                <TextView
+                    android:id="@+id/clothmaterial1"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_marginLeft="5dp"
+                    android:background="@drawable/top_part"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="5dp"
+                    android:paddingBottom="2dp"
+                    android:paddingRight="10dp"
+                    android:paddingTop="2dp"
+                    android:visibility="gone" />
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/textviewuploadphoto"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginLeft="5dp"
+                android:layout_weight="0.5"
+                android:background="@color/darkblue"
+                android:gravity="center"
+                android:text="Upload All"
+                android:textColor="@color/white"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <GridView
+            android:id="@+id/GridViewList"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_above="@+id/progressBar1"
+            android:layout_below="@+id/linearLayout3"
+            android:layout_marginBottom="2dp"
+            android:layout_marginTop="5dp"
+            android:numColumns="4" >
+        </GridView>
+
+        <ProgressBar
+            android:id="@+id/progressBar1"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/linearLayout1"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="5dp"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+    <ProgressBar
+        android:id="@+id/progressBar2"
+        style="?android:attr/progressBarStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:visibility="gone" />
+
+</RelativeLayout>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Projects</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="createAlbum">Create Album</string>
+    <string name="Save">Save</string>
+
+    <string name="property">Property</string>
+    <string name="propertyvalue">Property value</string>
+    
+    <string name="d_subpath">3d subpath</string>
+    <string name="base_image_path">base image path</string>
+    <string name="context_subpath">context subpath</string>
+    <string name="sample_label_area_divider">sample label area divider</string>
+    <string name="sample_label_context_divider">sample label context divider</string>
+    <string name="sample_label_font">sample label font</string>
+    <string name="sample_label_font_size">sample label font size</string>
+    <string name="sample_label_placement">sample label placement</string>
+    <string name="sample_label_sample_divider">sample label sample divider</string>
+    <string name="sample_subpath">sample subpath</string>
+    <string name="context_subpath_3d">context subpath 3d</string>
+</resources>

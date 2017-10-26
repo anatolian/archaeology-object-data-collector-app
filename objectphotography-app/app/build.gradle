@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "25.0.0"
+    buildToolsVersion '26.0.2'
     defaultConfig {
         applicationId "objectphotography2.com.object.photography.objectphotography_app"
         minSdkVersion 21
