@@ -64,13 +64,13 @@ SimpleStreamSurfaceView - UI for livestreamed data to/from server -?
 
 StateStatic - holds global state variables/methods
 
-StringResponseWrapper
+StringResponseWrapper - abstract, attempt to fetch strings from database, shows appropriate errors
 
-Syncable
+Syncable - interface, getter/setter for sync status
 
-Taggable
+Taggable - interface, tag an image
 
-TaggedImageView
+TaggedImageView - 
 
 Utils
 
