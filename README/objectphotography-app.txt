@@ -12,7 +12,7 @@ USER INTERACTION
 
 TECHNICAL DETAILS (BY CLASS/ACTIVITY(33))
 -------------------------------------
-AddChangeColorActivity - 
+AddChangeColorActivity - handles manual color correction/adjustments, can adjust: hues, lightness, chroma, color description
 
 AfterImageSavedMethodWrapper - abstract, used for processing saved image(s)
 
