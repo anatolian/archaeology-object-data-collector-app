@@ -42,7 +42,7 @@ JSONParser - gets json object from URL or by making http post or get method
 
 MainActivity - usability features: take picture (see ObjectDetail2Activity -?), go to photos (see PhotosActivity), reconnect to scale (and related bluetooth functions), get item weight, -?
 
-MyWiFiActivity
+MyWiFiActivity - connects to selected peer/wifi (direct) device, buttons to control en/dis-able IP sniffer and discoverability, take photo (testing purposes/verified pairing -?), start/stop liveview, zoom in/out, access SONY API functions (not implemented -?)
 
 NutriScaleBroadcastReceiver
 
@@ -76,4 +76,4 @@ Utils
 
 VolleyWrapper
 
-WiFiDirectBroadcastReceiver
+WiFiDirectBroadcastReceiver - handles wifi peer devices, checks wifi states, connected devices
