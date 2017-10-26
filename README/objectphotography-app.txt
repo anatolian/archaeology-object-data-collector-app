@@ -44,7 +44,7 @@ MainActivity - usability features: take picture (see ObjectDetail2Activity -?), 
 
 MyWiFiActivity - connects to selected peer/wifi (direct) device, buttons to control en/dis-able IP sniffer and discoverability, take photo (testing purposes/verified pairing -?), start/stop liveview, zoom in/out, access SONY API functions (not implemented -?)
 
-NutriScaleBroadcastReceiver
+NutriScaleBroadcastReceiver - handles connection status of the bluetooth scale
 
 ObjectDetail2Activity - "meat of the app"; checks/handles connections to bluetooth scale and wifi camera device; retrieves fields (internal/external color, weight, photo) from database using easting, northing, context number, and sample number (spinners); allows adding/editing these fields
 
