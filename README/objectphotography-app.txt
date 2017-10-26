@@ -70,10 +70,10 @@ Syncable - interface, getter/setter for sync status
 
 Taggable - interface, tag an image
 
-TaggedImageView - 
+TaggedImageView - handles tagged images, displays picture and corresponding tag
 
-Utils
+Utils - hardware utilities, verifying MAC addresses and IP addresses
 
-VolleyWrapper
+VolleyWrapper - handles SONY API functions
 
 WiFiDirectBroadcastReceiver - handles wifi peer devices, checks wifi states, connected devices
