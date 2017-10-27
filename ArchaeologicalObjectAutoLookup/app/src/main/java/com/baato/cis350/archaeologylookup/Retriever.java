@@ -1,6 +1,6 @@
 // Interface for implementations which retrieve and parse databases
 // @author: Andrej Ilic, Ben Greenberg, Anton Relin, and Tristrum Tuttle
-package com.baato.cis350.archeaologylookup;
+package com.baato.cis350.archaeologylookup;
 import java.io.InputStream;
 public interface Retriever
 {

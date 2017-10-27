@@ -1,6 +1,6 @@
 // Strategy pattern for museum artifact
 // @author: Andrej Ilic, Ben Greenberg, Anton Relin, and Tristrum Tuttle
-package com.baato.cis350.archeaologylookup;
+package com.baato.cis350.archaeologylookup;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;

@@ -1,6 +1,6 @@
 // Update the museum database
 // @author: Andrej Ilic, Ben Greenberg, Anton Relin, and Tristrum Tuttle
-package com.baato.cis350.archeaologylookup;
+package com.baato.cis350.archaeologylookup;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Environment;

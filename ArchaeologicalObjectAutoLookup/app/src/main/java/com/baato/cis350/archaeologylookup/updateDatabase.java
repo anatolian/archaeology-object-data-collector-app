@@ -1,6 +1,6 @@
 // Updating the database interface
 // @author: Andrej Ilic, Ben Greenberg, Anton Relin, and Tristrum Tuttle
-package com.baato.cis350.archeaologylookup;
+package com.baato.cis350.archaeologylookup;
 import android.app.Activity;
 public interface updateDatabase
 {

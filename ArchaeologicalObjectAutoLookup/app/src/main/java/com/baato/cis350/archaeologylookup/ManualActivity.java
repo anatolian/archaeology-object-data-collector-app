@@ -1,6 +1,6 @@
 // Manual Search
 // @author: Andrej Ilic, Ben Greenberg, Anton Relin, and Tristrum Tuttle
-package com.baato.cis350.archeaologylookup;
+package com.baato.cis350.archaeologylookup;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;

@@ -1,6 +1,6 @@
 // Retriever implementation for locally stored DBs
 // @author: Andrej Ilic, Ben Greenberg, Anton Relin, and Tristrum Tuttle
-package com.baato.cis350.archeaologylookup;
+package com.baato.cis350.archaeologylookup;
 import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import org.json.JSONObject;

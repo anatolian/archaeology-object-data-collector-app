@@ -1,6 +1,6 @@
 // History Screen
 // @author: Andrej Ilic, Ben Greenberg, Anton Relin, and Tristrum Tuttle
-package com.baato.cis350.archeaologylookup;
+package com.baato.cis350.archaeologylookup;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;

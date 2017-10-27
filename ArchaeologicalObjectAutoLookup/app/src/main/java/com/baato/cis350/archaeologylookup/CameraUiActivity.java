@@ -1,6 +1,6 @@
 // Camera Interface Screen
 // Andrej Ilic, Ben Greenberg, Anton Relin, and Tristrum Tuttle
-package com.baato.cis350.archeaologylookup;
+package com.baato.cis350.archaeologylookup;
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.res.AssetManager;
@@ -422,7 +422,7 @@ public class CameraUiActivity extends AppCompatActivity
 
     /**
      * Fetch a JSON from file
-     * @return
+     * @return Returns JSON object
      */
     @TargetApi(Build.VERSION_CODES.KITKAT)
     public String loadJSONFromAsset()

@@ -1,6 +1,6 @@
 // Retriever implementation for dbs stored online
 // @author: Andrej Ilic, Ben Greenberg, Anton Relin, and Tristrum Tuttle
-package com.baato.cis350.archeaologylookup;
+package com.baato.cis350.archaeologylookup;
 import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import org.apache.commons.io.IOUtils;
