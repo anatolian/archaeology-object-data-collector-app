@@ -11,11 +11,9 @@ public class SimpleData extends ResponseData
     public String north = null;
     public String samNo = null;
     public String conNo = null;
-    public String image_path = null;
+    public String imagePath = null;
     public String material = null;
-    public String count = "0";
-    public String state_code;
-    public String photowidth, photoheight;
+    public String photoWidth, photoHeight;
     /**
      * Release data
      */
@@ -23,7 +21,7 @@ public class SimpleData extends ResponseData
     {
         id = null;
         name = null;
-        image_path = null;
+        imagePath = null;
         super.release();
         callGC();
     }

@@ -9,7 +9,6 @@ import excavation.excavation_app.module.common.http.HttpOperation;
 import excavation.excavation_app.module.common.http.HttpProcessor;
 import excavation.excavation_app.module.common.http.HttpRequester;
 import excavation.excavation_app.module.common.http.Request;
-import excavation.excavation_app.module.common.http.Response;
 import excavation.excavation_app.module.common.http.Response.RESPONSE_RESULT;
 import excavation.excavation_app.module.common.http.Response.STANDARD;
 import excavation.excavation_app.module.common.http.bean.HttpObject;
@@ -18,17 +17,17 @@ import org.json.JSONObject;
 import android.util.Log;
 public class AddASinglePhotoProcessor extends HttpOperation implements HttpProcessor
 {
-    String cover_image = null;
-    String ip_address = null;
+    private String coverImage = null;
+    private String ipAddress = null;
     /**
      * Constructor
-     * @param cover_image - image
-     * @param ip_address - server IP
+     * @param coverImage - image
+     * @param ipAddress - server IP
      */
-    public AddASinglePhotoProcessor(String cover_image, String ip_address)
+    public AddASinglePhotoProcessor(String coverImage, String ipAddress)
     {
-        this.cover_image = cover_image;
-        this.ip_address = ip_address;
+        this.coverImage = coverImage;
+        this.ipAddress = ipAddress;
     }
 
     /**
@@ -40,15 +39,14 @@ public class AddASinglePhotoProcessor extends HttpOperation implements HttpProce
     public HttpObject getHttp(Map<Request, String> mapParams)
     {
         HttpObject object = new HttpObject();
-        object.setInfo(HttpRequester.ADD_SINGLE_PHOTO);
         object.setParams(mapParams);
-        object.setUrl(generateUrlWithParams(HttpRequester.ADD_SINGLE_PHOTO, mapParams, ip_address));
+        object.setUrl(generateUrlWithParams(HttpRequester.ADD_SINGLE_PHOTO, mapParams, ipAddress));
         return object;
     }
 
     public enum ADD_ALBUM_REQUEST implements Request
     {
-        area_easting, area_northing, context_number, base_image_path, context_subpath;
+        areaEasting, areaNorthing, contextNumber, baseImagePath, contextSubpath;
         /**
          * Get a parameter
          * @return Returns the parameter
@@ -58,10 +56,6 @@ public class AddASinglePhotoProcessor extends HttpOperation implements HttpProce
         {
             return this.name();
         }
-    }
-
-    public enum RESPONSE_PPARAM implements Response
-    {
     }
 
     /**
@@ -74,9 +68,9 @@ public class AddASinglePhotoProcessor extends HttpOperation implements HttpProce
     public SimpleData parseObject(HttpObject object)
     {
         SimpleData data = new SimpleData();
-        if (cover_image != null && cover_image.length() > 0)
+        if (coverImage != null && coverImage.length() > 0)
         {
-            object = request(object, cover_image);
+            object = request(object, coverImage);
         }
         else
         {
@@ -86,7 +80,7 @@ public class AddASinglePhotoProcessor extends HttpOperation implements HttpProce
         if (data.result == RESPONSE_RESULT.failed)
         {
             data.result = RESPONSE_RESULT.failed;
-            data.resultMsg = MessageConstants.Failed_To_Connect;
+            data.resultMsg = MessageConstants.FAILED_TO_CONNECT;
             return data;
         }
         try
@@ -94,20 +88,20 @@ public class AddASinglePhotoProcessor extends HttpOperation implements HttpProce
             JSONObject responseObj = new JSONObject(object.getResponseString());
             JSONObject responseData = responseObj.getJSONObject(STANDARD.responseData.name());
             String result = responseData.getString("result");
-            Log.d("LOG", result+"=="+responseData);
+            Log.d("LOG", result + "==" + responseData);
             if (result.equalsIgnoreCase("success"))
             {
                 data.result = RESPONSE_RESULT.success;
                 data.resultMsg = result;
-                System.out.println("responsedata single photo"+responseData);
+                System.out.println("responsedata single photo" + responseData);
                 if (responseData.has("photo_number"))
                 {
                     data.id = responseData.getInt("photo_number") + "";
                 }
                 if (responseData.has("image_path"))
                 {
-                    data.image_path = responseData.getString("image_path");
-                    System.out.println("photo image path"+data.image_path);
+                    data.imagePath = responseData.getString("image_path");
+                    System.out.println("photo image path" + data.imagePath);
                 }
             }
             else
@@ -115,19 +109,16 @@ public class AddASinglePhotoProcessor extends HttpOperation implements HttpProce
                 data.result = RESPONSE_RESULT.failed;
                 data.resultMsg = responseData.getString("result");
             }
-            responseData = null;
-            responseObj = null;
         }
         catch (Exception e)
         {
             e.printStackTrace();
             data.result = RESPONSE_RESULT.failed;
-            data.resultMsg = MessageConstants.Failed_To_Parse;
+            data.resultMsg = MessageConstants.FAILED_TO_PARSE;
         }
         finally
         {
             object.release();
-            object = null;
         }
         return data;
     }
@@ -138,6 +129,7 @@ public class AddASinglePhotoProcessor extends HttpOperation implements HttpProce
      * @return Returns null
      */
     @Override
+    @SuppressWarnings("unchecked")
     public List<SimpleData> parseList(HttpObject object)
     {
         return null;

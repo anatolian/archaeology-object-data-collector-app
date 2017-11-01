@@ -4,7 +4,6 @@ package excavation.excavation_app.module.sample;
 import java.util.List;
 import excavation.excavation_app.module.common.adapter.SimpleTextAdapter;
 import excavation.excavation_app.module.common.bean.SimpleData;
-import excavation.excavation_app.module.common.constants.AppConstants;
 import excavation.excavation_app.module.common.http.factory.SimpleListFactory;
 import excavation.excavation_app.module.common.task.BaseTask;
 import android.app.ProgressDialog;
@@ -12,95 +11,71 @@ import android.content.Context;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.Spinner;
 import excavation.excavation_app.com.appenginedemo.db.DBHelper;
-public class getSampleListTask extends BaseTask
+public class GetSampleListTask extends BaseTask
 {
+    private Context con;
     List<SimpleData> list;
-    List<SimpleData> material;
-    ProgressDialog progressDialog = null;
-    SimpleTextAdapter adp;
-    String m, north, east, cloth, gtype, contno, sno, co, sn;
-    String type, mode = "list";
-    String ip_address = "", ff, img;
-    int count;
+    private ProgressDialog progressDialog = null;
+    private String m, cloth, gType, contNo, sno;
+    private String ipAddress = "", ff;
+    private ListView lv;
+    private ProgressBar progressBar2;
     /**
      * Constructor
      * @param activity - calling activity
-     * @param count - item count
-     * @param spnClothmaterial - cloth type
      * @param md - md
      * @param material - material type
      * @param type - item type
      * @param conNo - context number
-     * @param SamNo - sample
-     * @param speast - easting
-     * @param spnorth - northing
+     * @param samNo - sample
      * @param conn - context
      * @param sam - sample
      * @param progressBar2 - progress bar
      */
-    public getSampleListTask(Context activity, int count, Spinner spnClothmaterial, String md,
-                             String material, String type, String conNo, String SamNo, String speast,
-                             String spnorth, String conn, String sam, ProgressBar progressBar2)
+    public GetSampleListTask(Context activity, String md, String material, String type,
+                             String conNo, String samNo, String conn, String sam,
+                             ProgressBar progressBar2)
     {
-        this.count = count;
+        con = activity;
         m = md;
         cloth = material;
-        gtype = type;
-        contno = conNo;
-        sno = SamNo;
-        east = speast;
-        north = spnorth;
-        co = conn;
-        sn = sam;
+        gType = type;
+        contNo = conNo;
+        sno = samNo;
+        contNo = conn;
+        sno = sam;
+        this.progressBar2 = progressBar2;
     }
-
     /**
      * Constructor
-     * @param activity_Sample - calling activity
-     * @param listViewContext - calling context
+     * @param activitySample - calling activity
+     * @param clothMaterial - cloth type
      * @param md - md
-     * @param east - easting
-     * @param north - northing
-     * @param imagePath - image location
-     * @param progressBar2 - progress bar
-     */
-    public getSampleListTask(Context activity_Sample, ListView listViewContext, String md, String east,
-                             String north, String imagePath, ProgressBar progressBar2)
-    {
-        m = md;
-        this.east = east;
-        this.north = north;
-        img = imagePath;
-    }
-
-    /**
-     * Constructor
-     * @param activity_Sample - calling activity
-     * @param clothmaterial - cloth material
-     * @param md - md
-     * @param spnmaterial2 - material
-     * @param type2 - type
-     * @param conNo - context number
-     * @param samNo - sample number
+     * @param spnMaterial2 - material
+     * @param type2 - object type
+     * @param conNo - context
+     * @param samNo - sample
      * @param act - act
      * @param progressBar2 - status
      */
-    public getSampleListTask(Context activity_Sample, ListView clothmaterial, String md,
-                             String spnmaterial2, String type2, String conNo, String samNo,
+    public GetSampleListTask(Context activitySample, ListView clothMaterial, String md,
+                             String spnMaterial2, String type2, String conNo, String samNo,
                              String act, ProgressBar progressBar2)
     {
+        con = activitySample;
+        lv = clothMaterial;
         m = md;
-        cloth = spnmaterial2;
-        gtype = type2;
-        contno = conNo;
+        this.progressBar2 = progressBar2;
+        cloth = spnMaterial2;
+        gType = type2;
+        contNo = conNo;
         sno = samNo;
         ff = act;
     }
 
     /**
-     * Get data
+     * Get sample
      * @param pos - position
      * @return Returns null
      */
@@ -116,9 +91,10 @@ public class getSampleListTask extends BaseTask
     @Override
     protected void onPreExecute()
     {
-        DBHelper db = DBHelper.getInstance(null);
+        progressBar2.setVisibility(View.VISIBLE);
+        DBHelper db = DBHelper.getInstance(con);
         db.open();
-        ip_address = db.getIpAddress();
+        ipAddress = db.getIpAddress();
         db.close();
     }
 
@@ -133,45 +109,50 @@ public class getSampleListTask extends BaseTask
         SimpleListFactory factory = SimpleListFactory.getInstance();
         if (m.equalsIgnoreCase("m"))
         {
-            list = factory.getSampleList("material", "list", m, ip_address, "",
-                    "", "");
+            list = factory.getSampleList("material", m, ipAddress);
         }
         else if (m.equalsIgnoreCase("cn"))
         {
-            list = factory.getSampleList("context", "list", m, ip_address, east, north, "");
+            list = factory.getSampleList("context", m, ipAddress);
         }
         else if (m.equalsIgnoreCase("s"))
         {
-            list = factory.getSampleList("sample", "list", m, ip_address, east, north, co);
+            list = factory.getSampleList("sample", m, ipAddress);
         }
         else
         {
-            list = factory.getSampleList("photograph", "list", m, ip_address, "", "", "");
+            list = factory.getSampleList("photograph", m, ipAddress);
         }
         return null;
     }
 
     /**
      * Run after thread
-     * @param result - nothing
+     * @param result - Nothing
      */
     @Override
     protected void onPostExecute(Void result)
     {
         super.onPostExecute(result);
+        progressBar2.setVisibility(View.GONE);
         if (m.equalsIgnoreCase("m"))
         {
-            if (!(ff != null && ff.length() > 0)) {
+            if (!(ff != null && ff.length() > 0))
+            {
                 SimpleData d = new SimpleData();
                 d.id = "Cloth Material";
                 list.add(0, d);
             }
+
         }
         else if (m.equalsIgnoreCase("cn"))
         {
-            SimpleData d = new SimpleData();
-            d.id = "Context Number";
-            list.add(0, d);
+            if (lv == null)
+            {
+                SimpleData d = new SimpleData();
+                d.id = "Context Number";
+                list.add(0, d);
+            }
         }
         else if (m.equalsIgnoreCase("s"))
         {
@@ -187,45 +168,39 @@ public class getSampleListTask extends BaseTask
         }
         if (list != null && list.size() > 0)
         {
-            //here changes done
-            adp = new SimpleTextAdapter(null, list, "1", ff);
-        }
-        else
-        {
-            adp = new SimpleTextAdapter(null, list, "", "");
+            if (lv != null)
+            {
+                // here changes done
+                SimpleTextAdapter adp = new SimpleTextAdapter(con, list, "1", ff);
+                lv.setAdapter(adp);
+            }
         }
         if (cloth != null && cloth.length() > 0)
         {
-            int j = 0;
             for (int i = 0; i < list.size(); i++)
             {
                 if (cloth.equals(list.get(i).id))
                 {
-                    j = i;
                     break;
                 }
             }
         }
-        if (gtype != null && gtype.length() > 0)
+        if (gType != null && gType.length() > 0)
         {
-            int j = 0;
             for (int i = 0; i < list.size(); i++)
             {
-                if (gtype.equals(list.get(i).id))
+                if (gType.equals(list.get(i).id))
                 {
-                    j = i;
                     break;
                 }
             }
         }
-        if (contno != null && contno.length() > 0)
+        if (contNo != null && contNo.length() > 0)
         {
-            int j = 0;
             for (int i = 0; i < list.size(); i++)
             {
-                if (contno.equals(list.get(i).id))
+                if (contNo.equals(list.get(i).id))
                 {
-                    j = i;
                     break;
                 }
             }
@@ -233,12 +208,10 @@ public class getSampleListTask extends BaseTask
         }
         if (sno != null && sno.length() > 0)
         {
-            int j = 0;
             for (int i = 0; i < list.size(); i++)
             {
                 if (sno.equals(list.get(i).id))
                 {
-                    j = i;
                     break;
                 }
             }
@@ -246,7 +219,7 @@ public class getSampleListTask extends BaseTask
     }
 
     /**
-     * Thread cancelled
+     * Thread stopped
      * @param result - nothing
      */
     @Override

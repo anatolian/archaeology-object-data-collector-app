@@ -19,17 +19,16 @@ import excavation.excavation_app.module.common.http.Response.STANDARD;
 import excavation.excavation_app.module.common.http.bean.HttpObject;
 import org.json.JSONException;
 import org.json.JSONObject;
-import android.util.Log;
 public class AreaListProcessor extends HttpOperation implements HttpProcessor
 {
-    String ip_address;
+    private String ipAddress;
     /**
      * Processor
-     * @param ip_address - server IP
+     * @param ipAddress - server IP
      */
-    public AreaListProcessor(String ip_address)
+    public AreaListProcessor(String ipAddress)
     {
-        this.ip_address=ip_address;
+        this.ipAddress = ipAddress;
     }
 
     /**
@@ -41,14 +40,13 @@ public class AreaListProcessor extends HttpOperation implements HttpProcessor
     public HttpObject getHttp(Map<Request, String> mapParams)
     {
         HttpObject object = new HttpObject();
-        object.setInfo(HttpRequester.GET_AREA);
-        object.setUrl(generateUrlWithParams(HttpRequester.GET_AREA,mapParams,ip_address));
+        object.setUrl(generateUrlWithParams(HttpRequester.GET_AREA, mapParams, ipAddress));
         return object;
     }
 
-    public enum LIST_Area_RESPONSE implements Response
+    public enum LIST_AREA_RESPONSE implements Response
     {
-        area_northing;
+        areaNorthing
     }
 
     /**
@@ -63,9 +61,9 @@ public class AreaListProcessor extends HttpOperation implements HttpProcessor
         return null;
     }
 
-    public enum LIST_Area_REQUESTER implements Request
+    public enum LIST_AREA_REQUESTER implements Request
     {
-        mode, area_easting_id, area_easting_name;
+        mode, areaEastingId, areaEastingName;
         /**
          * Get a parameter
          * @return Returns a parameter
@@ -86,13 +84,13 @@ public class AreaListProcessor extends HttpOperation implements HttpProcessor
     @Override
     public List<SimpleData> parseList(HttpObject object)
     {
-        SortedMap<Integer, SimpleData> map = new TreeMap<Integer, SimpleData>();
+        SortedMap<Integer, SimpleData> map = new TreeMap<>();
         SimpleData data = new SimpleData();
         object = request(object);
         checkHttpStatus(object, data);
         if (data.result == RESPONSE_RESULT.failed)
         {
-            return new LinkedList<SimpleData>(map.values());
+            return new LinkedList<>(map.values());
         }
         try
         {
@@ -106,9 +104,6 @@ public class AreaListProcessor extends HttpOperation implements HttpProcessor
                 SimpleData dataObject = parseObject(resItem);
                 map.put(Integer.parseInt(key), dataObject);
             }
-            resIter = null;
-            resData = null;
-            resObj = null;
         }
         catch (Exception e)
         {
@@ -116,11 +111,9 @@ public class AreaListProcessor extends HttpOperation implements HttpProcessor
         }
         finally
         {
-            data = null;
             object.release();
-            object = null;
         }
-        return new LinkedList<SimpleData>(map.values());
+        return new LinkedList<>(map.values());
     }
 
     /**
@@ -134,7 +127,7 @@ public class AreaListProcessor extends HttpOperation implements HttpProcessor
     public SimpleData parseObject(JSONObject object) throws JSONException
     {
         SimpleData data = new SimpleData();
-        data.id = get(LIST_Area_RESPONSE.area_northing.name(), object);
+        data.id = get(LIST_AREA_RESPONSE.areaNorthing.name(), object);
         return data;
     }
 }

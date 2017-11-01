@@ -1,18 +1,14 @@
 // Process easting
 // @author: anatolian
 package excavation.excavation_app.module.context;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import excavation.excavation_app.module.all.ImageBean;
 import excavation.excavation_app.module.common.bean.ResponseData;
 import excavation.excavation_app.module.common.bean.SimpleData;
-import excavation.excavation_app.module.common.constants.AppConstants;
-import excavation.excavation_app.module.common.constants.MessageConstants;
 import excavation.excavation_app.module.common.http.HttpOperation;
 import excavation.excavation_app.module.common.http.HttpProcessor;
 import excavation.excavation_app.module.common.http.HttpRequester;
@@ -21,20 +17,18 @@ import excavation.excavation_app.module.common.http.Response;
 import excavation.excavation_app.module.common.http.Response.RESPONSE_RESULT;
 import excavation.excavation_app.module.common.http.Response.STANDARD;
 import excavation.excavation_app.module.common.http.bean.HttpObject;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import android.util.Log;
 public class EastAreaListProcessor extends HttpOperation implements HttpProcessor
 {
-    String ip_address;
+    private String ipAddress;
     /**
      * Constructor
-     * @param ip_address - server IP
+     * @param ipAddress - server IP
      */
-    public EastAreaListProcessor(String ip_address)
+    public EastAreaListProcessor(String ipAddress)
     {
-        this.ip_address = ip_address;
+        this.ipAddress = ipAddress;
     }
 
     /**
@@ -46,14 +40,13 @@ public class EastAreaListProcessor extends HttpOperation implements HttpProcesso
     public HttpObject getHttp(Map<Request, String> mapParams)
     {
         HttpObject object = new HttpObject();
-        object.setInfo(HttpRequester.GET_AREA);
-        object.setUrl(generateUrlWithParams(HttpRequester.GET_AREA, mapParams, ip_address));
+        object.setUrl(generateUrlWithParams(HttpRequester.GET_AREA, mapParams, ipAddress));
         return object;
     }
 
-    public enum LIST_Area_RESPONSE implements Response
+    public enum LIST_AREA_RESPONSE implements Response
     {
-        area_northing, area_easting;
+        areaNorthing, areaEasting
     }
 
     /**
@@ -68,20 +61,6 @@ public class EastAreaListProcessor extends HttpOperation implements HttpProcesso
         return null;
     }
 
-    public enum LIST_Area_REQUESTER implements Request
-    {
-        mode, area_easting_id;
-        /**
-         * Get the parameter
-         * @return Returns the parameter
-         */
-        @Override
-        public String getParameter()
-        {
-            return this.name();
-        }
-    }
-
     /**
      * Process a list
      * @param object - list
@@ -91,13 +70,13 @@ public class EastAreaListProcessor extends HttpOperation implements HttpProcesso
     @Override
     public List<SimpleData> parseList(HttpObject object)
     {
-        SortedMap<Integer, SimpleData> map = new TreeMap<Integer, SimpleData>();
+        SortedMap<Integer, SimpleData> map = new TreeMap<>();
         SimpleData data = new SimpleData();
         object = request(object);
         checkHttpStatus(object, data);
         if (data.result == RESPONSE_RESULT.failed)
         {
-            return new LinkedList<SimpleData>(map.values());
+            return new LinkedList<>(map.values());
         }
         try
         {
@@ -111,9 +90,6 @@ public class EastAreaListProcessor extends HttpOperation implements HttpProcesso
                 SimpleData dataObject = parseObject(resItem);
                 map.put(Integer.parseInt(key), dataObject);
             }
-            resIter = null;
-            resData = null;
-            resObj = null;
         }
         catch (Exception e)
         {
@@ -121,11 +97,9 @@ public class EastAreaListProcessor extends HttpOperation implements HttpProcesso
         }
         finally
         {
-            data = null;
             object.release();
-            object = null;
         }
-        return new LinkedList<SimpleData>(map.values());
+        return new LinkedList<>(map.values());
     }
 
     /**
@@ -139,7 +113,7 @@ public class EastAreaListProcessor extends HttpOperation implements HttpProcesso
     public SimpleData parseObject(JSONObject object) throws JSONException
     {
         SimpleData data = new SimpleData();
-        data.id = get(LIST_Area_RESPONSE.area_easting.name(), object);
+        data.id = get(LIST_AREA_RESPONSE.areaEasting.name(), object);
         return data;
     }
 }

@@ -1,3 +1,5 @@
+// Get area
+// @author: anatolian
 package excavation.excavation_app.module.context;
 import java.util.List;
 import excavation.excavation_app.module.common.adapter.SimpleTextAdapter;
@@ -7,46 +9,48 @@ import excavation.excavation_app.module.common.http.factory.SimpleListFactory;
 import excavation.excavation_app.module.common.task.BaseTask;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import excavation.excavation_app.com.appenginedemo.db.DBHelper;
-public class getAreaTask extends BaseTask
+public class GetAreaTask extends BaseTask
 {
-    List<SimpleData> list;
-    ProgressDialog progressDialog = null;
-    SimpleTextAdapter adp;
-    String m, north, east, eastid;
-    String ip_address = "";
-    int flag = 0;
-    int count;
+    private Context con;
+    private Spinner spnEast, spnNorth;
+    private List<SimpleData> list;
+    private ProgressDialog progressDialog = null;
+    private String m, north, east, eastId;
+    ProgressBar progressBar2;
+    private String ipAddress = "";
+    private int count;
     /**
      * Constructor
      * @param mainActivity - calling activity
-     * @param count - item count
-     * @param Northing - northing
-     * @param areaEasting - easting
+     * @param count - items
+     * @param northing - area northing
+     * @param areaEasting - area easting
      * @param md - md
-     * @param north - northing2
-     * @param east - easting2
-     * @param id - item id
-     * @param progressBar2 - status
-     * @param flag - mode
+     * @param north - northing
+     * @param east - easting
+     * @param id - area id
+     * @param progressBar2 - progress
      */
-    public getAreaTask(Context mainActivity, int count, Spinner Northing, Spinner areaEasting,
-                       String md, String north, String east, String id, ProgressBar progressBar2, int flag)
+    public GetAreaTask(Context mainActivity, int count, Spinner northing, Spinner areaEasting,
+                       String md, String north, String east, String id, ProgressBar progressBar2)
     {
+        con = mainActivity;
+        spnEast = areaEasting;
+        spnNorth = northing;
         m = md;
+        this.progressBar2 = progressBar2;
         this.north = north;
         this.east = east;
-        this.flag = flag;
         this.count = count;
-        eastid = id;
+        eastId = id;
     }
 
     /**
-     * Return null
+     * Get the data
      * @param pos - position
      * @return Returns null
      */
@@ -62,9 +66,10 @@ public class getAreaTask extends BaseTask
     @Override
     protected void onPreExecute()
     {
-        DBHelper db = DBHelper.getInstance(null);
+        progressBar2.setVisibility(View.VISIBLE);
+        DBHelper db = DBHelper.getInstance(con);
         db.open();
-        ip_address = db.getIpAddress();
+        ipAddress = db.getIpAddress();
         db.close();
     }
 
@@ -79,60 +84,85 @@ public class getAreaTask extends BaseTask
         SimpleListFactory factory = SimpleListFactory.getInstance();
         if (m.equalsIgnoreCase("n"))
         {
-            list = factory.getNorthArea("area_northing", eastid, ip_address);
+            list = factory.getNorthArea(eastId, ipAddress);
         }
         else
         {
-            list = factory.getEastArea("area_easting", ip_address);
+            // Log.e("area_easting list","area_easting");
+            list = factory.getEastArea(ipAddress);
         }
         return null;
     }
 
-    /**
-     * Run after thread finished
-     * @param result - nothing
-     */
     @Override
     protected void onPostExecute(Void result)
     {
         super.onPostExecute(result);
-        if (m.equalsIgnoreCase("n"))
-        {
+        progressBar2.setVisibility(View.GONE);
+        if (m.equalsIgnoreCase("n")) {
             SimpleData d = new SimpleData();
             d.id = "Area Northing";
             list.add(0, d);
-            adp = new SimpleTextAdapter(null, list, "", "");
+            spnNorth.setEnabled(true);
+            SimpleTextAdapter adp = new SimpleTextAdapter(con, list, "", "");
+            spnNorth.setAdapter(adp);
+            if (count == 1)
+            {
+                spnNorth.setSelection(AppConstants.activityMainSpnNorth);
+            }
+            else if (count == 2)
+            {
+                spnNorth.setSelection(AppConstants.spnNorthPos);
+            }
+            else if (count == 3)
+            {
+                spnNorth.setSelection(AppConstants.activity3dSpnNorth);
+            }
         }
         else
         {
             SimpleData d = new SimpleData();
             d.id = "Area Easting";
             list.add(0, d);
-            adp = new SimpleTextAdapter(null, list, "", "");
+            spnEast.setEnabled(true);
+            SimpleTextAdapter adp = new SimpleTextAdapter(con, list, "", "");
+            spnEast.setAdapter(adp);
+            if (count == 1)
+            {
+                spnEast.setSelection(AppConstants.activityMainSpnEast);
+            }
+            else if (count == 2)
+            {
+                spnEast.setSelection(AppConstants.spnEastPos);
+            }
+            else if (count == 3)
+            {
+                spnEast.setSelection(AppConstants.activity3dSpnEast);
+            }
         }
         if (north != null && north.length() > 0)
         {
-            int j = 0;
             for (int i = 0; i < list.size(); i++)
             {
                 if (list.get(i).id.equals(north))
                 {
-                    j = i;
                     break;
                 }
             }
+            // here changes done spnMaterial.setSelection(j);
+            spnNorth.setSelection(0);
         }
         if (east != null && east.length() > 0)
         {
-            int j = 0;
             for (int i = 0; i < list.size(); i++)
             {
                 if (list.get(i).id.equals(east))
                 {
-                    j = i;
                     break;
                 }
             }
+            // here changes done spnMaterial.setSelection(j);
+            spnEast.setSelection(0);
         }
     }
 

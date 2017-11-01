@@ -15,7 +15,7 @@ import excavation.excavation_app.module.common.http.Response.RESPONSE_RESULT;
 import excavation.excavation_app.module.common.http.factory.SimpleListFactory;
 import excavation.excavation_app.module.common.http.factory.SimpleObjectFactory;
 import excavation.excavation_app.module.common.task.BaseTask;
-import excavation.excavation_app.module.context.getAreaTask;
+import excavation.excavation_app.module.context.GetAreaTask;
 import excavation.excavation_app.module.image.property.ImagePropertyBean;
 import excavation.excavation_app.module.image.property.ImagePropertyTask;
 import android.app.AlertDialog;
@@ -44,36 +44,29 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.appenginedemo.R;
-
 import excavation.excavation_app.com.appenginedemo.db.DBHelper;
-import excavation.excavation_app.com.utils.imageloader.ImageLoader;
 public class MainActivity extends ActivityBase
 {
     LayoutInflater inflaterMain;
     RelativeLayout screenMain;
     LinearLayout LinearLayout1;
     Spinner areaEasting, areaNorthing, spnContext;
-    TextView listdisp;
-    ImageView imgphoto;
+    TextView listDisp;
+    ImageView imgPhoto;
     BaseTask task;
-    static String spnEast = null, spnnorth = null, imagePath = null, yes = null, north = null;
-    static String east = null, ctx_no = null, next;
+    Context context;
+    static String spnEast = null, spnNorth = null, imagePath = null, yes = null, north = null;
+    static String east = null, ctxNo = null, next, photoId = null;
     ArrayList<String> ctx;
-    public ImageLoader imgld;
     ListView listViewContext;
-    TextView textViewReplacephotphoto, textViewnextphoto;
-    String p1;
+    TextView textViewReplacePhoto, textViewNextPhoto;
     ProgressBar progressBar2;
-    String photo_id = null;
-    int flag_context = 0;
     int a = 0;
-    boolean replace = false, photostart = false;
-    private static int RESULT_LOAD_IMAGE = 1, CAMERA_CAPTURE = 999;
+    boolean replace = false, photoStart = false;
+    private static int CAMERA_CAPTURE = 999;
     ProgressBar progressBar1;
     // Activity request codes
-    private static final int CAMERA_CAPTURE_IMAGE_REQUEST_CODE = 100;
     public static final int MEDIA_TYPE_IMAGE = 1;
     // directory name to store captured images and videos
     private static final String IMAGE_DIRECTORY_NAME = "Hello Camera";
@@ -81,8 +74,6 @@ public class MainActivity extends ActivityBase
     private Uri fileUri;
     ImagePropertyTask task1;
     static ImagePropertyBean data1;
-    Spinner Spneast;
-    DBHelper db;
     /**
      * Launch activity
      * @param savedInstanceState - state from memory
@@ -95,7 +86,7 @@ public class MainActivity extends ActivityBase
         screenMain = (RelativeLayout) inflaterMain.inflate(R.layout.activity_main, null);
         wrapper.addView(screenMain);
         AppConstants.up = 1;
-        header.setText("Context Photo");
+        header.setText(getString(R.string.context_photo_no_space));
         header.setBackgroundColor(getResources().getColor(R.color.cream));
         progressBar2 = (ProgressBar) findViewById(R.id.progressBar2);
         areaEasting = (Spinner) findViewById(R.id.areaEasting);
@@ -104,17 +95,16 @@ public class MainActivity extends ActivityBase
         progressBar1 = (ProgressBar) findViewById(R.id.progressBar1);
         areaEasting.setEnabled(false);
         areaNorthing.setEnabled(false);
-        AppConstants.temp_Context_No = null;
-        textViewReplacephotphoto = (TextView) findViewById(R.id.textViewReplacephotphoto);
-        textViewnextphoto = (TextView) findViewById(R.id.textViewnextphoto);
-        listdisp = (TextView) findViewById(R.id.textViewdisp);
+        AppConstants.tempContextNo = null;
+        textViewReplacePhoto = (TextView) findViewById(R.id.textViewReplacephotphoto);
+        textViewNextPhoto = (TextView) findViewById(R.id.textViewnextphoto);
+        listDisp = (TextView) findViewById(R.id.textViewdisp);
         LinearLayout1 = (LinearLayout) findViewById(R.id.LinearLayout1);
-        imgphoto = (ImageView) findViewById(R.id.imageView1);
-        imgld = new ImageLoader(MainActivity.this);
+        imgPhoto = (ImageView) findViewById(R.id.imageView1);
         listViewContext = (ListView) findViewById(R.id.listViewContext);
         task1 = new ImagePropertyTask(MainActivity.this);
         task1.execute();
-        ApplicationHandler apphand = ApplicationHandler.getInstance();
+        ApplicationHandler appHand = ApplicationHandler.getInstance();
         if (getIntent().hasExtra("north"))
         {
             north = getIntent().getExtras().getString("north");
@@ -128,16 +118,16 @@ public class MainActivity extends ActivityBase
             ctx = getIntent().getExtras().getStringArrayList("ctx");
         }
         areaNorthing.setEnabled(false);
-        if (!(spnnorth != null && spnnorth.length() > 0 || spnEast != null
-                && spnEast.length() > 0 || AppConstants.temp_Context_No != null
-                && AppConstants.temp_Context_No.size() > 0))
+        if (!(spnNorth != null && spnNorth.length() > 0 || spnEast != null
+                && spnEast.length() > 0 || AppConstants.tempContextNo != null
+                && AppConstants.tempContextNo.size() > 0))
         {
-            spnnorth = north;
+            spnNorth = north;
             spnEast = east;
         }
-        listdisp.setText(ctx_no);
-        task = new getAreaTask(MainActivity.this, 1, areaNorthing, areaEasting, "e", "", spnEast,
-                "", progressBar2, 0);
+        listDisp.setText(ctxNo);
+        task = new GetAreaTask(MainActivity.this, 1, areaNorthing, areaEasting,
+                "e", "", spnEast, "", progressBar2);
         task.execute();
         if (getIntent().hasExtra("imagePath") && getIntent().hasExtra("y"))
         {
@@ -150,7 +140,7 @@ public class MainActivity extends ActivityBase
         }
         if (yes != null && yes.length() > 0)
         {
-            imgphoto.setImageBitmap(apphand.decodeFile(new File(imagePath)));
+            imgPhoto.setImageBitmap(appHand.decodeFile(new File(imagePath)));
         }
         TextView3d.setOnClickListener(new OnClickListener() {
             /**
@@ -160,21 +150,22 @@ public class MainActivity extends ActivityBase
             @Override
             public void onClick(View v)
             {
-                if (photostart)
+                if (photoStart)
                 {
                     if (imagePath != null && imagePath.length() > 0)
                     {
-                        if (AppConstants.temp_Context_No != null && AppConstants.temp_Context_No.size() > 0)
+                        if (AppConstants.tempContextNo != null && AppConstants.tempContextNo.size() > 0)
                         {
                             TextView3d.setBackgroundColor(getResources().getColor(R.color.butterflyblue));
                             TextViewContext.setBackgroundColor(getResources().getColor(R.color.black));
                             TextViewSample.setBackgroundColor(getResources().getColor(R.color.black));
-                            Intent i = new Intent(MainActivity.this, Activity_3d.class);
+                            Intent i = new Intent(MainActivity.this, Activity3d.class);
                             startActivity(i);
                         }
                         else
                         {
-                            Toast.makeText(MainActivity.this, "Please select at least one context number...",
+                            Toast.makeText(MainActivity.this,
+                                    "Please select at least one context number...",
                                     Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -184,7 +175,7 @@ public class MainActivity extends ActivityBase
                     TextView3d.setBackgroundColor(getResources().getColor(R.color.butterflyblue));
                     TextViewContext.setBackgroundColor(getResources().getColor(R.color.black));
                     TextViewSample.setBackgroundColor(getResources().getColor(R.color.black));
-                    Intent i = new Intent(MainActivity.this, Activity_3d.class);
+                    Intent i = new Intent(MainActivity.this, Activity3d.class);
                     startActivity(i);
                 }
             }
@@ -197,21 +188,23 @@ public class MainActivity extends ActivityBase
             @Override
             public void onClick(View v)
             {
-                if (photostart)
+                if (photoStart)
                 {
                     if (imagePath != null && imagePath.length() > 0)
                     {
-                        if (AppConstants.temp_Context_No != null && AppConstants.temp_Context_No.size() > 0)
+                        if (AppConstants.tempContextNo != null
+                                && AppConstants.tempContextNo.size() > 0)
                         {
                             TextViewSample.setBackgroundColor(getResources().getColor(R.color.butterflyblue));
                             TextView3d.setBackgroundColor(getResources().getColor(R.color.black));
                             TextViewContext.setBackgroundColor(getResources().getColor(R.color.black));
-                            Intent i = new Intent(MainActivity.this, Activity_Sample.class);
+                            Intent i = new Intent(MainActivity.this, ActivitySample.class);
                             startActivity(i);
                         }
                         else
                         {
-                            Toast.makeText(MainActivity.this, "Please select at least one context number...",
+                            Toast.makeText(MainActivity.this,
+                                    "Please select at least one context number...",
                                     Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -221,12 +214,12 @@ public class MainActivity extends ActivityBase
                     TextViewSample.setBackgroundColor(getResources().getColor(R.color.butterflyblue));
                     TextView3d.setBackgroundColor(getResources().getColor(R.color.black));
                     TextViewContext.setBackgroundColor(getResources().getColor(R.color.black));
-                    Intent i = new Intent(MainActivity.this, Activity_Sample.class);
+                    Intent i = new Intent(MainActivity.this, ActivitySample.class);
                     startActivity(i);
                 }
             }
         });
-        imgphoto.setOnClickListener(new OnClickListener() {
+        imgPhoto.setOnClickListener(new OnClickListener() {
             /**
              * User clicked image
              * @param v - image
@@ -234,17 +227,19 @@ public class MainActivity extends ActivityBase
             @Override
             public void onClick(View v)
             {
-                if (spnnorth != null && spnnorth.length() > 0 && spnEast != null && spnEast.length() > 0)
+                if (spnNorth != null && spnNorth.length() > 0 && spnEast != null
+                        && spnEast.length() > 0)
                 {
-                    capture_image();
+                    captureImage();
                 }
                 else
                 {
-                    Toast.makeText(MainActivity.this, "Select area", Toast.LENGTH_LONG).show();
+                    Toast.makeText(MainActivity.this, "Select area",
+                            Toast.LENGTH_LONG).show();
                 }
             }
         });
-        textViewReplacephotphoto.setOnClickListener(new OnClickListener() {
+        textViewReplacePhoto.setOnClickListener(new OnClickListener() {
             /**
              * User clicked replace photo
              * @param v - text view
@@ -252,14 +247,16 @@ public class MainActivity extends ActivityBase
             @Override
             public void onClick(View v)
             {
-                if (spnnorth != null && spnnorth.length() > 0 && spnEast != null && spnEast.length() > 0)
+                if (spnNorth != null && spnNorth.length() > 0 && spnEast != null
+                        && spnEast.length() > 0)
                 {
                     replace = true;
-                    capture_image();
+                    captureImage();
                 }
                 else
                 {
-                    Toast.makeText(MainActivity.this, "No Photo to Replace", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "No Photo to Replace",
+                            Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -274,7 +271,7 @@ public class MainActivity extends ActivityBase
             @Override
             public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3)
             {
-                AppConstants.activity_mainSpnEast = arg2;
+                AppConstants.activityMainSpnEast = arg2;
                 if (arg2 > 0)
                 {
                     SimpleData s = (SimpleData) arg0.getItemAtPosition(arg2);
@@ -282,26 +279,26 @@ public class MainActivity extends ActivityBase
                     {
                         if (!spnEast.equalsIgnoreCase("s.id"))
                         {
-                            AppConstants.temp_Context_No = null;
-                            photo_id = null;
+                            AppConstants.tempContextNo = null;
+                            photoId = null;
                             imagePath = null;
                             replace = false;
                             listViewContext.setAdapter(null);
                             listViewContext.setVisibility(View.GONE);
                             spnContext.setVisibility(View.GONE);
                             a = 0;
-                            textViewnextphoto.setEnabled(false);
-                            textViewReplacephotphoto.setEnabled(false);
-                            textViewnextphoto.setClickable(false);
-                            textViewReplacephotphoto.setClickable(false);
-                            imgphoto.setImageResource(R.drawable.camera);
+                            textViewNextPhoto.setEnabled(false);
+                            textViewReplacePhoto.setEnabled(false);
+                            textViewNextPhoto.setClickable(false);
+                            textViewReplacePhoto.setClickable(false);
+                            imgPhoto.setImageResource(R.drawable.camera);
                         }
                     }
                     spnEast = s.id;
                     areaNorthing.setEnabled(true);
                     areaNorthing.setAdapter(null);
-                    task = new getAreaTask(MainActivity.this, 1, areaNorthing, areaEasting, "n",
-                            spnnorth, "", spnEast, progressBar2, 1);
+                    task = new GetAreaTask(MainActivity.this, 1, areaNorthing,
+                            areaEasting, "n", spnNorth, "", spnEast, progressBar2);
                     task.execute();
                 }
                 else
@@ -331,34 +328,34 @@ public class MainActivity extends ActivityBase
             @Override
             public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3)
             {
-                AppConstants.activity_mainSpnNorth = arg2;
+                AppConstants.activityMainSpnNorth = arg2;
                 if (arg2 > 0)
                 {
                     SimpleData s = (SimpleData) arg0.getItemAtPosition(arg2);
-                    if (spnnorth != null && spnnorth.length() > 0)
+                    if (spnNorth != null && spnNorth.length() > 0)
                     {
-                        if (!spnnorth.equalsIgnoreCase("s.id"))
+                        if (!spnNorth.equalsIgnoreCase("s.id"))
                         {
-                            AppConstants.temp_Context_No = null;
-                            photo_id = null;
+                            AppConstants.tempContextNo = null;
+                            photoId = null;
                             replace = false;
                             imagePath = null;
                             listViewContext.setAdapter(null);
                             listViewContext.setVisibility(View.GONE);
                             spnContext.setVisibility(View.GONE);
                             a = 0;
-                            textViewnextphoto.setEnabled(false);
-                            textViewReplacephotphoto.setEnabled(false);
-                            textViewnextphoto.setClickable(false);
-                            textViewReplacephotphoto.setClickable(false);
-                            imgphoto.setImageResource(R.drawable.camera);
+                            textViewNextPhoto.setEnabled(false);
+                            textViewReplacePhoto.setEnabled(false);
+                            textViewNextPhoto.setClickable(false);
+                            textViewReplacePhoto.setClickable(false);
+                            imgPhoto.setImageResource(R.drawable.camera);
                         }
                     }
-                    spnnorth = s.id;
+                    spnNorth = s.id;
                 }
                 else
                 {
-                    spnnorth = "";
+                    spnNorth = "";
                 }
             }
 
@@ -385,16 +382,17 @@ public class MainActivity extends ActivityBase
                 if (arg2 > 0)
                 {
                     SimpleData s = (SimpleData) arg0.getItemAtPosition(arg2);
-                    ctx_no = s.id;
-                    if (!(AppConstants.temp_Context_No != null && AppConstants.temp_Context_No.size() > 0))
+                    ctxNo = s.id;
+                    if (!(AppConstants.tempContextNo != null
+                            && AppConstants.tempContextNo.size() > 0))
                     {
-                        AppConstants.temp_Context_No = new ArrayList<String>();
+                        AppConstants.tempContextNo = new ArrayList<>();
                     }
-                    AppConstants.temp_Context_No.add(ctx_no);
-                    textViewnextphoto.setEnabled(true);
-                    textViewReplacephotphoto.setEnabled(true);
-                    textViewnextphoto.setClickable(true);
-                    textViewReplacephotphoto.setClickable(true);
+                    AppConstants.tempContextNo.add(ctxNo);
+                    textViewNextPhoto.setEnabled(true);
+                    textViewReplacePhoto.setEnabled(true);
+                    textViewNextPhoto.setClickable(true);
+                    textViewReplacePhoto.setClickable(true);
                 }
             }
 
@@ -407,7 +405,7 @@ public class MainActivity extends ActivityBase
             {
             }
         });
-        textViewnextphoto.setOnClickListener(new OnClickListener() {
+        textViewNextPhoto.setOnClickListener(new OnClickListener() {
             /**
              * User pressed next
              * @param v - button
@@ -415,13 +413,15 @@ public class MainActivity extends ActivityBase
             @Override
             public void onClick(View v)
             {
-                if (AppConstants.temp_Context_No != null && AppConstants.temp_Context_No.size() > 0)
+                if (AppConstants.tempContextNo != null && AppConstants.tempContextNo.size() > 0)
                 {
-                    if (spnnorth != null && spnnorth.length() > 0 && spnEast != null && spnEast.length() > 0)
+                    if (spnNorth != null && spnNorth.length() > 0 && spnEast != null
+                            && spnEast.length() > 0)
                     {
                         if (imagePath != null && imagePath.length() > 0)
                         {
-                            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
+                            AlertDialog.Builder alertDialogBuilder
+                                    = new AlertDialog.Builder(MainActivity.this);
                             LinearLayout myLayout = new LinearLayout(MainActivity.this);
                             myLayout.setOrientation(LinearLayout.VERTICAL);
                             final TextView t1 = new TextView(MainActivity.this);
@@ -432,8 +432,9 @@ public class MainActivity extends ActivityBase
                             myLayout.addView(t1);
                             alertDialogBuilder.setTitle("Alert");
                             // set dialog message
-                            alertDialogBuilder.setView(myLayout).setCancelable(false).setPositiveButton("Ok",
-                                    new DialogInterface.OnClickListener() {
+                            alertDialogBuilder.setView(myLayout).setCancelable(false)
+                                    .setPositiveButton("Ok",
+                                            new DialogInterface.OnClickListener() {
                                 /**
                                  * User pressed ok
                                  * @param dialog - alert window
@@ -442,16 +443,19 @@ public class MainActivity extends ActivityBase
                                 public void onClick(DialogInterface dialog, int id)
                                 {
                                     // if this button is clicked, close current activity
+                                    context = getApplicationContext();
                                     task = new addSinglePhotoTaskMain();
                                     task.execute();
-                                    Intent i = new Intent(MainActivity.this, MainActivity.class);
-                                    i.putExtra("north", spnnorth);
+                                    Intent i = new Intent(MainActivity.this,
+                                            MainActivity.class);
+                                    i.putExtra("north", spnNorth);
                                     i.putExtra("east", spnEast);
                                     i.putExtra("imagePath", imagePath);
-                                    i.putExtra("ctx", AppConstants.temp_Context_No);
+                                    i.putExtra("ctx", AppConstants.tempContextNo);
                                     startActivity(i);
                                 }
-                            }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            }).setNegativeButton("Cancel",
+                                    new DialogInterface.OnClickListener() {
                                 /**
                                  * User pressed cancel
                                  * @param dialog - alert window
@@ -470,23 +474,27 @@ public class MainActivity extends ActivityBase
                         }
                         else
                         {
-                            Intent i = new Intent(MainActivity.this, ActivityCamera.class);
-                            i.putExtra("north", spnnorth);
+                            Intent i = new Intent(MainActivity.this,
+                                    ActivityCamera.class);
+                            i.putExtra("north", spnNorth);
                             i.putExtra("east", spnEast);
-                            i.putExtra("ctx", AppConstants.temp_Context_No);
+                            i.putExtra("ctx", AppConstants.tempContextNo);
                             i.putExtra("imagePath", imagePath);
                             startActivity(i);
                         }
                     }
                     else
                     {
-                        Toast.makeText(MainActivity.this, "Select area", Toast.LENGTH_LONG).show();
+                        Toast.makeText(MainActivity.this, "Select area",
+                                Toast.LENGTH_LONG).show();
                     }
 
                 }
                 else
                 {
-                    Toast.makeText(MainActivity.this, "Please Select at least one Context number...", Toast.LENGTH_LONG).show();
+                    Toast.makeText(MainActivity.this,
+                            "Please Select at least one Context number...",
+                            Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -495,7 +503,7 @@ public class MainActivity extends ActivityBase
     /**
      * Take picture
      */
-    public void capture_image()
+    public void captureImage()
     {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         fileUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE);
@@ -543,21 +551,21 @@ public class MainActivity extends ActivityBase
             try
             {
                 Bitmap thumbnail = decodeUri(fileUri);
-                imgphoto.setImageBitmap(thumbnail);
+                imgPhoto.setImageBitmap(thumbnail);
             }
             catch (FileNotFoundException e)
             {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
             // changes done here
             if (replace)
             {
-                System.out.println("spneast" + spnEast + "spnnorth" + spnnorth);
+                System.out.println("spneast" + spnEast + "spnnorth" + spnNorth);
             }
             else
             {
-                task = new GetContextList(MainActivity.this); task.execute();
+                task = new GetContextList(MainActivity.this);
+                task.execute();
 			}
         }
     }
@@ -572,7 +580,8 @@ public class MainActivity extends ActivityBase
     {
         BitmapFactory.Options o = new BitmapFactory.Options();
         o.inJustDecodeBounds = true;
-        BitmapFactory.decodeStream(getContentResolver().openInputStream(selectedImage), null, o);
+        BitmapFactory.decodeStream(getContentResolver().openInputStream(selectedImage),
+                null, o);
         final int REQUIRED_SIZE = 100;
         int width_tmp = o.outWidth, height_tmp = o.outHeight;
         int scale = 1;
@@ -584,41 +593,8 @@ public class MainActivity extends ActivityBase
         }
         BitmapFactory.Options o2 = new BitmapFactory.Options();
         o2.inSampleSize = scale;
-        return BitmapFactory.decodeStream(getContentResolver().openInputStream(selectedImage), null, o2);
-    }
-
-    /**
-     * Preview image
-     */
-    private void previewCapturedImage()
-    {
-        try
-        {
-            // hide video preview
-            imgphoto.setVisibility(View.VISIBLE);
-            // bitmap factory
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            // downsizing image as it throws OutOfMemory Exception for larger images
-            options.inSampleSize = 1;
-            final Bitmap bitmap = BitmapFactory.decodeFile(fileUri.getPath(), options);
-            imgphoto.setImageBitmap(bitmap);
-            bitmap.recycle();
-            System.gc();
-            if (replace)
-            {
-                task = new ReplacePhotoMain();
-                task.execute();
-            }
-            else
-            {
-                task = new addSinglePhotoTaskMain();
-                task.execute();
-            }
-        }
-        catch (NullPointerException e)
-        {
-            e.printStackTrace();
-        }
+        return BitmapFactory.decodeStream(getContentResolver().openInputStream(selectedImage),
+                null, o2);
     }
 
     /**
@@ -639,24 +615,29 @@ public class MainActivity extends ActivityBase
     private static File getOutputMediaFile(int type)
     {
         // External sdcard location
-        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
+        File mediaStorageDir =
+                new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
                 IMAGE_DIRECTORY_NAME);
         // Create the storage directory if it does not exist
         if (!mediaStorageDir.exists())
         {
             if (!mediaStorageDir.mkdirs())
             {
-                Log.d(IMAGE_DIRECTORY_NAME, "Oops! Failed create " + IMAGE_DIRECTORY_NAME + " directory");
+                Log.d(IMAGE_DIRECTORY_NAME, "Oops! Failed create " + IMAGE_DIRECTORY_NAME
+                        + " directory");
                 return null;
             }
         }
         // Create a media file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss",
+                Locale.getDefault()).format(new Date());
         File mediaFile;
         if (type == MEDIA_TYPE_IMAGE)
         {
-            mediaFile = new File(mediaStorageDir.getPath() + File.separator + "IMG_" + timeStamp + ".jpg");
-            Log.e("ImagePAth", mediaStorageDir.getPath() + File.separator + "IMG_" + timeStamp + ".jpg");
+            mediaFile = new File(mediaStorageDir.getPath() + File.separator + "IMG_"
+                    + timeStamp + ".jpg");
+            Log.e("ImagePath", mediaStorageDir.getPath() + File.separator + "IMG_"
+                    + timeStamp + ".jpg");
             imagePath = mediaStorageDir.getPath() + File.separator + "IMG_" + timeStamp + ".jpg";
         }
         else
@@ -668,13 +649,9 @@ public class MainActivity extends ActivityBase
 
     static class addSinglePhotoTaskMain extends BaseTask
     {
-        // Context con;
-        // Spinner Spneast;
         SimpleData list;
         ProgressDialog progressDialog = null;
-        // SimpleTextAdapter adp;
-        // String north1,east1,img,photo_id;
-        String ip_address = "", camval;
+        String ipAddress = "";
         /**
          * Constructor
          */
@@ -701,7 +678,7 @@ public class MainActivity extends ActivityBase
         {
             DBHelper db = DBHelper.getInstance(null);
             db.open();
-            ip_address = db.getIpAddress();
+            ipAddress = db.getIpAddress();
             data1 = db.getImageProperty();
             db.close();
         }
@@ -717,8 +694,8 @@ public class MainActivity extends ActivityBase
             SimpleObjectFactory factory = SimpleObjectFactory.getInstance();
             if (imagePath != null && imagePath.length() > 0)
             {
-                list = factory.addSingleimg(spnnorth, spnEast, imagePath, null, ip_address, "",
-                        data1.base_image_path, data1.context_subpath);
+                list = factory.addSingleImg(spnNorth, spnEast, imagePath, null, ipAddress,
+                        "", data1.baseImagePath, data1.contextSubpath);
             }
             return null;
         }
@@ -737,7 +714,7 @@ public class MainActivity extends ActivityBase
             }
             if (list.result == RESPONSE_RESULT.success)
             {
-                if (list.image_path != null && list.image_path.length() > 0)
+                if (list.imagePath != null && list.imagePath.length() > 0)
                 {
                     System.out.println("inside single photo task post method");
                 }
@@ -746,12 +723,6 @@ public class MainActivity extends ActivityBase
             else
             {
                 Toast.makeText(null, list.resultMsg + "", Toast.LENGTH_SHORT).show();
-            }
-            if (AppConstants.temp_Context_No != null && AppConstants.temp_Context_No.size() > 0)
-            {
-                SimpleContextSelectedAdapter adyt =
-                        new SimpleContextSelectedAdapter(null, AppConstants.temp_Context_No,
-                        spnEast, spnnorth, null, null, null);
             }
         }
 
@@ -779,129 +750,15 @@ public class MainActivity extends ActivityBase
         }
     }
 
-    static class ReplacePhotoMain extends BaseTask
+    class GetContextList extends BaseTask
     {
-        SimpleData data;
-        ProgressDialog progressDialog = null;
-        String ip_address = "", camval;
-		/**
-		 * Replace photo
-		 */
-        public ReplacePhotoMain()
-        {
-        }
-
-        /**
-         * Get data
-         * @param pos - position
-         * @return Returns null
-         */
-        @SuppressWarnings("unchecked")
-        public SimpleData getData(int pos)
-        {
-            return null;
-        }
-
-        /**
-         * Run before thread
-         */
-        @Override
-        protected void onPreExecute()
-        {
-            DBHelper db = DBHelper.getInstance(null);
-            db.open();
-            ip_address = db.getIpAddress();
-            db.close();
-        }
-
-        /**
-         * Run thread in background
-         * @param params - thread parameters
-         * @return Returns nothing
-         */
-        @Override
-        protected Void doInBackground(String... params)
-        {
-            SimpleObjectFactory factory = SimpleObjectFactory.getInstance();
-            try
-            {
-                data = factory.ReplacePhoto(ip_address, "delete", spnEast, spnnorth, ctx_no,
-                        null, imagePath);
-                System.out.println("ip address" + ip_address);
-                System.out.println("ip spnEast" + spnEast);
-                System.out.println("ip spnnorth" + spnnorth);
-                System.out.println("ip ctx_no" + ctx_no);
-                System.out.println("ip imagePath" + imagePath);
-            }
-            catch (Exception ex)
-            {
-                ex.printStackTrace();
-            }
-            return null;
-        }
-
-        /**
-         * Run after the thread finishes
-         * @param result - Nothing
-         */
-        @Override
-        protected void onPostExecute(Void result)
-        {
-            if (progressDialog != null && progressDialog.isShowing())
-            {
-                progressDialog.dismiss();
-            }
-            if (data.result == RESPONSE_RESULT.success)
-            {
-                Toast.makeText(null, "Photo replaced..", Toast.LENGTH_SHORT).show();
-            }
-            else
-            {
-                Toast.makeText(null, data.resultMsg, Toast.LENGTH_SHORT).show();
-            }
-            if (AppConstants.temp_Context_No != null && AppConstants.temp_Context_No.size() > 0)
-            {
-                SimpleContextSelectedAdapter adyt =
-                        new SimpleContextSelectedAdapter(null, AppConstants.temp_Context_No,
-                        spnEast, spnnorth, null, null, null);
-            }
-        }
-
-        /**
-         * Thread cancelled
-         * @param result - nothing
-         */
-        @Override
-        protected void onCancelled(Void result)
-        {
-            release();
-            super.onCancelled(result);
-            if (progressDialog != null && progressDialog.isShowing())
-            {
-                progressDialog.dismiss();
-            }
-        }
-
-        /**
-         * Release thread
-         */
-        @Override
-        public void release()
-        {
-        }
-    }
-
-    static class GetContextList extends BaseTask
-    {
+        Context con;
         List<SimpleData> list;
         ProgressDialog progressDialog = null;
-        String ip_address = "", camval;
-        /**
-         * Get contexts
-         * @param con - context
-         */
+        String ipAddress = "";
         public GetContextList(Context con)
         {
+            this.con = con;
         }
 
         /**
@@ -916,18 +773,18 @@ public class MainActivity extends ActivityBase
         }
 
         /**
-         * Run before thread
+         * Start thread
          */
         @Override
         protected void onPreExecute()
         {
-            progressDialog = new ProgressDialog(null);
+            progressDialog = new ProgressDialog(MainActivity.this);
             progressDialog.setCancelable(false);
             progressDialog.setCanceledOnTouchOutside(false);
             progressDialog.show();
-            DBHelper db = DBHelper.getInstance(null);
+            DBHelper db = DBHelper.getInstance(MainActivity.this);
             db.open();
-            ip_address = db.getIpAddress();
+            ipAddress = db.getIpAddress();
             db.close();
         }
 
@@ -940,12 +797,12 @@ public class MainActivity extends ActivityBase
         protected Void doInBackground(String... params)
         {
             SimpleListFactory factory = SimpleListFactory.getInstance();
-            list = factory.getContextList(ip_address, spnEast, spnnorth, null);
+            list = factory.getContextList(ipAddress, spnEast, spnNorth, photoId);
             return null;
         }
 
         /**
-         * Run after thread
+         * Thread finished
          * @param result - nothing
          */
         @Override
@@ -958,13 +815,22 @@ public class MainActivity extends ActivityBase
             }
             if (list != null && list.size() > 0)
             {
-                SimpleStringAdapter asdad = new SimpleStringAdapter(null, list, spnEast, spnnorth, imagePath);
+                spnContext.setVisibility(View.VISIBLE);
+                SimpleStringAdapter asdad = new SimpleStringAdapter(con, list);
+                spnContext.setAdapter(asdad);
+                if (a == 0)
+                {
+                    spnContext.performClick();
+                }
+                a = a + 1;
             }
             else
             {
-                Toast.makeText(null, "There is no Context numbers for these areas",
+                Toast.makeText(MainActivity.this,
+                        "There is no Context numbers for these areas",
                         Toast.LENGTH_SHORT).show();
             }
+
         }
 
         /**
@@ -980,10 +846,11 @@ public class MainActivity extends ActivityBase
             {
                 progressDialog.dismiss();
             }
+
         }
 
         /**
-         * Release thread
+         * Thread released
          */
         @Override
         public void release()
@@ -998,12 +865,13 @@ public class MainActivity extends ActivityBase
     protected void onResume()
     {
         super.onResume();
-        if (AppConstants.temp_Context_No != null && AppConstants.temp_Context_No.size() > 0)
+        if (AppConstants.tempContextNo != null && AppConstants.tempContextNo.size() > 0)
         {
             listViewContext.setVisibility(View.VISIBLE);
             SimpleContextSelectedAdapter adyt =
-                    new SimpleContextSelectedAdapter(MainActivity.this, AppConstants.temp_Context_No, spnEast,
-                    spnnorth, photo_id, listViewContext, spnContext);
+                    new SimpleContextSelectedAdapter(MainActivity.this,
+                    AppConstants.tempContextNo, spnEast, spnNorth, photoId, listViewContext,
+                            spnContext);
             listViewContext.setAdapter(adyt);
         }
         else

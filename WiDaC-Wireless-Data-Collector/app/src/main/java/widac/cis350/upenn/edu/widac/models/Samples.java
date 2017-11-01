@@ -1,46 +1,58 @@
+// Samples
+// @author: ashutosh
 package widac.cis350.upenn.edu.widac.models;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-
-/**
- * Created by ashutosh on 4/27/17.
- */
-
-public class Samples {
-
-    List<Sample> samples;
-
-    // public constructor is necessary for collections
-    public Samples() {
+public class Samples
+{
+    private List<Sample> samples;
+    /**
+     * public constructor is necessary for collections
+     */
+    public Samples()
+    {
         samples = new ArrayList<Sample>();
     }
 
-    public static Samples parseJSON(String response) {
+    /**
+     * Read JSON response
+     * @param response - database response
+     * @return Returns samples
+     */
+    public static Samples parseJSON(String response)
+    {
         Gson gson = new GsonBuilder().create();
-        Samples samples = gson.fromJson(response, Samples.class);
-        return samples;
+        return gson.fromJson(response, Samples.class);
     }
 
-    public List<String> getCompositeKeys() {
+    /**
+     * Get sample keys
+     * @return Returns sample keys
+     */
+    public List<String> getCompositeKeys()
+    {
         List<String> allContextNumbers = new ArrayList<>();
-        for (Sample sample: samples) {
+        for (Sample sample: samples)
+        {
             allContextNumbers.add(sample.getCompositeKey());
         }
         return allContextNumbers;
     }
 
+    /**
+     * Represent as a string
+     * @return Returns string representation
+     */
     @Override
-    public String toString() {
-        String samplesString = "";
-        for (Sample sample : samples) {
-            samplesString += sample;
+    public String toString()
+    {
+        StringBuilder samplesString = new StringBuilder("");
+        for (Sample sample: samples)
+        {
+            samplesString.append(sample);
         }
-        return samplesString;
+        return samplesString.toString();
     }
 }

@@ -10,26 +10,26 @@ import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
 public class DBHelper extends SQLiteOpenHelper
 {
-    static DBHelper dbHelper;
-    SQLiteDatabase database;
-    final static String DB_NAME = "user.db";
-    final static int DB_VERSION = 3;
-    static final String TABLE_SERVER_DETAIL = "user_detail";
-    static final String IP_ADDRESS = "ip_address";
-    static final String DATABASE_SERVER = "create table " + TABLE_SERVER_DETAIL + "(" + IP_ADDRESS + " text);";
-    static final String TABLE_IMAGE_PROPERTY = "image_property";
+    private static DBHelper dbHelper;
+    private SQLiteDatabase database;
+    private final static String DB_NAME = "user.db";
+    private final static int DB_VERSION = 3;
+    private static final String TABLE_SERVER_DETAIL = "user_detail";
+    private static final String IP_ADDRESS = "ip_address";
+    private static final String DATABASE_SERVER = "create table " + TABLE_SERVER_DETAIL + "(" + IP_ADDRESS + " text);";
+    private static final String TABLE_IMAGE_PROPERTY = "image_property";
     // IMAGE_PROPERTY TABLE COLUMNS
-    static final String CONTEXT_SUBPATH_3D = "context_subpath_3d";
-    static final String BASE_IMAGE_PATH = "base_image_path";
-    static final String CONTEXT_SUBPATH = "context_subpath";
-    static final String AREA_DIVIDER = "sample_label_area_divider";
-    static final String CONTEXT_DIVIDER = "sample_label_context_divider";
-    static final String SAMPLE_LABEL_FONT = "sample_label_font";
-    static final String SAMPLE_LABEL_FONT_SIZE = "sample_label_font_size";
-    static final String SAMPLE_LABEL_PLACEMENT = "sample_label_placement";
-    static final String SAMPLE_DIVIDER = "sample_label_sample_divider";
-    static final String SAMPLE_SUBPATH = "sample_subpath";
-    static final String CREATE_TABLE_IMAGE_PROPERTY = "create table " + TABLE_IMAGE_PROPERTY
+    private static final String CONTEXT_SUBPATH_3D = "context_subpath_3d";
+    private static final String BASE_IMAGE_PATH = "base_image_path";
+    private static final String CONTEXT_SUBPATH = "context_subpath";
+    private static final String AREA_DIVIDER = "sample_label_area_divider";
+    private static final String CONTEXT_DIVIDER = "sample_label_context_divider";
+    private static final String SAMPLE_LABEL_FONT = "sample_label_font";
+    private static final String SAMPLE_LABEL_FONT_SIZE = "sample_label_font_size";
+    private static final String SAMPLE_LABEL_PLACEMENT = "sample_label_placement";
+    private static final String SAMPLE_DIVIDER = "sample_label_sample_divider";
+    private static final String SAMPLE_SUBPATH = "sample_subpath";
+    private static final String CREATE_TABLE_IMAGE_PROPERTY = "create table " + TABLE_IMAGE_PROPERTY
             + "(" + CONTEXT_SUBPATH_3D + " text," + BASE_IMAGE_PATH + " text," + CONTEXT_SUBPATH +" text,"
             + AREA_DIVIDER + " text," + CONTEXT_DIVIDER + " text," + SAMPLE_LABEL_FONT + " text,"
             + SAMPLE_LABEL_FONT_SIZE + " text," + SAMPLE_LABEL_PLACEMENT + " text,"
@@ -49,12 +49,10 @@ public class DBHelper extends SQLiteOpenHelper
 
     /**
      * Delete detail
-     * @return Returns true
      */
-    public boolean deleteServerDetail()
+    public void deleteServerDetail()
     {
         database.delete(TABLE_SERVER_DETAIL, null, null);
-        return true;
     }
 
     /**
@@ -85,24 +83,12 @@ public class DBHelper extends SQLiteOpenHelper
     /**
      * Connect to server
      * @param d - server IP
-     * @return Returns true
      */
-    public boolean addServerAddress(String d)
+    public void addServerAddress(String d)
     {
         ContentValues values = new ContentValues();
         values.put(IP_ADDRESS, d);
         database.insert(TABLE_SERVER_DETAIL, null, values);
-        return true;
-    }
-
-    /**
-     * Delete a user
-     * @return Returns true
-     */
-    public boolean deleteUser()
-    {
-        database.delete(TABLE_SERVER_DETAIL, null, null);
-        return true;
     }
 
     /**
@@ -134,21 +120,21 @@ public class DBHelper extends SQLiteOpenHelper
     {
         try
         {
-            ContentValues values=new ContentValues();
-            values.put(CONTEXT_SUBPATH_3D,data.context_subpath_3d);
-            values.put(BASE_IMAGE_PATH, data.base_image_path);
-            values.put(CONTEXT_SUBPATH,  data.context_subpath);
-            values.put(AREA_DIVIDER,  data.sample_label_area_divider);
-            values.put(CONTEXT_DIVIDER, data.sample_label_context_divider);
-            values.put(SAMPLE_LABEL_FONT,  data.sample_label_font);
-            values.put(SAMPLE_LABEL_FONT_SIZE, data.sample_label_font_size);
-            values.put(SAMPLE_LABEL_PLACEMENT, data.sample_label_placement);
-            values.put(SAMPLE_DIVIDER, data.sample_label_sample_divider);
-            values.put(SAMPLE_SUBPATH,  data.sample_subpath);
+            ContentValues values = new ContentValues();
+            values.put(CONTEXT_SUBPATH_3D, data.contextSubpath3d);
+            values.put(BASE_IMAGE_PATH, data.baseImagePath);
+            values.put(CONTEXT_SUBPATH, data.contextSubpath);
+            values.put(AREA_DIVIDER, data.sampleLabelAreaDivider);
+            values.put(CONTEXT_DIVIDER, data.sampleLabelContextDivider);
+            values.put(SAMPLE_LABEL_FONT, data.sampleLabelFont);
+            values.put(SAMPLE_LABEL_FONT_SIZE, data.sampleLabelFontSize);
+            values.put(SAMPLE_LABEL_PLACEMENT, data.sampleLabelPlacement);
+            values.put(SAMPLE_DIVIDER, data.sampleLabelSampleDivider);
+            values.put(SAMPLE_SUBPATH, data.sampleSubpath);
             database.insert(TABLE_IMAGE_PROPERTY, null, values);
             return true;
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             ex.printStackTrace();
             return false;
@@ -157,52 +143,49 @@ public class DBHelper extends SQLiteOpenHelper
 
     /**
      * Delete image property
-     * @return Returns whether the update succeeded
      */
-    public boolean deleteImageProperty()
+    public void deleteImageProperty()
     {
         try
         {
             database.delete(TABLE_IMAGE_PROPERTY, null, null);
-            return true;
         }
         catch(Exception ex)
         {
             ex.printStackTrace();
-            return false;
         }
     }
 
     /**
      * Change image property
-     * @param _3dsubpath - path to property
-     * @param base_image_path - image location
-     * @param context_subpath - context location
-     * @param area_divider - area divider
-     * @param context_divider - context divider
-     * @param font_size - font size
+     * @param threedSubpath - path to property
+     * @param baseImagePath - image location
+     * @param contextSubpath - context location
+     * @param areaDivider - area divider
+     * @param contextDivider - context divider
+     * @param fontSize - font size
      * @param item - item to change
-     * @param sample_divider - divider
-     * @param sample_subpath - subpath
+     * @param sampleDivider - divider
+     * @param sampleSubpath - subpath
      * @return Returns whether the update succeeded
      */
-    public boolean updateImageProperty(String _3dsubpath, String base_image_path,
-                                       String context_subpath, String area_divider,
-                                       String context_divider, String font_size, String item,
-                                       String sample_divider, String sample_subpath)
+    public boolean updateImageProperty(String threedSubpath, String baseImagePath,
+                                       String contextSubpath, String areaDivider,
+                                       String contextDivider, String fontSize, String item,
+                                       String sampleDivider, String sampleSubpath)
     {
         try
         {
             ContentValues values = new ContentValues();
-            values.put(CONTEXT_SUBPATH_3D,_3dsubpath);
-            values.put(BASE_IMAGE_PATH, base_image_path);
-            values.put(CONTEXT_SUBPATH, context_subpath);
-            values.put(AREA_DIVIDER, area_divider);
-            values.put(CONTEXT_DIVIDER, context_divider);
-            values.put(SAMPLE_LABEL_FONT_SIZE, font_size);
+            values.put(CONTEXT_SUBPATH_3D, threedSubpath);
+            values.put(BASE_IMAGE_PATH, baseImagePath);
+            values.put(CONTEXT_SUBPATH, contextSubpath);
+            values.put(AREA_DIVIDER, areaDivider);
+            values.put(CONTEXT_DIVIDER, contextDivider);
+            values.put(SAMPLE_LABEL_FONT_SIZE, fontSize);
             values.put(SAMPLE_LABEL_PLACEMENT, item);
-            values.put(SAMPLE_DIVIDER, sample_divider);
-            values.put(SAMPLE_SUBPATH,  sample_subpath);
+            values.put(SAMPLE_DIVIDER, sampleDivider);
+            values.put(SAMPLE_SUBPATH,  sampleSubpath);
             database.update(TABLE_IMAGE_PROPERTY, values, null, null);
             return true;
         }
@@ -225,16 +208,16 @@ public class DBHelper extends SQLiteOpenHelper
         cur.moveToFirst();
         if (!cur.isAfterLast())
         {
-            data.context_subpath_3d = cur.getString(0);
-            data.base_image_path = cur.getString(1);
-            data.context_subpath = cur.getString(2);
-            data.sample_label_area_divider = cur.getString(3);
-            data.sample_label_context_divider = cur.getString(4);
-            data.sample_label_font = cur.getString(5);
-            data.sample_label_font_size = cur.getString(6);
-            data.sample_label_placement = cur.getString(7);
-            data.sample_label_sample_divider = cur.getString(8);
-            data.sample_subpath = cur.getString(9);
+            data.contextSubpath3d = cur.getString(0);
+            data.baseImagePath = cur.getString(1);
+            data.contextSubpath = cur.getString(2);
+            data.sampleLabelAreaDivider = cur.getString(3);
+            data.sampleLabelContextDivider = cur.getString(4);
+            data.sampleLabelFont = cur.getString(5);
+            data.sampleLabelFontSize = cur.getString(6);
+            data.sampleLabelPlacement = cur.getString(7);
+            data.sampleLabelSampleDivider = cur.getString(8);
+            data.sampleSubpath = cur.getString(9);
             cur.close();
             return data;
         }

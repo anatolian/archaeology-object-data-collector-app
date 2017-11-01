@@ -1,18 +1,14 @@
 // Image List processor
 // @author: anatolian
 package excavation.excavation_app.module.sample;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import excavation.excavation_app.module.all.ImageBean;
 import excavation.excavation_app.module.common.bean.ResponseData;
 import excavation.excavation_app.module.common.bean.SimpleData;
-import excavation.excavation_app.module.common.constants.AppConstants;
-import excavation.excavation_app.module.common.constants.MessageConstants;
 import excavation.excavation_app.module.common.http.HttpOperation;
 import excavation.excavation_app.module.common.http.HttpProcessor;
 import excavation.excavation_app.module.common.http.HttpRequester;
@@ -21,20 +17,18 @@ import excavation.excavation_app.module.common.http.Response;
 import excavation.excavation_app.module.common.http.Response.RESPONSE_RESULT;
 import excavation.excavation_app.module.common.http.Response.STANDARD;
 import excavation.excavation_app.module.common.http.bean.HttpObject;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import android.util.Log;
-public class SampleimgListProcessor extends HttpOperation implements HttpProcessor
+public class SampleImgListProcessor extends HttpOperation implements HttpProcessor
 {
-    String ip_address;
+    private String ipAddress;
     /**
      * Constructor
-     * @param ip_address - server IP
+     * @param ipAddress - server IP
      */
-    public SampleimgListProcessor(String ip_address)
+    public SampleImgListProcessor(String ipAddress)
     {
-        this.ip_address = ip_address;
+        this.ipAddress = ipAddress;
     }
 
     /**
@@ -46,14 +40,13 @@ public class SampleimgListProcessor extends HttpOperation implements HttpProcess
     public HttpObject getHttp(Map<Request, String> mapParams)
     {
         HttpObject object = new HttpObject();
-        object.setInfo(HttpRequester.GET_LISTING);
-        object.setUrl(generateUrlWithParams(HttpRequester.GET_LISTING, mapParams, ip_address));
+        object.setUrl(generateUrlWithParams(HttpRequester.GET_LISTING, mapParams, ipAddress));
         return object;
     }
 
     public enum LIST_SAMPLE_RESPONSE implements Response
     {
-        file_type, image_path;
+        fileType, imagePath
     }
 
     /**
@@ -70,8 +63,8 @@ public class SampleimgListProcessor extends HttpOperation implements HttpProcess
 
     public enum IMG_SAMPLE_REQUESTER implements Request
     {
-        mode, listing_type, area_easting, area_northing, context_number, sample_number,
-        sample_photo_type, base_image_path, sample_subpath;
+        mode, listingType, areaEasting, areaNorthing, contextNumber, sampleNumber,
+        samplePhotoType, baseImagePath, sampleSubpath;
         /**
          * Get parameter
          * @return Get the string
@@ -92,13 +85,13 @@ public class SampleimgListProcessor extends HttpOperation implements HttpProcess
     @Override
     public List<SimpleData> parseList(HttpObject object)
     {
-        SortedMap<Integer, SimpleData> map = new TreeMap<Integer, SimpleData>();
+        SortedMap<Integer, SimpleData> map = new TreeMap<>();
         SimpleData data = new SimpleData();
         object = request(object);
         checkHttpStatus(object, data);
         if (data.result == RESPONSE_RESULT.failed)
         {
-            return new LinkedList<SimpleData>(map.values());
+            return new LinkedList<>(map.values());
         }
         try
         {
@@ -112,9 +105,6 @@ public class SampleimgListProcessor extends HttpOperation implements HttpProcess
                 SimpleData dataObject = parseObject(resItem);
                 map.put(Integer.parseInt(key), dataObject);
             }
-            resIter = null;
-            resData = null;
-            resObj = null;
         }
         catch (Exception e)
         {
@@ -122,25 +112,23 @@ public class SampleimgListProcessor extends HttpOperation implements HttpProcess
         }
         finally
         {
-            data = null;
             object.release();
-            object = null;
         }
-        return new LinkedList<SimpleData>(map.values());
+        return new LinkedList<>(map.values());
     }
 
     /**
      * Read object
      * @param object - JSON
      * @return Returns data
-     * @throws JSONException
+     * @throws JSONException if the response is malformed
      */
     @SuppressWarnings("unchecked")
     @Override
     public SimpleData parseObject(JSONObject object) throws JSONException
     {
         SimpleData data = new SimpleData();
-        data.id = get(LIST_SAMPLE_RESPONSE.file_type.name(), object);
+        data.id = get(LIST_SAMPLE_RESPONSE.fileType.name(), object);
         return data;
     }
 }

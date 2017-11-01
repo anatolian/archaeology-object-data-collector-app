@@ -11,39 +11,39 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.view.View;
 import android.widget.GridView;
-import android.widget.ListView;
-import android.widget.Spinner;
 import excavation.excavation_app.com.appenginedemo.db.DBHelper;
-public class getSamplePhotoTask extends BaseTask
+public class GetSamplePhotoTask extends BaseTask
 {
+    private Context con;
+    private GridView gList;
     List<SimpleData> list;
-    ProgressDialog progressDialog = null;
-    SimpleImagePhotoAdapter adp;
-    String m, north, east, cloth, gtype, contno, sno;
-    String type, mode = "list", type1;
-    ImagePropertyBean data1;
-    String ip_address = "";
-    int count;
+    private ProgressDialog progressDialog = null;
+    private String north, east, sno, type1, ipAddress = "", contNo;
+    private ImagePropertyBean data1;
+    private int count;
     /**
      * Constructor
-     * @param activity_Sample - calling activity
+     * @param activitySample - calling activity
      * @param count - item count
      * @param gridViewList - grid view
-     * @param spnnorth - northing
+     * @param spnNorth - northing
      * @param spnEast - easting
-     * @param spncon - context
-     * @param spnSAm - sample
+     * @param spnCon - context
+     * @param spnSam - sample
      * @param type - specimen type
      */
-    public getSamplePhotoTask(Context activity_Sample, int count, GridView gridViewList,
-                               String spnnorth, String spnEast, String spncon, String spnSAm, String type)
+    public GetSamplePhotoTask(Context activitySample, int count, GridView gridViewList,
+                              String spnNorth, String spnEast, String spnCon, String spnSam,
+                              String type)
     {
-        north = spnnorth;
+        con = activitySample;
+        gList = gridViewList;
+        north = spnNorth;
         east = spnEast;
-        contno = spncon;
-        sno = spnSAm;
+        sno = spnSam;
         type1 = type;
-        this.count=count;
+        contNo = spnCon;
+        this.count = count;
     }
 
     /**
@@ -65,7 +65,7 @@ public class getSamplePhotoTask extends BaseTask
     {
         DBHelper db = DBHelper.getInstance(null);
         db.open();
-        ip_address = db.getIpAddress();
+        ipAddress = db.getIpAddress();
         data1 = db.getImageProperty();
         db.close();
     }
@@ -79,10 +79,10 @@ public class getSamplePhotoTask extends BaseTask
     protected Void doInBackground(String... params)
     {
         SimpleListFactory factory = SimpleListFactory.getInstance();
-        if (count == 5 || count == 3 && AppConstants.spnConNopos > 1 && AppConstants.spnSamNopos > 0)
+        if (count == 5 || count == 3 && AppConstants.spnConNoPos > 1 && AppConstants.spnSamNoPos > 0)
         {
-            list = factory.getPhotoSampleList(north, east, contno, sno, type1, ip_address,
-                    data1.base_image_path, data1.sample_subpath);
+            list = factory.getPhotoSampleList(north, east, contNo, sno, type1, ipAddress,
+                    data1.baseImagePath, data1.sampleSubpath);
         }
         return null;
     }
@@ -97,7 +97,13 @@ public class getSamplePhotoTask extends BaseTask
         super.onPostExecute(result);
         if (list != null && list.size() > 0)
         {
-            adp = new SimpleImagePhotoAdapter(null, list);
+            gList.setVisibility(View.VISIBLE);
+            SimpleImagePhotoAdapter adp = new SimpleImagePhotoAdapter(con, list);
+            gList.setAdapter(adp);
+        }
+        else
+        {
+            gList.setVisibility(View.GONE);
         }
     }
 

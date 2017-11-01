@@ -25,7 +25,6 @@ public abstract class HttpOperation
     private static final String QUE = "?";
     private static final String AND = "&";
     private static final String EQ = "=";
-    protected static final String URL_FILLER = "1=1";
     /**
      * Create URL
      * @param info - HTTP info
@@ -33,15 +32,17 @@ public abstract class HttpOperation
      * @param url - base URL
      * @return Returns appended URL
      */
-    protected String generateUrlWithParams(final HttpRequester info, Map<Request, String> mapValues, String url)
+    protected String generateUrlWithParams(final HttpRequester info, Map<Request, String> mapValues,
+                                           String url)
     {
-        String dhagsj = "http://"+url+"/bil/webservices/";
+        String dhagsj = "http://" + url + "/bil/webservices/";
         StringBuilder finalUrl = new StringBuilder(dhagsj).append(info.getFileName()).append(QUE);
         if (mapValues != null && mapValues.size() > 0)
         {
-            for (Request paramName : mapValues.keySet())
+            for (Request paramName: mapValues.keySet())
             {
-                finalUrl.append(AND).append(paramName.getParameter()).append(EQ).append(mapValues.get(paramName));
+                finalUrl.append(AND).append(paramName.getParameter()).append(EQ)
+                        .append(mapValues.get(paramName));
             }
         }
         String newUrl = finalUrl.toString().replaceAll(" ", "%20");
@@ -83,7 +84,7 @@ public abstract class HttpOperation
             e.printStackTrace();
             return null;
         }
-        int STATUS = AppConstants.INT_STATUS_FAILED_DOWNLOAD;
+        int STATUS;
         try
         {
             BufferedReader br = new BufferedReader(new InputStreamReader(client.getInputStream()));
@@ -160,7 +161,7 @@ public abstract class HttpOperation
             e.printStackTrace();
             return null;
         }
-        int STATUS = AppConstants.INT_STATUS_FAILED_DOWNLOAD;
+        int STATUS;
         try
         {
             BufferedReader br = new BufferedReader(new InputStreamReader(client.getInputStream()));
@@ -239,7 +240,7 @@ public abstract class HttpOperation
             e.printStackTrace();
             return null;
         }
-        int STATUS = AppConstants.INT_STATUS_FAILED_DOWNLOAD;
+        int STATUS;
         try
         {
             BufferedReader br = new BufferedReader(new InputStreamReader(client.getInputStream()));
@@ -315,7 +316,7 @@ public abstract class HttpOperation
             e.printStackTrace();
             return null;
         }
-        int STATUS = AppConstants.INT_STATUS_FAILED_DOWNLOAD;
+        int STATUS;
         try
         {
             BufferedReader br = new BufferedReader(new InputStreamReader(client.getInputStream()));
@@ -371,49 +372,23 @@ public abstract class HttpOperation
             data = new ResponseData();
         }
         data.result = RESPONSE_RESULT.failed;
-        data.resultMsg = MessageConstants.No_Data_Found;
+        data.resultMsg = MessageConstants.NO_DATA_FOUND;
         switch (httpObject.getStatus())
         {
             case AppConstants.INT_STATUS_FAILED_DOWNLOAD:
-                data.resultMsg = MessageConstants.Failed_To_Connect;
+                data.resultMsg = MessageConstants.FAILED_TO_CONNECT;
                 break;
             case AppConstants.INT_STATUS_FAILED_TIMEOUT:
-                data.resultMsg = MessageConstants.Failed_TimeOut;
+                data.resultMsg = MessageConstants.FAILED_TIMEOUT;
                 break;
             case AppConstants.INT_STATUS_FAILED_IO:
-                data.resultMsg = MessageConstants.Failed_To_Read;
+                data.resultMsg = MessageConstants.FAILED_TO_READ;
                 break;
             case AppConstants.INT_STATUS_SUCCESS:
                 data.resultMsg = null;
                 data.result = RESPONSE_RESULT.success;
                 break;
         }
-    }
-
-    /**
-     * HTTP error detection
-     * @param httpObject - HTTP object
-     * @return Returns whether the object is an error
-     */
-    protected boolean isHttpError(HttpObject httpObject)
-    {
-        boolean isError = false;
-        switch (httpObject.getStatus())
-        {
-            case AppConstants.INT_STATUS_FAILED_DOWNLOAD:
-                isError = true;
-                break;
-            case AppConstants.INT_STATUS_FAILED_TIMEOUT:
-                isError = true;
-                break;
-            case AppConstants.INT_STATUS_FAILED_IO:
-                isError = true;
-                break;
-            case AppConstants.INT_STATUS_SUCCESS:
-                isError = false;
-                break;
-        }
-        return isError;
     }
 
     /**
@@ -426,29 +401,5 @@ public abstract class HttpOperation
     protected String get(String key, JSONObject resItem) throws JSONException
     {
         return (resItem.has(key)) ? resItem.getString(key) : null;
-    }
-
-    /**
-     * Get double value
-     * @param key - item key
-     * @param resItem - response
-     * @return Returns the double value
-     * @throws JSONException if the response is invalid
-     */
-    protected double getDouble(String key, JSONObject resItem) throws JSONException
-    {
-        return (resItem.has(key)) ? resItem.getDouble(key): null;
-    }
-
-    /**
-     * Get JSON value
-     * @param key - item key
-     * @param resItem - response
-     * @return Returns the JSON object value
-     * @throws JSONException if the response is malformed
-     */
-    protected JSONObject getJOSNObject(String key, JSONObject resItem) throws JSONException
-    {
-        return (resItem.has(key)) ? resItem.getJSONObject(key) : null;
     }
 }

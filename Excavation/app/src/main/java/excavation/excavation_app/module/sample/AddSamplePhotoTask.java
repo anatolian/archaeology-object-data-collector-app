@@ -2,54 +2,45 @@
 // @author: anatolian
 package excavation.excavation_app.module.sample;
 import java.util.ArrayList;
-import excavation.excavation_app.com.appenginedemo.Activity_Sample;
+import excavation.excavation_app.com.appenginedemo.ActivitySample;
 import excavation.excavation_app.com.appenginedemo.db.DBHelper;
 import excavation.excavation_app.module.common.bean.SimpleData;
-import excavation.excavation_app.module.common.constants.AppConstants;
 import excavation.excavation_app.module.common.http.Response.RESPONSE_RESULT;
 import excavation.excavation_app.module.common.http.factory.SimpleObjectFactory;
 import excavation.excavation_app.module.common.task.BaseTask;
 import excavation.excavation_app.module.image.property.ImagePropertyBean;
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
-import android.util.Log;
-import android.view.View;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 public class AddSamplePhotoTask extends BaseTask
 {
+    private Activity context;
     private SimpleData data = null;
-    ProgressDialog progressDialog = null;
-    String album_name, user_id, cover_image, photos, albumId, mode = null, east, north;
-    ArrayList<String> selectedItems;
-    ArrayList<String> allselectedItems = new ArrayList<String>();
-    int cnt = 0;
-    int i = 0;
-    String batch_id, tp, samno, conno, im;
-    ImagePropertyBean data1;
-    private Handler handler = new Handler();
-
+    private ProgressDialog progressDialog = null;
+    private String east, north;
+    private ArrayList<String> selectedItems;
+    private String tp, samNo,conNo;
     /**
      * Constructor
-     * @param con - calling context
+     * @param con context
      * @param spnEast - easting
-     * @param spnnorth - northing
+     * @param spnNorth - northing
      * @param selectedImg - image
-     * @param Con - context
      * @param sam - sample
      * @param type - type of object
      */
-    public AddSamplePhotoTask(Activity con, String spnEast, String spnnorth, ArrayList<String> selectedImg,
-                              String Con, String sam, String type)
+    public AddSamplePhotoTask(Activity con, String spnEast, String spnNorth,
+                              ArrayList<String> selectedImg, String context, String sam,
+                              String type)
     {
+        this.context = con;
         east = spnEast;
-        north = spnnorth;
+        north = spnNorth;
         selectedItems = selectedImg;
-        conno = Con;
-        samno = sam;
+        conNo = context;
+        samNo = sam;
         tp = type;
     }
 
@@ -70,6 +61,11 @@ public class AddSamplePhotoTask extends BaseTask
     @Override
     protected void onPreExecute()
     {
+        progressDialog = new ProgressDialog(context);
+        progressDialog.setCancelable(false);
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.setMessage("Uploading..");
+        progressDialog.show();
     }
 
     /**
@@ -81,23 +77,22 @@ public class AddSamplePhotoTask extends BaseTask
     protected Void doInBackground(String... params)
     {
         SimpleObjectFactory factory = SimpleObjectFactory.getInstance();
-        String ip_address = "";
-        DBHelper db = DBHelper.getInstance(null);
+        DBHelper db = DBHelper.getInstance(context);
         db.open();
-        ip_address = db.getIpAddress();
-        data1 = db.getImageProperty();
+        String ipAddress = db.getIpAddress();
+        ImagePropertyBean data1 = db.getImageProperty();
         db.close();
         int j = selectedItems.size() - 1;
-        data = factory.AddSamplePhotosData(east, north, conno, samno, tp, selectedItems.get(j), ip_address,
-                data1.context_subpath_3d, data1.base_image_path, data1.context_subpath,
-                data1.sample_label_area_divider, data1.sample_label_context_divider, data1.sample_label_font,
-                data1.sample_label_font_size, data1.sample_label_placement, data1.sample_label_sample_divider,
-                data1.sample_subpath, data1.context_subpath3d1);
+        data = factory.AddSamplePhotosData(east, north, conNo, samNo, tp, selectedItems.get(j),
+                ipAddress, data1.contextSubpath3d, data1.baseImagePath, data1.contextSubpath,
+                data1.sampleLabelAreaDivider, data1.sampleLabelContextDivider,
+                data1.sampleLabelFont, data1.sampleLabelFontSize, data1.sampleLabelPlacement,
+                data1.sampleLabelSampleDivider, data1.sampleSubpath);
         return null;
     }
 
     /**
-     * Thread ended
+     * Thread finished
      * @param result - nothing
      */
     @Override
@@ -110,12 +105,14 @@ public class AddSamplePhotoTask extends BaseTask
         }
         if (data.result == RESPONSE_RESULT.success)
         {
-            Toast.makeText(null, "Uploaded Successfully", Toast.LENGTH_SHORT).show();
-            Intent i = new Intent(null, Activity_Sample.class);
+            context.finish();
+            Toast.makeText(context, "Uploaded Successfully", Toast.LENGTH_SHORT).show();
+            Intent i = new Intent(context, ActivitySample.class);
+            context.startActivity(i);
         }
         else
         {
-            Toast.makeText(null, data.resultMsg, Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, data.resultMsg, Toast.LENGTH_SHORT).show();
         }
     }
 

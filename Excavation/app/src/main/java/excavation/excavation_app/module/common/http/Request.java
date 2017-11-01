@@ -7,5 +7,5 @@ public interface Request
      * Get a parameter
      * @return Returns the parameter
      */
-    public String getParameter();
+    String getParameter();
 }

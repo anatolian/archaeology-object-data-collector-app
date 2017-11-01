@@ -1,5 +1,8 @@
+// Add multiple photos thread
+// @author: anatolian
 package excavation.excavation_app.module.bil3d;
 import java.util.ArrayList;
+import excavation.excavation_app.com.appenginedemo.Activity3d;
 import excavation.excavation_app.module.common.bean.SimpleData;
 import excavation.excavation_app.module.common.constants.AppConstants;
 import excavation.excavation_app.module.common.http.Response.RESPONSE_RESULT;
@@ -16,54 +19,41 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
-import android.widget.Toast;
-import excavation.excavation_app.com.appenginedemo.Activity_3d;
 import com.appenginedemo.R;
 import excavation.excavation_app.com.appenginedemo.db.DBHelper;
 public class AddMultiPhotoTask extends BaseTask
 {
+    private Context context;
     private SimpleData data;
-    ProgressDialog progressDialog = null;
-    String album_name, user_id, cover_image, photos, albumId, mode = null, east, north;
-    ArrayList<String> selectedItems;
-    ArrayList<String> allselectedItems = new ArrayList<String>();
-    int cnt = 0;
-    int i = 0, j = 1, MAX_ATTEMPTS = 3;
-    String batch_id;
+    private ProgressBar bar;
+    private ProgressDialog progressDialog = null;
+    private String east, north;
+    private ArrayList<String> selectedItems;
+    private int i = 0, j = 1;
+    private String batchId;
     private Handler handler = new Handler();
-    ImagePropertyBean data1;
     /**
      * Constructor
      * @param con - calling context
-     * @param string - album name
-     * @param selectedItems - items
-     */
-    public AddMultiPhotoTask(Context con, String string, ArrayList<String> selectedItems)
-    {
-        this.album_name = string;
-        this.selectedItems = selectedItems;
-    }
-
-    /**
-     * Constructor
-     * @param con - context
      * @param spnEast - easting
-     * @param spnnorth - northing
+     * @param spnNorth - northing
      * @param selectedImg - image
-     * @param pbar - progress bar
+     * @param pbar - progress
      */
-    public AddMultiPhotoTask(Context con, String spnEast, String spnnorth, ArrayList<String> selectedImg,
-                             ProgressBar pbar)
+    public AddMultiPhotoTask(Context con, String spnEast, String spnNorth,
+                             ArrayList<String> selectedImg, ProgressBar pbar)
     {
+        this.context = con;
         east = spnEast;
-        north = spnnorth;
+        north = spnNorth;
         selectedItems = selectedImg;
+        bar = pbar;
     }
 
     /**
      * Get data
      * @param pos - position
-     * @return Returns data
+     * @return Returns null
      */
     @SuppressWarnings("unchecked")
     public SimpleData getData(int pos)
@@ -77,6 +67,7 @@ public class AddMultiPhotoTask extends BaseTask
     @Override
     protected void onPreExecute()
     {
+        bar.setVisibility(View.VISIBLE);
         new Thread(new Runnable() {
             /**
              * Run thread
@@ -93,7 +84,9 @@ public class AddMultiPhotoTask extends BaseTask
                         @Override
                         public void run()
                         {
+                            bar.setProgress(i);
                         }
+
                     });
                     try
                     {
@@ -117,37 +110,36 @@ public class AddMultiPhotoTask extends BaseTask
     protected Void doInBackground(String... params)
     {
         SimpleObjectFactory factory = SimpleObjectFactory.getInstance();
-        String ip_address = "";
-        DBHelper db = DBHelper.getInstance(null);
+        DBHelper db = DBHelper.getInstance(context);
         db.open();
-        ip_address = db.getIpAddress();
-        data1 = db.getImageProperty();
+        String ipAddress = db.getIpAddress();
+        ImagePropertyBean data1 = db.getImageProperty();
         db.close();
-        data = factory.getAddAlbumsPhotosData(east, north, selectedItems.get(0),"", ip_address,
-                data1.base_image_path, data1.context_subpath_3d);
-        batch_id = data.id;
-        Log.e("batch_id",batch_id + " " + data.resultMsg + " ");
-        while (j < selectedItems.size())
+        data = factory.getAddAlbumsPhotosData(east, north, selectedItems.get(0),"", ipAddress,
+                data1.baseImagePath, data1.contextSubpath3d);
+        batchId = data.id;
+        Log.e("batch_id",batchId + " " + data.resultMsg + " ");
+        while ( j < selectedItems.size())
         {
             if (data.result == RESPONSE_RESULT.success)
             {
                 Log.e("if part",j + "");
-                data = factory.getAddAlbumsPhotosData(east, north, selectedItems.get(j), batch_id,
-                        ip_address, data1.base_image_path, data1.context_subpath_3d);
+                data = factory.getAddAlbumsPhotosData(east, north,selectedItems.get(j), batchId,
+                        ipAddress, data1.baseImagePath, data1.contextSubpath3d);
             }
             else
             {
-                for (int h = 1; h <= MAX_ATTEMPTS; h++)
+                for (int h = 1; h <= 3; h++)
                 {
                     Log.e("MAX_ATTEMPTS" , h + " j=" + j);
-                    if (h == MAX_ATTEMPTS)
+                    if (h == 3)
                     {
                         break;
                     }
                     else
                     {
-                        data = factory.getAddAlbumsPhotosData(east, north,selectedItems.get(j),
-                                batch_id, ip_address, data1.base_image_path, data1.context_subpath_3d);
+                        data = factory.getAddAlbumsPhotosData(east, north, selectedItems.get(j),
+                                batchId, ipAddress, data1.baseImagePath, data1.contextSubpath3d);
                         if (data.result == RESPONSE_RESULT.success)
                         {
                             break;
@@ -168,32 +160,35 @@ public class AddMultiPhotoTask extends BaseTask
     protected void onPostExecute(Void result)
     {
         super.onPostExecute(result);
+        bar.setVisibility(View.GONE);
         if (AppConstants.internet == 0)
         {
             if (data.result == RESPONSE_RESULT.success)
             {
                 AppConstants.up = 1;
-                AppConstants.activity_3dSpnNorth = 0;
-                AppConstants.activity_3dSpnEast = 0;
-                AlertDialog alertDialog = new AlertDialog.Builder(null).create();
+                AppConstants.activity3dSpnNorth = 0;
+                AppConstants.activity3dSpnEast = 0;
+                AlertDialog alertDialog = new AlertDialog.Builder(context).create();
                 // Setting Dialog Title
                 alertDialog.setTitle("Uploaded Successfully");
                 // Setting Dialog Message
-                alertDialog.setMessage("your 3d photo batch was uploaded as " + batch_id);
+                alertDialog.setMessage("your 3d photo batch was uploaded as " + batchId);
                 // Setting alert dialog icon
-                alertDialog.setIcon(R.drawable.logo_small);
+                alertDialog.setIcon( R.drawable.logo_small);
                 // Setting OK Button
-                alertDialog.setButton(Dialog.BUTTON_POSITIVE,"OK", new DialogInterface.OnClickListener() {
+                alertDialog.setButton(Dialog.BUTTON_POSITIVE,"OK",
+                        new DialogInterface.OnClickListener() {
                     /**
-                     * User clicked alertDialog
-                     * @param dialog - alert window
-                     * @param which - which button
+                     * User pressed ok
+                     * @param dialog - dialog window
+                     * @param which - selection
                      */
                     public void onClick(DialogInterface dialog, int which)
                     {
                         dialog.dismiss();
                         AppConstants.selectedImg = null;
-                        Intent i = new Intent(null, Activity_3d.class);
+                        Intent i = new Intent(context, Activity3d.class);
+                        context.startActivity(i);
                     }
                 });
                 // Showing Alert Message
@@ -201,17 +196,18 @@ public class AddMultiPhotoTask extends BaseTask
             }
             else
             {
-                AlertDialog alertDialog = new AlertDialog.Builder(null).create();
+                AlertDialog alertDialog = new AlertDialog.Builder(context).create();
                 // Setting Dialog Title
                 alertDialog.setTitle("Upload Failed");
                 // Setting Dialog Message
                 alertDialog.setMessage("Error: " + data.resultMsg);
-                alertDialog.setIcon(R.drawable.logo_small);
+                alertDialog.setIcon( R.drawable.logo_small);
                 // Setting OK Button
-                alertDialog.setButton(Dialog.BUTTON_POSITIVE,"OK", new DialogInterface.OnClickListener() {
+                alertDialog.setButton(Dialog.BUTTON_POSITIVE,"OK",
+                        new DialogInterface.OnClickListener() {
                     /**
-                     * User clicked ok
-                     * @param dialog - alert window
+                     * User pressed ok
+                     * @param dialog - alert
                      * @param which - selection
                      */
                     public void onClick(DialogInterface dialog, int which)

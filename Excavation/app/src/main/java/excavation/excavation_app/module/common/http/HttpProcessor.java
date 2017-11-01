@@ -12,21 +12,21 @@ public interface HttpProcessor
      * @param mapParams - parameters
      * @return Returns response
      */
-    public HttpObject getHttp(Map<Request, String> mapParams);
+    HttpObject getHttp(Map<Request, String> mapParams);
 
     /**
      * Parse response
      * @param object - response
      * @return Returns data
      */
-    public <T extends ResponseData> T parseObject(HttpObject object);
+    <T extends ResponseData> T parseObject(HttpObject object);
 
     /**
      * Parse list
      * @param object - list
      * @return Returns data
      */
-    public <T extends ResponseData> List<T> parseList(HttpObject object);
+    <T extends ResponseData> List<T> parseList(HttpObject object);
 
     /**
      * Parse JSON
@@ -34,5 +34,5 @@ public interface HttpProcessor
      * @return Returns data
      * @throws JSONException if the response is malformed
      */
-    public <T extends ResponseData> T parseObject(JSONObject object) throws JSONException;
+    <T extends ResponseData> T parseObject(JSONObject object) throws JSONException;
 }

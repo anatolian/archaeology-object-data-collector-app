@@ -2,7 +2,6 @@
 // @author: anatolian
 package excavation.excavation_app.module.context;
 import java.util.ArrayList;
-import excavation.excavation_app.module.common.adapter.SimpleTextAdapter;
 import excavation.excavation_app.module.common.bean.SimpleData;
 import excavation.excavation_app.module.common.constants.AppConstants;
 import excavation.excavation_app.module.common.http.Response.RESPONSE_RESULT;
@@ -12,42 +11,36 @@ import excavation.excavation_app.module.image.property.ImagePropertyBean;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.widget.Spinner;
 import android.widget.Toast;
 import excavation.excavation_app.com.appenginedemo.MainActivity;
 import excavation.excavation_app.com.appenginedemo.db.DBHelper;
-public class addSinglePhotoTask extends BaseTask
+public class AddSinglePhotoTask extends BaseTask
 {
-    //Context con;
-    //Spinner Spneast;
-    SimpleData list;
-    ProgressDialog progressDialog = null;
-    SimpleTextAdapter adp;
-    String north1, east1, img, photo_id;
-    String ip_address = "", camval;
-    ArrayList<String> ctx_no = null;
-    ImagePropertyBean data1;
-
+    private Context con;
+    private SimpleData list;
+    private ProgressDialog progressDialog = null;
+    private String north1, east1, img, photoId;
+    private String ipAddress = "";
+    private ArrayList<String> ctxNo = null;
+    private ImagePropertyBean data1;
     /**
      * Constructor
-     * @param activityCamera - camera activity
+     * @param activityCamera - calling activity
      * @param north - northing
      * @param east - easting
-     * @param imagePath - location of image
-     * @param temp_Context_No - context number
-     * @param photoid - photo id
-     * @param camval1 - camera value
+     * @param imagePath - image location
+     * @param tempContextNo - context
+     * @param photoId - image id
      */
-    public addSinglePhotoTask(Context activityCamera, String north, String east, String imagePath,
-                              ArrayList<String> temp_Context_No, String photoid, String camval1)
+    public AddSinglePhotoTask(Context activityCamera, String north, String east, String imagePath,
+                              ArrayList<String> tempContextNo, String photoId)
     {
-        //con = activityCamera;
+        con = activityCamera;
         north1 = north;
         east1 = east;
         img = imagePath;
-        ctx_no = temp_Context_No;
-        photo_id = photoid;
-        camval = camval1;
+        ctxNo = tempContextNo;
+        this.photoId = photoId;
     }
 
     /**
@@ -67,9 +60,13 @@ public class addSinglePhotoTask extends BaseTask
     @Override
     protected void onPreExecute()
     {
-        DBHelper db = DBHelper.getInstance(null);
+        progressDialog = new ProgressDialog(con);
+        progressDialog.setCancelable(false);
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.show();
+        DBHelper db = DBHelper.getInstance(con);
         db.open();
-        ip_address = db.getIpAddress();
+        ipAddress = db.getIpAddress();
         data1 = db.getImageProperty();
         db.close();
     }
@@ -83,26 +80,27 @@ public class addSinglePhotoTask extends BaseTask
     protected Void doInBackground(String... params)
     {
         SimpleObjectFactory factory = SimpleObjectFactory.getInstance();
-        if(photo_id != null && photo_id.length() > 0)
+        if (photoId != null && photoId.length() > 0)
         {
-            list = factory.addSingleimg(north1, east1, img, ctx_no.get(0), ip_address, photo_id,
-                    data1.base_image_path, data1.context_subpath);
+            list = factory.addSingleImg(north1, east1, img, ctxNo.get(0), ipAddress, photoId,
+                    data1.baseImagePath, data1.contextSubpath);
         }
-        else if (ctx_no != null && ctx_no.size() > 0)
+        else if (ctxNo != null && ctxNo.size() > 0)
         {
-            list = factory.addSingleimg(north1, east1, img, ctx_no.get(0), ip_address, "",
-                    data1.base_image_path, data1.context_subpath);
+
+            list = factory.addSingleImg(north1, east1, img, ctxNo.get(0), ipAddress,"",
+                    data1.baseImagePath, data1.contextSubpath);
         }
         else
         {
-            list = factory.addSingleimg(north1, east1, img, "", ip_address, "",
-                    data1.base_image_path, data1.context_subpath);
+            list = factory.addSingleImg(north1, east1, img,"", ipAddress,"",
+                    data1.baseImagePath, data1.contextSubpath);
         }
         return null;
     }
 
     /**
-     * Run after thread
+     * Thread finished
      * @param result - nothing
      */
     @Override
@@ -115,12 +113,14 @@ public class addSinglePhotoTask extends BaseTask
         }
         if (list.result == RESPONSE_RESULT.success)
         {
-            AppConstants.temp_Context_No = null;
-            Intent i = new Intent(null, MainActivity.class);
+            AppConstants.tempContextNo = null;
+            Toast.makeText(con,"Uploaded Successfully", Toast.LENGTH_LONG).show();
+            Intent i = new Intent(con, MainActivity.class);
             i.putExtra("pic", "camval");
             i.putExtra("north", north1);
             i.putExtra("east", east1);
-            i.putExtra("ctx", ctx_no);
+            i.putExtra("ctx", ctxNo);
+            con.startActivity(i);
         }
     }
 

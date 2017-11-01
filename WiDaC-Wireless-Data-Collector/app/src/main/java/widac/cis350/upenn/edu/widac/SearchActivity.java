@@ -200,10 +200,10 @@ public class SearchActivity extends AppCompatActivity
                 onUpdateBluetoothButtonClick();
             }
         });
-        if (bluetoothService == null)
-        {
-            bluetooth.setVisibility(View.GONE);
-        }
+//        if (bluetoothService == null)
+//        {
+//            bluetooth.setVisibility(View.GONE);
+//        }
         Button manual = (Button) findViewById(R.id.update_manual);
         manual.setOnClickListener(new View.OnClickListener() {
             /**

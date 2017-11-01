@@ -3,7 +3,6 @@
 package excavation.excavation_app.com.appenginedemo;
 import excavation.excavation_app.module.common.constants.AppConstants;
 import excavation.excavation_app.module.common.dialog.IPAddressDialog;
-import excavation.excavation_app.module.image.property.ImagePropertyTask;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -18,20 +17,13 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 import com.appenginedemo.R;
 public class ActivityBase extends Activity
 {
-    ImageView imageViewCamera, imageViewHome, imageViewFolder;
     RelativeLayout wrapper;
-    TextView TextViewContext, TextView3d, TextViewSample,header;
-    private static final int MENU_ITEM_1 = Menu.FIRST + 1;
-    private static final int MENU_ITEM_2 = Menu.FIRST + 2;
-    private static final int MENU_ITEM_3 = Menu.FIRST + 3;
+    TextView TextViewContext, TextView3d, TextViewSample, header;
     ImageView imageView1;
     public LinearLayout linearLayout2;
-    Toast msg;
-    ImagePropertyTask task;
     /**
      * Launch activity
      * @param savedInstanceState - state from memory
@@ -45,9 +37,9 @@ public class ActivityBase extends Activity
         TextViewContext = (TextView) findViewById(R.id.TextViewContext);
         TextView3d = (TextView) findViewById(R.id.TextView3d);
         TextViewSample = (TextView) findViewById(R.id.TextViewSample);
-        header= (TextView) findViewById(R.id.textViewheader);
-        imageView1= (ImageView) findViewById(R.id.imageView1);
-        linearLayout2=(LinearLayout)findViewById(R.id.linearLayout2);
+        header = (TextView) findViewById(R.id.textViewheader);
+        imageView1 = (ImageView) findViewById(R.id.imageView1);
+        linearLayout2 = (LinearLayout) findViewById(R.id.linearLayout2);
         TextViewContext.setTextColor(getResources().getColor(R.color.white));
         TextViewContext.setBackgroundColor(getResources().getColor(R.color.butterflyblue));
         TextViewContext.setOnClickListener(new OnClickListener() {
@@ -70,8 +62,7 @@ public class ActivityBase extends Activity
                 else
                 {
                     AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(ActivityBase.this);
-                    LinearLayout myLayout = new LinearLayout(
-                            ActivityBase.this);
+                    LinearLayout myLayout = new LinearLayout(ActivityBase.this);
                     myLayout.setOrientation(LinearLayout.VERTICAL);
                     final TextView t1 = new TextView(ActivityBase.this);
                     t1.setTextSize(15.0f);
@@ -125,7 +116,7 @@ public class ActivityBase extends Activity
                 TextView3d.setBackgroundColor(getResources().getColor(R.color.butterflyblue));
                 TextViewContext.setBackgroundColor(getResources().getColor(R.color.black));
                 TextViewSample.setBackgroundColor(getResources().getColor(R.color.black));
-                Intent i = new Intent(ActivityBase.this, Activity_3d.class);
+                Intent i = new Intent(ActivityBase.this, Activity3d.class);
                 startActivity(i);
             }
         });
@@ -142,14 +133,13 @@ public class ActivityBase extends Activity
                 TextViewContext.setBackgroundColor(getResources().getColor(R.color.black));
                 if (AppConstants.up == 1)
                 {
-                    Intent i = new Intent(ActivityBase.this, Activity_Sample.class);
+                    Intent i = new Intent(ActivityBase.this, ActivitySample.class);
                     startActivity(i);
                 }
                 else
                 {
                     AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(ActivityBase.this);
-                    LinearLayout myLayout = new LinearLayout(
-                            ActivityBase.this);
+                    LinearLayout myLayout = new LinearLayout(ActivityBase.this);
                     myLayout.setOrientation(LinearLayout.VERTICAL);
                     final TextView t1 = new TextView(ActivityBase.this);
                     t1.setTextSize(15.0f);
@@ -167,7 +157,7 @@ public class ActivityBase extends Activity
                          * @param id - selection
                          */
                         public void onClick(DialogInterface dialog, int id) {
-                            Intent i = new Intent(ActivityBase.this, Activity_Sample.class);
+                            Intent i = new Intent(ActivityBase.this, ActivitySample.class);
                             startActivity(i);
                         }
                     }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -232,7 +222,7 @@ public class ActivityBase extends Activity
                 d.show();
                 return true;
             case R.id.image_property:
-                Intent i=new Intent(ActivityBase.this,ActivityImageProperty.class);
+                Intent i = new Intent(ActivityBase.this, ActivityImageProperty.class);
                 startActivity(i);
             default:
                 return super.onOptionsItemSelected(item);

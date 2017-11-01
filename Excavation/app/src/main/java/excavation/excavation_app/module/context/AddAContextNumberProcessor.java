@@ -9,25 +9,21 @@ import excavation.excavation_app.module.common.http.HttpOperation;
 import excavation.excavation_app.module.common.http.HttpProcessor;
 import excavation.excavation_app.module.common.http.HttpRequester;
 import excavation.excavation_app.module.common.http.Request;
-import excavation.excavation_app.module.common.http.Response;
 import excavation.excavation_app.module.common.http.Response.RESPONSE_RESULT;
 import excavation.excavation_app.module.common.http.Response.STANDARD;
 import excavation.excavation_app.module.common.http.bean.HttpObject;
 import org.json.JSONException;
 import org.json.JSONObject;
-import android.util.Log;
-import excavation.excavation_app.com.appenginedemo.db.DBHelper;
 public class AddAContextNumberProcessor extends HttpOperation implements HttpProcessor
 {
-    String cover_image;
-    String ip_address;
+    private String ipAddress;
     /**
      * Constructor
-     * @param ip_address - server IP
+     * @param ipAddress - server IP
      */
-    public AddAContextNumberProcessor(String ip_address)
+    public AddAContextNumberProcessor(String ipAddress)
     {
-        this.ip_address = ip_address;
+        this.ipAddress = ipAddress;
     }
 
     /**
@@ -39,15 +35,14 @@ public class AddAContextNumberProcessor extends HttpOperation implements HttpPro
     public HttpObject getHttp(Map<Request, String> mapParams)
     {
         HttpObject object = new HttpObject();
-        object.setInfo(HttpRequester.ADD_CONTEXT_NUM);
         object.setParams(mapParams);
-        object.setUrl(generateUrlWithParams(HttpRequester.ADD_CONTEXT_NUM,mapParams,ip_address));
+        object.setUrl(generateUrlWithParams(HttpRequester.ADD_CONTEXT_NUM, mapParams, ipAddress));
         return object;
     }
 
     public enum ADD_CONTEXT_REQUEST implements Request
     {
-        area_easting, area_northing, context_number, photograph_number;
+        areaEasting, areaNorthing, contextNumber, photographNumber;
         /**
          * Get a parameter
          * @return Returns the parameter
@@ -57,9 +52,6 @@ public class AddAContextNumberProcessor extends HttpOperation implements HttpPro
         {
             return this.name();
         }
-    }
-    public enum RESPONSE_PPARAM implements Response
-    {
     }
 
     /**
@@ -77,7 +69,7 @@ public class AddAContextNumberProcessor extends HttpOperation implements HttpPro
         if (data.result == RESPONSE_RESULT.failed)
         {
             data.result = RESPONSE_RESULT.failed;
-            data.resultMsg = MessageConstants.Failed_To_Connect;
+            data.resultMsg = MessageConstants.FAILED_TO_CONNECT;
             return data;
         }
         try
@@ -95,7 +87,7 @@ public class AddAContextNumberProcessor extends HttpOperation implements HttpPro
                 }
                 if (responseData.has("image_path"))
                 {
-                    data.image_path=responseData.getString("image_path");
+                    data.imagePath = responseData.getString("image_path");
                 }
             }
             else
@@ -103,19 +95,16 @@ public class AddAContextNumberProcessor extends HttpOperation implements HttpPro
                 data.result = RESPONSE_RESULT.failed;
                 data.resultMsg = responseData.getString("result");
             }
-            responseData = null;
-            responseObj = null;
         }
         catch (Exception e)
         {
             e.printStackTrace();
             data.result = RESPONSE_RESULT.failed;
-            data.resultMsg = MessageConstants.Failed_To_Parse;
+            data.resultMsg = MessageConstants.FAILED_TO_PARSE;
         }
         finally
         {
             object.release();
-            object = null;
         }
         return data;
     }
@@ -126,6 +115,7 @@ public class AddAContextNumberProcessor extends HttpOperation implements HttpPro
      * @return Returns null
      */
     @Override
+    @SuppressWarnings("unchecked")
     public List<SimpleData> parseList(HttpObject object)
     {
         return null;

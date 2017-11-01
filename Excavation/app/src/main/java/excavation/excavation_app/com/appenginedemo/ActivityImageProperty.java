@@ -1,13 +1,9 @@
 // Activity property
 // @author: anatolian
 package excavation.excavation_app.com.appenginedemo;
-import java.util.ArrayList;
-import java.util.List;
 import excavation.excavation_app.com.appenginedemo.db.DBHelper;
 import excavation.excavation_app.module.common.constants.AppConstants;
 import excavation.excavation_app.module.image.property.ImagePropertyBean;
-import excavation.excavation_app.module.image.property.ImagePropertyTask;
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -22,16 +18,14 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
-
 import com.appenginedemo.R;
-
 public class ActivityImageProperty extends ActivityBase
 {
     LayoutInflater inflater;
     RelativeLayout relLayout;
-    EditText txt3dsubpath, txtBase_img_path, txtContextsubpath, txtLabelareadivider;
-    EditText txtContextdivider, txtLabelfont, txtLabelfontsize, txtPlacement, txtSamplelabeldivider;
-    EditText txtSamplesubpath, txtContextsubpath3d1;
+    EditText txt3dSubpath, txtBaseImgPath, txtContextSubpath, txtLabelAreaDivider;
+    EditText txtContextDivider, txtLabelFont, txtLabelFontSize, txtSampleLabelDivider;
+    EditText txtSampleSubpath;
     Button btnUpdate;
     ImagePropertyBean data;
     Spinner spnLabelPlacement;
@@ -42,8 +36,8 @@ public class ActivityImageProperty extends ActivityBase
     ArrayAdapter<String> adapter;
     String placement = null;
     boolean flag;
-    String _3dsubpath, base_image_path, context_subpath, area_divider, context_divider, font_size;
-    String sample_divider, sample_subpath, context_subpath3d1;
+    String threedSubpath, baseImagePath, contextSubpath, areaDivider, contextDivider, fontSize;
+    String sampleDivider, sampleSubpath;
     /**
      * Activity launched
      * @param savedInstanceState - state from memory
@@ -51,7 +45,6 @@ public class ActivityImageProperty extends ActivityBase
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
-        // TODO Auto-generated method stub
         super.onCreate(savedInstanceState);
         inflater = getLayoutInflater();
         relLayout = (RelativeLayout) inflater.inflate(R.layout.activity_image_property, null);
@@ -59,19 +52,19 @@ public class ActivityImageProperty extends ActivityBase
         TextViewSample.setBackgroundColor(getResources().getColor(R.color.butterflyblue));
         TextView3d.setBackgroundColor(getResources().getColor(R.color.black));
         TextViewContext.setBackgroundColor(getResources().getColor(R.color.black));
-        txt3dsubpath = (EditText) findViewById(R.id.txt3d_Subpath);
-        txtBase_img_path = (EditText) findViewById(R.id.txtBase_image_path);
-        txtContextsubpath = (EditText) findViewById(R.id.txtContext_subpath);
-        txtLabelareadivider = (EditText) findViewById(R.id.txtLabeldivider);
-        txtContextdivider = (EditText) findViewById(R.id.txtContexdivider);
-        txtLabelfont = (EditText) findViewById(R.id.txtLabelfont);
-        txtLabelfontsize = (EditText) findViewById(R.id.txtLabelfontsize);
-        txtSamplelabeldivider = (EditText) findViewById(R.id.txtLabelsampledivider);
-        txtSamplesubpath = (EditText) findViewById(R.id.txtSamplesubpath);
+        txt3dSubpath = (EditText) findViewById(R.id.txt3d_Subpath);
+        txtBaseImgPath = (EditText) findViewById(R.id.txtBase_image_path);
+        txtContextSubpath = (EditText) findViewById(R.id.txtContext_subpath);
+        txtLabelAreaDivider = (EditText) findViewById(R.id.txtLabeldivider);
+        txtContextDivider = (EditText) findViewById(R.id.txtContexdivider);
+        txtLabelFont = (EditText) findViewById(R.id.txtLabelfont);
+        txtLabelFontSize = (EditText) findViewById(R.id.txtLabelfontsize);
+        txtSampleLabelDivider = (EditText) findViewById(R.id.txtLabelsampledivider);
+        txtSampleSubpath = (EditText) findViewById(R.id.txtSamplesubpath);
         spnLabelPlacement = (Spinner) findViewById(R.id.spnLabelPlacement);
         btnUpdate = (Button) findViewById(R.id.btnUpdate);
-        adapter = new ArrayAdapter<String>(ActivityImageProperty.this, android.R.layout.simple_spinner_item,
-                arrayPlacement);
+        adapter = new ArrayAdapter<>(ActivityImageProperty.this,
+                android.R.layout.simple_spinner_item, arrayPlacement);
         spnLabelPlacement.setAdapter(adapter);
         spnLabelPlacement.setSelection(AppConstants.spnPlacement);
         db = DBHelper.getInstance(ActivityImageProperty.this);
@@ -79,11 +72,12 @@ public class ActivityImageProperty extends ActivityBase
         data = db.getImageProperty();
         db.close();
         int temp = 0;
-        if (data != null && data.sample_label_placement != null && data.sample_label_placement.length() > 0)
+        if (data != null && data.sampleLabelPlacement != null
+                && data.sampleLabelPlacement.length() > 0)
         {
             for (int i = 0; i < arrayPlacement.length; i++)
             {
-                if (arrayPlacement[i].equalsIgnoreCase(data.sample_label_placement))
+                if (arrayPlacement[i].equalsIgnoreCase(data.sampleLabelPlacement))
                 {
                     temp = i;
                 }
@@ -94,19 +88,20 @@ public class ActivityImageProperty extends ActivityBase
         {
             if (data != null)
             {
-                txt3dsubpath.setText(data.context_subpath_3d);
-                txtBase_img_path.setText(data.base_image_path);
-                txtContextsubpath.setText(data.context_subpath);
-                txtLabelareadivider.setText(data.sample_label_area_divider);
-                txtContextdivider.setText(data.sample_label_context_divider);
-                txtLabelfont.setText(data.sample_label_font);
-                txtLabelfontsize.setText(data.sample_label_font_size);
-                txtSamplelabeldivider.setText(data.sample_label_sample_divider);
-                txtSamplesubpath.setText(data.sample_subpath);
+                txt3dSubpath.setText(data.contextSubpath3d);
+                txtBaseImgPath.setText(data.baseImagePath);
+                txtContextSubpath.setText(data.contextSubpath);
+                txtLabelAreaDivider.setText(data.sampleLabelAreaDivider);
+                txtContextDivider.setText(data.sampleLabelContextDivider);
+                txtLabelFont.setText(data.sampleLabelFont);
+                txtLabelFontSize.setText(data.sampleLabelFontSize);
+                txtSampleLabelDivider.setText(data.sampleLabelSampleDivider);
+                txtSampleSubpath.setText(data.sampleSubpath);
             }
             else
             {
-                Toast.makeText(ActivityImageProperty.this, "Data is empty", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ActivityImageProperty.this, "Data is empty",
+                        Toast.LENGTH_SHORT).show();
             }
         }
         catch (Exception ex)
@@ -145,40 +140,43 @@ public class ActivityImageProperty extends ActivityBase
             @Override
             public void onClick(View v)
             {
-                _3dsubpath = txt3dsubpath.getText().toString();
-                base_image_path = txtBase_img_path.getText().toString();
-                context_subpath = txtContextsubpath.getText().toString();
-                area_divider = txtLabelareadivider.getText().toString();
-                context_divider = txtContextdivider.getText().toString();
-                font_size = txtLabelfontsize.getText().toString();
-                sample_divider = txtSamplelabeldivider.getText().toString();
-                sample_subpath = txtSamplesubpath.getText().toString();
-                if (_3dsubpath != null && _3dsubpath.length() > 0)
+                threedSubpath = txt3dSubpath.getText().toString();
+                baseImagePath = txtBaseImgPath.getText().toString();
+                contextSubpath = txtContextSubpath.getText().toString();
+                areaDivider = txtLabelAreaDivider.getText().toString();
+                contextDivider = txtContextDivider.getText().toString();
+                fontSize = txtLabelFontSize.getText().toString();
+                sampleDivider = txtSampleLabelDivider.getText().toString();
+                sampleSubpath = txtSampleSubpath.getText().toString();
+                if (threedSubpath != null && threedSubpath.length() > 0)
                 {
-                    if (base_image_path != null && base_image_path.length() > 0)
+                    if (baseImagePath != null && baseImagePath.length() > 0)
                     {
-                        if (context_subpath != null && context_subpath.length() > 0)
+                        if (contextSubpath != null && contextSubpath.length() > 0)
                         {
-                            if (area_divider != null && area_divider.length() > 0)
+                            if (areaDivider != null && areaDivider.length() > 0)
                             {
-                                if (context_divider != null && context_divider.length() > 0)
+                                if (contextDivider != null && contextDivider.length() > 0)
                                 {
-                                    if (font_size != null && font_size.length() > 0)
+                                    if (fontSize != null && fontSize.length() > 0)
                                     {
                                         if (placement != null && placement.length() > 0)
                                         {
-                                            if (sample_divider != null && sample_divider.length() > 0)
+                                            if (sampleDivider != null && sampleDivider.length() > 0)
                                             {
-                                                if (sample_subpath != null && sample_subpath.length() > 0)
+                                                if (sampleSubpath != null
+                                                        && sampleSubpath.length() > 0)
                                                 {
-                                                    if (txtLabelfont != null && txtLabelfont.length() > 0)
+                                                    if (txtLabelFont != null
+                                                            && txtLabelFont.length() > 0)
                                                     {
                                                         db = DBHelper.getInstance(ActivityImageProperty.this);
                                                         db.open();
-                                                        flag = db.updateImageProperty(_3dsubpath,
-                                                                base_image_path, context_subpath, area_divider,
-                                                                context_divider, font_size, placement,
-                                                                sample_divider, sample_subpath);
+                                                        flag = db.updateImageProperty(threedSubpath,
+                                                                baseImagePath, contextSubpath,
+                                                                areaDivider, contextDivider,
+                                                                fontSize, placement, sampleDivider,
+                                                                sampleSubpath);
                                                         db.close();
                                                         if (flag)
                                                         {
@@ -186,7 +184,7 @@ public class ActivityImageProperty extends ActivityBase
                                                                     "Data Updated successfully",
                                                                     Toast.LENGTH_SHORT).show();
                                                             Intent intent = new Intent(ActivityImageProperty.this,
-                                                                    Activity_Sample.class);
+                                                                    ActivitySample.class);
                                                             startActivity(intent);
                                                             ActivityImageProperty.this.finish();
                                                         }

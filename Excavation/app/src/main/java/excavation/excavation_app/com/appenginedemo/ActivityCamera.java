@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import excavation.excavation_app.module.common.application.ApplicationHandler;
 import excavation.excavation_app.module.common.constants.AppConstants;
 import excavation.excavation_app.module.common.task.BaseTask;
-import excavation.excavation_app.module.context.addSinglePhotoTask;
+import excavation.excavation_app.module.context.AddSinglePhotoTask;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.database.Cursor;
@@ -18,7 +18,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -27,13 +26,13 @@ import com.appenginedemo.R;
 public class ActivityCamera extends ActivityBase
 {
     LayoutInflater inflater;
-    RelativeLayout rlayout;
-    ImageView camera_image;
-    String imagePath, photo_id;
-    String north, east, img, nxt, act3d,pic;
+    RelativeLayout rLayout;
+    ImageView cameraImage;
+    String imagePath, photoId;
+    String north, east, img, nxt, act3d, pic;
     BaseTask task;
-    ArrayList<String> ctx_no;
-    private static int RESULT_LOAD_IMAGE = 1, CAMERA_CAPTURE = 999;
+    ArrayList<String> ctxNo;
+    private static int CAMERA_CAPTURE = 999;
     /**
      * Launch activity
      * @param savedInstanceState - state from memory
@@ -43,16 +42,16 @@ public class ActivityCamera extends ActivityBase
     {
         super.onCreate(savedInstanceState);
         inflater = getLayoutInflater();
-        rlayout = (RelativeLayout) inflater.inflate(R.layout.activity_camera,null);
-        wrapper.addView(rlayout);
-        camera_image = (ImageView) findViewById(R.id.cemera_image);
+        rLayout = (RelativeLayout) inflater.inflate(R.layout.activity_camera,null);
+        wrapper.addView(rLayout);
+        cameraImage = (ImageView) findViewById(R.id.cemera_image);
         if (getIntent().hasExtra("north") || getIntent().hasExtra("east")
                 || getIntent().hasExtra("imagePath") || getIntent().hasExtra("ctx"))
         {
             north = getIntent().getExtras().getString("north");
             east = getIntent().getExtras().getString("east");
             img = getIntent().getExtras().getString("imagePath");
-            ctx_no= getIntent().getExtras().getStringArrayList("ctx");
+            ctxNo= getIntent().getExtras().getStringArrayList("ctx");
         }
         if (getIntent().hasExtra("3d"))
         {
@@ -68,7 +67,7 @@ public class ActivityCamera extends ActivityBase
         }
         if (getIntent().hasExtra("photo_id"))
         {
-            photo_id = getIntent().getExtras().getString("photo_id");
+            photoId = getIntent().getExtras().getString("photo_id");
         }
         try
         {
@@ -103,7 +102,7 @@ public class ActivityCamera extends ActivityBase
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
     {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && data != null)
+        if (requestCode == 1 && resultCode == RESULT_OK && data != null)
         {
             Uri selectedImage = data.getData();
             String[] filePathColumn = { MediaStore.Images.Media.DATA };
@@ -113,13 +112,13 @@ public class ActivityCamera extends ActivityBase
             int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
             imagePath = cursor.getString(columnIndex);
             ApplicationHandler apphand = ApplicationHandler.getInstance();
-            camera_image.setImageBitmap(apphand.decodeFile(new File(imagePath)));
+            cameraImage.setImageBitmap(apphand.decodeFile(new File(imagePath)));
             cursor.close();
         }
         if (requestCode == CAMERA_CAPTURE && resultCode == RESULT_OK)
         {
             Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
-            camera_image.setImageBitmap(thumbnail);
+            cameraImage.setImageBitmap(thumbnail);
             ByteArrayOutputStream bytes = new ByteArrayOutputStream();
             thumbnail.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
             File file = new File(Environment.getExternalStorageDirectory()
@@ -136,8 +135,8 @@ public class ActivityCamera extends ActivityBase
                 e.printStackTrace();
             }
             imagePath = Environment.getExternalStorageDirectory() + File.separator + "image.jpg";
-            task = new addSinglePhotoTask(ActivityCamera.this, north, east, imagePath,
-                    AppConstants.temp_Context_No, photo_id, pic);
+            task = new AddSinglePhotoTask(ActivityCamera.this, north, east, imagePath,
+                    AppConstants.tempContextNo, photoId);
             task.execute();
         }
     }

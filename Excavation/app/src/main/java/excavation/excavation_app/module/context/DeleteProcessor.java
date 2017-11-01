@@ -3,11 +3,8 @@
 package excavation.excavation_app.module.context;
 import java.util.List;
 import java.util.Map;
-import java.util.SortedMap;
-import java.util.TreeMap;
 import excavation.excavation_app.module.common.bean.ResponseData;
 import excavation.excavation_app.module.common.bean.SimpleData;
-import excavation.excavation_app.module.common.dialog.IPAddressDialog;
 import excavation.excavation_app.module.common.http.HttpOperation;
 import excavation.excavation_app.module.common.http.HttpProcessor;
 import excavation.excavation_app.module.common.http.HttpRequester;
@@ -20,14 +17,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 public class DeleteProcessor extends HttpOperation implements HttpProcessor
 {
-    String ip_address;
+    private String ipAddress;
     /**
      * Constructor
-     * @param ip_address - server IP
+     * @param ipAddress - server IP
      */
-    public DeleteProcessor(String ip_address)
+    public DeleteProcessor(String ipAddress)
     {
-        this.ip_address = ip_address;
+        this.ipAddress = ipAddress;
     }
 
     /**
@@ -39,14 +36,13 @@ public class DeleteProcessor extends HttpOperation implements HttpProcessor
     public HttpObject getHttp(Map<Request, String> mapParams)
     {
         HttpObject object = new HttpObject();
-        object.setInfo(HttpRequester.DELETE_CTX);
-        object.setUrl(generateUrlWithParams(HttpRequester.DELETE_CTX, mapParams,ip_address));
+        object.setUrl(generateUrlWithParams(HttpRequester.DELETE_CTX, mapParams, ipAddress));
         return object;
     }
 
     public enum DELETE_PRODUCT_REQUEST implements Request
     {
-        mode, id, area_east, area_north, context_number, photograph_number;
+        mode, id, areaEast, areaNorth, contextNumber, photographNumber;
         /**
          * Get a parameter
          * @return Returns a parameter
@@ -58,10 +54,6 @@ public class DeleteProcessor extends HttpOperation implements HttpProcessor
         }
     }
 
-    public enum DELETE_RESPONSE implements Response
-    {
-    }
-
     /**
      * Parse the response
      * @param object - response
@@ -71,7 +63,6 @@ public class DeleteProcessor extends HttpOperation implements HttpProcessor
     @Override
     public SimpleData parseObject(HttpObject object)
     {
-        SortedMap<Integer, SimpleData> map = new TreeMap<Integer, SimpleData>();
         SimpleData data = new SimpleData();
         object = request(object);
         checkHttpStatus(object, data);
@@ -88,14 +79,13 @@ public class DeleteProcessor extends HttpOperation implements HttpProcessor
             if (result.equalsIgnoreCase("success"))
             {
                 data.result = Response.RESPONSE_RESULT.success;
-                data.resultMsg=responseData1.getString("data");
+                data.resultMsg = responseData1.getString("data");
             }
             else
             {
                 data.result = Response.RESPONSE_RESULT.failed;
-                data.resultMsg=responseData1.getString("error");
+                data.resultMsg = responseData1.getString("error");
             }
-            responseObj = null;
         }
         catch (Exception e)
         {
@@ -104,7 +94,6 @@ public class DeleteProcessor extends HttpOperation implements HttpProcessor
         finally
         {
             object.release();
-            object = null;
         }
         return data;
     }

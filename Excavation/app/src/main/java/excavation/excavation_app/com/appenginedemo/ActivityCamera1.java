@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 import excavation.excavation_app.module.common.constants.AppConstants;
-import excavation.excavation_app.module.common.task.BaseTask;
 import excavation.excavation_app.module.sample.AddSamplePhotoTask;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -27,17 +26,10 @@ import com.appenginedemo.R;
 public class ActivityCamera1 extends ActivityBase
 {
     LayoutInflater inflater;
-    RelativeLayout rlayout;
+    RelativeLayout rLayout;
     ImageView camera_image;
     static String imagePath;
-    String samNo;
-    String conNo;
-    String material;
-    String type;
-    String sam;
-    String north, east, img, act3d;
-    BaseTask task;
-    private static int RESULT_LOAD_IMAGE = 1, CAMERA_CAPTURE = 999;
+    String samNo, conNo, material, type, sam, north, east, img, act3d;
     // Activity request codes
     private static final int CAMERA_CAPTURE_IMAGE_REQUEST_CODE = 100;
     public static final int MEDIA_TYPE_IMAGE = 1;
@@ -54,12 +46,13 @@ public class ActivityCamera1 extends ActivityBase
     {
         super.onCreate(savedInstanceState);
         inflater = getLayoutInflater();
-        rlayout = (RelativeLayout) inflater.inflate(R.layout.activity_camera,null);
-        wrapper.addView(rlayout);
+        rLayout = (RelativeLayout) inflater.inflate(R.layout.activity_camera,null);
+        wrapper.addView(rLayout);
         linearLayout2.setVisibility(View.GONE);
         camera_image = (ImageView) findViewById(R.id.cemera_image);
         if (getIntent().hasExtra("north") || getIntent().hasExtra("east")
-                || getIntent().hasExtra("imagePath")) {
+                || getIntent().hasExtra("imagePath"))
+        {
             north = getIntent().getExtras().getString("north");
             east = getIntent().getExtras().getString("east");
             img = getIntent().getExtras().getString("imagePath");
@@ -127,31 +120,32 @@ public class ActivityCamera1 extends ActivityBase
                 }
                 if (sam != null && sam.length() > 0)
                 {
-                    if (AppConstants.SampleselectedImg != null && AppConstants.SampleselectedImg.size() > 0)
+                    if (AppConstants.sampleSelectedImg != null && AppConstants.sampleSelectedImg.size() > 0)
                     {
                         if (imagePath != null && imagePath.length() > 0)
                         {
                             Log.e("array image size > 0", imagePath);
-                            AppConstants.SampleselectedImg.add(imagePath);
+                            AppConstants.sampleSelectedImg.add(imagePath);
                         }
                     }
                     else
                     {
-                        AppConstants.SampleselectedImg = new ArrayList<String>();
+                        AppConstants.sampleSelectedImg = new ArrayList<>();
                         if (imagePath != null && imagePath.length() > 0)
                         {
                             Log.e("array image size is 0", imagePath);
-                            AppConstants.SampleselectedImg.add(imagePath);
+                            AppConstants.sampleSelectedImg.add(imagePath);
                         }
                     }
-                    if (AppConstants.SampleselectedImg != null && AppConstants.SampleselectedImg.size() > 0)
+                    if (AppConstants.sampleSelectedImg != null
+                            && AppConstants.sampleSelectedImg.size() > 0)
                     {
                         if (east != null && east.length() > 0 && north != null && north.length() > 0
                                 && conNo != null && conNo.length() > 0 && samNo != null
                                 && samNo.length() > 0 && type != null && type.length() > 0)
                         {
-                            AddSamplePhotoTask task = new AddSamplePhotoTask(ActivityCamera1.this, east,
-                                    north, AppConstants.SampleselectedImg, conNo, samNo, type);
+                            AddSamplePhotoTask task = new AddSamplePhotoTask(ActivityCamera1.this,
+                                    east, north, AppConstants.sampleSelectedImg, conNo, samNo, type);
                             task.execute();
                         }
                     }
@@ -167,7 +161,7 @@ public class ActivityCamera1 extends ActivityBase
                     }
                     else
                     {
-                        AppConstants.selectedImg = new ArrayList<String>();
+                        AppConstants.selectedImg = new ArrayList<>();
                         if (imagePath != null && imagePath.length() > 0)
                         {
                             AppConstants.selectedImg.add(imagePath);
@@ -176,7 +170,7 @@ public class ActivityCamera1 extends ActivityBase
                     if (imagePath != null && imagePath.length() > 0)
                     {
                         finish();
-                        Intent i = new Intent(ActivityCamera1.this, Activity_3d.class);
+                        Intent i = new Intent(ActivityCamera1.this, Activity3d.class);
                         i.putExtra("y", "yes");
                         i.putExtra("imagePath", imagePath);
                         i.putExtra("north", north);
@@ -188,14 +182,14 @@ public class ActivityCamera1 extends ActivityBase
             else if (resultCode == RESULT_CANCELED)
             {
                 // user cancelled Image capture
-                Toast.makeText(getApplicationContext(), "User cancelled image capture", Toast.LENGTH_SHORT)
-                        .show();
+                Toast.makeText(getApplicationContext(), "User cancelled image capture",
+                        Toast.LENGTH_SHORT).show();
             }
             else
             {
                 // failed to capture image
-                Toast.makeText(getApplicationContext(), "Sorry! Failed to capture image", Toast.LENGTH_SHORT)
-                        .show();
+                Toast.makeText(getApplicationContext(), "Sorry! Failed to capture image",
+                        Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -225,86 +219,6 @@ public class ActivityCamera1 extends ActivityBase
     }
 
     /**
-     * Display image from a path to ImageView
-     */
-    private void previewCapturedImage()
-    {
-        try
-        {
-            // hide video preview
-            camera_image.setVisibility(View.VISIBLE);
-            // bitmap factory
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            // downsizing image as it throws OutOfMemory Exception for larger images
-            options.inSampleSize = 1;
-            final Bitmap bitmap = BitmapFactory.decodeFile(fileUri.getPath(), options);
-            camera_image.setImageBitmap(bitmap);
-            //	Log.e("sam", "smple" + "");
-            if (sam != null && sam.length() > 0)
-            {
-                if (AppConstants.SampleselectedImg != null && AppConstants.SampleselectedImg.size() > 0)
-                {
-                    if (imagePath != null && imagePath.length() > 0)
-                    {
-                        AppConstants.SampleselectedImg.add(imagePath);
-                    }
-                }
-                else
-                {
-                    AppConstants.SampleselectedImg = new ArrayList<String>();
-                    if (imagePath != null && imagePath.length() > 0)
-                    {
-                        AppConstants.SampleselectedImg.add(imagePath);
-                    }
-                }
-                if (AppConstants.SampleselectedImg != null && AppConstants.SampleselectedImg.size() > 0)
-                {
-                    if (east != null && east.length() > 0 && north != null && north.length() > 0
-                            && conNo != null && conNo.length() > 0 && samNo != null
-                            && samNo.length() > 0 && type != null && type.length() > 0)
-                    {
-                        AddSamplePhotoTask task = new AddSamplePhotoTask(ActivityCamera1.this, east,
-                                north, AppConstants.SampleselectedImg, conNo, samNo, type);
-                        task.execute();
-                    }
-                }
-            }
-            else
-            {
-                if (AppConstants.selectedImg != null && AppConstants.selectedImg.size() > 0)
-                {
-                    if (imagePath != null && imagePath.length() > 0)
-                    {
-                        AppConstants.selectedImg.add(imagePath);
-                    }
-                }
-                else
-                {
-                    AppConstants.selectedImg = new ArrayList<String>();
-                    if (imagePath != null && imagePath.length() > 0)
-                    {
-                        AppConstants.selectedImg.add(imagePath);
-                    }
-                }
-                if (imagePath != null && imagePath.length() > 0)
-                {
-                    finish();
-                    Intent i = new Intent(ActivityCamera1.this, Activity_3d.class);
-                    i.putExtra("y", "yes");
-                    i.putExtra("imagePath", imagePath);
-                    i.putExtra("north", north);
-                    i.putExtra("east", east);
-                    startActivity(i);
-                }
-            }
-        }
-        catch (NullPointerException e)
-        {
-            e.printStackTrace();
-        }
-    }
-
-    /**
      * Read file
      * @param selectedImage - file location
      * @return Returns the image
@@ -314,7 +228,8 @@ public class ActivityCamera1 extends ActivityBase
     {
         BitmapFactory.Options o = new BitmapFactory.Options();
         o.inJustDecodeBounds = true;
-        BitmapFactory.decodeStream(getContentResolver().openInputStream(selectedImage), null, o);
+        BitmapFactory.decodeStream(getContentResolver().openInputStream(selectedImage),
+                null, o);
         final int REQUIRED_SIZE = 100;
         int width_tmp = o.outWidth, height_tmp = o.outHeight;
         int scale = 1;
@@ -330,7 +245,8 @@ public class ActivityCamera1 extends ActivityBase
         }
         BitmapFactory.Options o2 = new BitmapFactory.Options();
         o2.inSampleSize = scale;
-        return BitmapFactory.decodeStream(getContentResolver().openInputStream(selectedImage), null, o2);
+        return BitmapFactory.decodeStream(getContentResolver().openInputStream(selectedImage),
+                null, o2);
     }
 
     /**
@@ -356,7 +272,7 @@ public class ActivityCamera1 extends ActivityBase
         // Create the storage directory if it does not exist
         if (!mediaStorageDir.exists())
         {
-            if(!mediaStorageDir.mkdirs())
+            if (!mediaStorageDir.mkdirs())
             {
                 Log.d(IMAGE_DIRECTORY_NAME, "Oops! Failed create " + IMAGE_DIRECTORY_NAME + " directory");
                 return null;

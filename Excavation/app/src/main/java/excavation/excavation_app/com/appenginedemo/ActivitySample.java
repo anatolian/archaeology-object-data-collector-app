@@ -6,13 +6,12 @@ import excavation.excavation_app.module.common.bean.SimpleData;
 import excavation.excavation_app.module.common.constants.AppConstants;
 import excavation.excavation_app.module.common.dialog.ImageDialog;
 import excavation.excavation_app.module.common.task.BaseTask;
-import excavation.excavation_app.module.context.getAreaTask;
-import excavation.excavation_app.module.sample.getSampleListTask;
-import excavation.excavation_app.module.sample.getSampleListTask1;
-import excavation.excavation_app.module.sample.getSamplePhotoTask;
+import excavation.excavation_app.module.context.GetAreaTask;
+import excavation.excavation_app.module.sample.GetSampleListTask;
+import excavation.excavation_app.module.sample.GetSampleListTask1;
+import excavation.excavation_app.module.sample.GetSamplePhotoTask;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,7 +20,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.GridView;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -29,25 +27,20 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.appenginedemo.R;
-import excavation.excavation_app.com.utils.imageloader.ImageLoader;
-public class Activity_Sample extends ActivityBase
+public class ActivitySample extends ActivityBase
 {
     LayoutInflater inflaterMain;
     RelativeLayout screenMain;
-    ListView clothmaterial;
-    TextView clothmaterial1;
-    Spinner areaEasting, areaNorting, spnType, spnContextNo, spnSampleNo;
-    TextView textViewtakephoto, textViewuploadphoto, samplephoto, textviewuploadphoto;
-    ImageView imgphoto;
+    ListView clothMaterial;
+    TextView clothMaterial1;
+    Spinner areaEasting, areaNorthing, spnType, spnContextNo, spnSampleNo;
+    TextView textViewTakePhoto, samplePhoto, textViewUploadPhoto;
     BaseTask task;
-    String spnEast = "", spnnorth = "", imagePath = "", yes = "", north = "", east = "";
-    String spnmaterial = "", spncon = "", spnSAm = "", type = "", sno = "", ctxno = "", gtype = "";
+    String spnEast = "", spnNorth = "", imagePath = "", north = "", east = "";
+    String spnMaterial = "", spnCon = "", spnSam = "", type = "", sno = "", ctxNo = "", gtype = "";
     String material = "", val = "";
-    ImageLoader imgld;
-    ProgressBar pbar, progressBar2;
-    GridView GridViewList;
-    private static int RESULT_LOAD_IMAGE = 1, CAMERA_CAPTURE = 999;
-    SharedPreferences preference;
+    ProgressBar pBar, progressBar2;
+    GridView gridViewList;
     boolean flag;
     /**
      * Launch activity
@@ -66,18 +59,18 @@ public class Activity_Sample extends ActivityBase
         TextViewSample.setBackgroundColor(getResources().getColor(R.color.butterflyblue));
         TextView3d.setBackgroundColor(getResources().getColor(R.color.black));
         TextViewContext.setBackgroundColor(getResources().getColor(R.color.black));
-        samplephoto = (TextView) findViewById(R.id.samplephoto);
+        samplePhoto = (TextView) findViewById(R.id.samplephoto);
         areaEasting = (Spinner) findViewById(R.id.areaEasting);
-        areaNorting = (Spinner) findViewById(R.id.areaNorting);
-        clothmaterial = (ListView) findViewById(R.id.clothmaterial);
-        clothmaterial1 = (TextView) findViewById(R.id.clothmaterial1);
+        areaNorthing = (Spinner) findViewById(R.id.areaNorting);
+        clothMaterial = (ListView) findViewById(R.id.clothmaterial);
+        clothMaterial1 = (TextView) findViewById(R.id.clothmaterial1);
         spnType = (Spinner) findViewById(R.id.Type);
         spnContextNo = (Spinner) findViewById(R.id.contextNo);
         spnSampleNo = (Spinner) findViewById(R.id.sampleNo);
-        textViewtakephoto = (TextView) findViewById(R.id.textviewtakephoto);
-        textviewuploadphoto = (TextView) findViewById(R.id.textviewuploadphoto);
-        GridViewList = (GridView) findViewById(R.id.GridViewList);
-        pbar = (ProgressBar) findViewById(R.id.progressBar1);
+        textViewTakePhoto = (TextView) findViewById(R.id.textviewtakephoto);
+        textViewUploadPhoto = (TextView) findViewById(R.id.textviewuploadphoto);
+        gridViewList = (GridView) findViewById(R.id.GridViewList);
+        pBar = (ProgressBar) findViewById(R.id.progressBar1);
         progressBar2 = (ProgressBar) findViewById(R.id.progressBar2);
         if (getIntent().hasExtra("db"))
         {
@@ -90,35 +83,34 @@ public class Activity_Sample extends ActivityBase
             north = getIntent().getExtras().getString("north");
             east = getIntent().getExtras().getString("east");
             sno = getIntent().getExtras().getString("samp_no");
-            ctxno = getIntent().getExtras().getString("Context_no");
+            ctxNo = getIntent().getExtras().getString("Context_no");
             material = getIntent().getExtras().getString("material");
             gtype = getIntent().getExtras().getString("type");
         }
-        if (!(spnnorth != null && spnnorth.length() > 0 || spnEast != null
-                && spnEast.length() > 0 || type != null && type.length() > 0
-                || spnmaterial != null && spnmaterial.length() > 0
-                || spncon != null && spncon.length() > 0 || spnSAm != null
-                && spnSAm.length() > 0))
+        if (!(spnNorth != null && spnNorth.length() > 0 || spnEast != null && spnEast.length() > 0
+                || type != null && type.length() > 0 || spnMaterial != null
+                && spnMaterial.length() > 0 || spnCon != null && spnCon.length() > 0
+                || spnSam != null && spnSam.length() > 0))
         {
-            spnnorth = north;
+            spnNorth = north;
             spnEast = east;
             type = gtype;
-            spnmaterial = material;
-            spncon = ctxno;
-            spnSAm = sno;
+            spnMaterial = material;
+            spnCon = ctxNo;
+            spnSam = sno;
         }
-        task = new getSampleListTask(Activity_Sample.this, clothmaterial, "m", spnmaterial, "", "",
-                "", "act", progressBar2);
+        task = new GetSampleListTask(ActivitySample.this, clothMaterial, "m",
+                spnMaterial, "", "","", "act", progressBar2);
         task.execute();
-        task = new getSampleListTask(Activity_Sample.this, 1, spnType, "t", "", type, "", "", "",
-                "", "", "", progressBar2);
+        task = new GetSampleListTask(ActivitySample.this, "t", spnMaterial, type,
+                "", "", "", "", progressBar2);
         task.execute();
-        task = new getAreaTask(Activity_Sample.this, 2, areaNorting, areaEasting,
-                "e", "", spnEast, "", progressBar2, 0);
+        task = new GetAreaTask(ActivitySample.this, 2, areaNorthing, areaEasting,
+                "e", "", spnEast, "", progressBar2);
         task.execute();
-        System.out.println("appcons pos IS===>" + AppConstants.spnNorthpos);
+        System.out.println("appcons pos IS===>" + AppConstants.spnNorthPos);
         flag = false;
-        areaNorting.setEnabled(false);
+        areaNorthing.setEnabled(false);
         areaEasting.setOnItemSelectedListener(new OnItemSelectedListener() {
             /**
              * User selected value
@@ -130,20 +122,20 @@ public class Activity_Sample extends ActivityBase
             @Override
             public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3)
             {
-                AppConstants.spnEastpos = arg2;
+                AppConstants.spnEastPos = arg2;
                 if (arg2 > 0)
                 {
                     SimpleData s = (SimpleData) arg0.getItemAtPosition(arg2);
                     spnEast = s.id;
-                    task = new getSamplePhotoTask(Activity_Sample.this, 1, GridViewList, spnnorth,
-                            spnEast, spncon, spnSAm, type);
+                    task = new GetSamplePhotoTask(ActivitySample.this, 1,
+                            gridViewList, spnNorth, spnEast, spnCon, spnSam, type);
                     task.execute();
-                    areaNorting.setEnabled(true);
+                    areaNorthing.setEnabled(true);
                 }
-                task = new getAreaTask(Activity_Sample.this, 2, areaNorting,
-                        areaEasting, "n", spnnorth, "", spnEast, progressBar2,0);
+                task = new GetAreaTask(ActivitySample.this, 2, areaNorthing,
+                        areaEasting, "n", spnNorth, "", spnEast, progressBar2);
                 task.execute();
-                clothmaterial1.setText("");
+                clothMaterial1.setText("");
             }
 
             /**
@@ -156,7 +148,7 @@ public class Activity_Sample extends ActivityBase
             }
         });
         spnContextNo.setEnabled(false);
-        areaNorting.setOnItemSelectedListener(new OnItemSelectedListener() {
+        areaNorthing.setOnItemSelectedListener(new OnItemSelectedListener() {
             /**
              * Item selected
              * @param arg0 - container
@@ -167,20 +159,20 @@ public class Activity_Sample extends ActivityBase
             @Override
             public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3)
             {
-                AppConstants.spnNorthpos = arg2;
+                AppConstants.spnNorthPos = arg2;
                 if (arg2 > 0)
                 {
                     SimpleData s = (SimpleData) arg0.getItemAtPosition(arg2);
-                    spnnorth = s.id;
-                    task = new getSamplePhotoTask(Activity_Sample.this, 2, GridViewList, spnnorth,
-                            spnEast, spncon, spnSAm, type);
+                    spnNorth = s.id;
+                    task = new GetSamplePhotoTask(ActivitySample.this, 2,
+                            gridViewList, spnNorth, spnEast, spnCon, spnSam, type);
                     task.execute();
                     spnContextNo.setEnabled(true);
                 }
-                task = new getSampleListTask(Activity_Sample.this, 2, spnContextNo, "cn", "", "",
-                        spncon, "", spnEast, spnnorth, "", "", progressBar2);
+                task = new GetSampleListTask(ActivitySample.this,"cn", "",
+                        "", spnCon, "", "", "", progressBar2);
                 task.execute();
-                clothmaterial1.setText("");
+                clothMaterial1.setText("");
             }
 
             /**
@@ -192,7 +184,7 @@ public class Activity_Sample extends ActivityBase
             {
             }
         });
-        GridViewList.setOnItemClickListener(new OnItemClickListener() {
+        gridViewList.setOnItemClickListener(new OnItemClickListener() {
             /**
              * User clicked grid
              * @param arg0 - container
@@ -204,7 +196,7 @@ public class Activity_Sample extends ActivityBase
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3)
             {
                 SimpleData d1 = (SimpleData) arg0.getItemAtPosition(arg2);
-                ImageDialog d = new ImageDialog(Activity_Sample.this, d1.img);
+                ImageDialog d = new ImageDialog(ActivitySample.this, d1.img);
                 d.show();
             }
         });
@@ -219,13 +211,13 @@ public class Activity_Sample extends ActivityBase
             @Override
             public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3)
             {
-                AppConstants.spnTypepos = arg2;
+                AppConstants.spnTypePos = arg2;
                 if (arg2 > 0)
                 {
                     SimpleData s = (SimpleData) arg0.getItemAtPosition(arg2);
                     type = s.id;
-                    task = new getSamplePhotoTask(Activity_Sample.this, 3, GridViewList, spnnorth,
-                            spnEast, spncon, spnSAm, type);
+                    task = new GetSamplePhotoTask(ActivitySample.this, 3,
+                            gridViewList, spnNorth, spnEast, spnCon, spnSam, type);
                     task.execute();
                 }
             }
@@ -239,7 +231,7 @@ public class Activity_Sample extends ActivityBase
             {
             }
         });
-        clothmaterial.setOnItemSelectedListener(new OnItemSelectedListener() {
+        clothMaterial.setOnItemSelectedListener(new OnItemSelectedListener() {
             /**
              * User selected item
              * @param arg0 - container
@@ -253,8 +245,8 @@ public class Activity_Sample extends ActivityBase
                 if (arg2 > 0)
                 {
                     SimpleData s = (SimpleData) arg0.getItemAtPosition(arg2);
-                    spnmaterial = s.id;
-                    samplephoto.setText(getString(R.string.frmt, spnmaterial));
+                    spnMaterial = s.id;
+                    samplePhoto.setText(getString(R.string.frmt, spnMaterial));
                 }
             }
 
@@ -279,20 +271,20 @@ public class Activity_Sample extends ActivityBase
             @Override
             public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3)
             {
-                AppConstants.spnConNopos = arg2;
+                AppConstants.spnConNoPos = arg2;
                 if (arg2 > 0)
                 {
                     SimpleData s = (SimpleData) arg0.getItemAtPosition(arg2);
-                    spncon = s.id;
-                    task = new getSamplePhotoTask(Activity_Sample.this, 4, GridViewList, spnnorth,
-                            spnEast, spncon, spnSAm, type);
+                    spnCon = s.id;
+                    task = new GetSamplePhotoTask(ActivitySample.this, 4,
+                            gridViewList, spnNorth, spnEast, spnCon, spnSam, type);
                     task.execute();
                     spnSampleNo.setEnabled(true);
                 }
-                task = new getSampleListTask(Activity_Sample.this, 3, spnSampleNo, "s", "", "", "",
-                        spnSAm, spnEast, spnnorth, spncon, "", progressBar2);
+                task = new GetSampleListTask(ActivitySample.this, "s", "",
+                        "", "", spnSam, spnCon, "", progressBar2);
                 task.execute();
-                clothmaterial1.setText("");
+                clothMaterial1.setText("");
             }
 
             /**
@@ -315,17 +307,19 @@ public class Activity_Sample extends ActivityBase
             @Override
             public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3)
             {
-                AppConstants.spnSamNopos = arg2;
+                AppConstants.spnSamNoPos = arg2;
                 if (arg2 > 0)
                 {
                     flag = true;
                     SimpleData s = (SimpleData) arg0.getItemAtPosition(arg2);
-                    spnSAm = s.id;
-                    task = new getSamplePhotoTask(Activity_Sample.this, 5, GridViewList, spnnorth,
-                            spnEast, spncon, spnSAm, type);
+                    spnSam = s.id;
+                    task = new GetSamplePhotoTask(ActivitySample.this, 5,
+                            gridViewList, spnNorth,
+                            spnEast, spnCon, spnSam, type);
                     task.execute();
-                    task = new getSampleListTask1(Activity_Sample.this, spnnorth, spncon, spnEast,
-                            "material", "list", spnSAm, progressBar2, clothmaterial1, clothmaterial);
+                    task = new GetSampleListTask1(ActivitySample.this, spnNorth, spnCon,
+                            spnEast,"material", "list", spnSam, progressBar2,
+                            clothMaterial1, clothMaterial);
                     task.execute();
                 }
             }
@@ -339,7 +333,7 @@ public class Activity_Sample extends ActivityBase
             {
             }
         });
-        textViewtakephoto.setOnClickListener(new OnClickListener() {
+        textViewTakePhoto.setOnClickListener(new OnClickListener() {
             /**
              * User clicked text
              * @param v - text
@@ -347,27 +341,28 @@ public class Activity_Sample extends ActivityBase
             @Override
             public void onClick(View v)
             {
-                if (flag && AppConstants.spnSamNopos > 0)
+                if (flag && AppConstants.spnSamNoPos > 0)
                 {
-                    if (spnnorth != null && spnnorth.length() > 0 && spnEast != null && spnEast.length() > 0
-                            && spnSAm != null && spnSAm.length() > 0 && spncon != null && spncon.length() > 0
-                            && type != null && type.length() > 0)
+                    if (spnNorth != null && spnNorth.length() > 0 && spnEast != null
+                            && spnEast.length() > 0 && spnSam != null && spnSam.length() > 0
+                            && spnCon != null && spnCon.length() > 0 && type != null
+                            && type.length() > 0)
                     {
-                        Intent i = new Intent(Activity_Sample.this, ActivityCamera1.class);
-                        i.putExtra("north", spnnorth);
+                        Intent i = new Intent(ActivitySample.this, ActivityCamera1.class);
+                        i.putExtra("north", spnNorth);
                         i.putExtra("east", spnEast);
                         i.putExtra("imagePath", imagePath);
-                        i.putExtra("samp_no", spnSAm);
-                        i.putExtra("Context_no", spncon);
+                        i.putExtra("samp_no", spnSam);
+                        i.putExtra("Context_no", spnCon);
                         i.putExtra("sam", "Sam");
-                        i.putExtra("material", spnmaterial);
+                        i.putExtra("material", spnMaterial);
                         i.putExtra("type", type);
                         startActivity(i);
                     }
                 }
                 else
                 {
-                    Toast.makeText(Activity_Sample.this,"Please Fill All Required Field",
+                    Toast.makeText(ActivitySample.this,"Please Fill All Required Field",
                             Toast.LENGTH_LONG).show();
                 }
             }

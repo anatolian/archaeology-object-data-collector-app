@@ -7,8 +7,6 @@ public class ResponseData implements DataInterface
     private static final long serialVersionUID = 1L;
     public RESPONSE_RESULT result;
     public String resultMsg;
-    public String email;
-    public int status;
     /**
      * Object Release Code
      */

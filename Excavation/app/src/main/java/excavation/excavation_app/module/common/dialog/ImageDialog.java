@@ -1,37 +1,29 @@
 // Image dialog
 // @author: anatolian
 package excavation.excavation_app.module.common.dialog;
-import excavation.excavation_app.module.common.bean.ImageListBean;
 import android.app.Dialog;
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
 import com.appenginedemo.R;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
-import excavation.excavation_app.com.utils.imageloader.ImageLoader;
 public class ImageDialog extends Dialog
 {
-    Context context;
-    ImageLoader image_loader;
-    String image_URL = null;
-    ImageListBean data = new ImageListBean();
-    String east,north,samNo,conNo,fontSize,placement;
-    String area_divider,context_divider,sample_divider;
+    private Context context;
+    private String imageURL = null;
     /**
      * Constructor
      * @param mContext - calling context
-     * @param image_URL - image location
+     * @param imageURL - image location
      */
-    public ImageDialog(Context mContext, String image_URL)
+    public ImageDialog(Context mContext, String imageURL)
     {
         super(mContext);
         context = mContext;
-        this.image_URL = image_URL;
-        image_loader=new  ImageLoader(mContext);
+        this.imageURL = imageURL;
     }
 
     /**
@@ -48,10 +40,10 @@ public class ImageDialog extends Dialog
         setCanceledOnTouchOutside(true);
         setCancelable(true);
         ImageView imageView1 = (ImageView) findViewById(R.id.imageView1);
-        System.out.println("Image Path in image dialog==>"+image_URL);
-        if (image_URL != null && image_URL.length() > 0)
+        System.out.println("Image Path in image dialog==>" + imageURL);
+        if (imageURL != null && imageURL.length() > 0)
         {
-            Picasso.with(context).load(image_URL).memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
+            Picasso.with(context).load(imageURL).memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
                     .into(imageView1, new com.squareup.picasso.Callback() {
                 /**
                  * Load failed

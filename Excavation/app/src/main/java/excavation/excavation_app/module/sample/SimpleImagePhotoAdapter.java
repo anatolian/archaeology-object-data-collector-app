@@ -1,54 +1,32 @@
 // Image adapter
 // @author: anatolian
 package excavation.excavation_app.module.sample;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
-import javax.security.auth.callback.Callback;
-import excavation.excavation_app.module.common.application.ApplicationHandler;
-import excavation.excavation_app.module.common.bean.ImageListBean;
 import excavation.excavation_app.module.common.bean.SimpleData;
-import excavation.excavation_app.module.common.dialog.ImageDialog;
-import excavation.excavation_app.module.image.property.ImagePropertyBean;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import com.appenginedemo.R;
-import excavation.excavation_app.com.appenginedemo.db.DBHelper;
-
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
-import excavation.excavation_app.com.utils.imageloader.ImageLoader;
 public class SimpleImagePhotoAdapter extends BaseAdapter
 {
     private Context mContext;
     private List<SimpleData> list;
-    ArrayList<String> Imgs;
-    ImageLoader imageLoader;
-    DBHelper db;
-    String fontSize, placement;
     /**
      * Constructor
-     * @param activity_3d - calling activity
+     * @param activity3d - calling activity
      * @param list2 - list
      */
-    public SimpleImagePhotoAdapter(Context activity_3d, List<SimpleData> list2)
+    public SimpleImagePhotoAdapter(Context activity3d, List<SimpleData> list2)
     {
-        mContext = activity_3d;
+        mContext = activity3d;
         list = list2;
-        imageLoader = new ImageLoader(mContext);
     }
 
     /**
@@ -98,14 +76,13 @@ public class SimpleImagePhotoAdapter extends BaseAdapter
         final SimpleData data = list.get(position);
         ImageView imageViewImageAlbum = (ImageView) row.findViewById(R.id.imageViewImageAlbum);
         final CheckBox checkBoxAlbum = (CheckBox) row.findViewById(R.id.checkBoxAlbum);
-        TextView textViewLAble = (TextView) row.findViewById(R.id.textViewLAble);
         final ProgressBar progressBar = (ProgressBar) row.findViewById(R.id.progressBar1);
-        int width = Integer.parseInt(data.photowidth);
-        int height = Integer.parseInt(data.photoheight);
-        int aspectwidth = ((130 * height) / width);
+        int width = Integer.parseInt(data.photoWidth);
+        int height = Integer.parseInt(data.photoHeight);
+        int aspectHeight = ((130 * height) / width);
         if (data.img != null && data.img.length() > 0)
         {
-            Picasso.with(mContext).load(data.img).resize(130, aspectwidth)
+            Picasso.with(mContext).load(data.img).resize(130, aspectHeight)
                     .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
                     .into(imageViewImageAlbum, new com.squareup.picasso.Callback() {
                 /**
@@ -133,28 +110,5 @@ public class SimpleImagePhotoAdapter extends BaseAdapter
         }
         checkBoxAlbum.setVisibility(View.GONE);
         return row;
-    }
-
-    /**
-     * Read image
-     * @param src - image location
-     * @return Returns image
-     */
-    public static Bitmap getBitmapFromURL(String src)
-    {
-        try
-        {
-            URL url = new URL(src);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setDoInput(true);
-            connection.connect();
-            InputStream input = connection.getInputStream();
-            return BitmapFactory.decodeStream(input);
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-            return null;
-        }
     }
 }

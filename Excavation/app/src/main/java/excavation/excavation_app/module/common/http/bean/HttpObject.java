@@ -3,14 +3,12 @@
 package excavation.excavation_app.module.common.http.bean;
 import java.io.Serializable;
 import java.util.Map;
-import excavation.excavation_app.module.common.http.HttpRequester;
 import excavation.excavation_app.module.common.http.Request;
 public class HttpObject implements Serializable
 {
     private static final long serialVersionUID = 1L;
     private String url;
     private int status;
-    private HttpRequester info;
     private Map<Request, String> params;
     private String responseString;
     /**
@@ -83,31 +81,12 @@ public class HttpObject implements Serializable
     public void release()
     {
         responseString = null;
-        info = null;
         url = null;
         if (params != null)
         {
             params.clear();
         }
         params = null;
-    }
-
-    /**
-     * Set information
-     * @param info1 - information
-     */
-    public void setInfo(HttpRequester info1)
-    {
-        info = info1;
-    }
-
-    /**
-     * Get information
-     * @return Returns information
-     */
-    public HttpRequester getInfo()
-    {
-        return info;
     }
 
     /**

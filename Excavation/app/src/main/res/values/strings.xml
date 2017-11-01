@@ -28,6 +28,7 @@
     <string name="threed">3d</string>
     <string name="sample">Sample</string>
     <string name="context_photo"> Context Photo</string>
+    <string name = "context_photo_no_space">Context Photo</string>
     <string name="replace_photo">Replace\nPhoto</string>
     <string name="next_photo">Next\nPhoto</string>
     <string name="context_colon">Context:</string>
