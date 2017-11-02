@@ -1,5 +1,4 @@
 // HTTP object
-// @author: anatolian
 package excavation.excavation_app.module.common.http.bean;
 import java.io.Serializable;
 import java.util.Map;

@@ -1,5 +1,4 @@
 // Splash activity
-// @author: anatolian
 package excavation.excavation_app.com.appenginedemo;
 import excavation.excavation_app.com.appenginedemo.db.DBHelper;
 import excavation.excavation_app.module.common.dialog.IPAddressDialog;

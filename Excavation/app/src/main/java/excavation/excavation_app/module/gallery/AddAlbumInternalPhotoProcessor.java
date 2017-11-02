@@ -1,5 +1,4 @@
 // Add an album
-// @author: anatolian
 package excavation.excavation_app.module.gallery;
 import java.util.List;
 import java.util.Map;

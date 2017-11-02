@@ -1,5 +1,4 @@
 // HTTP Operation
-// @author: anatolian
 package excavation.excavation_app.module.common.http;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

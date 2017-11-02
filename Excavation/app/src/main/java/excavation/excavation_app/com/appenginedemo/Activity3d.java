@@ -1,5 +1,4 @@
 // 3D activity
-// @author: anatolian
 package excavation.excavation_app.com.appenginedemo;
 import excavation.excavation_app.module.bil3d.AddMultiPhotoTask;
 import excavation.excavation_app.module.common.adapter.SimpleImageAdapter;
@@ -70,7 +69,6 @@ public class Activity3d extends ActivityBase
             north = getIntent().getExtras().getString("north");
             east = getIntent().getExtras().getString("east");
         }
-
         if (!(spnNorth != null && spnNorth.length() > 0 || spnEast != null && spnEast.length() > 0))
         {
             spnNorth = north;

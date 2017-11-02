@@ -1,5 +1,4 @@
 // Connect to database
-// @author: anatolian
 package excavation.excavation_app.com.appenginedemo.db;
 import excavation.excavation_app.module.image.property.ImagePropertyBean;
 import android.content.ContentValues;

@@ -1,5 +1,4 @@
 // Add photo thread
-// @author: anatolian
 package excavation.excavation_app.module.sample;
 import java.util.ArrayList;
 import excavation.excavation_app.com.appenginedemo.ActivitySample;
@@ -12,7 +11,6 @@ import excavation.excavation_app.module.image.property.ImagePropertyBean;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.os.Handler;
 import android.widget.Toast;
 public class AddSamplePhotoTask extends BaseTask
 {

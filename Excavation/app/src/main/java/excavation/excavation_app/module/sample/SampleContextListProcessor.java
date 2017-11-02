@@ -1,5 +1,4 @@
 // Context list processor
-// @author: anatolian
 package excavation.excavation_app.module.sample;
 import java.util.Iterator;
 import java.util.LinkedList;

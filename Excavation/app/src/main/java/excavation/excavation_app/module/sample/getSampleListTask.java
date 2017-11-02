@@ -1,5 +1,4 @@
 // Get sample list
-// @author: sample list
 package excavation.excavation_app.module.sample;
 import java.util.List;
 import excavation.excavation_app.module.common.adapter.SimpleTextAdapter;

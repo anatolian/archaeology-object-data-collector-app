@@ -1,3 +1,4 @@
+// Main menu
 package excavation.excavation_app.com.appenginedemo;
 import java.io.File;
 import java.io.FileNotFoundException;

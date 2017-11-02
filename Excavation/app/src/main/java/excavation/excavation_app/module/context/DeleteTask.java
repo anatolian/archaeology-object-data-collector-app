@@ -1,5 +1,4 @@
 // Delete thread
-// @author: anatolian
 package excavation.excavation_app.module.context;
 import java.util.List;
 import excavation.excavation_app.module.common.adapter.SimpleContextSelectedAdapter;

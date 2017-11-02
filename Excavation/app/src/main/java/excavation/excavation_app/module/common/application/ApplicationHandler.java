@@ -1,5 +1,4 @@
 // Handle application
-// @author: anatolian
 package excavation.excavation_app.module.common.application;
 import java.io.File;
 import java.io.FileInputStream;

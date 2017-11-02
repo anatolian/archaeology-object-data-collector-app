@@ -1,5 +1,4 @@
 // Base thread
-// @author: anatolian
 package excavation.excavation_app.module.common.task;
 import excavation.excavation_app.module.common.bean.ResponseData;
 import android.content.Context;

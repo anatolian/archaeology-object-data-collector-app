@@ -1,5 +1,4 @@
-// Camera
-// @author: anatolian
+// Camera for updating one image
 package excavation.excavation_app.com.appenginedemo;
 import java.io.ByteArrayOutputStream;
 import java.io.File;

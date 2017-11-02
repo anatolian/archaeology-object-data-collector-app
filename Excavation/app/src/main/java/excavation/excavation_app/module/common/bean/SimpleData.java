@@ -1,5 +1,4 @@
 // Data wrapper
-// @author: anatolian
 package excavation.excavation_app.module.common.bean;
 public class SimpleData extends ResponseData
 {

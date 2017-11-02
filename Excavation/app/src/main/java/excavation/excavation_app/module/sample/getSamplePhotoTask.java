@@ -1,5 +1,4 @@
 // Get photo
-// @author: anatolian
 package excavation.excavation_app.module.sample;
 import java.util.List;
 import excavation.excavation_app.module.common.bean.SimpleData;

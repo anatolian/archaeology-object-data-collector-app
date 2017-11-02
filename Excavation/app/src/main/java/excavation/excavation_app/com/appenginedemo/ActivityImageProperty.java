@@ -1,5 +1,4 @@
-// Activity property
-// @author: anatolian
+// Image property
 package excavation.excavation_app.com.appenginedemo;
 import excavation.excavation_app.com.appenginedemo.db.DBHelper;
 import excavation.excavation_app.module.common.constants.AppConstants;
@@ -252,8 +251,8 @@ public class ActivityImageProperty extends ActivityBase
                     }
                     else
                     {
-                        Toast.makeText(ActivityImageProperty.this, "Please enter base image path",
-                                Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ActivityImageProperty.this,
+                                "Please enter base image path", Toast.LENGTH_SHORT).show();
                     }
                 }
                 else

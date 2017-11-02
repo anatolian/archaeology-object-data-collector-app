@@ -1,5 +1,4 @@
 // Sample activity
-// @author: anatolian
 package excavation.excavation_app.com.appenginedemo;
 import java.io.File;
 import excavation.excavation_app.module.common.bean.SimpleData;
@@ -348,7 +347,8 @@ public class ActivitySample extends ActivityBase
                             && spnCon != null && spnCon.length() > 0 && type != null
                             && type.length() > 0)
                     {
-                        Intent i = new Intent(ActivitySample.this, ActivityCamera1.class);
+                        Intent i = new Intent(ActivitySample.this,
+                                ActivityCamera1.class);
                         i.putExtra("north", spnNorth);
                         i.putExtra("east", spnEast);
                         i.putExtra("imagePath", imagePath);
@@ -362,7 +362,7 @@ public class ActivitySample extends ActivityBase
                 }
                 else
                 {
-                    Toast.makeText(ActivitySample.this,"Please Fill All Required Field",
+                    Toast.makeText(ActivitySample.this,"Please Fill All Required Fields",
                             Toast.LENGTH_LONG).show();
                 }
             }

@@ -1,5 +1,4 @@
 // Image property thread
-// author: anatolian
 package excavation.excavation_app.module.image.property;
 import excavation.excavation_app.module.common.bean.ResponseData;
 import excavation.excavation_app.module.common.http.Response.RESPONSE_RESULT;

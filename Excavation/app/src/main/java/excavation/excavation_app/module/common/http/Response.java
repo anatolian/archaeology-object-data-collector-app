@@ -1,14 +1,13 @@
 // HTTP response
-// @author: anatolian
 package excavation.excavation_app.module.common.http;
 public interface Response
 {
     enum RESPONSE_RESULT
     {
-        success, failed;
+        success, failed
     }
     enum STANDARD
     {
-        responseData, result, error, data;
+        responseData, result, error, data
     }
 }

@@ -1,5 +1,4 @@
 // Image dialog
-// @author: anatolian
 package excavation.excavation_app.module.common.dialog;
 import android.app.Dialog;
 import android.content.Context;

@@ -1,5 +1,4 @@
 // Process easting
-// @author: anatolian
 package excavation.excavation_app.module.context;
 import java.util.Iterator;
 import java.util.LinkedList;

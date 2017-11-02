@@ -1,5 +1,4 @@
 // HTTP requester
-// @author: anatolian
 package excavation.excavation_app.module.common.http;
 public enum HttpRequester
 {

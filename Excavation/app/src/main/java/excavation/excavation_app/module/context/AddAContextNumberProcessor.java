@@ -1,5 +1,4 @@
 // Add a context number
-// @author: anatolian
 package excavation.excavation_app.module.context;
 import java.util.List;
 import java.util.Map;

@@ -1,5 +1,4 @@
 // Process image properties
-// @author: anatolian
 package excavation.excavation_app.module.image.property;
 import java.util.List;
 import java.util.Map;

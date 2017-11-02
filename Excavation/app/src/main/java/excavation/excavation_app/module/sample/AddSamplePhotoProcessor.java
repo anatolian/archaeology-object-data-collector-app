@@ -1,5 +1,4 @@
 // Add a sample with photo
-// @author: anatolian
 package excavation.excavation_app.module.sample;
 import java.util.List;
 import java.util.Map;

@@ -1,5 +1,4 @@
 // String adapter
-// @author: anatolian
 package excavation.excavation_app.module.common.adapter;
 import java.util.List;
 import excavation.excavation_app.module.common.bean.SimpleData;

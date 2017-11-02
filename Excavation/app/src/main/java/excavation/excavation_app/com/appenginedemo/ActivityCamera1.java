@@ -1,5 +1,4 @@
-// Camera activity
-// @author: anatolian
+// Camera activity for updating many images
 package excavation.excavation_app.com.appenginedemo;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -27,7 +26,7 @@ public class ActivityCamera1 extends ActivityBase
 {
     LayoutInflater inflater;
     RelativeLayout rLayout;
-    ImageView camera_image;
+    ImageView cameraImage;
     static String imagePath;
     String samNo, conNo, material, type, sam, north, east, img, act3d;
     // Activity request codes
@@ -49,7 +48,7 @@ public class ActivityCamera1 extends ActivityBase
         rLayout = (RelativeLayout) inflater.inflate(R.layout.activity_camera,null);
         wrapper.addView(rLayout);
         linearLayout2.setVisibility(View.GONE);
-        camera_image = (ImageView) findViewById(R.id.cemera_image);
+        cameraImage = (ImageView) findViewById(R.id.cemera_image);
         if (getIntent().hasExtra("north") || getIntent().hasExtra("east")
                 || getIntent().hasExtra("imagePath"))
         {
@@ -71,7 +70,7 @@ public class ActivityCamera1 extends ActivityBase
         {
             act3d = getIntent().getExtras().getString("3d");
         }
-        capture_image();
+        captureImage();
     }
 
     /**
@@ -84,7 +83,7 @@ public class ActivityCamera1 extends ActivityBase
     /**
      * Take picture
      */
-    public void capture_image()
+    public void captureImage()
     {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         fileUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE);
@@ -111,8 +110,8 @@ public class ActivityCamera1 extends ActivityBase
                 try
                 {
                     Bitmap thumbnail=decodeUri(fileUri);
-                    camera_image.setVisibility(View.VISIBLE);
-                    camera_image.setImageBitmap(thumbnail);
+                    cameraImage.setVisibility(View.VISIBLE);
+                    cameraImage.setImageBitmap(thumbnail);
                 }
                 catch (FileNotFoundException e)
                 {

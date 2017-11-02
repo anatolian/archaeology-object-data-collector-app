@@ -1,5 +1,4 @@
 // Select photos
-// @author: anatolian
 package excavation.excavation_app.com.appenginedemo;
 import java.util.ArrayList;
 import excavation.excavation_app.module.common.constants.AppConstants;
@@ -20,7 +19,6 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.GridView;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 import com.appenginedemo.R;
@@ -213,8 +211,6 @@ public class MultiPhotoSelectActivity extends ActivityBase
                 convertView = mInflater.inflate(R.layout.item_imageview,null);
             }
             CheckBox mCheckBox = (CheckBox) convertView.findViewById(R.id.checkBoxAlbum);
-            final ImageView imageView =
-                    (ImageView) convertView.findViewById(R.id.imageViewImageAlbum);
             mCheckBox.setTag(position);
             mCheckBox.setChecked(mSparseBooleanArray.get(position));
             mCheckBox.setOnCheckedChangeListener(mCheckedChangeListener);

@@ -1,5 +1,4 @@
-// Activity
-// @author: anatolian
+// Banner at bottom of many activities
 package excavation.excavation_app.com.appenginedemo;
 import excavation.excavation_app.module.common.constants.AppConstants;
 import excavation.excavation_app.module.common.dialog.IPAddressDialog;

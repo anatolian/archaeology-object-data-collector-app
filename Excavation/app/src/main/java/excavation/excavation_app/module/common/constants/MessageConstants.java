@@ -1,5 +1,4 @@
 // Message constants
-// @author: anatolian
 package excavation.excavation_app.module.common.constants;
 public class MessageConstants
 {

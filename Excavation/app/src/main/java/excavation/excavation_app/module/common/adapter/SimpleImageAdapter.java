@@ -1,5 +1,4 @@
 // Image adapter
-// author: anatolian
 package excavation.excavation_app.module.common.adapter;
 import java.util.ArrayList;
 import excavation.excavation_app.module.common.constants.AppConstants;

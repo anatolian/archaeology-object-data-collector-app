@@ -1,5 +1,4 @@
 // Add a photo
-// @author: anatolian
 package excavation.excavation_app.module.context;
 import java.util.ArrayList;
 import excavation.excavation_app.module.common.bean.SimpleData;

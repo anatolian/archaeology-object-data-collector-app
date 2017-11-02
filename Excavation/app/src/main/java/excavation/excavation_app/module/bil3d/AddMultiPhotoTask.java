@@ -1,5 +1,4 @@
 // Add multiple photos thread
-// @author: anatolian
 package excavation.excavation_app.module.bil3d;
 import java.util.ArrayList;
 import excavation.excavation_app.com.appenginedemo.Activity3d;

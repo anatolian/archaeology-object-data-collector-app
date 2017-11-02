@@ -1,5 +1,4 @@
 // Object factory
-// @author: anatolian
 package excavation.excavation_app.module.common.http.factory;
 import java.util.HashMap;
 import java.util.Map;

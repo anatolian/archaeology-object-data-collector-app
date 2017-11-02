@@ -1,3 +1,4 @@
+// Process HTTP communications
 package excavation.excavation_app.module.common.http;
 import java.util.List;
 import java.util.Map;

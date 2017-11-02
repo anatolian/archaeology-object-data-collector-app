@@ -1,5 +1,4 @@
 // Constants
-// @author: anatolian
 package excavation.excavation_app.module.common.constants;
 import java.util.ArrayList;
 public class AppConstants

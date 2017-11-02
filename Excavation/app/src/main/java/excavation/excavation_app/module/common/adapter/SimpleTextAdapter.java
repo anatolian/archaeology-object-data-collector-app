@@ -1,5 +1,4 @@
 // Text adapter
-// @author: anatolian
 package excavation.excavation_app.module.common.adapter;
 import java.util.ArrayList;
 import java.util.List;
