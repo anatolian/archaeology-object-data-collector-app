@@ -187,7 +187,8 @@ public class DownloadActivity extends AppCompatActivity
      */
     private void requestPermission(String permissionName, int permissionRequestCode)
     {
-        ActivityCompat.requestPermissions(this, new String[]{permissionName}, permissionRequestCode);
+        ActivityCompat.requestPermissions(this, new String[]{permissionName},
+                permissionRequestCode);
     }
 
     /**

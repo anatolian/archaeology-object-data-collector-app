@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="cis573.com.archaeology">
+
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.FLASHLIGHT" />
     <uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE" />
@@ -14,6 +15,7 @@
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -31,13 +33,18 @@
             </intent-filter>
         </activity>
         <activity android:name=".LocalRetriever" />
-        <activity android:name=".CameraUIActivity"
+        <activity
+            android:name=".CameraUIActivity"
             android:screenOrientation="landscape"
-            android:theme = "@style/Theme.AppCompat.NoActionBar"/>
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity android:name=".FavoriteActivity" />
         <activity android:name=".SearchActivity" />
         <activity android:name=".HistoryActivity" />
         <activity android:name=".ManualActivity" />
+        <activity android:name=".CeramicInputActivity" />
+        <activity android:name=".ObjectDetailActivity" />
+        <activity android:name=".PhotosActivity" />
+        <activity android:name=".MyWiFiActivity"></activity>
     </application>
 
 </manifest>
