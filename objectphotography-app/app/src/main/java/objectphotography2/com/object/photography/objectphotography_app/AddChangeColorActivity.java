@@ -24,10 +24,10 @@ import static objectphotography2.com.object.photography.objectphotography_app.Ch
 import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.CHROMA;
 import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.DESCRIPTION;
 import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.HUE;
-import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.INDEXBASE;
+import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.INDEX_BASE;
 import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.LIGHTNESS_VALUE;
-import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.MUNSELLCOLOR;
-import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.READINGLOCATION;
+import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.MUNSELL_COLOR;
+import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.READING_LOCATION;
 import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.getGlobalWebServerURL;
 import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.getMunsellColor;
 import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.parseMunsellColor;
@@ -38,11 +38,7 @@ public class AddChangeColorActivity extends AppCompatActivity
 {
     enum LoadState
     {
-        readingLocation,
-        hue,
-        lightness,
-        chroma,
-        description
+        readingLocation, hue, lightness, chroma, description
     }
     RequestQueue queue;
     public final HashMap<LoadState, Boolean> allDataLoadInfo = new HashMap<>();
@@ -68,7 +64,7 @@ public class AddChangeColorActivity extends AppCompatActivity
         // Munsell colors are determined by hue, lightness, and chroma
         // munsell colors stored in hashmap of consisting of all three values
         Bundle params = getIntent().getExtras();
-        if (params.getString(READINGLOCATION) == null && params.getString(MUNSELLCOLOR) == null
+        if (params.getString(READING_LOCATION) == null && params.getString(MUNSELL_COLOR) == null
                 && params.getString(HUE) == null && params.getString(CHROMA) == null)
         {
             asyncPopulateReadingLocationsFromDB();
@@ -78,8 +74,8 @@ public class AddChangeColorActivity extends AppCompatActivity
         }
         else
         {
-            asyncPopulateReadingLocationsFromDB(params.getString(READINGLOCATION));
-            HashMap<String, String> colorDict = parseMunsellColor(params.getString(MUNSELLCOLOR));
+            asyncPopulateReadingLocationsFromDB(params.getString(READING_LOCATION));
+            HashMap<String, String> colorDict = parseMunsellColor(params.getString(MUNSELL_COLOR));
             asyncPopulateHuesFromDB(colorDict.get(HUE));
             asyncPopulateLightnessFromDB(colorDict.get(LIGHTNESS_VALUE));
             asyncPopulateChromaFromDB(colorDict.get(CHROMA));
@@ -127,9 +123,11 @@ public class AddChangeColorActivity extends AppCompatActivity
     public void itemChanged(View view)
     {
         if (allDataLoadInfo.get(LoadState.hue) && allDataLoadInfo.get(LoadState.lightness)
-                && allDataLoadInfo.get(LoadState.chroma) && allDataLoadInfo.get(LoadState.readingLocation))
+                && allDataLoadInfo.get(LoadState.chroma)
+                && allDataLoadInfo.get(LoadState.readingLocation))
         {
-            asyncPopulateDescriptionFromDB(getSelectedHue(), getSelectedLightness(), getSelectedChroma());
+            asyncPopulateDescriptionFromDB(getSelectedHue(), getSelectedLightness(),
+                    getSelectedChroma());
         }
     }
 
@@ -166,10 +164,10 @@ public class AddChangeColorActivity extends AppCompatActivity
     public void saveAndReturn(View view)
     {
         Intent returnIntent = new Intent();
-        returnIntent.putExtra(INDEXBASE, getIntent().getIntExtra(INDEXBASE, 0));
-        returnIntent.putExtra(READINGLOCATION, getSelectedReadingLocation());
-        returnIntent.putExtra(MUNSELLCOLOR, getMunsellColor(getSelectedHue(), getSelectedLightness(),
-                getSelectedChroma()));
+        returnIntent.putExtra(INDEX_BASE, getIntent().getIntExtra(INDEX_BASE, 0));
+        returnIntent.putExtra(READING_LOCATION, getSelectedReadingLocation());
+        returnIntent.putExtra(MUNSELL_COLOR, getMunsellColor(getSelectedHue(),
+                getSelectedLightness(), getSelectedChroma()));
         returnIntent.putExtra(DESCRIPTION, getGeneratedColorDescription());
         setResult(RESULT_OK, returnIntent);
         finish();
@@ -208,67 +206,68 @@ public class AddChangeColorActivity extends AppCompatActivity
         toggleSaveButton();
         makeVolleyJSONArrayRequest(getGlobalWebServerURL() + "/get_reading_locations", queue,
                 new JSONArrayResponseWrapper(this) {
-                    /**
-                     * Response received
-                     * @param response - Database response
-                     */
-                    @Override
-                    void responseMethod(JSONArray response)
+            /**
+             * Response received
+             * @param response - Database response
+             */
+            @Override
+            void responseMethod(JSONArray response)
+            {
+                try
+                {
+                    Spinner locationSpinner = (Spinner) findViewById(R.id.locationSpinner);
+                    ArrayList<String> resultList = new ArrayList<>();
+                    for (int i = 0; i < response.length(); i++)
                     {
-                        try
-                        {
-                            Spinner locationSpinner = (Spinner) findViewById(R.id.locationSpinner);
-                            ArrayList<String> resultList = new ArrayList<>();
-                            for (int i = 0; i < response.length(); i++)
-                            {
-                                resultList.add(response.getString(i));
-                            }
-                            // populate spinner with reading locations
-                            setSpinnerItems(currentContext, locationSpinner, resultList, selectedItemText);
-                            locationSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                                /**
-                                 * User selected an item
-                                 * @param parent - list of items
-                                 * @param view - container view
-                                 * @param position - selected item
-                                 * @param id - id of item
-                                 */
-                                @Override
-                                public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
-                                {
-                                    itemChanged(view);
-                                }
-
-                                /**
-                                 * No item selected
-                                 * @param parent - list of items
-                                 */
-                                @Override
-                                public void onNothingSelected(AdapterView<?> parent)
-                                {
-                                }
-                            });
-                            allDataLoadInfo.put(LoadState.readingLocation, true);
-                            toggleSaveButton();
-                        }
-                        catch(JSONException e)
-                        {
-                            showToastError(e, getApplicationContext());
-                            e.printStackTrace();
-                        }
+                        resultList.add(response.getString(i));
                     }
+                    // populate spinner with reading locations
+                    setSpinnerItems(currentContext, locationSpinner, resultList, selectedItemText);
+                    locationSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                        /**
+                         * User selected an item
+                         * @param parent - list of items
+                         * @param view - container view
+                         * @param position - selected item
+                         * @param id - id of item
+                         */
+                        @Override
+                        public void onItemSelected(AdapterView<?> parent, View view, int position,
+                                                   long id)
+                        {
+                            itemChanged(view);
+                        }
 
-                    /**
-                     * Connection failed
-                     * @param error - failure
-                     */
-                    @Override
-                    void errorMethod(VolleyError error)
-                    {
-                        showToastError(error, getApplicationContext());
-                        error.printStackTrace();
-                    }
-                });
+                        /**
+                         * No item selected
+                         * @param parent - list of items
+                         */
+                        @Override
+                        public void onNothingSelected(AdapterView<?> parent)
+                        {
+                        }
+                    });
+                    allDataLoadInfo.put(LoadState.readingLocation, true);
+                    toggleSaveButton();
+                }
+                catch(JSONException e)
+                {
+                    showToastError(e, getApplicationContext());
+                    e.printStackTrace();
+                }
+            }
+
+            /**
+             * Connection failed
+             * @param error - failure
+             */
+            @Override
+            void errorMethod(VolleyError error)
+            {
+                showToastError(error, getApplicationContext());
+                error.printStackTrace();
+            }
+        });
     }
 
     /**
@@ -281,71 +280,6 @@ public class AddChangeColorActivity extends AppCompatActivity
         // populate spinner with reading locations
         makeVolleyJSONArrayRequest(getGlobalWebServerURL() + "/get_reading_locations", queue,
                 new JSONArrayResponseWrapper(this) {
-                    /**
-                     * Response received
-                     * @param response - database response
-                     */
-                    @Override
-                    void responseMethod(JSONArray response)
-                    {
-                        try
-                        {
-                            Spinner locationSpinner = (Spinner) findViewById(R.id.locationSpinner);
-                            ArrayList<String> resultList = new ArrayList<>();
-                            for (int i = 0; i < response.length(); i++)
-                            {
-                                resultList.add(response.getString(i));
-                            }
-                            setSpinnerItems(currentContext, locationSpinner, resultList);
-                            locationSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                                /**
-                                 * User selected an item
-                                 * @param parent - the spinner
-                                 * @param view - container view
-                                 * @param position - selected item
-                                 * @param id - item id
-                                 */
-                                @Override
-                                public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
-                                {
-                                    itemChanged(view);
-                                }
-
-                                /**
-                                 * Nothing selected
-                                 * @param parent - spinner
-                                 */
-                                @Override
-                                public void onNothingSelected(AdapterView<?> parent)
-                                {
-                                }
-                            });
-                            allDataLoadInfo.put(LoadState.readingLocation, true);
-                            toggleSaveButton();
-                        }
-                        catch (JSONException e)
-                        {
-                            showToastError(e, getApplicationContext());
-                            e.printStackTrace();
-                        }
-                    }
-
-                    @Override
-                    void errorMethod(VolleyError error) {
-                        showToastError(error, getApplicationContext());
-                        error.printStackTrace();
-                    }
-                });
-    }
-
-    /**
-     * Populate hues asynchronously
-     */
-    public void asyncPopulateHuesFromDB()
-    {
-        allDataLoadInfo.put(LoadState.hue, false);
-        toggleSaveButton();
-        makeVolleyJSONArrayRequest(getGlobalWebServerURL() + "/get_hues", queue, new JSONArrayResponseWrapper(this) {
             /**
              * Response received
              * @param response - database response
@@ -355,7 +289,79 @@ public class AddChangeColorActivity extends AppCompatActivity
             {
                 try
                 {
-                    ArrayList<String> resultList = new ArrayList<String>();
+                    Spinner locationSpinner = (Spinner) findViewById(R.id.locationSpinner);
+                    ArrayList<String> resultList = new ArrayList<>();
+                    for (int i = 0; i < response.length(); i++)
+                    {
+                        resultList.add(response.getString(i));
+                    }
+                    setSpinnerItems(currentContext, locationSpinner, resultList);
+                    locationSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                        /**
+                         * User selected an item
+                         * @param parent - the spinner
+                         * @param view - container view
+                         * @param position - selected item
+                         * @param id - item id
+                         */
+                        @Override
+                        public void onItemSelected(AdapterView<?> parent, View view, int position,
+                                                   long id)
+                        {
+                            itemChanged(view);
+                        }
+
+                        /**
+                         * Nothing selected
+                         * @param parent - spinner
+                         */
+                        @Override
+                        public void onNothingSelected(AdapterView<?> parent)
+                        {
+                        }
+                    });
+                    allDataLoadInfo.put(LoadState.readingLocation, true);
+                    toggleSaveButton();
+                }
+                catch (JSONException e)
+                {
+                    showToastError(e, getApplicationContext());
+                    e.printStackTrace();
+                }
+            }
+
+            /**
+             * Connection failed
+             * @param error - failure
+             */
+            @Override
+            void errorMethod(VolleyError error)
+            {
+                showToastError(error, getApplicationContext());
+                error.printStackTrace();
+            }
+        });
+    }
+
+    /**
+     * Populate hues asynchronously
+     */
+    public void asyncPopulateHuesFromDB()
+    {
+        allDataLoadInfo.put(LoadState.hue, false);
+        toggleSaveButton();
+        makeVolleyJSONArrayRequest(getGlobalWebServerURL() + "/get_hues", queue,
+                new JSONArrayResponseWrapper(this) {
+            /**
+             * Response received
+             * @param response - database response
+             */
+            @Override
+            void responseMethod(JSONArray response)
+            {
+                try
+                {
+                    ArrayList<String> resultList = new ArrayList<>();
                     Spinner huesSpinner = (Spinner) findViewById(R.id.huesSpinner);
                     for (int i = 0; i < response.length(); i++)
                     {
@@ -372,7 +378,8 @@ public class AddChangeColorActivity extends AppCompatActivity
                          * @param id - id of item
                          */
                         @Override
-                        public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
+                        public void onItemSelected(AdapterView<?> parent, View view, int position,
+                                                   long id)
                         {
                             itemChanged(view);
                         }
@@ -417,7 +424,8 @@ public class AddChangeColorActivity extends AppCompatActivity
     {
         allDataLoadInfo.put(LoadState.hue, false);
         toggleSaveButton();
-        makeVolleyJSONArrayRequest(getGlobalWebServerURL() + "/get_hues", queue, new JSONArrayResponseWrapper(this) {
+        makeVolleyJSONArrayRequest(getGlobalWebServerURL() + "/get_hues", queue,
+                new JSONArrayResponseWrapper(this) {
             /**
              * Response received
              * @param response - database response
@@ -427,7 +435,7 @@ public class AddChangeColorActivity extends AppCompatActivity
             {
                 try
                 {
-                    ArrayList<String> resultList = new ArrayList<String>();
+                    ArrayList<String> resultList = new ArrayList<>();
                     Spinner huesSpinner = (Spinner) findViewById(R.id.huesSpinner);
                     for (int i = 0; i < response.length(); i++)
                     {
@@ -444,7 +452,8 @@ public class AddChangeColorActivity extends AppCompatActivity
                          * @param id - item id
                          */
                         @Override
-                        public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
+                        public void onItemSelected(AdapterView<?> parent, View view, int position,
+                                                   long id)
                         {
                             itemChanged(view);
                         }
@@ -488,7 +497,8 @@ public class AddChangeColorActivity extends AppCompatActivity
     {
         allDataLoadInfo.put(LoadState.lightness, false);
         toggleSaveButton();
-        makeVolleyJSONArrayRequest(getGlobalWebServerURL() + "/get_lightness", queue, new JSONArrayResponseWrapper(this) {
+        makeVolleyJSONArrayRequest(getGlobalWebServerURL() + "/get_lightness", queue,
+                new JSONArrayResponseWrapper(this) {
             /**
              * Response received
              * @param response - database response
@@ -498,15 +508,15 @@ public class AddChangeColorActivity extends AppCompatActivity
             {
                 try
                 {
-                    ArrayList<String> resultList = new ArrayList<String>();
-                    Spinner lightnessSpiner = (Spinner) findViewById(R.id.lightnessSpiner);
+                    ArrayList<String> resultList = new ArrayList<>();
+                    Spinner lightnessSpinner = (Spinner) findViewById(R.id.lightnessSpiner);
                     for (int i = 0; i < response.length(); i++)
                     {
                         resultList.add(response.getString(i));
                     }
-                    //populate spinner with lightness
-                    setSpinnerItems(currentContext, lightnessSpiner, resultList);
-                    lightnessSpiner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    // populate spinner with lightness
+                    setSpinnerItems(currentContext, lightnessSpinner, resultList);
+                    lightnessSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                         /**
                          * User selected item
                          * @param parent - spinner
@@ -515,7 +525,8 @@ public class AddChangeColorActivity extends AppCompatActivity
                          * @param id - item id
                          */
                         @Override
-                        public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
+                        public void onItemSelected(AdapterView<?> parent, View view, int position,
+                                                   long id)
                         {
                             itemChanged(view);
                         }
@@ -560,8 +571,10 @@ public class AddChangeColorActivity extends AppCompatActivity
     {
         allDataLoadInfo.put(LoadState.lightness, false);
         toggleSaveButton();
-        //  /get_lightness refers to the php file that contains the function present in the superclass
-        makeVolleyJSONArrayRequest(getGlobalWebServerURL() + "/get_lightness", queue, new JSONArrayResponseWrapper(this) {
+        // /get_lightness refers to the php file that contains the function present in the
+        // superclass
+        makeVolleyJSONArrayRequest(getGlobalWebServerURL() + "/get_lightness", queue,
+                new JSONArrayResponseWrapper(this) {
             /**
              * Response received
              * @param response - database response
@@ -571,15 +584,15 @@ public class AddChangeColorActivity extends AppCompatActivity
             {
                 try
                 {
-                    ArrayList<String> resultList = new ArrayList<String>();
-                    Spinner lightnessSpiner = (Spinner) findViewById(R.id.lightnessSpiner);
+                    ArrayList<String> resultList = new ArrayList<>();
+                    Spinner lightnessSpinner = (Spinner) findViewById(R.id.lightnessSpiner);
                     for (int i = 0; i < response.length(); i++)
                     {
                         resultList.add(response.getString(i));
                     }
                     // populate spinner with lightness
-                    setSpinnerItems(currentContext, lightnessSpiner, resultList, selectedItemText);
-                    lightnessSpiner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    setSpinnerItems(currentContext, lightnessSpinner, resultList, selectedItemText);
+                    lightnessSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                         /**
                          * User selected item
                          * @param parent - spinner
@@ -588,7 +601,8 @@ public class AddChangeColorActivity extends AppCompatActivity
                          * @param id - item id
                          */
                         @Override
-                        public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
+                        public void onItemSelected(AdapterView<?> parent, View view, int position,
+                                                   long id)
                         {
                             itemChanged(view);
                         }
@@ -632,7 +646,8 @@ public class AddChangeColorActivity extends AppCompatActivity
     {
         allDataLoadInfo.put(LoadState.chroma, false);
         toggleSaveButton();
-        makeVolleyJSONArrayRequest(getGlobalWebServerURL() + "/get_chroma", queue, new JSONArrayResponseWrapper(this) {
+        makeVolleyJSONArrayRequest(getGlobalWebServerURL() + "/get_chroma", queue,
+                new JSONArrayResponseWrapper(this) {
             /**
              * Response received
              * @param response - database response
@@ -659,7 +674,8 @@ public class AddChangeColorActivity extends AppCompatActivity
                          * @param id - item id
                          */
                         @Override
-                        public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
+                        public void onItemSelected(AdapterView<?> parent, View view, int position,
+                                                   long id)
                         {
                             itemChanged(view);
                         }
@@ -704,7 +720,8 @@ public class AddChangeColorActivity extends AppCompatActivity
     {
         allDataLoadInfo.put(LoadState.chroma, false);
         toggleSaveButton();
-        makeVolleyJSONArrayRequest(getGlobalWebServerURL() + "/get_chroma", queue, new JSONArrayResponseWrapper(this) {
+        makeVolleyJSONArrayRequest(getGlobalWebServerURL() + "/get_chroma", queue,
+                new JSONArrayResponseWrapper(this) {
             /**
              * Response received
              * @param response - database response
@@ -771,15 +788,16 @@ public class AddChangeColorActivity extends AppCompatActivity
     /**
      * Asynchronously fill descriptions
      * @param hue - object hue
-     * @param ligthness_value - object lightness
+     * @param lightnessValue - object lightness
      * @param chroma - object chroma
      */
-    public void asyncPopulateDescriptionFromDB(String hue, String ligthness_value, String chroma)
+    public void asyncPopulateDescriptionFromDB(String hue, String lightnessValue, String chroma)
     {
         allDataLoadInfo.put(LoadState.description, false);
         toggleSaveButton();
         makeVolleyStringRequest(getGlobalWebServerURL() + "/get_color_desc?hue=" + hue
-                + "&lightness_value=" + ligthness_value + "&chroma=" + chroma, queue, new StringResponseWrapper(this) {
+                + "&lightness_value=" + lightnessValue + "&chroma=" + chroma, queue,
+                new StringResponseWrapper(this) {
             /**
              * Response received
              * @param response - database response

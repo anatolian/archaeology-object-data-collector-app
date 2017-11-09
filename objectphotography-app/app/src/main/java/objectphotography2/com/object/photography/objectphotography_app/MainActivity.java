@@ -15,7 +15,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.LOGTAG;
+import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.LOG_TAG;
 import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.MESSAGE_STATUS_CHANGE;
 import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.MESSAGE_WEIGHT;
 import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.REQUEST_ENABLE_BT;
@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity
         @Override
         public void handleMessage(Message msg)
         {
-            Log.v(LOGTAG, "Message received: " + msg.obj + " : " + msg.getData() + " : " + msg.what);
+            Log.v(LOG_TAG, "Message received: " + msg.obj + " : " + msg.getData() + " : " + msg.what);
             if (msg.what == MESSAGE_WEIGHT)
             {
                 getWeightText().setText(msg.obj.toString());
@@ -88,7 +88,8 @@ public class MainActivity extends AppCompatActivity
             }
             else
             {
-                Toast.makeText(this, "Bluetooth cannot be enabled", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Bluetooth cannot be enabled",
+                        Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -114,9 +115,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+        // Handle action bar item clicks here. The action bar will automatically handle clicks on
+        // the Home/Up button, so long as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         // noinspection SimplifiableIfStatement
         if (id == R.id.action_settings)

@@ -9,9 +9,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-public class SimpleLiveviewSlicer
+public class SimpleLiveViewSlicer
 {
-    private static final String TAG = SimpleLiveviewSlicer.class.getSimpleName();
+    private static final String TAG = SimpleLiveViewSlicer.class.getSimpleName();
     /**
      * Payload data class. See also Camera Remote API specification document to
      * know the data structure.
@@ -20,13 +20,11 @@ public class SimpleLiveviewSlicer
     {
         /**
          * jpeg data container
-         * @return Returns the jpeg data
          */
         public final byte[] jpegData;
 
         /**
          * padding data container
-         * @return Returns padding data
          */
         public final byte[] paddingData;
 
@@ -45,19 +43,19 @@ public class SimpleLiveviewSlicer
     private static final int CONNECTION_TIMEOUT = 2000;
     private HttpURLConnection mHttpConn;
     private InputStream mInputStream;
-
     /**
      * Opens Liveview HTTP GET connection and prepares for reading Packet data.
-     * @param liveviewUrl Liveview data url that is obtained by DD.xml or result of startLiveview API.
+     * @param liveViewUrl - Liveview data url that is obtained by DD.xml or result of startLiveView
+     *      API.
      * @throws IOException generic errors or exception.
      */
-    public void open(String liveviewUrl) throws IOException
+    public void open(String liveViewUrl) throws IOException
     {
         if (mInputStream != null || mHttpConn != null)
         {
             throw new IllegalStateException("Slicer is already open.");
         }
-        final URL urlObj = new URL(liveviewUrl);
+        final URL urlObj = new URL(liveViewUrl);
         mHttpConn = (HttpURLConnection) urlObj.openConnection();
         mHttpConn.setRequestMethod("GET");
         mHttpConn.setConnectTimeout(CONNECTION_TIMEOUT);
@@ -117,8 +115,7 @@ public class SimpleLiveviewSlicer
             {
                 case (byte) 0x12:
                     // This is information header for streaming. skip this packet.
-                    readLength = 4 + 3 + 1 + 2 + 118 + 4 + 4 + 24;
-                    commonHeader = null;
+                    readLength = 160;
                     readBytes(mInputStream, readLength);
                     break;
                 case (byte) 0x01:
@@ -194,13 +191,13 @@ public class SimpleLiveviewSlicer
         byte[] buffer = new byte[1024];
         while (true)
         {
-            int trialReadlen = Math.min(buffer.length, length - tmpByteArray.size());
-            int readlen = in.read(buffer, 0, trialReadlen);
-            if (readlen < 0)
+            int trialReadLen = Math.min(buffer.length, length - tmpByteArray.size());
+            int readLen = in.read(buffer, 0, trialReadLen);
+            if (readLen < 0)
             {
                 break;
             }
-            tmpByteArray.write(buffer, 0, readlen);
+            tmpByteArray.write(buffer, 0, readLen);
             if (length <= tmpByteArray.size())
             {
                 break;

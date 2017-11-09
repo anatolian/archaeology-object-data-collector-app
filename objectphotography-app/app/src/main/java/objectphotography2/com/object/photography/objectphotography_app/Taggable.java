@@ -9,5 +9,5 @@ public interface Taggable
      * @param inputCanvas - image canvas
      * @param tagCharacter - image tag
      */
-    public void tagImage(Canvas inputCanvas, String tagCharacter);
+    void tagImage(Canvas inputCanvas, String tagCharacter);
 }

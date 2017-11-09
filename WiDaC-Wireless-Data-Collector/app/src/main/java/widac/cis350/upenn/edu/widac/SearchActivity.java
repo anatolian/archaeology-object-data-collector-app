@@ -49,6 +49,7 @@ public class SearchActivity extends AppCompatActivity
      * @param savedInstanceState - app state from memory
      */
     @Override
+    @SuppressWarnings("unchecked")
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
@@ -69,7 +70,8 @@ public class SearchActivity extends AppCompatActivity
         toast.show();
         // check if we've been given a totally new composite key
         Call<Sample> call = service.getSample(areaEastingSelection + "-"
-                + areaNorthingSelection + "-" + contextNumberSelection + "-" + sampleNumberSelection);
+                + areaNorthingSelection + "-" + contextNumberSelection + "-"
+                + sampleNumberSelection);
         call.enqueue(new Callback<Sample>() {
             /**
              * Response received
@@ -555,7 +557,6 @@ public class SearchActivity extends AppCompatActivity
             }
         });
     }
-
     // The BroadcastReceiver that listens for bluetooth broadcasts
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         /**
@@ -582,7 +583,8 @@ public class SearchActivity extends AppCompatActivity
             {
                 bluetoothService.reconnect(device);
                 // Device has disconnected
-                Toast.makeText(context, "Disconnected from scale: please restart the scale", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Disconnected from scale: please restart the scale",
+                        Toast.LENGTH_SHORT).show();
             }
         }
     };
@@ -618,7 +620,8 @@ public class SearchActivity extends AppCompatActivity
                 String newWeight = input.getText().toString();
                 try
                 {
-                    ((TextView) findViewById(R.id.itemWeight)).setText("Weight: " + newWeight + "g");
+                    ((TextView) findViewById(R.id.itemWeight))
+                            .setText(getString(R.string.weight_frmt, newWeight));
                 }
                 catch (Exception e)
                 {
@@ -665,7 +668,7 @@ public class SearchActivity extends AppCompatActivity
     {
         bluetoothService.runService(device);
         TextView weightText = (TextView) findViewById(R.id.itemWeight);
-        weightText.setText("Weight: " + BluetoothService.currWeight + "g");
+        weightText.setText(getString(R.string.weight_int_frmt, BluetoothService.currWeight));
     }
 
     Callback sampleCallback = new Callback<Sample>() {
@@ -682,9 +685,11 @@ public class SearchActivity extends AppCompatActivity
             {
                 SearchActivity.this.sample = response.body();
                 TextView itemWeight = (TextView) findViewById(R.id.itemWeight);
-                String displayWeight = (sample.getWeight() == 0) ? "No Data" : "" + sample.getWeight();
-                itemWeight.setText("Weight: " + displayWeight + "g");
-                Log.d("DBConnection", "Got the sample: " + sample.toString() + " Material: " + sample.getMaterial());
+                String displayWeight = (sample.getWeight() == 0) ? "No Data" : ""
+                        + sample.getWeight();
+                itemWeight.setText(getString(R.string.weight_frmt, displayWeight));
+                Log.d("DBConnection", "Got the sample: " + sample.toString()
+                        + " Material: " + sample.getMaterial());
             }
             else
             {

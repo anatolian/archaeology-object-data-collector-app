@@ -1,4 +1,4 @@
-/**
+/*
  * Created by J. Patrick Taggart on 2/17/2017.
  * ===================================================
  * Expected data
@@ -24,12 +24,13 @@ import widac.cis350.upenn.edu.widac.models.SampleStaging;
 public class SessionReportActivity extends AppCompatActivity
 {
     // List of ids
-    private Map<String, TypeData> types = new HashMap<String, TypeData>();
+    private Map<String, TypeData> types = new HashMap<>();
     /**
      * Activity is launched
      * @param savedInstanceState - app state from memory
      */
     @Override
+    @SuppressWarnings("unchecked")
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
@@ -116,7 +117,7 @@ public class SessionReportActivity extends AppCompatActivity
                            + types.get("Metal").num + types.get("Stone").num
                            + types.get("Organic").num;
         // Add number of items collected to table
-        TextView tv = (TextView)findViewById(R.id.TotalNum);
+        TextView tv = (TextView) findViewById(R.id.TotalNum);
         tv.setText(getString(R.string.total_frmt, itemsCollected));
         // Calculate statistics
         setNumCollected();
@@ -129,15 +130,15 @@ public class SessionReportActivity extends AppCompatActivity
      */
     private void setNumCollected()
     {
-        TextView tv = (TextView)findViewById(R.id.NumA);
+        TextView tv = (TextView) findViewById(R.id.NumA);
         tv.setText(getString(R.string.num_frmt, types.get("Glass").num));
-        tv = (TextView)findViewById(R.id.NumB);
+        tv = (TextView) findViewById(R.id.NumB);
         tv.setText(getString(R.string.num_frmt, types.get("Ceramic").num));
-        tv = (TextView)findViewById(R.id.NumC);
+        tv = (TextView) findViewById(R.id.NumC);
         tv.setText(getString(R.string.num_frmt, types.get("Metal").num));
-        tv = (TextView)findViewById(R.id.NumD);
+        tv = (TextView) findViewById(R.id.NumD);
         tv.setText(getString(R.string.num_frmt, types.get("Stone").num));
-        tv = (TextView)findViewById(R.id.NumE);
+        tv = (TextView) findViewById(R.id.NumE);
         tv.setText(getString(R.string.num_frmt, types.get("Organic").num));
     }
 
@@ -186,13 +187,15 @@ public class SessionReportActivity extends AppCompatActivity
         tv = (TextView)findViewById(R.id.DevAvgWtA);
         tv.setText(String.format(Locale.ENGLISH, "%.2f", types.get("Glass").stdDevWeight()));
         tv = (TextView)findViewById(R.id.DevAvgWtB);
-        tv.setText(String.format(Locale.ENGLISH, "%.2f", types.get("Ceramic").stdDevWeight()));
+        tv.setText(String.format(Locale.ENGLISH, "%.2f",
+                types.get("Ceramic").stdDevWeight()));
         tv = (TextView)findViewById(R.id.DevAvgWtC);
         tv.setText(String.format(Locale.ENGLISH, "%.2f", types.get("Metal").stdDevWeight()));
         tv = (TextView)findViewById(R.id.DevAvgWtD);
         tv.setText(String.format(Locale.ENGLISH, "%.2f", types.get("Stone").stdDevWeight()));
         tv = (TextView)findViewById(R.id.DevAvgWtE);
-        tv.setText(String.format(Locale.ENGLISH, "%.2f", types.get("Organic").stdDevWeight()));
+        tv.setText(String.format(Locale.ENGLISH, "%.2f",
+                types.get("Organic").stdDevWeight()));
     }
 
     // Class for working with data recovered from the database
@@ -213,7 +216,7 @@ public class SessionReportActivity extends AppCompatActivity
         TypeData(String type)
         {
             this.type = type;
-            instances = new HashSet<Sample>();
+            instances = new HashSet<>();
         }
 
         /**

@@ -27,23 +27,23 @@ import java.util.Calendar;
 public class MainActivity extends Activity
 {
     public final static String SU_YEAR = "surveyphotography.archaeology.org.survey.SU_YEAR";
-    public final static String SU_SEQNUM = "surveyphotography.archaeology.org.survey.SU_SEQNUM";
-    public final static String FIELDPHOTONUMBER = "surveyphotography.archaeology.org.survey.FIELDPHOTONUMBER";
-    public final static String FIELDORBAG = "surveyphotography.archaeology.org.survey.FIELDORBAG";
+    public final static String SU_SEQ_NUM = "surveyphotography.archaeology.org.survey.SU_SEQNUM";
+    public final static String FIELD_PHOTO_NUMBER = "surveyphotography.archaeology.org.survey.FIELDPHOTONUMBER";
+    public final static String FIELD_OR_BAG = "surveyphotography.archaeology.org.survey.FIELDORBAG";
     public final static String FIELD = "field";
     public final static String BAG = "bag";
     public final static String THUMBNAIL = "thumbnail";
-    public final static String PHOTOSAVEPATH = "photoSavePath";
-    public final static int BAGCODE = 101;
-    public final static int FIELDCODE = 100;
-    public final static String DEFAULTSAVEPATH = "/SUPhotos/";
-    public final static int PHOTOCOUNTERDEFAULT = 300;
-    public final static int BAGPHOTOID = 299;
-    private String save_path = DEFAULTSAVEPATH;
+    public final static String PHOTO_SAVE_PATH = "photoSavePath";
+    public final static int BAG_CODE = 101;
+    public final static int FIELD_CODE = 100;
+    public final static String DEFAULT_SAVE_PATH = "/SUPhotos/";
+    public final static int PHOTO_COUNTER_DEFAULT = 300;
+    public final static int BAG_PHOTO_ID = 299;
+    private String save_path = DEFAULT_SAVE_PATH;
     DrawView bagPhoto = null;
     public ArrayList<ImageView> photoList =  new ArrayList<>();
     RelativeLayout mainLayout;
-    private int photoIdCounter = PHOTOCOUNTERDEFAULT;
+    private int photoIdCounter = PHOTO_COUNTER_DEFAULT;
     private boolean isThumbnailCreation;
     /**
      * Was the thumbnail created?
@@ -117,19 +117,19 @@ public class MainActivity extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Spinner sp = (Spinner) findViewById(R.id.spinner2);
-        ArrayAdapter<String> spa = new ArrayAdapter<String>(this,
+        ArrayAdapter<String> spa = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, getRelevantYears(getCurrentYear()));
         sp.setAdapter(spa);
         sp.setSelection(3);
         setThumbnailCreation(getIntent().getBooleanExtra("thumbnailState", true));
-        if (getIntent().hasExtra(PHOTOSAVEPATH))
+        if (getIntent().hasExtra(PHOTO_SAVE_PATH))
         {
-            Log.v("Survey App", "has extra" + getIntent().getStringExtra(PHOTOSAVEPATH));
-            setSave_path(getIntent().getStringExtra(PHOTOSAVEPATH));
+            Log.v("Survey App", "has extra" + getIntent().getStringExtra(PHOTO_SAVE_PATH));
+            setSave_path(getIntent().getStringExtra(PHOTO_SAVE_PATH));
         }
         else
         {
-            setSave_path(DEFAULTSAVEPATH);
+            setSave_path(DEFAULT_SAVE_PATH);
         }
         final EditText et = (EditText) findViewById(R.id.suSeqNum2);
         et.addTextChangedListener(new TextWatcher() {
@@ -187,16 +187,14 @@ public class MainActivity extends Activity
      * @param aLayout - layout for photo
      * @param anImage - image to add
      * @param previousImage - image before new one
-     * @return Returns the image view
      */
-    public View addPhotoToEnd(RelativeLayout aLayout, ImageView anImage, View previousImage)
+    public void addPhotoToEnd(RelativeLayout aLayout, ImageView anImage, View previousImage)
     {
         RelativeLayout.LayoutParams imageDetails = new RelativeLayout.LayoutParams(340, 255);
         imageDetails.addRule(RelativeLayout.CENTER_HORIZONTAL);
         imageDetails.addRule(RelativeLayout.BELOW, previousImage.getId());
         imageDetails.setMargins(0, 20, 0, 0);
         aLayout.addView(anImage, imageDetails);
-        return anImage;
     }
 
     /**
@@ -205,7 +203,8 @@ public class MainActivity extends Activity
      * @param images - images to use
      * @param topAttachedView - container view
      */
-    public void arrangePhotoListInLayout(RelativeLayout aLayout, ArrayList<ImageView> images, View topAttachedView)
+    public void arrangePhotoListInLayout(RelativeLayout aLayout, ArrayList<ImageView> images,
+                                         View topAttachedView)
     {
         images.trimToSize();
         Log.v("Survey App", "number of photos : " + images.size());
@@ -258,7 +257,7 @@ public class MainActivity extends Activity
             aLayout.removeView(aPhoto);
         }
         clearBagPhoto(aLayout);
-        photoIdCounter = PHOTOCOUNTERDEFAULT;
+        photoIdCounter = PHOTO_COUNTER_DEFAULT;
         return new ArrayList<>();
     }
 
@@ -270,7 +269,7 @@ public class MainActivity extends Activity
     {
         Intent myIntent = new Intent(this, SettingsActivity.class);
         myIntent.putExtra(THUMBNAIL, isThumbnailCreation());
-        myIntent.putExtra(PHOTOSAVEPATH, getSave_path());
+        myIntent.putExtra(PHOTO_SAVE_PATH, getSave_path());
         startActivity(myIntent);
         Log.v("Survey App", "Settings button clicked");
     }
@@ -289,11 +288,11 @@ public class MainActivity extends Activity
         EditText fieldPhotoNumberTxt = (EditText) findViewById(R.id.fieldPhotoNumber2);
         Intent intent = new Intent(this, TakePhotographActivity.class);
         intent.putExtra(SU_YEAR, suYearTxt);
-        intent.putExtra(SU_SEQNUM, suSeqNumTxt.getText().toString());
-        intent.putExtra(FIELDPHOTONUMBER, fieldPhotoNumberTxt.getText().toString());
-        intent.putExtra(FIELDORBAG, FIELD);
-        intent.putExtra(PHOTOSAVEPATH, getSave_path());
-        startActivityForResult(intent, FIELDCODE);
+        intent.putExtra(SU_SEQ_NUM, suSeqNumTxt.getText().toString());
+        intent.putExtra(FIELD_PHOTO_NUMBER, fieldPhotoNumberTxt.getText().toString());
+        intent.putExtra(FIELD_OR_BAG, FIELD);
+        intent.putExtra(PHOTO_SAVE_PATH, getSave_path());
+        startActivityForResult(intent, FIELD_CODE);
     }
 
     /**
@@ -310,11 +309,11 @@ public class MainActivity extends Activity
         EditText fieldPhotoNumberTxt = (EditText) findViewById(R.id.fieldPhotoNumber2);
         Intent intent = new Intent(this, TakePhotographActivity.class);
         intent.putExtra(SU_YEAR, suYearTxt);
-        intent.putExtra(SU_SEQNUM, suSeqNumTxt.getText().toString());
-        intent.putExtra(FIELDPHOTONUMBER, fieldPhotoNumberTxt.getText().toString());
-        intent.putExtra(FIELDORBAG, BAG);
-        intent.putExtra(PHOTOSAVEPATH, getSave_path());
-        startActivityForResult(intent, BAGCODE);
+        intent.putExtra(SU_SEQ_NUM, suSeqNumTxt.getText().toString());
+        intent.putExtra(FIELD_PHOTO_NUMBER, fieldPhotoNumberTxt.getText().toString());
+        intent.putExtra(FIELD_OR_BAG, BAG);
+        intent.putExtra(PHOTO_SAVE_PATH, getSave_path());
+        startActivityForResult(intent, BAG_CODE);
     }
 
     /**
@@ -326,7 +325,7 @@ public class MainActivity extends Activity
         clearBagPhoto(mainLayout);
         bagPhoto = new DrawView(this);
         bagPhoto.setImageURI(anUri);
-        bagPhoto.setId(BAGPHOTOID);
+        bagPhoto.setId(BAG_PHOTO_ID);
     }
 
     /**
@@ -360,9 +359,9 @@ public class MainActivity extends Activity
         {
             Log.v("ActivityResult" , "RESULT_OK " + resultCode + "edfasdf");
             // field photo
-            if (requestCode == FIELDCODE)
+            if (requestCode == FIELD_CODE)
             {
-                Log.v("ActivityResulty", getSave_path());
+                Log.v("ActivityResult", getSave_path());
                 int fieldPhotoNumber = increaseFieldPhotoNumberAndReturnOldNumber(fieldPhotoNumberTxt);
                 String path = Environment.getExternalStorageDirectory().getPath()
                         + getSave_path() + suYearTxt + "/" +  suSeqNumTxt.getText().toString()
@@ -373,7 +372,8 @@ public class MainActivity extends Activity
                 File thumbFile = new File(thumbPath, "1_pic_" + fieldPhotoNumber + ".jpg");
                 if (isThumbnailCreation())
                 {
-                    Bitmap ThumbImage = ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(path), 300, 225);
+                    Bitmap ThumbImage = ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(path),
+                            300, 225);
                     try
                     {
                         FileOutputStream fos = new FileOutputStream(thumbFile);
@@ -400,7 +400,7 @@ public class MainActivity extends Activity
                 arrangePhotoListInLayout(mainLayout, photoList, findViewById(R.id.space3));
             }
             // bag photo
-            else if (requestCode == BAGCODE)
+            else if (requestCode == BAG_CODE)
             {
                 Log.v("ActivityResulty", getSave_path());
                 String path = Environment.getExternalStorageDirectory().getPath()

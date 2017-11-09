@@ -98,4 +98,6 @@
     <string name = "context_number">Context Number</string>
     <string name = "northing">Area Northing</string>
     <string name = "easting">Area Easting</string>
+    <string name = "sample_frmt">%1$s.%2$s.%3$s.</string>
+    <string name = "long_frmt">%d</string>
 </resources>

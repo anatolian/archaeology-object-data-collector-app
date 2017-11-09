@@ -19,7 +19,7 @@ public class TakePhotographActivity extends Activity
 {
     private Uri fileUri;
     private String photoSavePath = "";
-    public static int PHOTOCODE = 100;
+    public static int PHOTO_CODE = 100;
     /**
      * Activity launched
      * @param savedInstanceState - state from memory
@@ -30,10 +30,10 @@ public class TakePhotographActivity extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         String suYearTxt = getIntent().getStringExtra(MainActivity.SU_YEAR);
-        String suSeqNumTxt = getIntent().getStringExtra(MainActivity.SU_SEQNUM);
-        String fieldPhotoNumberTxt = getIntent().getStringExtra(MainActivity.FIELDPHOTONUMBER);
-        String fieldOrBag = getIntent().getStringExtra(MainActivity.FIELDORBAG);
-        photoSavePath = getIntent().getStringExtra((MainActivity.PHOTOSAVEPATH));
+        String suSeqNumTxt = getIntent().getStringExtra(MainActivity.SU_SEQ_NUM);
+        String fieldPhotoNumberTxt = getIntent().getStringExtra(MainActivity.FIELD_PHOTO_NUMBER);
+        String fieldOrBag = getIntent().getStringExtra(MainActivity.FIELD_OR_BAG);
+        photoSavePath = getIntent().getStringExtra((MainActivity.PHOTO_SAVE_PATH));
         getIntent().putExtra("result", false);
         TextView textView = new TextView(this);
         textView.setTextSize(40);
@@ -81,7 +81,7 @@ public class TakePhotographActivity extends Activity
         // set the image file name
         intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
         // start the image capture Intent
-        startActivityForResult(intent, PHOTOCODE);
+        startActivityForResult(intent, PHOTO_CODE);
     }
 
     /**
@@ -113,12 +113,13 @@ public class TakePhotographActivity extends Activity
      */
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
     {
-        if (requestCode == PHOTOCODE)
+        if (requestCode == PHOTO_CODE)
         {
             if (resultCode == RESULT_OK)
             {
                 // Image captured and saved to fileUri specified in the Intent
-                Toast.makeText(this, "Image saved to:\n" + fileUri.getPath(), Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Image saved to:\n" + fileUri.getPath(),
+                        Toast.LENGTH_LONG).show();
                 this.setResult(RESULT_OK);
             }
             else if (resultCode == RESULT_CANCELED)
@@ -145,8 +146,9 @@ public class TakePhotographActivity extends Activity
         File path = getOutputMediaFile(fieldOrBag);
         if (path == null)
         {
-            Toast.makeText(this, "Specified directory not writable. Using default directory.", Toast.LENGTH_LONG).show();
-            photoSavePath = MainActivity.DEFAULTSAVEPATH;
+            Toast.makeText(this, "Specified directory not writable. Using default directory.",
+                    Toast.LENGTH_LONG).show();
+            photoSavePath = MainActivity.DEFAULT_SAVE_PATH;
             path = getOutputMediaFile(fieldOrBag);
         }
         return Uri.fromFile(path);
@@ -160,8 +162,8 @@ public class TakePhotographActivity extends Activity
     private File getOutputMediaFile(String fieldOrBag)
     {
         String suYear = getIntent().getStringExtra(MainActivity.SU_YEAR);
-        String suSeqNum = getIntent().getStringExtra(MainActivity.SU_SEQNUM);
-        String fieldPhotoNumber = getIntent().getStringExtra(MainActivity.FIELDPHOTONUMBER);
+        String suSeqNum = getIntent().getStringExtra(MainActivity.SU_SEQ_NUM);
+        String fieldPhotoNumber = getIntent().getStringExtra(MainActivity.FIELD_PHOTO_NUMBER);
         File mediaStorageDir = new File(Environment.getExternalStorageDirectory().getPath()
                 + photoSavePath + suYear + "/" + suSeqNum + "/fld");
         File thumbMediaStorageDir = new File(Environment.getExternalStorageDirectory().getPath()
@@ -188,7 +190,8 @@ public class TakePhotographActivity extends Activity
         // Create a media file name
         if (fieldOrBag.equals(MainActivity.FIELD))
         {
-            return new File(mediaStorageDir.getPath() + File.separator + "1_pic_" + fieldPhotoNumber + ".jpg");
+            return new File(mediaStorageDir.getPath() + File.separator + "1_pic_"
+                    + fieldPhotoNumber + ".jpg");
         }
         return new File(mediaStorageDir.getPath() + File.separator + "1_bag_1.jpg");
     }

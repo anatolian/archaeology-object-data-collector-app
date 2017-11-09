@@ -23,7 +23,7 @@ public class SettingsActivity extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
         EditText savePathInput = (EditText) findViewById(R.id.savePathInput);
-        savePathInput.setText(getIntent().getStringExtra(MainActivity.PHOTOSAVEPATH));
+        savePathInput.setText(getIntent().getStringExtra(MainActivity.PHOTO_SAVE_PATH));
         CheckBox thumbnailCheckBox = (CheckBox) findViewById(R.id.checkBox);
         thumbnailCheckBox.setChecked(getIntent().getBooleanExtra(MainActivity.THUMBNAIL, true));
         thumbnailCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {

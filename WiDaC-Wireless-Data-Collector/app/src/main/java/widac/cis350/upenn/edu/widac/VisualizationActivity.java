@@ -10,7 +10,6 @@ import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -22,12 +21,13 @@ import widac.cis350.upenn.edu.widac.models.SampleStaging;
 public class VisualizationActivity extends AppCompatActivity
 {
     PieChart pieChart;
-    Map<String, Integer> chartData = new HashMap<String, Integer>();
+    Map<String, Integer> chartData = new HashMap<>();
     /**
      * Launch activity
      * @param savedInstanceState - app state from memory
      */
     @Override
+    @SuppressWarnings("unchecked")
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);

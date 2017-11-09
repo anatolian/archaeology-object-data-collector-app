@@ -25,12 +25,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
@@ -44,14 +46,14 @@ import static objectphotography2.com.object.photography.objectphotography_app.Ch
 import static objectphotography2.com.object.photography.objectphotography_app.CheatSheet.getOutputMediaFileUri;
 import static objectphotography2.com.object.photography.objectphotography_app.CheatSheet.goToSettings;
 import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.ALL_SAMPLE_NUMBER;
-import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.LOGTAG;
-import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.LOGTAG_BLUETOOTH;
-import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.LOGTAG_WIFIDIRECT;
+import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.LOG_TAG;
+import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.LOG_TAG_BLUETOOTH;
+import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.LOG_TAG_WIFI_DIRECT;
 import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.MARKED_AS_ADDED;
 import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.MARKED_AS_TO_DOWNLOAD;
 import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.MESSAGE_STATUS_CHANGE;
 import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.MESSAGE_WEIGHT;
-import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.REQUESTIMAGECAPTURE;
+import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.REQUEST_IMAGE_CAPTURE;
 import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.REQUEST_ENABLE_BT;
 import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.connectedMacAddress;
 import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.connectedToRemoteCamera;
@@ -85,7 +87,8 @@ public class ObjectDetail2Activity extends AppCompatActivity implements PhotoFra
         @Override
         public void handleMessage(Message msg)
         {
-            Log.v(LOGTAG, "Message received: " + msg.obj + " : " + msg.getData() + " : " + msg.what);
+            Log.v(LOG_TAG, "Message received: " + msg.obj + " : " + msg.getData() + " : "
+                    + msg.what);
             if (msg.what == MESSAGE_WEIGHT)
             {
                 int weightOnScale = Integer.parseInt(msg.obj.toString().trim());
@@ -103,71 +106,13 @@ public class ObjectDetail2Activity extends AppCompatActivity implements PhotoFra
     private String bluetoothConnectionStatus = "";
     boolean dialogVisible = false;
     // dialogs set up in order to provide interface to interact with other devices
-    AlertDialog remoteCameraDialog;
-    AlertDialog weightDialog;
-    AlertDialog pickPeersDialog;
+    AlertDialog remoteCameraDialog, weightDialog, pickPeersDialog;
     // broadcast receiver objects used to receive messages from other devices
-    BroadcastReceiver nutriScaleBroadcastReceiver;
-    BroadcastReceiver wifiDirectBroadcastReceiver;
-    private boolean asyncPopulateWeightFieldComplete = true;
-    private boolean asyncPopulateExteriorColorFieldsComplete = true;
-    private boolean asyncPopulateInteriorColorFieldsComplete = true;
+    BroadcastReceiver nutriScaleBroadcastReceiver, wifiDirectBroadcastReceiver;
     private boolean activityPaused = false;
     private boolean isPickPeersDialogAppeared = false;
-    /**
-     * the following method simply check to see if fields have been populated
-     * @return Returns whether the interior colors loaded
-     */
-    public boolean isAsyncPopulateInteriorColorFieldsComplete()
-    {
-        return asyncPopulateInteriorColorFieldsComplete;
-    }
-
-    /**
-     * Interior colors loaded
-     * @param asyncPopulateInteriorColorFieldsComplete - whether the interior colors loaded
-     */
-    public void setAsyncPopulateInteriorColorFieldsComplete(boolean asyncPopulateInteriorColorFieldsComplete)
-    {
-        this.asyncPopulateInteriorColorFieldsComplete = asyncPopulateInteriorColorFieldsComplete;
-    }
-
-    /**
-     * Did exterior colors load?
-     * @return Returns whether exterior colors loaded
-     */
-    public boolean isAsyncPopulateExteriorColorFieldsComplete()
-    {
-        return asyncPopulateExteriorColorFieldsComplete;
-    }
-
-    /**
-     * Exterior colors loaded
-     * @param asyncPopulateExteriorColorFieldsComplete - whether exterior colors loaded
-     */
-    public void setAsyncPopulateExteriorColorFieldsComplete(boolean asyncPopulateExteriorColorFieldsComplete)
-    {
-        this.asyncPopulateExteriorColorFieldsComplete = asyncPopulateExteriorColorFieldsComplete;
-    }
-
-    /**
-     * Did weight load?
-     * @return Returns whether weight loaded
-     */
-    public boolean isAsyncPopulateWeightFieldComplete()
-    {
-        return asyncPopulateWeightFieldComplete;
-    }
-
-    /**
-     * Weight loaded
-     * @param asyncPopulateWeightFieldComplete - whether weight loaded
-     */
-    public void setAsyncPopulateWeightFieldComplete(boolean asyncPopulateWeightFieldComplete)
-    {
-        this.asyncPopulateWeightFieldComplete = asyncPopulateWeightFieldComplete;
-    }
-
+    // correspond to columns in database associated with finds
+    int areaEasting, areaNorthing, contextNumber, sampleNumber;
     /**
      * Get temporary file name
      * @return Returns temp file name
@@ -185,11 +130,7 @@ public class ObjectDetail2Activity extends AppCompatActivity implements PhotoFra
     {
         this.tempFileName = tempFileName;
     }
-    // correspond to columns in database associated with finds
-    int areaEasting;
-    int areaNorthing;
-    int contextNumber;
-    int sampleNumber;
+
     /**
      * Launch the activity
      * @param savedInstanceState - activity from memory
@@ -202,58 +143,62 @@ public class ObjectDetail2Activity extends AppCompatActivity implements PhotoFra
         queue = Volley.newRequestQueue(this);
         mManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
         mChannel = mManager.initialize(this, getMainLooper(), null);
-        wifiDirectBroadcastReceiver = new WiFiDirectBroadcastReceiver(mManager, mChannel, this);
+        wifiDirectBroadcastReceiver = new WiFiDirectBroadcastReceiver(mManager, mChannel,
+                this);
         // adding actions to intent filter
         mIntentFilter = new IntentFilter();
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
-        // TODO: need to uncomment this. this was just for testing purposes
-        /*
-         // getting object data from previous activity
-         Bundle myBundle = getIntent().getExtras();
-         areaEasting = Integer.parseInt(myBundle.getString(AREA_EASTING));
-         areaNorthing = Integer.parseInt(myBundle.getString(AREA_NORTHING));
-         contextNumber = Integer.parseInt(myBundle.getString(CONTEXT_NUMBER));
-         sampleNumber = Integer.parseInt(myBundle.getString(SAMPLE_NUMBER));
-         // adding info about object to text field in view
-         fillSampleInfo(areaEasting + "", areaNorthing + "", contextNumber + "");
-         fillSampleNumberspinner();
-         ((Spinner) findViewById(R.id.sample_spinner)).setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-         /**
+        // getting object data from previous activity
+        Bundle myBundle = getIntent().getExtras();
+        areaEasting = Integer.parseInt(myBundle.getString("area_easting"));
+        areaNorthing = Integer.parseInt(myBundle.getString("area_northing"));
+        contextNumber = Integer.parseInt(myBundle.getString("context_number"));
+        sampleNumber = Integer.parseInt(myBundle.getString(""));
+        // adding info about object to text field in view
+        fillSampleInfo(areaEasting + "", areaNorthing + "",
+                contextNumber + "");
+        fillSampleNumberSpinner();
+        ((Spinner) findViewById(R.id.sample_spinner))
+                .setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        /**
          * User selected item
          * @param parent - spinner
          * @param view - item selected
          * @param position - item position
          * @param id - item id
          */
-            /*@Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-                // if the item you selected from the spinner has a different sample number than the item returned
-                // from the last intent then cancel the request.
-                String x = ((Spinner) findViewById(R.id.sample_spinner)).getItemAtPosition(position).toString();
-                int tmpSampleNumber = Integer.parseInt(x);
-                if (sampleNumber != tmpSampleNumber)
-                {
-                    sampleNumber = tmpSampleNumber;
-                    queue.cancelAll(new RequestQueue.RequestFilter() {
-                        /**
-                         * Cancel all requests
-                         * @param request - request to cancel requests
-                         * @return Returns true
-                         */
-                        /*@Override
-                        public boolean apply(Request<?> request) {
-                            return true;
-                        }
+         @Override
+         public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
+         {
+             // if the item you selected from the spinner has a different sample number than the
+             // item returned from the last intent then cancel the request.
+             String x = ((Spinner) findViewById(R.id.sample_spinner)).getItemAtPosition(position).toString();
+             int tmpSampleNumber = Integer.parseInt(x);
+             if (sampleNumber != tmpSampleNumber)
+             {
+                 sampleNumber = tmpSampleNumber;
+                 queue.cancelAll(new RequestQueue.RequestFilter() {
+                    /**
+                     * Cancel all requests
+                     * @param request - request to cancel requests
+                     * @return Returns true
+                     */
+                    @Override
+                    public boolean apply(Request<?> request)
+                    {
+                        return true;
+                    }
                     });
-                    asyncPopulateWeightFieldFromDB(areaEasting, areaNorthing, contextNumber, sampleNumber);
-                    asnycPopulateExteriorColorFieldsFromDB(areaEasting, areaNorthing, contextNumber, sampleNumber);
-                    asnycPopulateInteriorColorFieldsFromDB(areaEasting, areaNorthing, contextNumber, sampleNumber);
-                    clearCurentPhotosOnLayoutAndFetchPhotosAsync();
-                    fillSampleNumberspinner();
+                    asyncPopulateWeightFieldFromDB(areaEasting, areaNorthing, contextNumber,
+                            sampleNumber);
+                    asyncPopulateExteriorColorFieldsFromDB(areaEasting, areaNorthing, contextNumber,
+                            sampleNumber);
+                    asyncPopulateInteriorColorFieldsFromDB(areaEasting, areaNorthing, contextNumber,
+                            sampleNumber);
+                    fillSampleNumberSpinner();
                 }
             }
 
@@ -261,23 +206,25 @@ public class ObjectDetail2Activity extends AppCompatActivity implements PhotoFra
              * Nothing selected
              * @param parent - spinner
              */
-            /*@Override
+            @Override
             public void onNothingSelected(AdapterView<?> parent)
             {
             }
         });
         // populate fields with information about object
         asyncPopulateWeightFieldFromDB(areaEasting, areaNorthing, contextNumber, sampleNumber);
-        asnycPopulateExteriorColorFieldsFromDB(areaEasting, areaNorthing, contextNumber, sampleNumber);
-        asnycPopulateInteriorColorFieldsFromDB(areaEasting, areaNorthing, contextNumber, sampleNumber);
+        asyncPopulateExteriorColorFieldsFromDB(areaEasting, areaNorthing, contextNumber,
+                sampleNumber);
+        asyncPopulateInteriorColorFieldsFromDB(areaEasting, areaNorthing, contextNumber,
+                sampleNumber);
         asyncPopulatePhotos();
-        toggleAddPhotoButton(null);
-         **/
+        toggleAddPhotoButton();
         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         //check to see if bluetooth is enabled
         if (mBluetoothAdapter == null || !isBluetoothEnabled())
         {
-            Toast.makeText(this, "Bluetooth not supported or disabled in settings", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Bluetooth not supported or disabled in settings",
+                    Toast.LENGTH_SHORT).show();
         }
         else
         {
@@ -297,23 +244,23 @@ public class ObjectDetail2Activity extends AppCompatActivity implements PhotoFra
         }
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = this.getLayoutInflater();
-        // Inflate and set the layout for the weight dialog
-        // Pass null as the parent view because its going in the dialog layout
-        // save or cancel weight data
+        // Inflate and set the layout for the weight dialog. Pass null as the parent view because
+        // its going in the dialog layout save or cancel weight data
         builder.setView(inflater.inflate(R.layout.record_weight_dialog, null))
                 .setPositiveButton("Save", new DialogInterface.OnClickListener() {
-                    /**
-                     * User pressed Save
-                     * @param dialog - alert dialog
-                     * @param id - selection
-                     */
-                    @Override
-                    public void onClick(DialogInterface dialog, int id)
-                    {
-                        saveWeight((((EditText) weightDialog.findViewById(R.id.dialogCurrentWeightInDBText)).getText().toString().trim()));
-                        dialogVisible = false;
-                    }
-                }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            /**
+             * User pressed Save
+             * @param dialog - alert dialog
+             * @param id - selection
+             */
+            @Override
+            public void onClick(DialogInterface dialog, int id)
+            {
+                saveWeight((((EditText) weightDialog.findViewById(R.id.dialogCurrentWeightInDBText))
+                        .getText().toString().trim()));
+                dialogVisible = false;
+            }
+        }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             /**
              * User clicked Cancel
              * @param dialog - alert dialog
@@ -337,7 +284,8 @@ public class ObjectDetail2Activity extends AppCompatActivity implements PhotoFra
         weightDialog = builder.create();
         // creating the camera dialog and setting up photofragment to store the photos
         remoteCameraDialog = CameraDialog.createCameraDialog(this);
-        PhotoFragment photoFragment = (PhotoFragment) getFragmentManager().findFragmentById(R.id.fragment);
+        PhotoFragment photoFragment
+                = (PhotoFragment) getFragmentManager().findFragmentById(R.id.fragment);
         if (savedInstanceState == null)
         {
             photoFragment.prepareFragmentForNewPhotosFromNewItem();
@@ -368,7 +316,7 @@ public class ObjectDetail2Activity extends AppCompatActivity implements PhotoFra
         switch (item.getItemId())
         {
             case R.id.action_settings:
-                goToSettings(findViewById(R.id.action_settings), this);
+                goToSettings(this);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -385,27 +333,28 @@ public class ObjectDetail2Activity extends AppCompatActivity implements PhotoFra
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
     {
         // action to be performed when request is sent to take photo
-        Log.v(LOGTAG, "Intent result receiving");
-        if (requestCode == REQUESTIMAGECAPTURE)
+        Log.v(LOG_TAG, "Intent result receiving");
+        if (requestCode == REQUEST_IMAGE_CAPTURE)
         {
-            Log.v(LOGTAG, "Intent Result for Camera Intent");
+            Log.v(LOG_TAG, "Intent Result for Camera Intent");
             if (resultCode == RESULT_OK)
             {
-                Log.v(LOGTAG, "OK Code Received");
+                Log.v(LOG_TAG, "OK Code Received");
                 if (data == null)
                 {
-                    Log.v(LOGTAG, "data: " + "null");
+                    Log.v(LOG_TAG, "data: " + "null");
                 }
                 else
                 {
-                    Log.v(LOGTAG, "data: " + data.getData());
+                    Log.v(LOG_TAG, "data: " + data.getData());
                 }
                 // creating URI to save photo to once taken
                 String originalFileName = getTempFileName() + ".jpg";
                 final Uri fileUri = CheatSheet.getThumbnail(originalFileName);
-                Log.v(LOGTAG, fileUri.toString());
+                Log.v(LOG_TAG, fileUri.toString());
                 // ApproveDialogCallback is an interface. see CameraDialog class
-                CameraDialog.ApproveDialogCallback approveDialogCallback = new CameraDialog.ApproveDialogCallback() {
+                CameraDialog.ApproveDialogCallback approveDialogCallback
+                        = new CameraDialog.ApproveDialogCallback() {
                     /**
                      * User pressed save
                      */
@@ -426,10 +375,12 @@ public class ObjectDetail2Activity extends AppCompatActivity implements PhotoFra
                     }
                 };
                 // set up camera dialog
-                AlertDialog approveDialog = CameraDialog.createPhotoApprovalDialog(this, approveDialogCallback);
+                AlertDialog approveDialog = CameraDialog.createPhotoApprovalDialog(this,
+                        approveDialogCallback);
                 approveDialog.show();
                 // view photo you are trying to approve
-                ImageView approvePhotoImage = (ImageView) approveDialog.findViewById(R.id.approvePhotoImage);
+                ImageView approvePhotoImage
+                        = (ImageView) approveDialog.findViewById(R.id.approvePhotoImage);
                 approvePhotoImage.setImageURI(fileUri);
             }
         }
@@ -442,7 +393,7 @@ public class ObjectDetail2Activity extends AppCompatActivity implements PhotoFra
     protected void onDestroy()
     {
         super.onDestroy();
-        Log.v(LOGTAG, "Destroying Activity");
+        Log.v(LOG_TAG, "Destroying Activity");
         activityPaused = true;
         isPickPeersDialogAppeared = false;
         if (pickPeersDialog != null)
@@ -456,7 +407,7 @@ public class ObjectDetail2Activity extends AppCompatActivity implements PhotoFra
         }
         catch (IllegalArgumentException e)
         {
-            Log.v(LOGTAG_BLUETOOTH, "Trying to unregister a non registered receiver");
+            Log.v(LOG_TAG_BLUETOOTH, "Trying to unregister a non registered receiver");
         }
     }
 
@@ -467,7 +418,7 @@ public class ObjectDetail2Activity extends AppCompatActivity implements PhotoFra
     protected void onResume()
     {
         super.onResume();
-        Log.v(LOGTAG, "Resuming Activity");
+        Log.v(LOG_TAG, "Resuming Activity");
         activityPaused = false;
         registerReceiver(wifiDirectBroadcastReceiver, mIntentFilter);
     }
@@ -479,7 +430,7 @@ public class ObjectDetail2Activity extends AppCompatActivity implements PhotoFra
     protected void onStop()
     {
         super.onStop();
-        Log.v(LOGTAG, "Stopping Activity");
+        Log.v(LOG_TAG, "Stopping Activity");
         activityPaused = true;
         isPickPeersDialogAppeared = false;
         if (pickPeersDialog != null)
@@ -493,7 +444,7 @@ public class ObjectDetail2Activity extends AppCompatActivity implements PhotoFra
         }
         catch (IllegalArgumentException e)
         {
-            Log.v(LOGTAG, "Trying to unregister a non registered receiver");
+            Log.v(LOG_TAG, "Trying to unregister a non registered receiver");
         }
     }
 
@@ -504,10 +455,13 @@ public class ObjectDetail2Activity extends AppCompatActivity implements PhotoFra
      * @param contextNumber - context
      * @param sampleNumber - sample
      */
-    public void asyncPopulateWeightFieldFromDB(int areaEasting, int areaNorthing, int contextNumber, int sampleNumber)
+    public void asyncPopulateWeightFieldFromDB(int areaEasting, int areaNorthing, int contextNumber,
+                                               int sampleNumber)
     {
-        setAsyncPopulateWeightFieldComplete(false);
-        makeVolleyJSONOBjectRequest(getGlobalWebServerURL() + "/get_item_weight_2.php?area_easting=" + areaEasting + "&area_northing=" + areaNorthing + "&context_number=" + contextNumber + "&sample_number=" + sampleNumber, queue, new JSONObjectResponseWrapper(this) {
+        makeVolleyJSONOBjectRequest(getGlobalWebServerURL()
+                + "/get_item_weight_2.php?area_easting=" + areaEasting + "&area_northing="
+                + areaNorthing + "&context_number=" + contextNumber + "&sample_number="
+                + sampleNumber, queue, new JSONObjectResponseWrapper(this) {
             /**
              * Response received
              * @param response - database response
@@ -524,16 +478,15 @@ public class ObjectDetail2Activity extends AppCompatActivity implements PhotoFra
                     else
                     {
                         getWeightInputText().setText(getString(R.string.scale_reading,
-                                Double.parseDouble(response.getString("weight_kilograms")) * 1000.0));
+                                Double.parseDouble(response.getString("weight_kilograms"))
+                                        * 1000.0));
                     }
                     // indicates weight field has been populated
-                    setAsyncPopulateWeightFieldComplete(true);
                 }
                 catch (JSONException e)
                 {
                     showToastError(e, getApplicationContext());
                     e.printStackTrace();
-                    setAsyncPopulateWeightFieldComplete(true);
                 }
             }
 
@@ -544,7 +497,6 @@ public class ObjectDetail2Activity extends AppCompatActivity implements PhotoFra
             @Override
             void errorMethod(VolleyError error)
             {
-                asyncPopulateWeightFieldComplete = true;
                 showToastError(error, getApplicationContext());
                 error.printStackTrace();
             }
@@ -562,10 +514,13 @@ public class ObjectDetail2Activity extends AppCompatActivity implements PhotoFra
     public void asyncModifyWeightFieldInDB(double weightInGrams, int areaEasting, int areaNorthing,
                                            int contextNumber, int sampleNumber)
     {
-        setAsyncPopulateWeightFieldComplete(false);
         double weightInKg = weightInGrams / 1000.0;
         // making php request to call the update method with updated params
-        makeVolleyJSONOBjectRequest(getGlobalWebServerURL() + "/set_item_weight_2.php?area_easting=" + areaEasting + "&area_northing=" + areaNorthing + "&context_number=" + contextNumber + "&sample_number=" + sampleNumber + "&weight_in_kg=" + weightInKg, queue, new JSONObjectResponseWrapper(this) {
+        makeVolleyJSONOBjectRequest(getGlobalWebServerURL()
+                + "/set_item_weight_2.php?area_easting=" + areaEasting + "&area_northing="
+                + areaNorthing + "&context_number=" + contextNumber + "&sample_number="
+                + sampleNumber + "&weight_in_kg=" + weightInKg, queue,
+                new JSONObjectResponseWrapper(this) {
             /**
              * Response received
              * @param response - database response
@@ -577,18 +532,17 @@ public class ObjectDetail2Activity extends AppCompatActivity implements PhotoFra
                 {
                     if (response.getString("status").equals("ok"))
                     {
-                        Toast.makeText(currentContext, "New Weight Value Stored into DB", Toast.LENGTH_LONG).show();
+                        Toast.makeText(currentContext, "New Weight Value Stored into DB",
+                                Toast.LENGTH_LONG).show();
                     }
                     else
                     {
-                        Toast.makeText(currentContext, "Cannot update weight in DB", Toast.LENGTH_LONG).show();
+                        Toast.makeText(currentContext, "Cannot update weight in DB",
+                                Toast.LENGTH_LONG).show();
                     }
-                    setAsyncPopulateWeightFieldComplete(true);
-
                 }
                 catch (JSONException e)
                 {
-                    setAsyncPopulateWeightFieldComplete(true);
                     showToastError(e, currentContext);
                     e.printStackTrace();
                 }
@@ -601,12 +555,10 @@ public class ObjectDetail2Activity extends AppCompatActivity implements PhotoFra
             @Override
             void errorMethod(VolleyError error)
             {
-                setAsyncPopulateWeightFieldComplete(true);
                 showToastError(error, currentContext);
                 error.printStackTrace();
             }
         });
-
     }
 
     /**
@@ -616,11 +568,13 @@ public class ObjectDetail2Activity extends AppCompatActivity implements PhotoFra
      * @param contextNumber - context
      * @param sampleNumber - sample
      */
-    public void asnycPopulateExteriorColorFieldsFromDB(int areaEasting, int areaNorthing,
+    public void asyncPopulateExteriorColorFieldsFromDB(int areaEasting, int areaNorthing,
                                                        int contextNumber, int sampleNumber)
     {
-        setAsyncPopulateExteriorColorFieldsComplete(false);
-        makeVolleyJSONOBjectRequest(getGlobalWebServerURL() + "/get_exterior_color_2.php?area_easting=" + areaEasting + "&area_northing=" + areaNorthing + "&context_number=" + contextNumber + "&sample_number=" + sampleNumber, queue, new JSONObjectResponseWrapper(this) {
+        makeVolleyJSONOBjectRequest(getGlobalWebServerURL()
+                + "/get_exterior_color_2.php?area_easting=" + areaEasting + "&area_northing="
+                + areaNorthing + "&context_number=" + contextNumber + "&sample_number="
+                + sampleNumber, queue, new JSONObjectResponseWrapper(this) {
             /**
              * Response received
              * @param response - database response
@@ -630,7 +584,6 @@ public class ObjectDetail2Activity extends AppCompatActivity implements PhotoFra
             {
                 try
                 {
-                    setAsyncPopulateWeightFieldComplete(true);
                     // displays color fields in textfields in view
                     populateExteriorColorFields(response.getString("exterior_color_hue"),
                             response.getString("exterior_color_lightness_value"),
@@ -640,7 +593,6 @@ public class ObjectDetail2Activity extends AppCompatActivity implements PhotoFra
                 {
                     showToastError(e, getApplicationContext());
                     e.printStackTrace();
-                    setAsyncPopulateWeightFieldComplete(true);
                 }
             }
 
@@ -651,7 +603,6 @@ public class ObjectDetail2Activity extends AppCompatActivity implements PhotoFra
             @Override
             void errorMethod(VolleyError error)
             {
-                asyncPopulateWeightFieldComplete = true;
                 showToastError(error, getApplicationContext());
                 error.printStackTrace();
             }
@@ -666,11 +617,13 @@ public class ObjectDetail2Activity extends AppCompatActivity implements PhotoFra
      * @param contextNumber - context
      * @param sampleNumber - sample
      */
-    public void asnycPopulateInteriorColorFieldsFromDB(int areaEasting, int areaNorthing,
+    public void asyncPopulateInteriorColorFieldsFromDB(int areaEasting, int areaNorthing,
                                                        int contextNumber, int sampleNumber)
     {
-        setAsyncPopulateInteriorColorFieldsComplete(false);
-        makeVolleyJSONOBjectRequest(getGlobalWebServerURL() + "/get_interior_color_2.php?area_easting=" + areaEasting + "&area_northing=" + areaNorthing + "&context_number=" + contextNumber + "&sample_number=" + sampleNumber, queue, new JSONObjectResponseWrapper(this) {
+        makeVolleyJSONOBjectRequest(getGlobalWebServerURL()
+                + "/get_interior_color_2.php?area_easting=" + areaEasting + "&area_northing="
+                + areaNorthing + "&context_number=" + contextNumber + "&sample_number="
+                + sampleNumber, queue, new JSONObjectResponseWrapper(this) {
             /**
              * Response received
              * @param response - database response
@@ -680,7 +633,6 @@ public class ObjectDetail2Activity extends AppCompatActivity implements PhotoFra
             {
                 try
                 {
-                    setAsyncPopulateWeightFieldComplete(true);
                     // add color data to text fields
                     populateInteriorColorFields(response.getString("interior_color_hue"),
                             response.getString("interior_color_lightness_value"),
@@ -690,7 +642,6 @@ public class ObjectDetail2Activity extends AppCompatActivity implements PhotoFra
                 {
                     showToastError(e, getApplicationContext());
                     e.printStackTrace();
-                    setAsyncPopulateWeightFieldComplete(true);
                 }
             }
 
@@ -701,7 +652,6 @@ public class ObjectDetail2Activity extends AppCompatActivity implements PhotoFra
             @Override
             void errorMethod(VolleyError error)
             {
-                asyncPopulateWeightFieldComplete = true;
                 showToastError(error, getApplicationContext());
                 error.printStackTrace();
             }
@@ -713,7 +663,9 @@ public class ObjectDetail2Activity extends AppCompatActivity implements PhotoFra
      */
     public void asyncPopulatePhotos()
     {
-        String url = getGlobalWebServerURL() +  "/get_image_2.php?area_easting=" + areaEasting +"&area_northing=" + areaNorthing + "&context_number=" + contextNumber +"&sample_number=" + sampleNumber;
+        String url = getGlobalWebServerURL() + "/get_image_2.php?area_easting=" + areaEasting
+                + "&area_northing=" + areaNorthing + "&context_number=" + contextNumber
+                + "&sample_number=" + sampleNumber;
         makeVolleyJSONOBjectRequest(url, queue, new JSONObjectResponseWrapper(this) {
             /**
              * Database response
@@ -794,20 +746,22 @@ public class ObjectDetail2Activity extends AppCompatActivity implements PhotoFra
         this.currentScaleWeight = currentScaleWeight;
         if (dialogVisible)
         {
-            ((EditText) weightDialog.findViewById(R.id.weightOnScaleText)).setText(currentScaleWeight.trim());
+            ((EditText) weightDialog.findViewById(R.id.weightOnScaleText))
+                    .setText(currentScaleWeight.trim());
         }
     }
 
     /**
      * Change bluetooth connection
-     * @param bluetoothConnectionStatus - new conection status
+     * @param bluetoothConnectionStatus - new connection status
      */
     public void setBluetoothConnectionStatus(String bluetoothConnectionStatus)
     {
         this.bluetoothConnectionStatus = bluetoothConnectionStatus;
         if (dialogVisible)
         {
-            ((TextView) weightDialog.findViewById(R.id.btConnectionStatusText)).setText(bluetoothConnectionStatus);
+            ((TextView) weightDialog.findViewById(R.id.btConnectionStatusText))
+                    .setText(bluetoothConnectionStatus);
         }
     }
 
@@ -831,8 +785,10 @@ public class ObjectDetail2Activity extends AppCompatActivity implements PhotoFra
     {
         weightDialog.show();
         dialogVisible = true;
-        // set up buttons on record_weight_dialog.xml so that you can view and save wieght information
-        weightDialog.findViewById(R.id.dialogReconnect).setOnClickListener(new View.OnClickListener() {
+        // set up buttons on record_weight_dialog.xml so that you can view and save weight
+        // information
+        weightDialog.findViewById(R.id.dialogReconnect)
+                .setOnClickListener(new View.OnClickListener() {
             /**
              * User clicked reconnect
              * @param v - dialog
@@ -843,7 +799,8 @@ public class ObjectDetail2Activity extends AppCompatActivity implements PhotoFra
                 reconnectButtonAction(v);
             }
         });
-        weightDialog.findViewById(R.id.dialogSaveWeightButton).setOnClickListener(new View.OnClickListener() {
+        weightDialog.findViewById(R.id.dialogSaveWeightButton)
+                .setOnClickListener(new View.OnClickListener() {
             /**
              * User clicked save
              * @param v - dialog
@@ -851,11 +808,13 @@ public class ObjectDetail2Activity extends AppCompatActivity implements PhotoFra
             @Override
             public void onClick(View v)
             {
-                saveWeight((((EditText) weightDialog.findViewById(R.id.weightOnScaleText)).getText().toString().trim()));
+                saveWeight((((EditText) weightDialog.findViewById(R.id.weightOnScaleText)).getText()
+                        .toString().trim()));
                 weightDialog.dismiss();
             }
         });
-        weightDialog.findViewById(R.id.dialogCopyWeightBelowButton).setOnClickListener(new View.OnClickListener() {
+        weightDialog.findViewById(R.id.dialogCopyWeightBelowButton)
+                .setOnClickListener(new View.OnClickListener() {
             /**
              * User clicked copy weight
              * @param v - dialog
@@ -863,7 +822,8 @@ public class ObjectDetail2Activity extends AppCompatActivity implements PhotoFra
             @Override
             public void onClick(View v)
             {
-                String weightOnScale = ((EditText) weightDialog.findViewById(R.id.weightOnScaleText)).getText().toString().trim();
+                String weightOnScale = ((EditText) weightDialog.findViewById(R.id.weightOnScaleText))
+                        .getText().toString().trim();
                 ((EditText) weightDialog.findViewById(R.id.dialogCurrentWeightInDBText)).setText(weightOnScale);
             }
         });
@@ -890,7 +850,7 @@ public class ObjectDetail2Activity extends AppCompatActivity implements PhotoFra
      */
     public void addPhotoAction(View view)
     {
-        Log.v(LOGTAG, "Add Photo Action Method Called");
+        Log.v(LOG_TAG, "Add Photo Action Method Called");
         if(isIsRemoteCameraSelect())
         {
             showRemoteCameraDialog(view);
@@ -929,7 +889,7 @@ public class ObjectDetail2Activity extends AppCompatActivity implements PhotoFra
             @Override
             public void onCancel(DialogInterface dialog)
             {
-                CameraDialog.stopLiveview(view, StateStatic.getGlobalCameraMAC(), parentActivity,
+                CameraDialog.stopLiveView(StateStatic.getGlobalCameraMAC(), parentActivity,
                         queue, sonyApiRequestID++, getLiveViewSurface());
             }
         });
@@ -945,18 +905,22 @@ public class ObjectDetail2Activity extends AppCompatActivity implements PhotoFra
                 {
                     isTakePhotoButtonClicked = true;
                     remoteCameraDialog.findViewById(R.id.take_photo).setEnabled(false);
-                    Log.v(LOGTAG_WIFIDIRECT, "Take photo button clicked");
-                    CameraDialog.takePhoto(v, StateStatic.getGlobalCameraMAC(), parentActivity, queue, sonyApiRequestID++, getTimeStamp(), new AfterImageSavedMethodWrapper() {
+                    Log.v(LOG_TAG_WIFI_DIRECT, "Take photo button clicked");
+                    CameraDialog.takePhoto(StateStatic.getGlobalCameraMAC(), parentActivity,
+                            queue, sonyApiRequestID++, getTimeStamp(),
+                            new AfterImageSavedMethodWrapper() {
                         /**
                          * Process saved image
-                         * @param thumbnailmageUri - image URI
+                         * @param thumbnailImageUri - image URI
                          */
                         @Override
-                        public void doStuffWithSavedImage(final Uri thumbnailmageUri)
+                        public void doStuffWithSavedImage(final Uri thumbnailImageUri)
                         {
-                            final Uri orignalImageUri = CheatSheet.getOriginalImageUri(thumbnailmageUri);
+                            final Uri originalImageUri
+                                    = CheatSheet.getOriginalImageUri(thumbnailImageUri);
                             // implementing interface from CameraDialog class
-                            CameraDialog.ApproveDialogCallback approveDialogCallback = new CameraDialog.ApproveDialogCallback() {
+                            CameraDialog.ApproveDialogCallback approveDialogCallback
+                                    = new CameraDialog.ApproveDialogCallback() {
                                 /**
                                  * Save button pressed
                                  */
@@ -964,7 +928,7 @@ public class ObjectDetail2Activity extends AppCompatActivity implements PhotoFra
                                 public void onSaveButtonClicked()
                                 {
                                     // take picture and add as photo fragment
-                                    loadPhotoIntoPhotoFragment(orignalImageUri, MARKED_AS_ADDED);
+                                    loadPhotoIntoPhotoFragment(originalImageUri, MARKED_AS_ADDED);
                                     isTakePhotoButtonClicked = false;
                                     remoteCameraDialog.findViewById(R.id.take_photo).setEnabled(true);
                                 }
@@ -975,19 +939,23 @@ public class ObjectDetail2Activity extends AppCompatActivity implements PhotoFra
                                 @Override
                                 public void onCancelButtonClicked()
                                 {
-                                    deleteOriginalAndThumnailPhoto(orignalImageUri);
+                                    deleteOriginalAndThumnailPhoto(originalImageUri);
                                     isTakePhotoButtonClicked = false;
                                     remoteCameraDialog.findViewById(R.id.take_photo).setEnabled(true);
                                 }
                             };
                             // create dialog to view and approve photo
                             AlertDialog approveDialog =
-                                    CameraDialog.createPhotoApprovalDialog(parentActivity, approveDialogCallback);
+                                    CameraDialog.createPhotoApprovalDialog(parentActivity,
+                                            approveDialogCallback);
                             approveDialog.show();
-                            ImageView approvePhotoImage = (ImageView) approveDialog.findViewById(R.id.approvePhotoImage);
-                            Log.v(LOGTAG, "Loading image " + thumbnailmageUri + " into approvePhoto Dialog");
-                            approvePhotoImage.setImageURI(thumbnailmageUri);
-                            Log.v(LOGTAG, "Loading image " + thumbnailmageUri + " into approvePhoto Dialog done!");
+                            ImageView approvePhotoImage
+                                    = (ImageView) approveDialog.findViewById(R.id.approvePhotoImage);
+                            Log.v(LOG_TAG, "Loading image " + thumbnailImageUri
+                                    + " into approvePhoto Dialog");
+                            approvePhotoImage.setImageURI(thumbnailImageUri);
+                            Log.v(LOG_TAG, "Loading image " + thumbnailImageUri
+                                    + " into approvePhoto Dialog done!");
                         }
                     }, getLiveViewSurface());
                 }
@@ -1001,7 +969,8 @@ public class ObjectDetail2Activity extends AppCompatActivity implements PhotoFra
             @Override
             public void onClick(View v)
             {
-                CameraDialog.zoomIn(v, StateStatic.getGlobalCameraMAC(), parentActivity, queue, sonyApiRequestID++);
+                CameraDialog.zoomIn(StateStatic.getGlobalCameraMAC(), parentActivity, queue,
+                        sonyApiRequestID++);
             }
         });
         remoteCameraDialog.findViewById(R.id.zoom_out).setOnClickListener(new View.OnClickListener() {
@@ -1012,11 +981,12 @@ public class ObjectDetail2Activity extends AppCompatActivity implements PhotoFra
             @Override
             public void onClick(View v)
             {
-                CameraDialog.zoomOut(v, StateStatic.getGlobalCameraMAC(), parentActivity, queue, sonyApiRequestID++);
+                CameraDialog.zoomOut(StateStatic.getGlobalCameraMAC(), parentActivity, queue,
+                        sonyApiRequestID++);
             }
         });
         // should allow you to see what the camera is seeing
-        CameraDialog.startLiveview(view, StateStatic.getGlobalCameraMAC(), this, queue,
+        CameraDialog.startLiveView(StateStatic.getGlobalCameraMAC(), this, queue,
                 sonyApiRequestID++, getLiveViewSurface());
     }
 
@@ -1029,10 +999,10 @@ public class ObjectDetail2Activity extends AppCompatActivity implements PhotoFra
         String stamp = getTimeStamp();
         // create a file to save the image
         Uri fileUri = getOutputMediaFileUri(stamp);
-        Log.v(LOGTAG, "fileUri: " + fileUri.toString());
+        Log.v(LOG_TAG, "fileUri: " + fileUri.toString());
         photoIntent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
         setTempFileName(stamp);
-        startActivityForResult(photoIntent, REQUESTIMAGECAPTURE);
+        startActivityForResult(photoIntent, REQUEST_IMAGE_CAPTURE);
     }
 
     /**
@@ -1070,10 +1040,10 @@ public class ObjectDetail2Activity extends AppCompatActivity implements PhotoFra
      */
     public void loadPhotoIntoPhotoFragment(Uri imageUri, final String SYNC_STATUS)
     {
-        Log.v(LOGTAG, "loadPhotoIntoPhotoFragment method called");
+        Log.v(LOG_TAG, "loadPhotoIntoPhotoFragment method called");
         // loading PhotoFragment class to add photo URIs
         PhotoFragment photoFragment = (PhotoFragment) getFragmentManager().findFragmentById(R.id.fragment);
-        Log.v(LOGTAG, "imageUri: " + imageUri);
+        Log.v(LOG_TAG, "imageUri: " + imageUri);
         if (photoFragment != null)
         {
             // photo URIs are added to hashmap in PhotoFragment class
@@ -1081,7 +1051,7 @@ public class ObjectDetail2Activity extends AppCompatActivity implements PhotoFra
         }
         else
         {
-            Log.v(LOGTAG, "loadPhotoIntoPhotoFragment method called on null photoFragment");
+            Log.v(LOG_TAG, "loadPhotoIntoPhotoFragment method called on null photoFragment");
         }
     }
 
@@ -1091,8 +1061,6 @@ public class ObjectDetail2Activity extends AppCompatActivity implements PhotoFra
      */
     public void setAllPhotosLoaded(boolean isLoaded)
     {
-//        asyncPopulatePhotoComplete = isLoaded;
-//        toggleLoadingStatusAccordingToState();
         // TODO
     }
 
@@ -1102,12 +1070,7 @@ public class ObjectDetail2Activity extends AppCompatActivity implements PhotoFra
      */
     public void toggleDeletePhotoStatus(boolean deletePhotoStatus)
     {
-//        if(deletePhotoStatus) {
-//            showDeletePhotosButton();
-//        } else {
-//            hideDeletePhotosButton();
-//        }
-        //TODO
+        // TODO
     }
 
     /**
@@ -1117,11 +1080,11 @@ public class ObjectDetail2Activity extends AppCompatActivity implements PhotoFra
     @Override
     public void peersDiscovered(Collection<WifiP2pDevice> collectionOfDevices)
     {
-        Log.v(LOGTAG_WIFIDIRECT, collectionOfDevices.size() + " device discovered");
+        Log.v(LOG_TAG_WIFI_DIRECT, collectionOfDevices.size() + " device discovered");
         // so you can connect with camera
-        ((Button) findViewById(R.id.connectToCameraButton)).setEnabled(true);
+        findViewById(R.id.connectToCameraButton).setEnabled(true);
         ((Button) findViewById(R.id.connectToCameraButton)).setText(getString(R.string.pick_camera));
-        ((Button) findViewById(R.id.connectToCameraButton)).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.connectToCameraButton).setOnClickListener(new View.OnClickListener() {
             /**
              * User clicked on a peer
              * @param v - connection view
@@ -1129,7 +1092,7 @@ public class ObjectDetail2Activity extends AppCompatActivity implements PhotoFra
             @Override
             public void onClick(View v)
             {
-                pickaRemoteCameraAction(v);
+                pickARemoteCameraAction(v);
             }
         });
         // organizing all devices phone can connect to
@@ -1141,51 +1104,51 @@ public class ObjectDetail2Activity extends AppCompatActivity implements PhotoFra
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Pick Remote Camera").setItems(listOfDeviceNames.toArray(new String[]{}),
                 new DialogInterface.OnClickListener() {
+            /**
+             * User clicked remote camera
+             * @param dialog - camera dialog
+             * @param which - item selected
+             */
+            public void onClick(DialogInterface dialog, int which)
+            {
+                // The 'which' argument contains the index position of the selected item.
+                // setting up connection with mac device
+                final String macAddress = listOfDeviceNames.get(which);
+                WifiP2pDevice device = new WifiP2pDevice();
+                device.deviceAddress = macAddress;
+                WifiP2pConfig config = new WifiP2pConfig();
+                config.deviceAddress = device.deviceAddress;
+                Log.v(LOG_TAG, "the device address is " + config.deviceAddress);
+                mManager.connect(mChannel, config, new WifiP2pManager.ActionListener() {
                     /**
-                     * User clicked remote camera
-                     * @param dialog - camera dialog
-                     * @param which - item selected
+                     * Connection succeeded
                      */
-                    public void onClick(DialogInterface dialog, int which)
+                    @Override
+                    public void onSuccess()
                     {
-                        // The 'which' argument contains the index position of the selected item.
-                        // setting up connection with mac device
-                        final String macAddress = listOfDeviceNames.get(which);
-                        WifiP2pDevice device = new WifiP2pDevice();
-                        device.deviceAddress = macAddress;
-                        WifiP2pConfig config = new WifiP2pConfig();
-                        config.deviceAddress = device.deviceAddress;
-//                        connectedMACAddress = macAddress;
-                        Log.v(LOGTAG, "the device address is " + config.deviceAddress);
-                        mManager.connect(mChannel, config, new WifiP2pManager.ActionListener() {
-                            /**
-                             * Connection succeeded
-                             */
-                            @Override
-                            public void onSuccess()
-                            {
-                                connectedMacAddress = macAddress;
-                                Log.v(LOGTAG, "mac address is "+macAddress);
-                                // so at this point the connection has been made
-                                Log.v(LOGTAG_WIFIDIRECT, "Connection request sent. Arp file modified "
-                                        + Utils.getLastModifiedDateOfArpFile());
-                                ((Button) findViewById(R.id.connectToCameraButton)).setEnabled(false);
-                                ((Button) findViewById(R.id.connectToCameraButton)).setText(getString(R.string.wait));
-                            }
+                        connectedMacAddress = macAddress;
+                        Log.v(LOG_TAG, "mac address is " + macAddress);
+                        // so at this point the connection has been made
+                        Log.v(LOG_TAG_WIFI_DIRECT, "Connection request sent. Arp file modified "
+                                + Utils.getLastModifiedDateOfArpFile());
+                        findViewById(R.id.connectToCameraButton).setEnabled(false);
+                        ((Button) findViewById(R.id.connectToCameraButton))
+                                .setText(getString(R.string.wait));
+                    }
 
-                            /**
-                             * Connection failed
-                             * @param reason - error
-                             */
-                            @Override
-                            public void onFailure(int reason)
-                            {
-                                // TODO: failure logic
-                                Log.v(LOGTAG, "the connection has failed "+String.valueOf(reason));
-                            }
-                        });
+                    /**
+                     * Connection failed
+                     * @param reason - error
+                     */
+                    @Override
+                    public void onFailure(int reason)
+                    {
+                        // TODO: failure logic
+                        Log.v(LOG_TAG, "the connection has failed " + String.valueOf(reason));
                     }
                 });
+            }
+        });
         pickPeersDialog = builder.create();
     }
 
@@ -1198,7 +1161,7 @@ public class ObjectDetail2Activity extends AppCompatActivity implements PhotoFra
         if(!connectedToRemoteCamera)
         {
             mManager.removeGroup(mChannel, null);
-            // if connection is successful then disenable connect to camera button
+            // if connection is successful then disable connect to camera button
             mManager.discoverPeers(mChannel, new WifiP2pManager.ActionListener() {
                 /**
                  * Connection successful
@@ -1206,9 +1169,9 @@ public class ObjectDetail2Activity extends AppCompatActivity implements PhotoFra
                 @Override
                 public void onSuccess()
                 {
-                    ((Button) findViewById(R.id.connectToCameraButton)).setEnabled(false);
+                    findViewById(R.id.connectToCameraButton).setEnabled(false);
                     ((Button) findViewById(R.id.connectToCameraButton)).setText(getString(R.string.no_remote_camera));
-                    Log.v(LOGTAG_WIFIDIRECT, "Peer discovery started");
+                    Log.v(LOG_TAG_WIFI_DIRECT, "Peer discovery started");
                 }
 
                 /**
@@ -1218,7 +1181,7 @@ public class ObjectDetail2Activity extends AppCompatActivity implements PhotoFra
                 @Override
                 public void onFailure(int reason)
                 {
-                    Log.v(LOGTAG_WIFIDIRECT, "Peers discovery failed");
+                    Log.v(LOG_TAG_WIFI_DIRECT, "Peers discovery failed");
                 }
             });
         }
@@ -1240,8 +1203,8 @@ public class ObjectDetail2Activity extends AppCompatActivity implements PhotoFra
     {
         // so at this point you were able to establish a connection with the camera
         connectedToRemoteCamera = true;
-        ((Button)findViewById(R.id.connectToCameraButton)).setEnabled(false);
-        ((Button)findViewById(R.id.connectToCameraButton)).setText(getString(R.string.arp_ip));
+        findViewById(R.id.connectToCameraButton).setEnabled(false);
+        ((Button) findViewById(R.id.connectToCameraButton)).setText(getString(R.string.arp_ip));
         new Thread() {
             /**
              * Run the Thread
@@ -1254,12 +1217,12 @@ public class ObjectDetail2Activity extends AppCompatActivity implements PhotoFra
                 int retryLimit = 5;
                 while (true)
                 {
-                    Log.v(LOGTAG, "inside the loop");
+                    Log.v(LOG_TAG, "inside the loop");
                     if (retryCount < retryLimit && connectedToRemoteCamera)
                     {
                         if (Utils.getIPFromMac(connectedMacAddress) != null)
                         {
-                            Log.v(LOGTAG, "so you were able to get the mac ip address");
+                            Log.v(LOG_TAG, "so you were able to get the mac ip address");
                             ipInsertedIntoArpCallback();
                             break;
                         }
@@ -1279,22 +1242,12 @@ public class ObjectDetail2Activity extends AppCompatActivity implements PhotoFra
                     else
                     {
                         ipNotFoundOnArpCallback();
-                        Log.v(LOGTAG, "could not find the ip");
+                        Log.v(LOG_TAG, "could not find the ip");
                         break;
                     }
                 }
             }
         }.start();
-    }
-
-    /**
-     * Disable IP button
-     */
-    @Override
-    public void disableGetIpButton()
-    {
-        connectedToRemoteCamera = false;
-        enableDiscoverPeersButton();
     }
 
     /**
@@ -1308,32 +1261,12 @@ public class ObjectDetail2Activity extends AppCompatActivity implements PhotoFra
     }
 
     /**
-     * Open the dialog
-     * @param connectDialogAppeared - whether to open the dialog
-     */
-    @Override
-    public void setConnectDialogAppeared(boolean connectDialogAppeared)
-    {
-        isPickPeersDialogAppeared = connectDialogAppeared;
-    }
-
-    /**
-     * Print the ARPANET log
-     * @param view - item view
-     */
-    public void printArpNetLog(View view)
-    {
-        Log.v(LOGTAG_WIFIDIRECT, "Arp file last modified: " + Utils.getLastModifiedDateOfArpFile());
-        Utils.getIPFromMac(connectedMacAddress);
-    }
-
-    /**
      * Pick a camera action
      * @param view - camera view
      */
-    public void pickaRemoteCameraAction(View view)
+    public void pickARemoteCameraAction(View view)
     {
-        Log.v(LOGTAG, "Activity pause status: " + activityPaused);
+        Log.v(LOG_TAG, "Activity pause status: " + activityPaused);
         if (!activityPaused)
         {
             if (!connectedToRemoteCamera)
@@ -1356,18 +1289,18 @@ public class ObjectDetail2Activity extends AppCompatActivity implements PhotoFra
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Disconnect from Camera?").setPositiveButton(android.R.string.yes,
                 new DialogInterface.OnClickListener() {
-                    /**
-                     * User confirmed disconnect
-                     * @param dialog - alert window
-                     * @param which - selection
-                     */
-                    @Override
-                    public void onClick(DialogInterface dialog, int which)
-                    {
-                        connectedToRemoteCamera = false;
-                        enableDiscoverPeersButton();
-                    }
-                }).setNegativeButton(android.R.string.no, null);
+            /**
+             * User confirmed disconnect
+             * @param dialog - alert window
+             * @param which - selection
+             */
+            @Override
+            public void onClick(DialogInterface dialog, int which)
+            {
+                connectedToRemoteCamera = false;
+                enableDiscoverPeersButton();
+            }
+        }).setNegativeButton(android.R.string.no, null);
         builder.create().show();
     }
 
@@ -1384,10 +1317,10 @@ public class ObjectDetail2Activity extends AppCompatActivity implements PhotoFra
             public void run()
             {
                 connectedToRemoteCamera = true;
-                ((Button) findViewById(R.id.connectToCameraButton)).setEnabled(true);
+                findViewById(R.id.connectToCameraButton).setEnabled(true);
                 ((Button) findViewById(R.id.connectToCameraButton)).setText(getString(R.string.mac_connection,
                         connectedMacAddress));
-                ((Button) findViewById(R.id.connectToCameraButton)).setOnClickListener(new View.OnClickListener() {
+                findViewById(R.id.connectToCameraButton).setOnClickListener(new View.OnClickListener() {
                     /**
                      * User pressed disconnect
                      * @param v - the button
@@ -1398,10 +1331,10 @@ public class ObjectDetail2Activity extends AppCompatActivity implements PhotoFra
                         disconnectRemoteCameraAction(v);
                     }
                 });
-                Log.v(LOGTAG_WIFIDIRECT, "Connected to device " + connectedMacAddress + " ip "
+                Log.v(LOG_TAG_WIFI_DIRECT, "Connected to device " + connectedMacAddress + " ip "
                         + Utils.getIPFromMac(connectedMacAddress));
                 StateStatic.setGlobalCameraMAC(connectedMacAddress);
-                toggleAddPhotoButton(null);
+                toggleAddPhotoButton();
             }
         });
     }
@@ -1411,7 +1344,7 @@ public class ObjectDetail2Activity extends AppCompatActivity implements PhotoFra
      */
     public void ipNotFoundOnArpCallback()
     {
-        Log.v(LOGTAG_WIFIDIRECT, "Ip not Found On Arp Callback called");
+        Log.v(LOG_TAG_WIFI_DIRECT, "Ip not Found On Arp Callback called");
         connectedToRemoteCamera = false;
         runOnUiThread(new Runnable() {
             /**
@@ -1421,7 +1354,7 @@ public class ObjectDetail2Activity extends AppCompatActivity implements PhotoFra
             public void run()
             {
                 enableDiscoverPeersButton();
-                toggleAddPhotoButton(null);
+                toggleAddPhotoButton();
             }
         });
     }
@@ -1429,15 +1362,15 @@ public class ObjectDetail2Activity extends AppCompatActivity implements PhotoFra
     /**
      * display sample number of items in spinner
      */
-    public void fillSampleNumberspinner()
+    public void fillSampleNumberSpinner()
     {
-        Log.v(LOGTAG,"Filling sample number spinner");
+        Log.v(LOG_TAG,"Filling sample number spinner");
         Bundle myBundle = getIntent().getExtras();
         String[] sampleNumbers = myBundle.getStringArray(ALL_SAMPLE_NUMBER);
         Spinner sampleSpinner = (Spinner) findViewById(R.id.sample_spinner);
         CheatSheet.setSpinnerItems(this, sampleSpinner, Arrays.asList(sampleNumbers),
                 sampleNumber + "", R.layout.spinner_item);
-        Log.v(LOGTAG, "Avaiable sample numbers: " + Arrays.asList(sampleNumbers));
+        Log.v(LOG_TAG, "Available sample numbers: " + Arrays.asList(sampleNumbers));
     }
 
     /**
@@ -1448,7 +1381,8 @@ public class ObjectDetail2Activity extends AppCompatActivity implements PhotoFra
      */
     public void fillSampleInfo(String areaEasting, String areaNorthing, String contextNumber)
     {
-        ((TextView) findViewById(R.id.sampleInfo)).setText(areaEasting + "." + areaNorthing + "." + contextNumber + ".");
+        ((TextView) findViewById(R.id.sampleInfo)).setText(getString(R.string.sample_frmt,
+                areaEasting, areaNorthing, contextNumber));
     }
 
     /**
@@ -1456,7 +1390,8 @@ public class ObjectDetail2Activity extends AppCompatActivity implements PhotoFra
      */
     public void clearCurrentPhotosOnLayoutAndFetchPhotosAsync()
     {
-        PhotoFragment photoFragment = (PhotoFragment) getFragmentManager().findFragmentById(R.id.fragment);
+        PhotoFragment photoFragment
+                = (PhotoFragment) getFragmentManager().findFragmentById(R.id.fragment);
         photoFragment.prepareFragmentForNewPhotosFromNewItem();
         asyncPopulatePhotos();
     }
@@ -1472,48 +1407,31 @@ public class ObjectDetail2Activity extends AppCompatActivity implements PhotoFra
             if (Utils.getIPFromMac(connectedMacAddress) == null)
             {
                 connectedToRemoteCamera = false;
-                toggleAddPhotoButton(null);
+                toggleAddPhotoButton();
                 enableDiscoverPeersButton();
             }
         }
     }
 
     /**
-     * enable buttons depending on connection with remote caamera
-     * @param view - button view
+     * enable buttons depending on connection with remote camera
      */
-    public void toggleAddPhotoButton(View view)
+    public void toggleAddPhotoButton()
     {
-        if(isIsRemoteCameraSelect())
+        if (isIsRemoteCameraSelect())
         {
-            if(connectedToRemoteCamera)
+            if (connectedToRemoteCamera)
             {
-                ((Button) findViewById(R.id.button26)).setEnabled(true);
+                findViewById(R.id.button26).setEnabled(true);
             }
             else
             {
-                ((Button) findViewById(R.id.button26)).setEnabled(false);
+                findViewById(R.id.button26).setEnabled(false);
             }
         }
         else
         {
-            ((Button) findViewById(R.id.button26)).setEnabled(true);
-        }
-    }
-
-    /**
-     * navigate through items in spinner
-     * @param view - next button
-     */
-    public void goToNextItemIfAvailable(View view)
-    {
-        int selectedItemPos = ((Spinner) findViewById(R.id.sample_spinner)).getSelectedItemPosition();
-        int itemCount = ((Spinner) findViewById(R.id.sample_spinner)).getCount();
-        Log.v(LOGTAG, "selectedItemPos: "+ selectedItemPos);
-        Log.v(LOGTAG, "count: "+ itemCount);
-        if (selectedItemPos + 1 <= itemCount - 1)
-        {
-            ((Spinner) findViewById(R.id.sample_spinner)).setSelection(selectedItemPos + 1);
+            findViewById(R.id.button26).setEnabled(true);
         }
     }
 

@@ -1,4 +1,4 @@
-/**
+/*
  * Created by J. Patrick Taggart on 2/17/2017.
  * =============================================
  * Stores ids of artifacts worked with during app use
@@ -41,26 +41,9 @@ public class Session
 
     /**
      * Get the entries in current session
-     * @return Returns current session entries
      */
-    public static Set<String> getCurrentSessionIDs()
+    public static void getCurrentSessionIDs()
     {
-        return entries;
-    }
-
-    /**
-     * PULLING METHODS - DEFUNCT
-     * @return Returns junk
-     */
-    public static Set<Sample> pullFromDB()
-    {
-        Set<Sample> samples = new HashSet<>();
-        // Check for elements that were deleted?
-        for (String id: entries)
-        {
-            samples.add(DBC.retrieveSample(id));
-        }
-        return samples;
     }
 
     /**
@@ -69,7 +52,6 @@ public class Session
      */
     public static void asyncPullFromDB(Callback<Sample> callback)
     {
-        Set<Sample> samples = new HashSet<Sample>();
         // Begin staging samples. Set to execute callback when all entries received
         Log.d("Session", "Begin Staging: " + entries.size() + " to stage");
         Log.d("Session", "Callback: " + callback);
@@ -86,6 +68,7 @@ public class Session
      * @param id - item to fetch
      * @param callback - function to call when finished
      */
+    @SuppressWarnings("unchecked")
     public static void asyncPullNewEntry(String id, Callback<Sample> callback)
     {
         Log.d("Session", "Id: " + id);
@@ -96,7 +79,7 @@ public class Session
         DBC.getSample(id, addEntry);
     }
     // Callback called on pull from database
-    static Callback addEntry = new Callback<Sample>() {
+    private static Callback addEntry = new Callback<Sample>() {
         /**
          * Response received
          * @param call - requested items

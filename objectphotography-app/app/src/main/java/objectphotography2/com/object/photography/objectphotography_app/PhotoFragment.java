@@ -21,7 +21,7 @@ import com.squareup.picasso.Callback;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.LOGTAG;
+import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.LOG_TAG;
 import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.MARKED_AS_ADDED;
 import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.MARKED_AS_REMOVED;
 import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.MARKED_AS_TO_DOWNLOAD;
@@ -29,13 +29,6 @@ import static objectphotography2.com.object.photography.objectphotography_app.St
 import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.getGlobalWebServerURL;
 public class PhotoFragment extends Fragment
 {
-    /**
-     * Constructor
-     */
-    public PhotoFragment()
-    {
-    }
-
     abstract class CustomPicassoCallback implements Callback
     {
         TaggedImageView actualImageView;
@@ -71,12 +64,13 @@ public class PhotoFragment extends Fragment
         {
             photoLoadedSemaphore--;
             getActualImageView().setSyncStatus(SYNCED);
-            Log.v(LOGTAG, "photoLoadedSemaphore: " + photoLoadedSemaphore);
+            Log.v(LOG_TAG, "photoLoadedSemaphore: " + photoLoadedSemaphore);
             if (photoLoadedSemaphore == 0)
             {
                 // changed from getActivity()
-                PhotoLoadDeleteInterface containerActivity = (PhotoLoadDeleteInterface) getActivity();
-                Log.v(LOGTAG, "Container: " + containerActivity);
+                PhotoLoadDeleteInterface containerActivity
+                        = (PhotoLoadDeleteInterface) getActivity();
+                Log.v(LOG_TAG, "Container: " + containerActivity);
                 if (containerActivity != null)
                 {
                     containerActivity.setAllPhotosLoaded(true);
@@ -91,8 +85,8 @@ public class PhotoFragment extends Fragment
         public void onError()
         {
             photoLoadedSemaphore++;
-            Log.v(LOGTAG, "photo callback error");
-            Log.v(LOGTAG, "photoLoadedSempahore: " + photoLoadedSemaphore);
+            Log.v(LOG_TAG, "photo callback error");
+            Log.v(LOG_TAG, "photoLoadedSempahore: " + photoLoadedSemaphore);
         }
     };
     public int selectedPhotoCount = 0;
@@ -104,15 +98,14 @@ public class PhotoFragment extends Fragment
          * All photos loaded
          * @param isLoaded - are all photos loaded?
          */
-        public void setAllPhotosLoaded(boolean isLoaded);
+        void setAllPhotosLoaded(boolean isLoaded);
 
         /**
          * Whether to delete photo
          * @param deletePhotoStatus - status of photo
          */
-        public void toggleDeletePhotoStatus(boolean deletePhotoStatus);
+        void toggleDeletePhotoStatus(boolean deletePhotoStatus);
     }
-
     public class PhotoOnClickListener implements View.OnClickListener
     {
         /**
@@ -138,6 +131,13 @@ public class PhotoFragment extends Fragment
             PhotoLoadDeleteInterface containerActivity = (PhotoLoadDeleteInterface) getActivity();
             containerActivity.toggleDeletePhotoStatus(selectedPhotoCount > 0);
         }
+    }
+
+    /**
+     * Constructor
+     */
+    public PhotoFragment()
+    {
     }
 
     /**
@@ -179,7 +179,8 @@ public class PhotoFragment extends Fragment
         super.onActivityCreated(savedInstanceState);
         if (savedInstanceState != null)
         {
-            dictOfPhotoSyncStatus = (LinkedHashMap<Uri, String>) savedInstanceState.getSerializable(PHOTO_DICT);
+            dictOfPhotoSyncStatus
+                    = (LinkedHashMap<Uri, String>) savedInstanceState.getSerializable(PHOTO_DICT);
             syncPhotos();
         }
     }
@@ -191,7 +192,7 @@ public class PhotoFragment extends Fragment
     @Override
     public void onSaveInstanceState(Bundle outState)
     {
-        Log.v(LOGTAG, "SAVE FRAGMENT");
+        Log.v(LOG_TAG, "SAVE FRAGMENT");
         super.onSaveInstanceState(outState);
         outState.putSerializable(PHOTO_DICT, dictOfPhotoSyncStatus);
     }
@@ -239,15 +240,16 @@ public class PhotoFragment extends Fragment
         {
             if (dictEntry.getValue().equals(MARKED_AS_TO_DOWNLOAD))
             {
-                Log.v(LOGTAG, "Downloading remote image: " + dictEntry.getKey());
+                Log.v(LOG_TAG, "Downloading remote image: " + dictEntry.getKey());
                 picassoSingleton.fetchAndInsertImage((LinearLayout) inflatedView, dictEntry.getKey(),
-                        getActivity(), dictEntry.getValue(), new PhotoOnClickListener(), picassoCallback, loadedPhotos);
+                        getActivity(), dictEntry.getValue(), new PhotoOnClickListener(),
+                        picassoCallback);
             }
             else if(dictEntry.getValue().equals(MARKED_AS_ADDED))
             {
                 picassoSingleton.fetchAndInsertImage((LinearLayout) inflatedView, dictEntry.getKey(),
                         getActivity(), dictEntry.getValue(), new PhotoOnClickListener(),
-                        picassoCallback, loadedPhotos);
+                        picassoCallback);
                 final Activity parentActivity = getActivity();
                 if (parentActivity instanceof ObjectDetail2Activity)
                 {
@@ -255,9 +257,12 @@ public class PhotoFragment extends Fragment
                     final int areaNorthing = ((ObjectDetail2Activity) parentActivity).areaNorthing;
                     final int contextNumber = ((ObjectDetail2Activity) parentActivity).contextNumber;
                     final int sampleNumber = ((ObjectDetail2Activity) parentActivity).sampleNumber;
-                    String url = getGlobalWebServerURL() + "/upload_image_2.php?area_easting=" + areaEasting + "&area_northing=" + areaNorthing + "&context_number=" + contextNumber + "&sample_number=" + sampleNumber;
-                    Log.v(LOGTAG, "Image to be uploaded" + dictEntry.getKey());
-                    AsyncHttpWrapper.makeImageUpload(url, dictEntry.getKey(), getActivity(), new AsyncHttpCallbackWrapper() {
+                    String url = getGlobalWebServerURL() + "/upload_image_2.php?area_easting="
+                            + areaEasting + "&area_northing=" + areaNorthing + "&context_number="
+                            + contextNumber + "&sample_number=" + sampleNumber;
+                    Log.v(LOG_TAG, "Image to be uploaded" + dictEntry.getKey());
+                    AsyncHttpWrapper.makeImageUpload(url, dictEntry.getKey(), getActivity(),
+                            new AsyncHttpCallbackWrapper() {
                         /**
                          * Connection succeeded
                          * @param response - HTTP response
@@ -267,9 +272,11 @@ public class PhotoFragment extends Fragment
                         {
                             super.onSuccessCallback(response);
                             dictOfPhotoSyncStatus.put(dictEntry.getKey(), SYNCED);
-                            Log.v(LOGTAG, "Image New Url After Upload" + response);
-                            Toast.makeText(parentActivity, "Image Uploaded To Server", Toast.LENGTH_SHORT).show();
-                            ((ObjectDetail2Activity) parentActivity).clearCurrentPhotosOnLayoutAndFetchPhotosAsync();
+                            Log.v(LOG_TAG, "Image New Url After Upload" + response);
+                            Toast.makeText(parentActivity, "Image Uploaded To Server",
+                                    Toast.LENGTH_SHORT).show();
+                            ((ObjectDetail2Activity) parentActivity)
+                                    .clearCurrentPhotosOnLayoutAndFetchPhotosAsync();
                         }
                     });
                 }
@@ -284,30 +291,32 @@ public class PhotoFragment extends Fragment
     {
         new AlertDialog.Builder(getActivity()).setTitle("Do you want to delete photo(s)")
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                    /**
-                     * User pressed delete
-                     * @param dialog - alert window
-                     * @param which selection
-                     */
-                    public void onClick(DialogInterface dialog, int which)
+            /**
+             * User pressed delete
+             * @param dialog - alert window
+             * @param which selection
+             */
+            public void onClick(DialogInterface dialog, int which)
+            {
+                for (TaggedImageView aPhoto: loadedPhotos)
+                {
+                    if (aPhoto.isSelected())
                     {
-                        for (TaggedImageView aPhoto: loadedPhotos)
-                        {
-                            if (aPhoto.isSelected())
-                            {
-                                aPhoto.setSyncStatus(MARKED_AS_REMOVED);
-                                aPhoto.setSelected(false);
-                                Log.v(LOGTAG, "Before delete: " + dictOfPhotoSyncStatus);
-                                dictOfPhotoSyncStatus.put(aPhoto.getInformativeImageURI(), MARKED_AS_REMOVED);
-                                Log.v(LOGTAG, "After delete: " + dictOfPhotoSyncStatus);
-                                selectedPhotoCount--;
-                                PhotoLoadDeleteInterface containerActivity = (PhotoLoadDeleteInterface) getActivity();
-                                containerActivity.toggleDeletePhotoStatus(selectedPhotoCount > 0);
-                                aPhoto.invalidate();
-                            }
-                        }
+                        aPhoto.setSyncStatus(MARKED_AS_REMOVED);
+                        aPhoto.setSelected(false);
+                        Log.v(LOG_TAG, "Before delete: " + dictOfPhotoSyncStatus);
+                        dictOfPhotoSyncStatus.put(aPhoto.getInformativeImageURI(),
+                                MARKED_AS_REMOVED);
+                        Log.v(LOG_TAG, "After delete: " + dictOfPhotoSyncStatus);
+                        selectedPhotoCount--;
+                        PhotoLoadDeleteInterface containerActivity
+                                = (PhotoLoadDeleteInterface) getActivity();
+                        containerActivity.toggleDeletePhotoStatus(selectedPhotoCount > 0);
+                        aPhoto.invalidate();
                     }
-                }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                }
+            }
+        }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
             /**
              * User pressed cancel
              * @param dialog - alert window

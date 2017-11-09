@@ -13,7 +13,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
@@ -36,25 +35,24 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.HashMap;
 import static objectphotography2.com.object.photography.objectphotography_app.CheatSheet.getOutputMediaFileUri;
-import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.ADDCOLORCODE;
-import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.CHANGECOLORCODE;
+import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.ADD_COLOR_CODE;
+import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.CHANGE_COLOR_CODE;
 import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.CHROMA;
-import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.COLOROFFSET;
+import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.COLOR_OFFSET;
 import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.DESCRIPTION;
-import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.DESCRIPTIONOFFSET;
+import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.DESCRIPTION_OFFSET;
 import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.HUE;
-import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.INDEXBASE;
-import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.INDEXMULTIPIER;
+import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.INDEX_BASE;
 import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.LIGHTNESS_VALUE;
-import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.LOGTAG;
-import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.LOGTAG_BLUETOOTH;
-import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.LOGTAG_WIFIDIRECT;
+import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.LOG_TAG;
+import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.LOG_TAG_BLUETOOTH;
+import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.LOG_TAG_WIFI_DIRECT;
 import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.MESSAGE_STATUS_CHANGE;
 import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.MESSAGE_WEIGHT;
-import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.MUNSELLCOLOR;
-import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.READINGLOCATION;
-import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.READINGLOCATIONOFFSET;
-import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.REQUESTIMAGECAPTURE;
+import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.MUNSELL_COLOR;
+import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.READING_LOCATION;
+import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.READING_LOCATION_OFFSET;
+import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.REQUEST_IMAGE_CAPTURE;
 import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.REQUEST_ENABLE_BT;
 import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.SYNCED;
 import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.getGlobalCurrentObject;
@@ -95,7 +93,8 @@ public class ObjectDetailActivity extends AppCompatActivity implements PhotoFrag
         @Override
         public void handleMessage(Message msg)
         {
-            Log.v(LOGTAG, "Message received: " + msg.obj + " : " + msg.getData() + " : " + msg.what);
+            Log.v(LOG_TAG, "Message received: " + msg.obj + " : " + msg.getData() + " : "
+                    + msg.what);
             if (msg.what == MESSAGE_WEIGHT)
             {
                 int weightOnScale = Integer.parseInt(msg.obj.toString().trim());
@@ -107,7 +106,6 @@ public class ObjectDetailActivity extends AppCompatActivity implements PhotoFrag
             }
         }
     };
-
     // receiver object that will allow you to interact with the weight scale
     BroadcastReceiver mReceiver = new NutriScaleBroadcastReceiver(handler);
     // create weight dialog and remote camera dialog to display when clicked
@@ -116,7 +114,7 @@ public class ObjectDetailActivity extends AppCompatActivity implements PhotoFrag
     boolean dialogVisible = false;
     /**
      * Launch the activity
-     * @param savedInstanceState
+     * @param savedInstanceState - state from memory
      */
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -141,7 +139,8 @@ public class ObjectDetailActivity extends AppCompatActivity implements PhotoFrag
                 }
                 else
                 {
-                    BlueToothStaticWrapper.discoverAndConnectToNutriScale(mBluetoothAdapter, mReceiver, this, handler);
+                    BlueToothStaticWrapper.discoverAndConnectToNutriScale(mBluetoothAdapter,
+                            mReceiver, this, handler);
                 }
             }
             // creates a queue to handle json requests
@@ -167,12 +166,12 @@ public class ObjectDetailActivity extends AppCompatActivity implements PhotoFrag
             });
             if (getGlobalCurrentObject().equals(""))
             {
-                Toast.makeText(this, "global current object is null", Toast.LENGTH_SHORT);
+                Toast.makeText(this, "global current object is null", Toast.LENGTH_SHORT)
+                        .show();
             }
-            // TODO: this part was commented out just to test the camera
-//            asyncPopulateWeightFieldFromDB(Integer.parseInt(getGlobalCurrentObject()));
-//            asyncPopulateColorTable(Integer.parseInt(getGlobalCurrentObject()));
-//            asyncPopulatePhotos(Integer.parseInt(getGlobalCurrentObject()));
+            asyncPopulateWeightFieldFromDB(Integer.parseInt(getGlobalCurrentObject()));
+            asyncPopulateColorTable(Integer.parseInt(getGlobalCurrentObject()));
+            asyncPopulatePhotos(Integer.parseInt(getGlobalCurrentObject()));
             ProgressBar tmpBar = (ProgressBar) findViewById(R.id.progressBar1);
             tmpBar.setEnabled(true);
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -182,19 +181,19 @@ public class ObjectDetailActivity extends AppCompatActivity implements PhotoFrag
             // Pass null as the parent view because its going in the dialog layout. Add action buttons
             builder.setView(inflater.inflate(R.layout.record_weight_dialog, null))
                     .setPositiveButton("Save", new DialogInterface.OnClickListener() {
-                        /**
-                         * User pressed record weight
-                         * @param dialog - alert window
-                         * @param id - selection
-                         */
-                        @Override
-                        public void onClick(DialogInterface dialog, int id)
-                        {
-                            saveWeight((((EditText) weightDialog.findViewById(R.id.dialogCurrentWeightInDBText))
-                                    .getText().toString().trim()));
-                            dialogVisible = false;
-                        }
-                    }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                /**
+                 * User pressed record weight
+                 * @param dialog - alert window
+                 * @param id - selection
+                 */
+                @Override
+                public void onClick(DialogInterface dialog, int id)
+                {
+                    saveWeight((((EditText) weightDialog.findViewById(R.id.dialogCurrentWeightInDBText))
+                            .getText().toString().trim()));
+                    dialogVisible = false;
+                }
+            }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                 /**
                  * User pressed cancel
                  * @param dialog - alert window
@@ -270,7 +269,7 @@ public class ObjectDetailActivity extends AppCompatActivity implements PhotoFrag
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState)
     {
-        Log.v(LOGTAG, "SAVING INSTANCE");
+        Log.v(LOG_TAG, "SAVING INSTANCE");
         savedInstanceState.putInt(ROW_COUNT, rowCount);
         savedInstanceState.putString(TMP_FILENAME, getTempFileName());
         cancelAllVolleyRequests(queue);
@@ -286,70 +285,57 @@ public class ObjectDetailActivity extends AppCompatActivity implements PhotoFrag
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
     {
-        if (requestCode == CHANGECOLORCODE)
+        if (requestCode == CHANGE_COLOR_CODE)
         {
             if (resultCode == RESULT_OK)
             {
                 // TODO: is idBase meant to differentiate each object?
-                int idBase = data.getIntExtra(INDEXBASE, 0);
+                int idBase = data.getIntExtra(INDEX_BASE, 0);
                 // populate text fields with data required to change the color
-                TextView readingLocation = (TextView) findViewById(idBase + READINGLOCATIONOFFSET);
-                TextView color = (TextView) findViewById(idBase + COLOROFFSET);
-                TextView description = (TextView) findViewById(idBase + DESCRIPTIONOFFSET);
-                readingLocation.setText(data.getStringExtra(READINGLOCATION));
-                color.setText(data.getStringExtra(MUNSELLCOLOR));
+                TextView readingLocation = (TextView) findViewById(idBase + READING_LOCATION_OFFSET);
+                TextView color = (TextView) findViewById(idBase + COLOR_OFFSET);
+                TextView description = (TextView) findViewById(idBase + DESCRIPTION_OFFSET);
+                readingLocation.setText(data.getStringExtra(READING_LOCATION));
+                color.setText(data.getStringExtra(MUNSELL_COLOR));
                 description.setText(data.getStringExtra(DESCRIPTION));
             }
         }
-        else if (requestCode == ADDCOLORCODE)
+        else if (requestCode == ADD_COLOR_CODE)
         {
             if (resultCode == RESULT_OK)
             {
-                int idBase = data.getIntExtra(INDEXBASE, 0);
+                int idBase = data.getIntExtra(INDEX_BASE, 0);
                 Button b = (Button) findViewById(idBase);
                 // populating fields with data required to apply change in color
-                TextView readingLocation = (TextView) findViewById(idBase + READINGLOCATIONOFFSET);
-                TextView color = (TextView) findViewById(idBase + COLOROFFSET);
-                TextView description = (TextView) findViewById(idBase + DESCRIPTIONOFFSET);
-                b.setText("Change Color");
-                readingLocation.setText(data.getStringExtra(READINGLOCATION));
-                color.setText(data.getStringExtra(MUNSELLCOLOR));
+                TextView readingLocation = (TextView) findViewById(idBase + READING_LOCATION_OFFSET);
+                TextView color = (TextView) findViewById(idBase + COLOR_OFFSET);
+                TextView description = (TextView) findViewById(idBase + DESCRIPTION_OFFSET);
+                b.setText(getString(R.string.change_color));
+                readingLocation.setText(data.getStringExtra(READING_LOCATION));
+                color.setText(data.getStringExtra(MUNSELL_COLOR));
                 description.setText(data.getStringExtra(DESCRIPTION));
                 addTableRow();
             }
         }
-        else if(requestCode == REQUESTIMAGECAPTURE)
+        else if(requestCode == REQUEST_IMAGE_CAPTURE)
         {
             if (resultCode == RESULT_OK)
             {
-                PhotoFragment photoFragment = (PhotoFragment) getFragmentManager().findFragmentById(R.id.fragment);
                 if (data == null)
                 {
-                    Log.v(LOGTAG, "data: " + "null");
+                    Log.v(LOG_TAG, "data: " + "null");
                 }
                 else
                 {
-                    Log.v(LOGTAG, "data: " + data.getData());
+                    Log.v(LOG_TAG, "data: " + data.getData());
                 }
                 // create image uri to add the photo and add the photo
                 String originalFileName = getTempFileName() + ".jpg";
                 Uri fileUri = CheatSheet.getThumbnail(originalFileName);
-                Log.v(LOGTAG, fileUri.toString());
+                Log.v(LOG_TAG, fileUri.toString());
                 loadPhotoIntoPhotoFragment(fileUri);
             }
             // request connection to nutriscale via bluetooth once again
-        }
-        else if (requestCode == REQUEST_ENABLE_BT)
-        {
-            if (resultCode == RESULT_OK)
-            {
-                Toast.makeText(this, "Bluetooth enabled", Toast.LENGTH_SHORT).show();
-                BlueToothStaticWrapper.discoverAndConnectToNutriScale(BluetoothAdapter.getDefaultAdapter(), mReceiver, this, handler);
-            }
-            else
-            {
-                Toast.makeText(this, "Bluetooth cannot be enabled", Toast.LENGTH_SHORT).show();
-            }
         }
     }
 
@@ -377,7 +363,7 @@ public class ObjectDetailActivity extends AppCompatActivity implements PhotoFrag
      */
     public void goToSettings(View view)
     {
-        Log.v(LOGTAG, "Settings button clicked");
+        Log.v(LOG_TAG, "Settings button clicked");
         Intent myIntent = new Intent(this, SettingsActivity.class);
         startActivity(myIntent);
     }
@@ -388,34 +374,34 @@ public class ObjectDetailActivity extends AppCompatActivity implements PhotoFrag
      */
     public void addPhotoAction(View view)
     {
-        Log.v(LOGTAG, "Add Photo button clicked");
-        //determine if the app is synced with a camera and calibrate if it is not calibrated
+        Log.v(LOG_TAG, "Add Photo button clicked");
+        // determine if the app is synced with a camera and calibrate if it is not calibrated
         if (isIsRemoteCameraSelect())
         {
             if (isRemoteCameraRecentlyCalibrated())
             {
-                Log.v(LOGTAG, "Remote Camera Recently Calibrated");
+                Log.v(LOG_TAG, "Remote Camera Recently Calibrated");
                 showRemoteCameraDialog(view);
             }
             else
             {
-                Log.v(LOGTAG, "Remote Camera Not Recently Calibrated");
-                //alert dialog to calibrate camera
+                Log.v(LOG_TAG, "Remote Camera Not Recently Calibrated");
+                // alert dialog to calibrate camera
                 new AlertDialog.Builder(this).setTitle("Remote Camera Not Recently Calibrated")
                         .setPositiveButton("Calibrate Now", new DialogInterface.OnClickListener() {
-                            /**
-                             * User pressed calibrate
-                             * @param dialog - alert window
-                             * @param which - selection
-                             */
-                            public void onClick(DialogInterface dialog, int which)
-                            {
-                                // TODO: call calibrate function
-                                populateRemoteCameraCalibrationTime();
-                                Log.v(LOGTAG, "Remote Camera Calibration Done");
-                                Toast.makeText(getApplicationContext(), "Remote Camera Calibration Done", Toast.LENGTH_SHORT).show();
-                            }
-                        }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    /**
+                     * User pressed calibrate
+                     * @param dialog - alert window
+                     * @param which - selection
+                     */
+                    public void onClick(DialogInterface dialog, int which)
+                    {
+                        // TODO: call calibrate function
+                        populateRemoteCameraCalibrationTime();
+                        Log.v(LOG_TAG, "Remote Camera Calibration Done");
+                        Toast.makeText(getApplicationContext(), "Remote Camera Calibration Done", Toast.LENGTH_SHORT).show();
+                    }
+                }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
                     /**
                      * User pressed cancel
                      * @param dialog - alert window
@@ -434,29 +420,30 @@ public class ObjectDetailActivity extends AppCompatActivity implements PhotoFrag
             {
                 if (isTabletCameraRecentlyCalibrated())
                 {
-                    Log.v(LOGTAG, "Tablet Camera Recently Calibrated");
+                    Log.v(LOG_TAG, "Tablet Camera Recently Calibrated");
                     // starts activity to take photo
                     startLocalCameraIntent();
                 }
                 else
                 {
-                    Log.v(LOGTAG, "Tablet Camera Not Recently Calibrated");
-                    // alert dialog to callibrate camera
+                    Log.v(LOG_TAG, "Tablet Camera Not Recently Calibrated");
+                    // alert dialog to calibrate camera
                     new AlertDialog.Builder(this).setTitle("Tablet Camera Not Recently Calibrated")
                             .setPositiveButton("Calibrate Now", new DialogInterface.OnClickListener() {
-                                /**
-                                 * User pressed calibrate
-                                 * @param dialog - alert window
-                                 * @param which - selection
-                                 */
-                                public void onClick(DialogInterface dialog, int which)
-                                {
-                                    // TODO: call calibrate function
-                                    populateTabletCameraCalibrationTime();
-                                    Log.v(LOGTAG, "Tablet Camera Calibration Done");
-                                    Toast.makeText(getApplicationContext(), "Tablet Camera Calibration Done", Toast.LENGTH_SHORT).show();
-                                }
-                            }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                        /**
+                         * User pressed calibrate
+                         * @param dialog - alert window
+                         * @param which - selection
+                         */
+                        public void onClick(DialogInterface dialog, int which)
+                        {
+                            // TODO: call calibrate function
+                            populateTabletCameraCalibrationTime();
+                            Log.v(LOG_TAG, "Tablet Camera Calibration Done");
+                            Toast.makeText(getApplicationContext(),
+                                    "Tablet Camera Calibration Done", Toast.LENGTH_SHORT).show();
+                        }
+                    }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
                         /**
                          * User pressed cancel
                          * @param dialog - alert window
@@ -473,16 +460,16 @@ public class ObjectDetailActivity extends AppCompatActivity implements PhotoFrag
             {
                 new AlertDialog.Builder(this).setTitle("Your Device Does Not Have A Camera")
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                            /**
-                             * User pressed ok
-                             * @param dialog - alert window
-                             * @param which - selection
-                             */
-                            public void onClick(DialogInterface dialog, int which)
-                            {
-                                // do nothing
-                            }
-                        }).show();
+                    /**
+                     * User pressed ok
+                     * @param dialog - alert window
+                     * @param which - selection
+                     */
+                    public void onClick(DialogInterface dialog, int which)
+                    {
+                        // do nothing
+                    }
+                }).show();
             }
         }
     }
@@ -493,30 +480,30 @@ public class ObjectDetailActivity extends AppCompatActivity implements PhotoFrag
      */
     public void addChangeColorAction(View view)
     {
-        Log.v(LOGTAG, "Add/Change Color button clicked");
+        Log.v(LOG_TAG, "Add/Change Color button clicked");
         Button b = (Button) view;
         int idBase = b.getId();
         // add photo descriptions and color value and start color change intent
         // regardless of whether button says add color or not
         if (b.getText().toString().equals(getResources().getString(R.string.add_color)))
         {
-            Log.v(LOGTAG, "button text: " + b.getText().toString());
+            Log.v(LOG_TAG, "button text: " + b.getText().toString());
             Intent colorIntent = new Intent(this, AddChangeColorActivity.class);
-            colorIntent.putExtra(INDEXBASE, idBase);
-            startActivityForResult(colorIntent, ADDCOLORCODE);
+            colorIntent.putExtra(INDEX_BASE, idBase);
+            startActivityForResult(colorIntent, ADD_COLOR_CODE);
         }
         else
         {
-            Log.v(LOGTAG, "button text: " + b.getText().toString());
+            Log.v(LOG_TAG, "button text: " + b.getText().toString());
             Intent colorIntent = new Intent(this, AddChangeColorActivity.class);
-            TextView readingLocation = (TextView) findViewById(idBase + READINGLOCATIONOFFSET);
-            TextView color = (TextView) findViewById(idBase + COLOROFFSET);
-            TextView description = (TextView) findViewById(idBase + DESCRIPTIONOFFSET);
-            colorIntent.putExtra(READINGLOCATION, readingLocation.getText().toString());
-            colorIntent.putExtra(MUNSELLCOLOR, color.getText().toString());
+            TextView readingLocation = (TextView) findViewById(idBase + READING_LOCATION_OFFSET);
+            TextView color = (TextView) findViewById(idBase + COLOR_OFFSET);
+            TextView description = (TextView) findViewById(idBase + DESCRIPTION_OFFSET);
+            colorIntent.putExtra(READING_LOCATION, readingLocation.getText().toString());
+            colorIntent.putExtra(MUNSELL_COLOR, color.getText().toString());
             colorIntent.putExtra(DESCRIPTION, description.getText().toString());
-            colorIntent.putExtra(INDEXBASE, idBase);
-            startActivityForResult(colorIntent, CHANGECOLORCODE);
+            colorIntent.putExtra(INDEX_BASE, idBase);
+            startActivityForResult(colorIntent, CHANGE_COLOR_CODE);
         }
     }
 
@@ -529,15 +516,15 @@ public class ObjectDetailActivity extends AppCompatActivity implements PhotoFrag
         String stamp = getTimeStamp();
         // create a file to save the image
         Uri fileUri = getOutputMediaFileUri(stamp);
-        Log.v(LOGTAG, "fileUri: " + fileUri.toString());
+        Log.v(LOG_TAG, "fileUri: " + fileUri.toString());
         photoIntent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
         setTempFileName(stamp);
-        startActivityForResult(photoIntent, REQUESTIMAGECAPTURE);
+        startActivityForResult(photoIntent, REQUEST_IMAGE_CAPTURE);
     }
 
     /**
      * Returns if the device has a camera
-     * @return
+     * @return Returns whether the phone has a camera
      */
     public boolean hasCamera()
     {
@@ -553,16 +540,19 @@ public class ObjectDetailActivity extends AppCompatActivity implements PhotoFrag
     public void addTableRow(String type, String color, String description)
     {
         rowCount += 1;
-        int cellID = rowCount * INDEXMULTIPIER;
+        int cellID = rowCount * 100;
         // create table to store color values
         TableLayout colorTable = (TableLayout) findViewById(R.id.colorTable);
         TableRow tr = new TableRow(this);
-        tr.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
-        // set button to correspond to a cellId and listen for addChangeColorAction method to be triggered
+        tr.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT,
+                TableRow.LayoutParams.WRAP_CONTENT));
+        // set button to correspond to a cellId and listen for addChangeColorAction method to be
+        // triggered
         Button b = new Button(this);
         b.setId(cellID);
         b.setText(R.string.change_color);
-        b.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
+        b.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT,
+                TableRow.LayoutParams.WRAP_CONTENT));
         b.setOnClickListener(new View.OnClickListener() {
             /**
              * User pressed the button
@@ -575,10 +565,10 @@ public class ObjectDetailActivity extends AppCompatActivity implements PhotoFrag
             }
         });
         tr.addView(b);
-        // for each row add data regarding type(reading location), color(munsell), and decription
+        // for each row add data regarding type(reading location), color(munsell), and description
         // populate with type of input
         TextView typeInput = new TextView(this);
-        typeInput.setId(cellID + READINGLOCATIONOFFSET);
+        typeInput.setId(cellID + READING_LOCATION_OFFSET);
         // type can refer to reading location
         typeInput.setText(type);
         typeInput.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
@@ -587,7 +577,7 @@ public class ObjectDetailActivity extends AppCompatActivity implements PhotoFrag
         tr.addView(typeInput);
         // populate with color input
         TextView colorInput = new TextView(this);
-        colorInput.setId(cellID + COLOROFFSET);
+        colorInput.setId(cellID + COLOR_OFFSET);
         colorInput.setText(color);
         colorInput.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
         colorInput.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT,
@@ -595,7 +585,7 @@ public class ObjectDetailActivity extends AppCompatActivity implements PhotoFrag
         tr.addView(colorInput);
         // populate with description input
         TextView descriptionInput = new TextView(this);
-        descriptionInput.setId(cellID + DESCRIPTIONOFFSET);
+        descriptionInput.setId(cellID + DESCRIPTION_OFFSET);
         descriptionInput.setText(description);
         descriptionInput.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
         descriptionInput.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT,
@@ -606,12 +596,13 @@ public class ObjectDetailActivity extends AppCompatActivity implements PhotoFrag
     }
 
     /**
-     * TODO: does the same thing as the previous method but does not seem to add a row with any text (blank row?)
+     * TODO: does the same thing as the previous method but does not seem to add a row with any text
+     * (blank row?)
      */
     public void addTableRow()
     {
         rowCount += 1;
-        int cellID = rowCount * INDEXMULTIPIER;
+        int cellID = rowCount * 100;
         TableLayout colorTable = (TableLayout) findViewById(R.id.colorTable);
         TableRow tr = new TableRow(this);
         tr.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
@@ -633,21 +624,21 @@ public class ObjectDetailActivity extends AppCompatActivity implements PhotoFrag
         tr.addView(b);
         // get data and add to colorTable
         TextView typeInput = new TextView(this);
-        typeInput.setId(cellID + READINGLOCATIONOFFSET);
+        typeInput.setId(cellID + READING_LOCATION_OFFSET);
         typeInput.setText("");
         typeInput.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
         typeInput.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT,
                 TableRow.LayoutParams.WRAP_CONTENT));
         tr.addView(typeInput);
         TextView colorInput = new TextView(this);
-        colorInput.setId(cellID + COLOROFFSET);
+        colorInput.setId(cellID + COLOR_OFFSET);
         colorInput.setText("");
         colorInput.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
         colorInput.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT,
                 TableRow.LayoutParams.WRAP_CONTENT));
         tr.addView(colorInput);
         TextView descriptionInput = new TextView(this);
-        descriptionInput.setId(cellID + DESCRIPTIONOFFSET);
+        descriptionInput.setId(cellID + DESCRIPTION_OFFSET);
         descriptionInput.setText("");
         descriptionInput.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
         descriptionInput.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT,
@@ -675,7 +666,8 @@ public class ObjectDetailActivity extends AppCompatActivity implements PhotoFrag
     {
         asyncPopulateColorTableLoadComplete = false;
         // makes php request
-        makeVolleyJSONArrayRequest(getGlobalWebServerURL() + "/get_color?itemid=" + itemID, queue, new JSONArrayResponseWrapper(this) {
+        makeVolleyJSONArrayRequest(getGlobalWebServerURL() + "/get_color?itemid=" + itemID, queue,
+                new JSONArrayResponseWrapper(this) {
             /**
              * Response received
              * @param response - database response
@@ -691,10 +683,12 @@ public class ObjectDetailActivity extends AppCompatActivity implements PhotoFrag
                         JSONObject tmpObject = response.getJSONObject(i);
                         // create a hashmap to store data about object and add each entry in hashmap to table
                         HashMap<String, String> tmpMap = new HashMap<>(3);
-                        tmpMap.put(READINGLOCATION, tmpObject.getString(READINGLOCATION));
-                        tmpMap.put(MUNSELLCOLOR, getMunsellColor(tmpObject.getString(HUE), tmpObject.getString(LIGHTNESS_VALUE), tmpObject.getString(CHROMA)));
+                        tmpMap.put(READING_LOCATION, tmpObject.getString(READING_LOCATION));
+                        tmpMap.put(MUNSELL_COLOR, getMunsellColor(tmpObject.getString(HUE),
+                                tmpObject.getString(LIGHTNESS_VALUE), tmpObject.getString(CHROMA)));
                         tmpMap.put(DESCRIPTION, tmpObject.getString(DESCRIPTION));
-                        addTableRow(tmpMap.get(READINGLOCATION), tmpMap.get(MUNSELLCOLOR), tmpMap.get(DESCRIPTION));
+                        addTableRow(tmpMap.get(READING_LOCATION), tmpMap.get(MUNSELL_COLOR),
+                                tmpMap.get(DESCRIPTION));
                     }
                     addTableRow();
                     asyncPopulateColorTableLoadComplete = true;
@@ -732,7 +726,8 @@ public class ObjectDetailActivity extends AppCompatActivity implements PhotoFrag
     {
         asyncPopulateWeightFieldComplete = false;
         // makes a call to the database
-        makeVolleyJSONOBjectRequest(getGlobalWebServerURL() + "/get_item_weight?itemid=" + itemID, queue, new JSONObjectResponseWrapper(this) {
+        makeVolleyJSONOBjectRequest(getGlobalWebServerURL() + "/get_item_weight?itemid="
+                + itemID, queue, new JSONObjectResponseWrapper(this) {
             /**
              * Response received
              * @param response - database response
@@ -780,7 +775,8 @@ public class ObjectDetailActivity extends AppCompatActivity implements PhotoFrag
     {
         setAllPhotosLoaded(false);
         // php request
-        makeVolleyJSONOBjectRequest(getGlobalWebServerURL() + "/get_image?itemid=" + itemId, queue, new JSONObjectResponseWrapper(this) {
+        makeVolleyJSONOBjectRequest(getGlobalWebServerURL() + "/get_image?itemid=" + itemId,
+                queue, new JSONObjectResponseWrapper(this) {
             /**
              * Response received
              * @param response - database response
@@ -793,15 +789,17 @@ public class ObjectDetailActivity extends AppCompatActivity implements PhotoFrag
                     // returns image arrays and loads photos into photofragment
                     String imageBase = response.getString("image_base");
                     JSONArray images = response.getJSONArray("images");
-                    PhotoFragment photoFragment = (PhotoFragment) getFragmentManager().findFragmentById(R.id.fragment);
+                    PhotoFragment photoFragment = (PhotoFragment) getFragmentManager()
+                            .findFragmentById(R.id.fragment);
                     photoFragment.prepareFragmentForNewPhotosFromNewItem();
                     for (int i = 0; i < images.length(); i++)
                     {
                         JSONObject imageInfo = images.getJSONObject(i);
                         // formatting image url
-                        String url = imageBase + Uri.encode(imageInfo.getString("citation")) + "/finds/jpg/" + imageInfo.getString("figureid") + ".jpg";
+                        String url = imageBase + Uri.encode(imageInfo.getString("citation"))
+                                + "/finds/jpg/" + imageInfo.getString("figureid") + ".jpg";
                         Uri y = Uri.parse(url);
-                        Log.v(LOGTAG, "Photo URL: actualImageView:  " + url + " y: " + y);
+                        Log.v(LOG_TAG, "Photo URL: actualImageView:  " + url + " y: " + y);
                         // loads images to photofragment
                         loadPhotoIntoPhotoFragment(y);
                         toggleLoadingStatusAccordingToState();
@@ -843,13 +841,15 @@ public class ObjectDetailActivity extends AppCompatActivity implements PhotoFrag
     /**
      * display loading state status to user
      */
-    public void toggleLoadingStatusAccordingToState() {
+    public void toggleLoadingStatusAccordingToState()
+    {
         // will allow you to take the photo
         Button addPhotoButton = (Button) findViewById(R.id.button8);
         Button recordWeightButton = (Button) findViewById(R.id.button9);
         ProgressBar pb = (ProgressBar) findViewById(R.id.progressBar1);
         EditText objectIDText = (EditText) findViewById(R.id.objectID);
-        // only if all data has been recieved (colors, weight, and photos added to photofragments) are t
+        // only if all data has been recieved (colors, weight, and photos added to photofragments)
+        // are t
         if (asyncPopulateColorTableLoadComplete && asyncPopulateWeightFieldComplete
                 && asyncPopulatePhotoComplete)
         {
@@ -864,11 +864,11 @@ public class ObjectDetailActivity extends AppCompatActivity implements PhotoFrag
             addPhotoButton.setEnabled(false);
             recordWeightButton.setEnabled(false);
             pb.setVisibility(View.VISIBLE);
-            Log.v(LOGTAG, "START----------------------------------");
-            Log.v(LOGTAG, "asnycPopulateColorTableLoad: " + asyncPopulateColorTableLoadComplete);
-            Log.v(LOGTAG, "asyncPopulateWeightFieldCopmplete: " + asyncPopulateWeightFieldComplete);
-            Log.v(LOGTAG, "asyncPopulateDictofPhotoSyncStatus: " + asyncPopulatePhotoComplete);
-            Log.v(LOGTAG, "END----------------------------------");
+            Log.v(LOG_TAG, "START----------------------------------");
+            Log.v(LOG_TAG, "asnycPopulateColorTableLoad: " + asyncPopulateColorTableLoadComplete);
+            Log.v(LOG_TAG, "asyncPopulateWeightFieldCopmplete: " + asyncPopulateWeightFieldComplete);
+            Log.v(LOG_TAG, "asyncPopulateDictofPhotoSyncStatus: " + asyncPopulatePhotoComplete);
+            Log.v(LOG_TAG, "END----------------------------------");
         }
     }
 
@@ -896,8 +896,9 @@ public class ObjectDetailActivity extends AppCompatActivity implements PhotoFrag
      */
     public void deletePhotosButtonAction(View view)
     {
-        Log.v(LOGTAG, "Delete Button clicked");
-        PhotoFragment photoFragment = (PhotoFragment) getFragmentManager().findFragmentById(R.id.fragment);
+        Log.v(LOG_TAG, "Delete Button clicked");
+        PhotoFragment photoFragment
+                = (PhotoFragment) getFragmentManager().findFragmentById(R.id.fragment);
         photoFragment.markPhotosAsDeleted();
     }
 
@@ -953,7 +954,7 @@ public class ObjectDetailActivity extends AppCompatActivity implements PhotoFrag
             @Override
             public void onCancel(DialogInterface dialog)
             {
-                CameraDialog.stopLiveview(view, StateStatic.getGlobalCameraMAC(), parentActivity,
+                CameraDialog.stopLiveView(StateStatic.getGlobalCameraMAC(), parentActivity,
                         queue, sonyApiRequestID++, getLiveViewSurface());
             }
         });
@@ -966,18 +967,18 @@ public class ObjectDetailActivity extends AppCompatActivity implements PhotoFrag
             @Override
             public void onClick(View v)
             {
-                Log.v(LOGTAG_WIFIDIRECT, "Take photo button clicked");
-                CameraDialog.takePhoto(v, StateStatic.getGlobalCameraMAC(), parentActivity, queue,
+                Log.v(LOG_TAG_WIFI_DIRECT, "Take photo button clicked");
+                CameraDialog.takePhoto(StateStatic.getGlobalCameraMAC(), parentActivity, queue,
                         sonyApiRequestID++, getTimeStamp(), new AfterImageSavedMethodWrapper() {
-                            /**
-                             * Process image
-                             * @param imageUri - image location
-                             */
-                            @Override
-                            public void doStuffWithSavedImage(Uri imageUri)
-                            {
-                            }
-                        }, getLiveViewSurface());
+                    /**
+                     * Process image
+                     * @param imageUri - image location
+                     */
+                    @Override
+                    public void doStuffWithSavedImage(Uri imageUri)
+                    {
+                    }
+                }, getLiveViewSurface());
             }
         });
         // listeners for to control zoom for camera
@@ -989,7 +990,8 @@ public class ObjectDetailActivity extends AppCompatActivity implements PhotoFrag
             @Override
             public void onClick(View v)
             {
-                CameraDialog.zoomIn(v, StateStatic.getGlobalCameraMAC(), parentActivity, queue, sonyApiRequestID++);
+                CameraDialog.zoomIn(StateStatic.getGlobalCameraMAC(), parentActivity, queue,
+                        sonyApiRequestID++);
             }
         });
         remoteCameraDialog.findViewById(R.id.zoom_out).setOnClickListener(new View.OnClickListener() {
@@ -1000,22 +1002,25 @@ public class ObjectDetailActivity extends AppCompatActivity implements PhotoFrag
             @Override
             public void onClick(View v)
             {
-                CameraDialog.zoomOut(v, StateStatic.getGlobalCameraMAC(), parentActivity, queue, sonyApiRequestID++);
+                CameraDialog.zoomOut(StateStatic.getGlobalCameraMAC(), parentActivity, queue,
+                        sonyApiRequestID++);
             }
         });
-        CameraDialog.startLiveview(view, StateStatic.getGlobalCameraMAC(), this, queue, sonyApiRequestID++, getLiveViewSurface());
+        CameraDialog.startLiveView(StateStatic.getGlobalCameraMAC(), this, queue,
+                sonyApiRequestID++, getLiveViewSurface());
     }
 
     /**
      * Record weight
      * @param view - scale view
      */
-    public void startRecordWieght(View view)
+    public void startRecordWeight(View view)
     {
         weightDialog.show();
         dialogVisible = true;
         // adding onclick listeners to buttons in record_weight_dialog.xml
-        weightDialog.findViewById(R.id.dialogReconnect).setOnClickListener(new View.OnClickListener() {
+        weightDialog.findViewById(R.id.dialogReconnect)
+                .setOnClickListener(new View.OnClickListener() {
             /**
              * User pressed reconnect
              * @param v - scale
@@ -1026,7 +1031,8 @@ public class ObjectDetailActivity extends AppCompatActivity implements PhotoFrag
                 reconnectButtonAction(v);
             }
         });
-        weightDialog.findViewById(R.id.dialogSaveWeightButton).setOnClickListener(new View.OnClickListener() {
+        weightDialog.findViewById(R.id.dialogSaveWeightButton)
+                .setOnClickListener(new View.OnClickListener() {
             /**
              * User pressed save
              * @param v - scale
@@ -1034,11 +1040,13 @@ public class ObjectDetailActivity extends AppCompatActivity implements PhotoFrag
             @Override
             public void onClick(View v)
             {
-                saveWeight((((EditText) weightDialog.findViewById(R.id.weightOnScaleText)).getText().toString().trim()));
+                saveWeight((((EditText) weightDialog.findViewById(R.id.weightOnScaleText)).getText()
+                        .toString().trim()));
                 weightDialog.dismiss();
             }
         });
-        weightDialog.findViewById(R.id.dialogCopyWeightBelowButton).setOnClickListener(new View.OnClickListener() {
+        weightDialog.findViewById(R.id.dialogCopyWeightBelowButton)
+                .setOnClickListener(new View.OnClickListener() {
             /**
              * User pressed copy weight
              * @param v - scale
@@ -1046,11 +1054,14 @@ public class ObjectDetailActivity extends AppCompatActivity implements PhotoFrag
             @Override
             public void onClick(View v)
             {
-                String weightOnScale = ((EditText) weightDialog.findViewById(R.id.weightOnScaleText)).getText().toString().trim();
-                ((EditText) weightDialog.findViewById(R.id.dialogCurrentWeightInDBText)).setText(weightOnScale);
+                String weightOnScale = ((EditText) weightDialog.findViewById(R.id.weightOnScaleText))
+                        .getText().toString().trim();
+                ((EditText) weightDialog.findViewById(R.id.dialogCurrentWeightInDBText))
+                        .setText(weightOnScale);
             }
         });
-        weightDialog.findViewById(R.id.tare_scale_button).setOnClickListener(new View.OnClickListener() {
+        weightDialog.findViewById(R.id.tare_scale_button)
+                .setOnClickListener(new View.OnClickListener() {
             /**
              * User pressed tare
              * @param v - scale
@@ -1058,22 +1069,18 @@ public class ObjectDetailActivity extends AppCompatActivity implements PhotoFrag
             @Override
             public void onClick(View v)
             {
-                String weightOnScale = ((EditText) weightDialog.findViewById(R.id.weightOnScaleText)).getText().toString().trim();
+                String weightOnScale = ((EditText) weightDialog.findViewById(R.id.weightOnScaleText))
+                        .getText().toString().trim();
                 // setting scale tare to weight on scale
                 setScaleTare(Integer.parseInt(weightOnScale));
-                Toast.makeText(getApplicationContext(), "Tare weight is " + getScaleTare() + " gram",
-                        Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Tare weight is " + getScaleTare()
+                                + " gram", Toast.LENGTH_SHORT).show();
             }
         });
-        ((EditText) weightDialog.findViewById(R.id.weightOnScaleText)).setText(getCurrentScaleWeight());
-        ((TextView) weightDialog.findViewById(R.id.btConnectionStatusText)).setText(getBluetoothConnectionStatus());
-    }
-
-    /**
-     * Find peers
-     */
-    public void showConnectableWifiDirectDevices()
-    {
+        ((EditText) weightDialog.findViewById(R.id.weightOnScaleText))
+                .setText(getCurrentScaleWeight());
+        ((TextView) weightDialog.findViewById(R.id.btConnectionStatusText))
+                .setText(getBluetoothConnectionStatus());
     }
 
     /**
@@ -1098,7 +1105,7 @@ public class ObjectDetailActivity extends AppCompatActivity implements PhotoFrag
         }
         catch (IllegalArgumentException e)
         {
-            Log.v(LOGTAG_BLUETOOTH, "Trying to unregister a non regeistered receiver");
+            Log.v(LOG_TAG_BLUETOOTH, "Trying to unregister a non-registered receiver");
         }
     }
 
@@ -1109,7 +1116,8 @@ public class ObjectDetailActivity extends AppCompatActivity implements PhotoFrag
      */
     public void isItemExistThenLoadInfos(String itemID)
     {
-        makeVolleyJSONOBjectRequest(getGlobalWebServerURL() + "/is_item_exist?itemid=" + itemID, queue, new JSONObjectResponseWrapper(this) {
+        makeVolleyJSONOBjectRequest(getGlobalWebServerURL() + "/is_item_exist?itemid=" + itemID,
+                queue, new JSONObjectResponseWrapper(this) {
             /**
              * Scale response
              * @param response - response received
@@ -1130,17 +1138,20 @@ public class ObjectDetailActivity extends AppCompatActivity implements PhotoFrag
                     }
                     else
                     {
-                        new AlertDialog.Builder(currentContext).setTitle("This Item ID does not exist")
-                                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                                    /**
-                                     * User pressed ok
-                                     * @param dialog - alert window
-                                     * @param which - selection
-                                     */
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        // continue with ok
-                                    }
-                                }).show();
+                        new AlertDialog.Builder(currentContext)
+                                .setTitle("This Item ID does not exist")
+                                .setPositiveButton(android.R.string.yes,
+                                        new DialogInterface.OnClickListener() {
+                            /**
+                             * User pressed ok
+                             * @param dialog - alert window
+                             * @param which - selection
+                             */
+                            public void onClick(DialogInterface dialog, int which)
+                            {
+                                // continue with ok
+                            }
+                        }).show();
                     }
                 }
                 catch (JSONException e)
@@ -1152,7 +1163,7 @@ public class ObjectDetailActivity extends AppCompatActivity implements PhotoFrag
 
             /**
              * Connection failed
-             * @param error
+             * @param error - failure
              */
             @Override
             void errorMethod(VolleyError error)
@@ -1181,7 +1192,8 @@ public class ObjectDetailActivity extends AppCompatActivity implements PhotoFrag
         this.currentScaleWeight = currentScaleWeight;
         if (dialogVisible)
         {
-            ((EditText) weightDialog.findViewById(R.id.weightOnScaleText)).setText(currentScaleWeight.trim());
+            ((EditText) weightDialog.findViewById(R.id.weightOnScaleText))
+                    .setText(currentScaleWeight.trim());
         }
     }
 
@@ -1203,7 +1215,8 @@ public class ObjectDetailActivity extends AppCompatActivity implements PhotoFrag
         this.bluetoothConnectionStatus = bluetoothConnectionStatus;
         if (dialogVisible)
         {
-            ((TextView) weightDialog.findViewById(R.id.btConnectionStatusText)).setText(bluetoothConnectionStatus);
+            ((TextView) weightDialog.findViewById(R.id.btConnectionStatusText))
+                    .setText(bluetoothConnectionStatus);
         }
     }
 
@@ -1232,7 +1245,8 @@ public class ObjectDetailActivity extends AppCompatActivity implements PhotoFrag
      */
     public void loadPhotoIntoPhotoFragment(Uri imageUri)
     {
-        PhotoFragment photoFragment = (PhotoFragment) getFragmentManager().findFragmentById(R.id.fragment);
+        PhotoFragment photoFragment
+                = (PhotoFragment) getFragmentManager().findFragmentById(R.id.fragment);
         photoFragment.addPhoto(imageUri, SYNCED);
     }
 
@@ -1242,8 +1256,9 @@ public class ObjectDetailActivity extends AppCompatActivity implements PhotoFrag
      */
     public void printAsyncState(View view)
     {
-        Log.v(LOGTAG, "asyncPopulatePhotoComplete: "  + asyncPopulatePhotoComplete);
-        Log.v(LOGTAG, "asyncPopulateWeightFieldComplete: "  + asyncPopulateWeightFieldComplete);
-        Log.v(LOGTAG, "asyncPopulateColorTableLoadComplete: "  + asyncPopulateColorTableLoadComplete);
+        Log.v(LOG_TAG, "asyncPopulatePhotoComplete: " + asyncPopulatePhotoComplete);
+        Log.v(LOG_TAG, "asyncPopulateWeightFieldComplete: " + asyncPopulateWeightFieldComplete);
+        Log.v(LOG_TAG, "asyncPopulateColorTableLoadComplete: "
+                + asyncPopulateColorTableLoadComplete);
     }
 }

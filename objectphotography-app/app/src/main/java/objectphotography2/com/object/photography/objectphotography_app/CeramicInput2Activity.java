@@ -4,7 +4,6 @@ package objectphotography2.com.object.photography.objectphotography_app;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -26,7 +25,7 @@ import static objectphotography2.com.object.photography.objectphotography_app.St
 import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.AREA_EASTING;
 import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.AREA_NORTHING;
 import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.CONTEXT_NUMBER;
-import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.LOGTAG;
+import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.LOG_TAG;
 import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.SAMPLE_NUMBER;
 import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.getGlobalWebServerURL;
 import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.showToastError;
@@ -40,10 +39,7 @@ public class CeramicInput2Activity extends AppCompatActivity
     // representing database fields for object
     enum LoadState
     {
-        areaEasting,
-        areaNorthing,
-        contextNumber,
-        sampleNumber
+        areaEasting, areaNorthing, contextNumber, sampleNumber
     }
 
     /**
@@ -58,12 +54,17 @@ public class CeramicInput2Activity extends AppCompatActivity
         queue = Volley.newRequestQueue(this);
         // storing load state values
         allDataLoadInfo = new HashMap<>(LoadState.values().length);
-        for (LoadState ls : LoadState.values()) {
+        for (LoadState ls: LoadState.values())
+        {
             allDataLoadInfo.put(ls, false);
         }
         barProgressDialog = new ProgressDialog(this);
         barProgressDialog.setTitle("Downloading Information From Database ...");
         barProgressDialog.setIndeterminate(true);
+        if (getAreaEastingSpinner() == null || getAreaEastingSpinner().getSelectedItem() == null)
+        {
+            findViewById(R.id.continue_button).setVisibility(View.INVISIBLE);
+        }
     }
 
     /**
@@ -84,7 +85,8 @@ public class CeramicInput2Activity extends AppCompatActivity
              * @param id - item id
              */
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
+            {
                 clearNorthingSpinner();
                 asyncGetAreaNorthingFromDB();
             }
@@ -94,7 +96,8 @@ public class CeramicInput2Activity extends AppCompatActivity
              * @param parent - spinner
              */
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
+            public void onNothingSelected(AdapterView<?> parent)
+            {
             }
         });
         getAreaNorthingSpinner().setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -106,7 +109,8 @@ public class CeramicInput2Activity extends AppCompatActivity
              * @param id - item id
              */
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
+            {
                 clearContextNumberSpinner();
                 asyncGetContextNumberFromDB();
             }
@@ -116,7 +120,8 @@ public class CeramicInput2Activity extends AppCompatActivity
              * @param parent - spinner
              */
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
+            public void onNothingSelected(AdapterView<?> parent)
+            {
             }
         });
         getContextNumberSpinner().setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -128,7 +133,8 @@ public class CeramicInput2Activity extends AppCompatActivity
              * @param id - item id
              */
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
+            {
                 clearSampleNumberSpinner();
                 asyncGetSampleNumberFromDB();
             }
@@ -138,7 +144,8 @@ public class CeramicInput2Activity extends AppCompatActivity
              * @param parent - spinner
              */
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
+            public void onNothingSelected(AdapterView<?> parent)
+            {
             }
         });
     }
@@ -147,26 +154,30 @@ public class CeramicInput2Activity extends AppCompatActivity
      * Context switch back to Activity
      */
     @Override
-    protected void onResume() {
+    protected void onResume()
+    {
         super.onResume();
-        Log.v(LOGTAG, "Resuming CeramicInput2Activity reloading sample numbers");
+        Log.v(LOG_TAG, "Resuming CeramicInput2Activity reloading sample numbers");
         if (allDataLoadInfo.get(LoadState.areaEasting) && allDataLoadInfo.get(LoadState.areaNorthing)
-                && allDataLoadInfo.get(LoadState.contextNumber)) {
+                && allDataLoadInfo.get(LoadState.contextNumber))
+        {
             clearSampleNumberSpinner();
             asyncGetSampleNumberFromDB();
-        } else {
+        }
+        else
+        {
             asyncGetAreaEastingFromDB();
         }
     }
 
     /**
      * Populate overflow
-     *
      * @param menu - action overflow
      * @return Returns true
      */
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_ceramic_input2, menu);
         return true;
@@ -174,15 +185,16 @@ public class CeramicInput2Activity extends AppCompatActivity
 
     /**
      * User selected overflow action
-     *
      * @param item - action selected
      * @return Returns whether the event was handled
      */
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        switch (item.getItemId())
+        {
             case R.id.action_settings:
-                goToSettings(findViewById(R.id.action_settings), this);
+                goToSettings(this);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -191,65 +203,69 @@ public class CeramicInput2Activity extends AppCompatActivity
 
     /**
      * methods to clear and fill spinners
-     *
      * @param entries - spinner values
      */
-    public void fillEastingSpinner(ArrayList<String> entries) {
+    public void fillEastingSpinner(ArrayList<String> entries)
+    {
         CheatSheet.setSpinnerItems(this, getAreaEastingSpinner(), entries);
     }
 
     /**
      * Fill northings
-     *
      * @param entries - spinner values
      */
-    public void fillNorthingSpinner(ArrayList<String> entries) {
+    public void fillNorthingSpinner(ArrayList<String> entries)
+    {
         CheatSheet.setSpinnerItems(this, getAreaNorthingSpinner(), entries);
     }
 
     /**
      * Fill context numbers
-     *
      * @param entries - spinner values
      */
-    public void fillContextNumberSpinner(ArrayList<String> entries) {
+    public void fillContextNumberSpinner(ArrayList<String> entries)
+    {
         CheatSheet.setSpinnerItems(this, getContextNumberSpinner(), entries);
     }
 
     /**
      * Fill sample numbers
-     *
      * @param entries - spinner values
      */
-    public void fillSampleNumberSpinner(ArrayList<String> entries) {
+    public void fillSampleNumberSpinner(ArrayList<String> entries)
+    {
         CheatSheet.setSpinnerItems(this, getSampleNumberSpinner(), entries);
     }
 
     /**
      * Clear northings
      */
-    public void clearNorthingSpinner() {
+    public void clearNorthingSpinner()
+    {
         CheatSheet.setSpinnerItems(this, getAreaNorthingSpinner(), new ArrayList<String>());
     }
 
     /**
      * Clear context numbers
      */
-    public void clearContextNumberSpinner() {
+    public void clearContextNumberSpinner()
+    {
         CheatSheet.setSpinnerItems(this, getContextNumberSpinner(), new ArrayList<String>());
     }
 
     /**
      * Clear sample numbers
      */
-    public void clearSampleNumberSpinner() {
+    public void clearSampleNumberSpinner()
+    {
         CheatSheet.setSpinnerItems(this, getSampleNumberSpinner(), new ArrayList<String>());
     }
 
     /**
      * get area easting data and fill spinner
      */
-    public void asyncGetAreaEastingFromDB() {
+    public void asyncGetAreaEastingFromDB()
+    {
         allDataLoadInfo.put(LoadState.areaEasting, false);
         toggleContinueButton();
         String url = getGlobalWebServerURL() + "/get_area_easting.php";
@@ -259,12 +275,16 @@ public class CeramicInput2Activity extends AppCompatActivity
              * @param response - volley response
              */
             @Override
-            void responseMethod(JSONArray response) {
-                try {
+            void responseMethod(JSONArray response)
+            {
+                try
+                {
                     // converting json array to regular array so you can populate the spinner
                     fillEastingSpinner(CheatSheet.convertJSONArrayToList(response));
-                    Log.v(LOGTAG, "got area easting");
-                } catch (JSONException e) {
+                    Log.v(LOG_TAG, "got area easting");
+                }
+                catch (JSONException e)
+                {
                     StateStatic.showToastError(e, currentContext);
                 }
                 allDataLoadInfo.put(LoadState.areaEasting, true);
@@ -276,10 +296,11 @@ public class CeramicInput2Activity extends AppCompatActivity
              * @param error - failure
              */
             @Override
-            void errorMethod(VolleyError error) {
+            void errorMethod(VolleyError error)
+            {
                 error.printStackTrace();
                 StateStatic.showToastError(error, currentContext);
-                Log.v(LOGTAG, "there was an error in getting area easting");
+                Log.v(LOG_TAG, "there was an error in getting area easting");
             }
         });
     }
@@ -287,24 +308,31 @@ public class CeramicInput2Activity extends AppCompatActivity
     /**
      * get northing data from database and populate spinner
      */
-    private void asyncGetAreaNorthingFromDB() {
+    private void asyncGetAreaNorthingFromDB()
+    {
         allDataLoadInfo.put(LoadState.areaNorthing, false);
         toggleContinueButton();
-        String url = getGlobalWebServerURL() + "/get_area_northing.php?area_easting=" + getSelectedAreaEasting();
+        String url = getGlobalWebServerURL() + "/get_area_northing.php?area_easting="
+                + getSelectedAreaEasting();
         makeVolleyJSONArrayRequest(url, queue, new JSONArrayResponseWrapper(this) {
             /**
              * Response received
              * @param response - database response
              */
             @Override
-            void responseMethod(JSONArray response) {
-                try {
+            void responseMethod(JSONArray response)
+            {
+                try
+                {
                     //convert json array to regular array to populate spinner
                     fillNorthingSpinner(CheatSheet.convertJSONArrayToList(response));
-                } catch (JSONException e) {
+                }
+                catch (JSONException e)
+                {
                     StateStatic.showToastError(e, currentContext);
                 }
-                // if data was received successfully you can put sample number as true and enable buttons
+                // if data was received successfully you can put sample number as true and enable
+                // buttons
                 allDataLoadInfo.put(LoadState.areaNorthing, true);
                 toggleContinueButton();
             }
@@ -314,10 +342,11 @@ public class CeramicInput2Activity extends AppCompatActivity
              * @param error - failure
              */
             @Override
-            void errorMethod(VolleyError error) {
+            void errorMethod(VolleyError error)
+            {
                 error.printStackTrace();
                 StateStatic.showToastError(error, currentContext);
-                Log.v(LOGTAG, "there was an error in getting area easting");
+                Log.v(LOG_TAG, "there was an error in getting area easting");
             }
         });
     }
@@ -325,22 +354,28 @@ public class CeramicInput2Activity extends AppCompatActivity
     /**
      * get context numbers from database and fill spinner
      */
-    private void asyncGetContextNumberFromDB() {
+    private void asyncGetContextNumberFromDB()
+    {
         allDataLoadInfo.put(LoadState.contextNumber, false);
         toggleContinueButton();
-        String url = getGlobalWebServerURL() + "/get_context_number.php?area_easting=" + getSelectedAreaEasting() + "&area_northing=" + getSelectedAreaNorthing();
-        Log.v(LOGTAG, "the url is " + url);
+        String url = getGlobalWebServerURL() + "/get_context_number.php?area_easting="
+                + getSelectedAreaEasting() + "&area_northing=" + getSelectedAreaNorthing();
+        Log.v(LOG_TAG, "the url is " + url);
         makeVolleyJSONArrayRequest(url, queue, new JSONArrayResponseWrapper(this) {
             /**
              * Response received
              * @param response - database response
              */
             @Override
-            void responseMethod(JSONArray response) {
-                try {
+            void responseMethod(JSONArray response)
+            {
+                try
+                {
                     // convert to regular array
                     fillContextNumberSpinner(CheatSheet.convertJSONArrayToList(response));
-                } catch (JSONException e) {
+                }
+                catch (JSONException e)
+                {
                     showToastError(e, currentContext);
                 }
                 // if data was received successfully you can put sample number as true and enable buttons
@@ -353,7 +388,8 @@ public class CeramicInput2Activity extends AppCompatActivity
              * @param error - failure
              */
             @Override
-            void errorMethod(VolleyError error) {
+            void errorMethod(VolleyError error)
+            {
                 error.printStackTrace();
                 StateStatic.showToastError(error, currentContext);
             }
@@ -363,21 +399,28 @@ public class CeramicInput2Activity extends AppCompatActivity
     /**
      * get sample number from db and populate spinner
      */
-    private void asyncGetSampleNumberFromDB() {
+    private void asyncGetSampleNumberFromDB()
+    {
         allDataLoadInfo.put(LoadState.sampleNumber, false);
         toggleContinueButton();
-        String url = getGlobalWebServerURL() + "/get_sample_number.php?area_easting=" + getSelectedAreaEasting() + "&area_northing=" + getSelectedAreaNorthing() + "&context_number=" + getSelectedContextNumber();
+        String url = getGlobalWebServerURL() + "/get_sample_number.php?area_easting="
+                + getSelectedAreaEasting() + "&area_northing=" + getSelectedAreaNorthing()
+                + "&context_number=" + getSelectedContextNumber();
         makeVolleyJSONArrayRequest(url, queue, new JSONArrayResponseWrapper(this) {
             /**
              * Database response
              * @param response - response received
              */
             @Override
-            void responseMethod(JSONArray response) {
-                try {
+            void responseMethod(JSONArray response)
+            {
+                try
+                {
                     // convert to regular array from json array
                     fillSampleNumberSpinner(CheatSheet.convertJSONArrayToList(response));
-                } catch (JSONException e) {
+                }
+                catch (JSONException e)
+                {
                     StateStatic.showToastError(e, currentContext);
                 }
                 // if data was received successfully you can put sample number as true and enable buttons
@@ -390,7 +433,8 @@ public class CeramicInput2Activity extends AppCompatActivity
              * @param error - failure
              */
             @Override
-            void errorMethod(VolleyError error) {
+            void errorMethod(VolleyError error)
+            {
                 error.printStackTrace();
                 StateStatic.showToastError(error, currentContext);
             }
@@ -399,97 +443,107 @@ public class CeramicInput2Activity extends AppCompatActivity
 
     /**
      * getters for specific data fields
-     *
      * @return Returns easting
      */
-    public String getSelectedAreaEasting() {
+    public String getSelectedAreaEasting()
+    {
         return getAreaEastingSpinner().getSelectedItem().toString();
     }
 
     /**
      * Returns northing
-     *
      * @return Returns northing
      */
-    public String getSelectedAreaNorthing() {
+    public String getSelectedAreaNorthing()
+    {
         return getAreaNorthingSpinner().getSelectedItem().toString();
     }
 
     /**
      * Returns context number
-     *
      * @return Returns context number
      */
-    public String getSelectedContextNumber() {
+    public String getSelectedContextNumber()
+    {
         return getContextNumberSpinner().getSelectedItem().toString();
     }
 
     /**
      * Returns sample number
-     *
      * @return Returns sample number
      */
-    public String getSelectedSampleNumber() {
+    public String getSelectedSampleNumber()
+    {
         return getSampleNumberSpinner().getSelectedItem().toString();
     }
 
     /**
      * getters for spinners
-     *
      * @return Returns easting spinner
      */
-    public Spinner getAreaEastingSpinner() {
+    public Spinner getAreaEastingSpinner()
+    {
         return (Spinner) findViewById(R.id.easting_spinner);
     }
 
     /**
      * Get northing spinner
-     *
      * @return Returns northing spinner
      */
-    public Spinner getAreaNorthingSpinner() {
+    public Spinner getAreaNorthingSpinner()
+    {
         return (Spinner) findViewById(R.id.northing_spinner);
     }
 
     /**
      * Get context number spinner
-     *
      * @return Returns context number spinner
      */
-    public Spinner getContextNumberSpinner() {
+    public Spinner getContextNumberSpinner()
+    {
         return (Spinner) findViewById(R.id.context_spinner);
     }
 
     /**
      * Get sample number spinner
-     *
      * @return Returns sample number spinner
      */
-    public Spinner getSampleNumberSpinner() {
+    public Spinner getSampleNumberSpinner()
+    {
         return (Spinner) findViewById(R.id.sample_spinner);
     }
 
     /**
      * enables continue button if all data has been loaded correctly
      */
-    public void toggleContinueButton() {
+    public void toggleContinueButton()
+    {
         Button b = (Button) findViewById(R.id.continue_button);
         boolean allLoaded = true;
-        for (Boolean loadInfo : allDataLoadInfo.values()) {
-            if (!loadInfo) {
+        for (Boolean loadInfo: allDataLoadInfo.values())
+        {
+            if (!loadInfo)
+            {
                 allLoaded = false;
             }
         }
-        if (allLoaded) {
+        if (allLoaded)
+        {
             b.setEnabled(true);
-            try {
-                if (barProgressDialog != null && barProgressDialog.isShowing()) {
+            try
+            {
+                if (barProgressDialog != null && barProgressDialog.isShowing())
+                {
                     barProgressDialog.dismiss();
                 }
-            } catch (IllegalArgumentException e) {
+            }
+            catch (IllegalArgumentException e)
+            {
                 e.printStackTrace();
             }
-        } else {
+        }
+        else
+        {
             b.setEnabled(true);
             barProgressDialog.show();
         }
@@ -497,10 +551,10 @@ public class CeramicInput2Activity extends AppCompatActivity
 
     /**
      * Go to previous item
-     *
      * @param view - previous button
      */
-    public void goPrevious(View view) {
+    public void goPrevious(View view)
+    {
         cancelAllVolleyRequests(queue);
         finish();
     }
@@ -518,8 +572,9 @@ public class CeramicInput2Activity extends AppCompatActivity
         tmpIntent.putExtra(AREA_NORTHING, getSelectedAreaNorthing());
         tmpIntent.putExtra(CONTEXT_NUMBER, getSelectedContextNumber());
         tmpIntent.putExtra(SAMPLE_NUMBER, getSelectedSampleNumber());
-        List<String> avaiableSampleNumbers = CheatSheet.getSpinnerItems(this, getSampleNumberSpinner());
-        tmpIntent.putExtra(ALL_SAMPLE_NUMBER, avaiableSampleNumbers.toArray(new String[avaiableSampleNumbers.size()]));
+        List<String> avaiableSampleNumbers = CheatSheet.getSpinnerItems(getSampleNumberSpinner());
+        tmpIntent.putExtra(ALL_SAMPLE_NUMBER,
+                avaiableSampleNumbers.toArray(new String[avaiableSampleNumbers.size()]));
         startActivity(tmpIntent);
     }
 }

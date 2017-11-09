@@ -31,5 +31,6 @@
         <activity android:name=".CeramicInput2Activity"/>
         <activity android:name=".MyWiFiActivity"/>
         <activity android:name=".CeramicInputActivity"/>
+        <activity android:name=".AddChangeColorActivity"/>
     </application>
 </manifest>

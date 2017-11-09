@@ -15,7 +15,7 @@ import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -33,10 +33,11 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.LOGTAG_WIFIDIRECT;
+import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.LOG_TAG_WIFI_DIRECT;
 import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.showToastError;
 // camera can be accessed through this class as well as ObjectActivity classes
-public class MyWiFiActivity extends ActionBarActivity implements WiFiDirectBroadcastReceiver.WifiDirectBroadcastReceivable
+public class MyWiFiActivity extends AppCompatActivity
+        implements WiFiDirectBroadcastReceiver.WifiDirectBroadcastReceivable
 {
     // helps to establish connection with peer devices
     WifiP2pManager mManager;
@@ -46,6 +47,8 @@ public class MyWiFiActivity extends ActionBarActivity implements WiFiDirectBroad
     int requestID;
     IntentFilter mIntentFilter;
     String connectedMACAddress = "";
+    private boolean connectDialogAppeared = false;
+    public boolean connectButtonClicked = false;
     /**
      * Open connected dialog
      * @return Returns whether the dialog appeared
@@ -63,8 +66,7 @@ public class MyWiFiActivity extends ActionBarActivity implements WiFiDirectBroad
     {
         this.connectDialogAppeared = connectDialogAppeared;
     }
-    private boolean connectDialogAppeared = false;
-    public boolean connectButtonClicked = false;
+
     /**
      * Launch activity
      * @param savedInstanceState - state from memory
@@ -109,9 +111,8 @@ public class MyWiFiActivity extends ActionBarActivity implements WiFiDirectBroad
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+        // Handle action bar item clicks here. The action bar will automatically handle clicks on
+        // the Home/Up button, so long as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         // noinspection SimplifiableIfStatement
         if (id == R.id.action_settings)
@@ -139,22 +140,6 @@ public class MyWiFiActivity extends ActionBarActivity implements WiFiDirectBroad
     {
         super.onPause();
         unregisterReceiver(mReceiver);
-    }
-
-    /**
-     * Say that wifi is enabled
-     */
-    public void toastWifiEnabled()
-    {
-        Toast.makeText(this, "Wifi Direct Enabled", Toast.LENGTH_SHORT).show();
-    }
-
-    /**
-     * Say that wifi is not enabled
-     */
-    public void toastWifiCannotBeEnabled()
-    {
-        Toast.makeText(this, "Wifi Direct Cannot Be Enabled", Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -196,18 +181,20 @@ public class MyWiFiActivity extends ActionBarActivity implements WiFiDirectBroad
      */
     public void peersDiscovered(Collection<WifiP2pDevice> collectionOfDevices)
     {
-        Log.v(LOGTAG_WIFIDIRECT, "Peers Discovered Called");
-        final HashMap<String, String> pairsOfAdressAndNames = new HashMap<>(collectionOfDevices.size());
+        Log.v(LOG_TAG_WIFI_DIRECT, "Peers Discovered Called");
+        final HashMap<String, String> pairsOfAddressAndNames
+                = new HashMap<>(collectionOfDevices.size());
         // stores names of peer devices with corresponding addresses into hashmap
         final ArrayList<String> listOfDeviceNames = new ArrayList<>(collectionOfDevices.size());
         for (WifiP2pDevice myDevice: collectionOfDevices)
         {
             listOfDeviceNames.add(myDevice.deviceName);
-            pairsOfAdressAndNames.put(myDevice.deviceName, myDevice.deviceAddress);
+            pairsOfAddressAndNames.put(myDevice.deviceName, myDevice.deviceAddress);
         }
         // load peer devices and addresses to dialog box
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Pick Color").setItems(listOfDeviceNames.toArray(new String[]{}), new DialogInterface.OnClickListener() {
+        builder.setTitle("Pick Color").setItems(listOfDeviceNames.toArray(new String[]{}),
+                new DialogInterface.OnClickListener() {
             /**
              * User clicked the alert
              * @param dialog - alert window
@@ -216,7 +203,7 @@ public class MyWiFiActivity extends ActionBarActivity implements WiFiDirectBroad
             public void onClick(DialogInterface dialog, int which)
             {
                 connectButtonClicked = true;
-                connectToWifiDirectDevice(pairsOfAdressAndNames.get(listOfDeviceNames.get(which)));
+                connectToWifiDirectDevice(pairsOfAddressAndNames.get(listOfDeviceNames.get(which)));
                 // The 'which' argument contains the index position of the selected item
             }
         });
@@ -289,8 +276,8 @@ public class MyWiFiActivity extends ActionBarActivity implements WiFiDirectBroad
     public void showIpAddress(View view)
     {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        Log.v(LOGTAG_WIFIDIRECT, "remote macAddress " + connectedMACAddress);
-        Log.v(LOGTAG_WIFIDIRECT, "my macAddress "  + getMyMacAddress());
+        Log.v(LOG_TAG_WIFI_DIRECT, "remote macAddress " + connectedMACAddress);
+        Log.v(LOG_TAG_WIFI_DIRECT, "my macAddress "  + getMyMacAddress());
         builder.setTitle("IP Address").setMessage(Utils.getIPFromMac(connectedMACAddress));
         builder.create().show();
     }
@@ -302,10 +289,10 @@ public class MyWiFiActivity extends ActionBarActivity implements WiFiDirectBroad
      */
     public String getMyMacAddress()
     {
-        WifiManager manager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        WifiManager manager = (WifiManager) getApplicationContext()
+                .getSystemService(Context.WIFI_SERVICE);
         WifiInfo info = manager.getConnectionInfo();
-        String address = info.getMacAddress();
-        return address;
+        return info.getMacAddress();
     }
 
     /**
@@ -327,7 +314,8 @@ public class MyWiFiActivity extends ActionBarActivity implements WiFiDirectBroad
         String url = buildApiURLFromIP(Utils.getIPFromMac(connectedMACAddress));
         try
         {
-            VolleyWrapper.makeVolleySonyApiGetApiCommands(url, queue, requestID++, new JSONObjectResponseWrapper(this) {
+            VolleyWrapper.makeVolleySonyApiGetApiCommands(url, queue, requestID++,
+                    new JSONObjectResponseWrapper(this) {
                 /**
                  * Response received
                  * @param response - camera response
@@ -335,7 +323,7 @@ public class MyWiFiActivity extends ActionBarActivity implements WiFiDirectBroad
                 @Override
                 void responseMethod(JSONObject response)
                 {
-                    Log.v(LOGTAG_WIFIDIRECT, "Avaiable Api Commands: \n" + response);
+                    Log.v(LOG_TAG_WIFI_DIRECT, "Available Api Commands: \n" + response);
                 }
 
                 /**
@@ -364,7 +352,8 @@ public class MyWiFiActivity extends ActionBarActivity implements WiFiDirectBroad
         String url = buildApiURLFromIP(Utils.getIPFromMac(connectedMACAddress));
         try
         {
-            VolleyWrapper.makeVolleySonyApiTakePhotoRequest(url, queue, requestID++, new JSONObjectResponseWrapper(this) {
+            VolleyWrapper.makeVolleySonyApiTakePhotoRequest(url, queue, requestID++,
+                    new JSONObjectResponseWrapper(this) {
                 /**
                  * Response received
                  * @param response - camera response
@@ -373,14 +362,14 @@ public class MyWiFiActivity extends ActionBarActivity implements WiFiDirectBroad
                 void responseMethod(JSONObject response)
                 {
                     Toast.makeText(currentContext, response.toString(), Toast.LENGTH_SHORT).show();
-                    Log.v(LOGTAG_WIFIDIRECT, response.toString());
+                    Log.v(LOG_TAG_WIFI_DIRECT, response.toString());
                     try
                     {
                         // creating image url from response
                         String imageUrl = response.getJSONArray("result").getString(0);
                         imageUrl = imageUrl.substring(2, imageUrl.length() - 2);
                         imageUrl = imageUrl.replace("\\", "");
-                        Log.v(LOGTAG_WIFIDIRECT, "imageUrl: " + imageUrl);
+                        Log.v(LOG_TAG_WIFI_DIRECT, "imageUrl: " + imageUrl);
                         Callback onPhotoFetchedCallback = new Callback() {
                             /**
                              * Photo successfully fetched
@@ -389,9 +378,12 @@ public class MyWiFiActivity extends ActionBarActivity implements WiFiDirectBroad
                             public void onSuccess()
                             {
                                 // convert url into bitmap
-                                ImageView takenPhoto = (ImageView) findViewById(R.id.sonyCameraPhoto);
-                                Bitmap tmpBitmap = ((BitmapDrawable) takenPhoto.getDrawable()).getBitmap();
-                                Log.v(LOGTAG_WIFIDIRECT, "Bitmap Size: " + tmpBitmap.getByteCount());
+                                ImageView takenPhoto
+                                        = (ImageView) findViewById(R.id.sonyCameraPhoto);
+                                Bitmap tmpBitmap
+                                        = ((BitmapDrawable) takenPhoto.getDrawable()).getBitmap();
+                                Log.v(LOG_TAG_WIFI_DIRECT, "Bitmap Size: "
+                                        + tmpBitmap.getByteCount());
                             }
 
                             /**
@@ -403,9 +395,11 @@ public class MyWiFiActivity extends ActionBarActivity implements WiFiDirectBroad
                                 Picasso.with(currentContext).cancelRequest((ImageView) findViewById(R.id.sonyCameraPhoto));
                             }
                         };
-                        Picasso.with(currentContext).load(imageUrl).placeholder(android.R.drawable.ic_delete)
+                        Picasso.with(currentContext).load(imageUrl)
+                                .placeholder(android.R.drawable.ic_delete)
                                 .error(android.R.drawable.ic_dialog_alert)
-                                .into((ImageView) findViewById(R.id.sonyCameraPhoto), onPhotoFetchedCallback);
+                                .into((ImageView) findViewById(R.id.sonyCameraPhoto),
+                                        onPhotoFetchedCallback);
                     }
                     catch (JSONException e)
                     {
@@ -421,7 +415,7 @@ public class MyWiFiActivity extends ActionBarActivity implements WiFiDirectBroad
                 void errorMethod(VolleyError error)
                 {
                     showToastError(error, currentContext);
-                    Log.v(LOGTAG_WIFIDIRECT, error.toString());
+                    Log.v(LOG_TAG_WIFI_DIRECT, error.toString());
                 }
             });
         }
@@ -444,12 +438,13 @@ public class MyWiFiActivity extends ActionBarActivity implements WiFiDirectBroad
      * live view from camera
      * @param view - camera view
      */
-    public void startLiveview(final View view)
+    public void startLiveView(final View view)
     {
         final String url = buildApiURLFromIP(Utils.getIPFromMac(connectedMACAddress));
         try
         {
-            VolleyWrapper.makeVolleySonyApiStartLiveViewRequest(url, queue, requestID++, new JSONObjectResponseWrapper(this) {
+            VolleyWrapper.makeVolleySonyApiStartLiveViewRequest(url, queue, requestID++,
+                    new JSONObjectResponseWrapper(this) {
                 /**
                  * Response received
                  * @param response - camera response
@@ -459,7 +454,8 @@ public class MyWiFiActivity extends ActionBarActivity implements WiFiDirectBroad
                 {
                     try
                     {
-                        final String liveviewUrl = response.getJSONArray("result").getString(0);
+                        final String liveViewUrl = response.getJSONArray("result")
+                                .getString(0);
                         runOnUiThread(new Runnable() {
                             /**
                              * Run Thread
@@ -467,7 +463,8 @@ public class MyWiFiActivity extends ActionBarActivity implements WiFiDirectBroad
                             @Override
                             public void run()
                             {
-                                getLiveViewSurface().start(liveviewUrl, new SimpleStreamSurfaceView.StreamErrorListener() {
+                                getLiveViewSurface().start(liveViewUrl,
+                                        new SimpleStreamSurfaceView.StreamErrorListener() {
                                     /**
                                      * Connection failed
                                      * @param reason - error
@@ -475,7 +472,7 @@ public class MyWiFiActivity extends ActionBarActivity implements WiFiDirectBroad
                                     @Override
                                     public void onError(StreamErrorReason reason)
                                     {
-                                        stopLiveview(view);
+                                        stopLiveView(view);
                                     }
                                 });
                             }
@@ -508,12 +505,13 @@ public class MyWiFiActivity extends ActionBarActivity implements WiFiDirectBroad
      * Stop streaming camera
      * @param view - camera view
      */
-    public void stopLiveview(View view)
+    public void stopLiveView(View view)
     {
         final String url = buildApiURLFromIP(Utils.getIPFromMac(connectedMACAddress));
         try
         {
-            VolleyWrapper.makeVolleySonyApiStopLiveViewRequest(url, queue, requestID++, new JSONObjectResponseWrapper(this) {
+            VolleyWrapper.makeVolleySonyApiStopLiveViewRequest(url, queue, requestID++,
+                    new JSONObjectResponseWrapper(this) {
                 /**
                  * Response received
                  * @param response - camera response
@@ -521,7 +519,7 @@ public class MyWiFiActivity extends ActionBarActivity implements WiFiDirectBroad
                 @Override
                 void responseMethod(JSONObject response)
                 {
-                    Log.v(LOGTAG_WIFIDIRECT, response.toString());
+                    Log.v(LOG_TAG_WIFI_DIRECT, response.toString());
                 }
 
                 /**
@@ -550,66 +548,28 @@ public class MyWiFiActivity extends ActionBarActivity implements WiFiDirectBroad
         final String url = buildApiURLFromIP(Utils.getIPFromMac(connectedMACAddress));
         try
         {
-            VolleyWrapper.makeVolleySonyApiActZoomRequest("in", "1shot", queue, url, requestID++,
-                    new JSONObjectResponseWrapper(this) {
-                        /**
-                         * Response received
-                         * @param response - camera response
-                         */
-                        @Override
-                        void responseMethod(JSONObject response)
-                        {
-                            Log.v(LOGTAG_WIFIDIRECT, response.toString());
-                        }
+            VolleyWrapper.makeVolleySonyApiActZoomRequest("in", queue,
+                    url, requestID++, new JSONObjectResponseWrapper(this) {
+                /**
+                 * Response received
+                 * @param response - camera response
+                 */
+                @Override
+                void responseMethod(JSONObject response)
+                {
+                    Log.v(LOG_TAG_WIFI_DIRECT, response.toString());
+                }
 
-                        /**
-                         * Connection failed
-                         * @param error - failure
-                         */
-                        @Override
-                        void errorMethod(VolleyError error)
-                        {
-                            showToastError(error, currentContext);
-                        }
-                    });
-        }
-        catch (JSONException e)
-        {
-            showToastError(e, this);
-        }
-    }
-
-    /**
-     * Zoom out of camera
-     * @param view - camera view
-     */
-    public void zoomOut(View view)
-    {
-        final String url = buildApiURLFromIP(Utils.getIPFromMac(connectedMACAddress));
-        try
-        {
-            VolleyWrapper.makeVolleySonyApiActZoomRequest("out", "1shot", queue, url, requestID++,
-                    new JSONObjectResponseWrapper(this) {
-                        /**
-                         * Camera response
-                         * @param response - response received
-                         */
-                        @Override
-                        void responseMethod(JSONObject response)
-                        {
-                            Log.v(LOGTAG_WIFIDIRECT, response.toString());
-                        }
-
-                        /**
-                         * Connection failed
-                         * @param error - failure
-                         */
-                        @Override
-                        void errorMethod(VolleyError error)
-                        {
-                            showToastError(error, currentContext);
-                        }
-                    });
+                /**
+                 * Connection failed
+                 * @param error - failure
+                 */
+                @Override
+                void errorMethod(VolleyError error)
+                {
+                    showToastError(error, currentContext);
+                }
+            });
         }
         catch (JSONException e)
         {
@@ -629,25 +589,26 @@ public class MyWiFiActivity extends ActionBarActivity implements WiFiDirectBroad
         {
             VolleyWrapper.makeVolleySonyApiCustomFunctionCall(functionName, url, queue, requestID++,
                     new JSONObjectResponseWrapper(this) {
-                        /**
-                         * Camera response
-                         * @param response - response received
-                         */
-                        @Override
-                        void responseMethod(JSONObject response)
-                        {
-                            Log.v(LOGTAG_WIFIDIRECT, "Custom Api Function Call Response: " + response);
-                        }
+                /**
+                 * Camera response
+                 * @param response - response received
+                 */
+                @Override
+                void responseMethod(JSONObject response)
+                {
+                    Log.v(LOG_TAG_WIFI_DIRECT, "Custom Api Function Call Response: " + response);
+                }
 
-                        /**
-                         * Connection failed
-                         * @param error - failure
-                         */
-                        @Override
-                        void errorMethod(VolleyError error) {
-                            showToastError(error, currentContext);
-                        }
-                    });
+                /**
+                 * Connection failed
+                 * @param error - failure
+                 */
+                @Override
+                void errorMethod(VolleyError error)
+                {
+                    showToastError(error, currentContext);
+                }
+            });
         }
         catch (JSONException e)
         {

@@ -45,4 +45,6 @@
     <string name = "deviation">Std. Deviation</string>
     <string name = "average_weight">Average Weight</string>
     <string name = "num_frmt">%d</string>
+    <string name = "weight_frmt">Weight: %sg</string>
+    <string name = "weight_int_frmt">Weight" %dg</string>
 </resources>

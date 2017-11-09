@@ -10,8 +10,8 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.Spinner;
 import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.*;
-import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.DEFAULTCALIBRATIONINTERVAL;
-import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.DEFAULTWEBSERVERURL;
+import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.DEFAULT_CALIBRATION_INTERVAL;
+import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.DEFAULT_WEB_SERVER_URL;
 import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.DEFAULT_CAMERA_MAC;
 import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.getGlobalCameraMAC;
 import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.getGlobalDataStructureType;
@@ -105,7 +105,8 @@ public class SettingsActivity extends AppCompatActivity
         }
         webServerEditText.setText(getGlobalWebServerURL());
         cameraIP.setText(getGlobalCameraMAC());
-        calibrationInterval.setText("" + getRemoteCameraCalibrationInterval());
+        calibrationInterval.setText(getString(R.string.long_frmt,
+                getRemoteCameraCalibrationInterval()));
     }
 
     /**
@@ -133,10 +134,10 @@ public class SettingsActivity extends AppCompatActivity
      */
     public void setDefaultSettings(View view)
     {
-        setGlobalWebServerURL(DEFAULTWEBSERVERURL);
+        setGlobalWebServerURL(DEFAULT_WEB_SERVER_URL);
         setGlobalCameraMAC(DEFAULT_CAMERA_MAC);
-        setRemoteCameraCalibrationInterval(DEFAULTCALIBRATIONINTERVAL);
-        setTabletCameraCalibrationInterval(DEFAULTCALIBRATIONINTERVAL);
+        setRemoteCameraCalibrationInterval(DEFAULT_CALIBRATION_INTERVAL);
+        setTabletCameraCalibrationInterval(DEFAULT_CALIBRATION_INTERVAL);
         setIsRemoteCameraSelect(false);
         EditText webServerEditText = (EditText) findViewById(R.id.settingsWebServiceUrl);
         Spinner cameraSelectBox = (Spinner) findViewById(R.id.cameraSelectBox);
@@ -145,7 +146,8 @@ public class SettingsActivity extends AppCompatActivity
         webServerEditText.setText(getGlobalWebServerURL());
         cameraSelectBox.setSelection(0);
         cameraIP.setText(getGlobalCameraMAC());
-        calibrationInterval.setText(getRemoteCameraCalibrationInterval() + "");
+        calibrationInterval.setText(getString(R.string.long_frmt,
+                getRemoteCameraCalibrationInterval()));
     }
 
     /**
@@ -202,14 +204,16 @@ public class SettingsActivity extends AppCompatActivity
         {
             cameraIPText.setText("");
             cameraIPText.setEnabled(false);
-            calibrationInterval.setText("" + getTabletCameraCalibrationInterval());
+            calibrationInterval.setText(getString(R.string.long_frmt,
+                    getTabletCameraCalibrationInterval()));
             setIsRemoteCameraSelect(false);
         }
         else
         {
             cameraIPText.setText(getGlobalCameraMAC());
             cameraIPText.setEnabled(true);
-            calibrationInterval.setText("" + getRemoteCameraCalibrationInterval());
+            calibrationInterval.setText(getString(R.string.long_frmt,
+                    getRemoteCameraCalibrationInterval()));
             setIsRemoteCameraSelect(true);
         }
     }

@@ -38,12 +38,12 @@ dependencies {
     compile('eu.livotov.labs.android:CAMView:2.0.1@aar') { transitive = true }
     // QREader 2.0.1
     compile 'com.rmtheis:tess-two:6.2.0'
-    compile 'com.android.support:appcompat-v7:25.3.1'
-    compile 'com.android.support:design:25.3.1'
-    compile 'com.squareup.okhttp3:okhttp:3.6.0'
+    compile 'com.android.support:appcompat-v7:25.4.0'
+    compile 'com.android.support:design:25.4.0'
+    compile 'com.squareup.okhttp3:okhttp:3.7.0'
     compile 'com.github.nisrulz:qreader:2.0.1'
     compile 'org.apache.directory.studio:org.apache.commons.io:2.4'
-    compile 'com.android.support:support-v4:25.3.1'
+    compile 'com.android.support:support-v4:25.4.0'
     testCompile 'junit:junit:4.12'
     compile project(':postgresql-42.0.0.jre6')
 }

@@ -14,14 +14,15 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import objectphotography2.com.object.photography.objectphotography_app.SimpleLiveviewSlicer.Payload;
+import objectphotography2.com.object.photography.objectphotography_app.SimpleLiveViewSlicer.Payload;
 import java.io.IOException;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
-public class SimpleStreamSurfaceView extends SurfaceView implements SurfaceHolder.Callback {
+public class SimpleStreamSurfaceView extends SurfaceView implements SurfaceHolder.Callback
+{
     private static final String TAG = SimpleStreamSurfaceView.class.getSimpleName();
     private boolean mWhileFetching;
-    private final BlockingQueue<byte[]> mJpegQueue = new ArrayBlockingQueue<byte[]>(2);
+    private final BlockingQueue<byte[]> mJpegQueue = new ArrayBlockingQueue<>(2);
     private Thread mDrawerThread;
     private int mPreviousWidth = 0;
     private int mPreviousHeight = 0;
@@ -42,7 +43,7 @@ public class SimpleStreamSurfaceView extends SurfaceView implements SurfaceHolde
     /**
      * Constructor
      * @param context - app context
-     * @param attrs - context apptributes
+     * @param attrs - context attributes
      */
     public SimpleStreamSurfaceView(Context context, AttributeSet attrs)
     {
@@ -100,7 +101,7 @@ public class SimpleStreamSurfaceView extends SurfaceView implements SurfaceHolde
     }
 
     /**
-     * Start retrieving and drawing liveview frame data by new threads.
+     * Start retrieving and drawing liveView frame data by new threads.
      * @param streamUrl - source of stream
      * @param listener - input error listener
      * @return true if the starting is completed successfully, false otherwise.
@@ -130,11 +131,11 @@ public class SimpleStreamSurfaceView extends SurfaceView implements SurfaceHolde
             public void run()
             {
                 Log.d(TAG, "Starting retrieving streaming data from server.");
-                SimpleLiveviewSlicer slicer = null;
+                SimpleLiveViewSlicer slicer = null;
                 try
                 {
                     // Create Slicer to open the stream and parse it.
-                    slicer = new SimpleLiveviewSlicer();
+                    slicer = new SimpleLiveViewSlicer();
                     slicer.open(streamUrl);
                     while (mWhileFetching)
                     {
@@ -142,7 +143,7 @@ public class SimpleStreamSurfaceView extends SurfaceView implements SurfaceHolde
                         // never occurs
                         if (payload == null)
                         {
-                            Log.e(TAG, "Liveview Payload is null.");
+                            Log.e(TAG, "LiveView Payload is null.");
                             continue;
                         }
                         if (mJpegQueue.size() == 2)
@@ -178,7 +179,8 @@ public class SimpleStreamSurfaceView extends SurfaceView implements SurfaceHolde
              * Run the thread
              */
             @Override
-            public void run() {
+            public void run()
+            {
                 Log.d(TAG, "Starting drawing stream frame.");
                 Bitmap frameBitmap = null;
                 BitmapFactory.Options factoryOptions = new BitmapFactory.Options();
@@ -221,15 +223,6 @@ public class SimpleStreamSurfaceView extends SurfaceView implements SurfaceHolde
     public void stop()
     {
         mWhileFetching = false;
-    }
-
-    /**
-     * Check to see whether start() is already called.
-     * @return true if start() is already called, false otherwise.
-     */
-    public boolean isStarted()
-    {
-        return mWhileFetching;
     }
 
     /**
@@ -290,7 +283,8 @@ public class SimpleStreamSurfaceView extends SurfaceView implements SurfaceHolde
         float by = Math.min((float) getWidth() / w, (float) getHeight() / h);
         int offsetX = (getWidth() - (int) (w * by)) / 2;
         int offsetY = (getHeight() - (int) (h * by)) / 2;
-        Rect dst = new Rect(offsetX, offsetY, getWidth() - offsetX, getHeight() - offsetY);
+        Rect dst = new Rect(offsetX, offsetY, getWidth() - offsetX, getHeight()
+                - offsetY);
         canvas.drawBitmap(frame, src, dst, mFramePaint);
         getHolder().unlockCanvasAndPost(canvas);
     }
@@ -333,9 +327,8 @@ public class SimpleStreamSurfaceView extends SurfaceView implements SurfaceHolde
         enum StreamErrorReason
         {
             IO_EXCEPTION,
-            OPEN_ERROR,
+            OPEN_ERROR
         }
-
         /**
          * Read failed
          * @param reason - error

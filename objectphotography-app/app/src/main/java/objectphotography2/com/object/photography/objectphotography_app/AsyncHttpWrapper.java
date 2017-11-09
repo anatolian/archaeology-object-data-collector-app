@@ -9,7 +9,7 @@ import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.TextHttpResponseHandler;
 import java.io.File;
 import java.io.FileNotFoundException;
-import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.LOGTAG;
+import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.LOG_TAG;
 import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.showToastError;
 public class AsyncHttpWrapper
 {
@@ -29,7 +29,7 @@ public class AsyncHttpWrapper
         RequestParams params = new RequestParams();
         try
         {
-            Log.v(LOGTAG,"upload_picture=" + myFile.getPath());
+            Log.v(LOG_TAG,"upload_picture=" + myFile.getPath());
             params.put("upload_picture", myFile);
         }
         catch(FileNotFoundException e)
@@ -49,9 +49,9 @@ public class AsyncHttpWrapper
             public void onFailure(int statusCode, cz.msebera.android.httpclient.Header[] headers,
                                   String responseString, Throwable throwable)
             {
-                Log.v(LOGTAG, "File upload failed");
+                Log.v(LOG_TAG, "File upload failed");
                 callbackWrapper.onFailureCallback(responseString);
-                Log.v(LOGTAG, "responseString from file upload request: " + responseString);
+                Log.v(LOG_TAG, "responseString from file upload request: " + responseString);
             }
 
             /**
@@ -64,8 +64,8 @@ public class AsyncHttpWrapper
             public void onSuccess(int statusCode, cz.msebera.android.httpclient.Header[] headers,
                                   String responseString)
             {
-                Log.v(LOGTAG, "File upload succeed");
-                Log.v(LOGTAG, "responseString from file upload request: " + responseString);
+                Log.v(LOG_TAG, "File upload succeed");
+                Log.v(LOG_TAG, "responseString from file upload request: " + responseString);
                 callbackWrapper.onSuccessCallback(responseString);
             }
 
@@ -76,7 +76,7 @@ public class AsyncHttpWrapper
             public void onStart()
             {
                 super.onStart();
-                Log.v(LOGTAG, "File upload started");
+                Log.v(LOG_TAG, "File upload started");
                 callbackWrapper.onStartCallback();
             }
 
@@ -88,7 +88,7 @@ public class AsyncHttpWrapper
             public void onRetry(int retryNo)
             {
                 super.onRetry(retryNo);
-                Log.v(LOGTAG, "Retrying File Upload retry number: " + retryNo);
+                Log.v(LOG_TAG, "Retrying File Upload retry number: " + retryNo);
                 callbackWrapper.onRetryCallback(retryNo);
             }
         });

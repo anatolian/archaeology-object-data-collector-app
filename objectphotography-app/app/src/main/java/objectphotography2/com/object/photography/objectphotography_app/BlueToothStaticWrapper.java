@@ -11,7 +11,6 @@ import android.content.BroadcastReceiver;
 import android.content.DialogInterface;
 import android.content.IntentFilter;
 import android.os.Handler;
-import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.Toast;
 import java.io.IOException;
@@ -20,8 +19,8 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
-import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.LOGTAG;
-import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.LOGTAG_BLUETOOTH;
+import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.LOG_TAG;
+import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.LOG_TAG_BLUETOOTH;
 import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.MESSAGE_STATUS_CHANGE;
 import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.MESSAGE_WEIGHT;
 import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.MY_UUID;
@@ -65,7 +64,7 @@ public class BlueToothStaticWrapper
         {
             BluetoothSocket socket = null;
             // Keep listening until exception occurs or a socket is returned
-            Log.v(LOGTAG, "Listening incoming connections");
+            Log.v(LOG_TAG, "Listening incoming connections");
             while (true)
             {
                 try
@@ -80,7 +79,7 @@ public class BlueToothStaticWrapper
                 {
                     cancel();
                     e.printStackTrace();
-                    Log.v(LOGTAG_BLUETOOTH, "Bluetooth error");
+                    Log.v(LOG_TAG_BLUETOOTH, "Bluetooth error");
                     break;
                 }
                 // If a connection was accepted
@@ -110,13 +109,9 @@ public class BlueToothStaticWrapper
             {
                 mmServerSocket.close();
             }
-            catch (IOException e)
+            catch (IOException | NullPointerException e)
             {
                 e.printStackTrace();
-            }
-            catch (NullPointerException e)
-            {
-                return;
             }
         }
     }
@@ -124,7 +119,6 @@ public class BlueToothStaticWrapper
     private static class ConnectThread extends Thread
     {
         private final BluetoothSocket mmSocket;
-        private final BluetoothDevice mmDevice;
         private final BluetoothAdapter mBluetoothAdapter;
         private final Handler mHandler;
         /**
@@ -137,7 +131,6 @@ public class BlueToothStaticWrapper
         {
             // Use a temporary object that is later assigned to mmSocket, because mmSocket is final
             BluetoothSocket tmp = null;
-            mmDevice = device;
             mBluetoothAdapter = aBluetoothAdapter;
             mHandler = aHandler;
             // Get a BluetoothSocket to connect with the given BluetoothDevice
@@ -233,7 +226,8 @@ public class BlueToothStaticWrapper
         /**
          * Run the thread
          */
-        public void run() {
+        public void run()
+        {
             // Keep listening to the InputStream until an exception occurs
             while (true)
             {
@@ -245,14 +239,14 @@ public class BlueToothStaticWrapper
                     String[] buffer = new String[2];
                     while((inputByte = mmInStream.read()) != -1)
                     {
-                        Log.v(LOGTAG, "reading byte");
-                        Log.v(LOGTAG, Integer.toBinaryString(inputByte));
+                        Log.v(LOG_TAG, "reading byte");
+                        Log.v(LOG_TAG, Integer.toBinaryString(inputByte));
                         buffer[counter] = Integer.toBinaryString(inputByte);
                         if (counter > 0)
                         {
                             counter = 0;
                             int weight = CheatSheet.combineScaleBytes(buffer[0], buffer[1]);
-                            Log.v(LOGTAG, "combined: " + weight + "");
+                            Log.v(LOG_TAG, "combined: " + weight + "");
                             mmHandler.obtainMessage(MESSAGE_WEIGHT, weight).sendToTarget();
 
                         }
@@ -271,21 +265,6 @@ public class BlueToothStaticWrapper
         }
 
         /**
-         * Call this from the main activity to send data to the remote device
-         * @param bytes - bytes to send
-         */
-        public void write(byte[] bytes)
-        {
-            try
-            {
-                mmOutStream.write(bytes);
-            }
-            catch (IOException e)
-            {
-            }
-        }
-
-        /**
          * Call this from the main activity to shutdown the connection
          */
         public void cancel()
@@ -296,18 +275,9 @@ public class BlueToothStaticWrapper
             }
             catch (IOException e)
             {
+                e.printStackTrace();
             }
         }
-    }
-
-    /**
-     * Default adapter
-     * @return Returns the default adapter
-     */
-    @Nullable
-    public static BluetoothAdapter getDefaultBluetoothAdapter()
-    {
-        return BluetoothAdapter.getDefaultAdapter();
     }
 
     /**
@@ -317,31 +287,32 @@ public class BlueToothStaticWrapper
      * @param aHandler - event handler
      * @param aBluetoothAdapter - bluetooth adapter
      */
-    @Nullable
     private static void selectNutriScaleDevice(final Set<BluetoothDevice> pairedDevices,
                                                final Activity anActivity, final Handler aHandler,
                                                final BluetoothAdapter aBluetoothAdapter)
     {
-        final HashMap<String, BluetoothDevice> adressToBluetoothDeviceMap = new HashMap<>();
+        final HashMap<String, BluetoothDevice> addressToBluetoothDeviceMap = new HashMap<>();
         for (BluetoothDevice tmpDevice : pairedDevices)
         {
             if(tmpDevice.getName().startsWith("nutriscale"))
             {
-                adressToBluetoothDeviceMap.put(tmpDevice.getAddress() + "", tmpDevice);
+                addressToBluetoothDeviceMap.put(tmpDevice.getAddress() + "", tmpDevice);
             }
         }
-        final ArrayList<String> tmpList = new ArrayList<>(adressToBluetoothDeviceMap.keySet());
+        final ArrayList<String> tmpList = new ArrayList<>(addressToBluetoothDeviceMap.keySet());
         AlertDialog.Builder builder = new AlertDialog.Builder(anActivity);
-        builder.setTitle("Pick Scale").setItems(tmpList.toArray(new String[]{}), new DialogInterface.OnClickListener() {
+        builder.setTitle("Pick Scale").setItems(tmpList.toArray(new String[]{}),
+                new DialogInterface.OnClickListener() {
             /**
              * User clicked the dialog
              * @param dialog - alert window
              * @param which - selected option
              */
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(DialogInterface dialog, int which)
+            {
                 final String scaleAdress = tmpList.get(which);
-                scaleAdressSelectedCallback(scaleAdress, adressToBluetoothDeviceMap.get(scaleAdress),
-                        anActivity, aBluetoothAdapter, aHandler);
+                scaleAdressSelectedCallback(addressToBluetoothDeviceMap.get(scaleAdress), anActivity,
+                        aBluetoothAdapter, aHandler);
             }
         });
         AlertDialog scaleDialog = builder.create();
@@ -388,23 +359,24 @@ public class BlueToothStaticWrapper
      * @param anActivity - calling activity
      * @param aHandler - event handler
      */
-    @Nullable
     public static void discoverAndConnectToNutriScale(BluetoothAdapter aBluetoothAdapter,
-                                                      BroadcastReceiver aReceiver, Activity anActivity,
-                                                      Handler aHandler)
+                                                      BroadcastReceiver aReceiver,
+                                                      Activity anActivity, Handler aHandler)
     {
         if (BlueToothStaticWrapper.startBlueToothDiscoveryAndRegisterRecevierForFoundDevices(
                 aBluetoothAdapter, aReceiver, anActivity))
         {
             AcceptThread acceptThread = new AcceptThread(aBluetoothAdapter, aHandler);
             acceptThread.start();
-            BlueToothStaticWrapper.selectNutriScaleDevice(BlueToothStaticWrapper.getPairedBluetoothDevices(aBluetoothAdapter),
+            BlueToothStaticWrapper.selectNutriScaleDevice(BlueToothStaticWrapper
+                            .getPairedBluetoothDevices(aBluetoothAdapter),
                     anActivity, aHandler, aBluetoothAdapter);
         }
         else
         {
-            Log.v(LOGTAG_BLUETOOTH, "Bluetooth discovery cannot be started");
-            Toast.makeText(anActivity, "Bluetooth discovery cannot be started", Toast.LENGTH_SHORT).show();
+            Log.v(LOG_TAG_BLUETOOTH, "Bluetooth discovery cannot be started");
+            Toast.makeText(anActivity, "Bluetooth discovery cannot be started",
+                    Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -417,25 +389,24 @@ public class BlueToothStaticWrapper
     {
         ConnectedThread listenerThread = new ConnectedThread(mySocket, aHandler);
         listenerThread.start();
-        Log.v(LOGTAG, "Manage Connected Socket Method Called");
+        Log.v(LOG_TAG, "Manage Connected Socket Method Called");
     }
 
     /**
      * Scale found
-     * @param adress - scale IP address
      * @param scaleDevice - the scale
      * @param anActivity - calling activity
      * @param aBluetoothAdapter - bluetooth adapter
      * @param aHandler - event handler
      */
-    private static void scaleAdressSelectedCallback(String adress, BluetoothDevice scaleDevice,
-                                                    Activity anActivity, BluetoothAdapter aBluetoothAdapter,
+    private static void scaleAdressSelectedCallback(BluetoothDevice scaleDevice, Activity anActivity,
+                                                    BluetoothAdapter aBluetoothAdapter,
                                                     Handler aHandler)
     {
         if (scaleDevice != null)
         {
             aHandler.obtainMessage(MESSAGE_STATUS_CHANGE, "Device Connected").sendToTarget();
-            Log.v(LOGTAG_BLUETOOTH, "NutriScale device found, paired and connected");
+            Log.v(LOG_TAG_BLUETOOTH, "NutriScale device found, paired and connected");
             Toast.makeText(anActivity, "NutriScale Bluetooth Connection Established", Toast.LENGTH_LONG).show();
             ConnectThread connectThread = new ConnectThread(scaleDevice, aBluetoothAdapter, aHandler);
             connectThread.start();

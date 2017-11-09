@@ -9,7 +9,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import com.android.volley.AuthFailureError;
@@ -26,7 +25,7 @@ import com.android.volley.toolbox.DiskBasedCache;
 import com.android.volley.toolbox.HurlStack;
 import org.json.JSONException;
 import org.json.JSONObject;
-import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.LOGTAG;
+import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.LOG_TAG;
 import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.getGlobalDataStructureType;
 import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.getGlobalWebServerURL;
 import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.setGlobalWebServerURL;
@@ -48,8 +47,8 @@ public class InitialActivity extends AppCompatActivity
         Network network = new BasicNetwork(new HurlStack());
         queue = new RequestQueue(cache, network);
         queue.start();
-        EditText webserver = (EditText) findViewById(R.id.urlText);
-        webserver.setText(getGlobalWebServerURL());
+        EditText webServer = (EditText) findViewById(R.id.urlText);
+        webServer.setText(getGlobalWebServerURL());
     }
 
     /**
@@ -90,8 +89,8 @@ public class InitialActivity extends AppCompatActivity
     public void onResume()
     {
         super.onResume();
-        EditText webserver = (EditText) findViewById(R.id.urlText);
-        webserver.setText(getGlobalWebServerURL());
+        EditText webServer = (EditText) findViewById(R.id.urlText);
+        webServer.setText(getGlobalWebServerURL());
         testConnection(null);
     }
 
@@ -99,10 +98,10 @@ public class InitialActivity extends AppCompatActivity
      * how is this getting your ip address?
      * @return Returns the IP address
      */
-    public String getWebserverFromLayout()
+    public String getWebServerFromLayout()
     {
         EditText tmpET = (EditText) findViewById(R.id.urlText);
-        return tmpET.getText().toString().trim() ;
+        return tmpET.getText().toString().trim();
     }
 
     /**
@@ -111,8 +110,8 @@ public class InitialActivity extends AppCompatActivity
      */
     public void goToSettings(View view)
     {
-        Log.v(LOGTAG, "Settings button clicked");
-        setGlobalWebServerURL(getWebserverFromLayout());
+        Log.v(LOG_TAG, "Settings button clicked");
+        setGlobalWebServerURL(getWebServerFromLayout());
         Intent myIntent = new Intent(this, SettingsActivity.class);
         startActivity(myIntent);
     }
@@ -123,7 +122,7 @@ public class InitialActivity extends AppCompatActivity
      */
     public void goToCeramicInput()
     {
-        Intent tmpIntent = new Intent(this, CeramicInputActivity.class);
+        Intent tmpIntent;
         if (getGlobalDataStructureType().equals(StateStatic.DataType.type1))
         {
             tmpIntent = new Intent(this, CeramicInputActivity.class);
@@ -132,13 +131,14 @@ public class InitialActivity extends AppCompatActivity
         {
             tmpIntent = new Intent(this, CeramicInput2Activity.class);
         }
-        setGlobalWebServerURL(getWebserverFromLayout());
+        setGlobalWebServerURL(getWebServerFromLayout());
         startActivity(tmpIntent);
     }
 
     /**
      * makes a call to php file to test the connection
      * returns boolean value depending on whether it is connected or not
+     * @param aView - container view
      */
     public void testConnection(View aView)
     {
@@ -146,9 +146,10 @@ public class InitialActivity extends AppCompatActivity
         barProgressDialog.setTitle("Connecting to Server ...");
         barProgressDialog.setIndeterminate(true);
         barProgressDialog.show();
-        Log.v(LOGTAG, "Test Connection Button Clicked");
+        Log.v(LOG_TAG, "Test Connection Button Clicked");
         cancelAllVolleyRequests(queue);
-        makeVolleyJSONOBjectRequest(getWebserverFromLayout() + "/test_service.php", queue, new JSONObjectResponseWrapper(this) {
+        makeVolleyJSONOBjectRequest(getWebServerFromLayout() + "/test_service.php", queue,
+                new JSONObjectResponseWrapper(this) {
             /**
              * Response received
              *
@@ -159,8 +160,9 @@ public class InitialActivity extends AppCompatActivity
             {
                 try
                 {
-                    Toast.makeText(getApplicationContext(), "trying to connect", Toast.LENGTH_SHORT).show();
-                    Log.v(LOGTAG, "here is the response " + response.toString());
+                    Toast.makeText(getApplicationContext(), "trying to connect",
+                            Toast.LENGTH_SHORT).show();
+                    Log.v(LOG_TAG, "here is the response " + response.toString());
                     boolean connStatus = response.getBoolean("status");
                     if (connStatus)
                     {
@@ -170,11 +172,12 @@ public class InitialActivity extends AppCompatActivity
                     else
                     {
                         barProgressDialog.dismiss();
-
                         connectionTestFailedCallback();
                     }
-                } catch (JSONException e) {
-                    Log.v(LOGTAG, "thrown json exception");
+                }
+                catch (JSONException e)
+                {
+                    Log.v(LOG_TAG, "thrown json exception");
                     e.printStackTrace();
                 }
             }
@@ -186,28 +189,33 @@ public class InitialActivity extends AppCompatActivity
             @Override
             void errorMethod(VolleyError error)
             {
-                Log.v(LOGTAG, "did not connect");
-                Log.v(LOGTAG, error.toString());
-                //this just put in place to step through the app
+                Log.v(LOG_TAG, "did not connect");
+                Log.v(LOG_TAG, error.toString());
+                // this just put in place to step through the app
                 if (error instanceof ServerError)
                 {
-                    Toast.makeText(getApplicationContext(), "server error", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "server error",
+                            Toast.LENGTH_SHORT).show();
                 }
                 else if (error instanceof AuthFailureError)
                 {
-                    Toast.makeText(getApplicationContext(), "authentication failure", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "authentication failure",
+                            Toast.LENGTH_SHORT).show();
                 }
                 else if (error instanceof ParseError)
                 {
-                    Toast.makeText(getApplicationContext(), "parse error", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "parse error",
+                            Toast.LENGTH_SHORT).show();
                 }
                 else if (error instanceof NoConnectionError)
                 {
-                    Toast.makeText(getApplicationContext(), "no connection error", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "no connection error",
+                            Toast.LENGTH_SHORT).show();
                 }
                 else if (error instanceof TimeoutError)
                 {
-                    Toast.makeText(getApplicationContext(), "time out error", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "time out error",
+                            Toast.LENGTH_SHORT).show();
                 }
                 barProgressDialog.dismiss();
                 connectionTestFailedCallback();
@@ -218,9 +226,10 @@ public class InitialActivity extends AppCompatActivity
     /**
      * Connection failed
      */
-    public void connectionTestFailedCallback() {
-        ((EditText) findViewById(R.id.urlText)).setEnabled(true);
-        ((Button) findViewById(R.id.connectButton)).setEnabled(true);
+    public void connectionTestFailedCallback()
+    {
+        findViewById(R.id.urlText).setEnabled(true);
+        findViewById(R.id.connectButton).setEnabled(true);
     }
 
     /**

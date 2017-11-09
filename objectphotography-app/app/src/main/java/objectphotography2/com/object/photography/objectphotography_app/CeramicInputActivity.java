@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.TreeMap;
 import static objectphotography2.com.object.photography.objectphotography_app.CheatSheet.goToSettings;
 import static objectphotography2.com.object.photography.objectphotography_app.CheatSheet.setSpinnerItems;
-import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.LOGTAG;
+import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.LOG_TAG;
 import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.getGlobalWebServerURL;
 import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.setGlobalCurrentObject;
 import static objectphotography2.com.object.photography.objectphotography_app.StateStatic.showToastError;
@@ -40,7 +40,7 @@ public class CeramicInputActivity extends AppCompatActivity
     RequestQueue queue;
     /**
      * Create the activity
-     * @param savedInstanceState
+     * @param savedInstanceState - state from memory
      */
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -169,7 +169,7 @@ public class CeramicInputActivity extends AppCompatActivity
         switch (item.getItemId())
         {
             case R.id.action_settings:
-                goToSettings(findViewById(R.id.action_settings), this);
+                goToSettings(this);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -217,8 +217,10 @@ public class CeramicInputActivity extends AppCompatActivity
     /**
      * Async Volley call
      */
-    public void populateListOfSitenameAndId() {
-        makeVolleyJSONArrayRequest(getGlobalWebServerURL() + "/get_sitenames.php", queue, new JSONArrayResponseWrapper(this) {
+    public void populateListOfSitenameAndId()
+    {
+        makeVolleyJSONArrayRequest(getGlobalWebServerURL() + "/get_sitenames.php", queue,
+                new JSONArrayResponseWrapper(this) {
             /**
              * Response received
              * @param response - database response
@@ -233,14 +235,14 @@ public class CeramicInputActivity extends AppCompatActivity
                     for (int i = 0; i < response.length(); i++)
                     {
                         JSONObject tmpObject = response.getJSONObject(i);
-                        String sitename = tmpObject.getString("site_name");
-                        String siteid = tmpObject.getString("siteid");
-                        resultList.put(sitename, Integer.parseInt(siteid));
+                        String siteName = tmpObject.getString("site_name");
+                        String siteId = tmpObject.getString("siteid");
+                        resultList.put(siteName, Integer.parseInt(siteId));
                     }
                     // filling spinner with request info
                     fillSpinner(resultList);
-                    Log.v(LOGTAG, "Volley Request 1 Done");
-                    populateItemIDSFromDB(resultList.get(getSelectedSitename()));
+                    Log.v(LOG_TAG, "Volley Request 1 Done");
+                    populateItemIDSFromDB(resultList.get(getSelectedSiteName()));
                 }
                 catch (JSONException e)
                 {
@@ -268,11 +270,8 @@ public class CeramicInputActivity extends AppCompatActivity
      */
     public void fillSpinner(final TreeMap<String, Integer> aDict)
     {
-        List<String> spinnerArray =  new ArrayList<String>();
-        for (String sitename: aDict.keySet())
-        {
-            spinnerArray.add(sitename);
-        }
+        List<String> spinnerArray =  new ArrayList<>();
+        spinnerArray.addAll(aDict.keySet());
         Spinner siteNameSpinner = (Spinner) findViewById(R.id.sitenameSpinner);
         setSpinnerItems(this, siteNameSpinner, spinnerArray);
         siteNameSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -284,9 +283,10 @@ public class CeramicInputActivity extends AppCompatActivity
              * @param id - item id
              */
             @Override
-            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id)
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView,
+                                       int position, long id)
             {
-                populateItemIDSFromDB(aDict.get(getSelectedSitename()));
+                populateItemIDSFromDB(aDict.get(getSelectedSiteName()));
             }
 
             /**
@@ -322,7 +322,8 @@ public class CeramicInputActivity extends AppCompatActivity
     public void populateItemIDSFromDB(int siteId)
     {
         // makes call to database, receives JSON object and stores item IDs into an array list
-        makeVolleyJSONArrayRequest(getGlobalWebServerURL() + "/get_object_ids?siteid=" + siteId, queue, new JSONArrayResponseWrapper(this) {
+        makeVolleyJSONArrayRequest(getGlobalWebServerURL() + "/get_object_ids?siteid=" + siteId,
+                queue, new JSONArrayResponseWrapper(this) {
             /**
              * Response received
              * @param response - database response
@@ -366,7 +367,7 @@ public class CeramicInputActivity extends AppCompatActivity
      * Get site name
      * @return Returns site name
      */
-    public String getSelectedSitename()
+    public String getSelectedSiteName()
     {
         Spinner sItems = (Spinner) findViewById(R.id.sitenameSpinner);
         return sItems.getSelectedItem().toString();
@@ -378,7 +379,8 @@ public class CeramicInputActivity extends AppCompatActivity
      */
     public void goNextIfItemIdExist(String itemID)
     {
-        makeVolleyJSONOBjectRequest(getGlobalWebServerURL() + "/is_item_exist?itemid=" + itemID, queue, new JSONObjectResponseWrapper(this) {
+        makeVolleyJSONOBjectRequest(getGlobalWebServerURL() + "/is_item_exist?itemid=" + itemID,
+                queue, new JSONObjectResponseWrapper(this) {
             /**
              * Response received
              * @param response - database response
@@ -392,7 +394,8 @@ public class CeramicInputActivity extends AppCompatActivity
                     {
                         // sets the global current object as the current object.
                         setGlobalCurrentObject(getObjectId());
-                        // if the item exits then go to ObjectDetailActivity where you can view the object
+                        // if the item exits then go to ObjectDetailActivity where you can view the
+                        // object
                         Intent anIntent = new Intent(currentContext, ObjectDetailActivity.class);
                         startActivity(anIntent);
                     }
@@ -400,16 +403,16 @@ public class CeramicInputActivity extends AppCompatActivity
                     {
                         new AlertDialog.Builder(currentContext).setTitle("This Item ID does not exist")
                                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                                    /**
-                                     * User clicked alert
-                                     * @param dialog - alert window
-                                     * @param which - item selected
-                                     */
-                                    public void onClick(DialogInterface dialog, int which)
-                                    {
-                                        // continue with ok
-                                    }
-                                }).show();
+                            /**
+                             * User clicked alert
+                             * @param dialog - alert window
+                             * @param which - item selected
+                             */
+                            public void onClick(DialogInterface dialog, int which)
+                            {
+                                // continue with ok
+                            }
+                        }).show();
                     }
                 }
                 catch (JSONException e)

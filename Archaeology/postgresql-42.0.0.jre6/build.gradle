@@ -1,0 +1,2 @@
+configurations.maybeCreate("default")
+artifacts.add("default", file('postgresql-42.0.0.jre6.jar'))
