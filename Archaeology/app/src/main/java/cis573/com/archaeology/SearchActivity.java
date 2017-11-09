@@ -64,7 +64,7 @@ public class SearchActivity extends AppCompatActivity
      */
     private void displayTrashcan()
     {
-        fab.setImageResource(R.mipmap.delete);
+        fab.setImageResource(R.drawable.delete);
         fab.setOnClickListener(new View.OnClickListener() {
             /**
              * User clicked trashcan

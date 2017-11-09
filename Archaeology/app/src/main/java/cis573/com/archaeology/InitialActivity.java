@@ -42,12 +42,16 @@ public class InitialActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_initial);
-        Cache cache = new DiskBasedCache(getCacheDir(), 1024 * 1024);
-        Network network = new BasicNetwork(new HurlStack());
-        queue = new RequestQueue(cache, network);
-        queue.start();
-        EditText webServer = (EditText) findViewById(R.id.urlText);
-        webServer.setText(getGlobalWebServerURL());
+        // TODO: Revert
+        Intent i = new Intent(this, CameraUIActivity.class);
+        startActivity(i);
+        // TODO: uncomment
+//        Cache cache = new DiskBasedCache(getCacheDir(), 1024 * 1024);
+//        Network network = new BasicNetwork(new HurlStack());
+//        queue = new RequestQueue(cache, network);
+//        queue.start();
+//        EditText webServer = (EditText) findViewById(R.id.urlText);
+//        webServer.setText(getGlobalWebServerURL());
     }
 
     /**
@@ -88,9 +92,10 @@ public class InitialActivity extends AppCompatActivity
     public void onResume()
     {
         super.onResume();
-        EditText webServer = (EditText) findViewById(R.id.urlText);
-        webServer.setText(getGlobalWebServerURL());
-        testConnection(null);
+        // TODO: uncomment
+//        EditText webServer = (EditText) findViewById(R.id.urlText);
+//        webServer.setText(getGlobalWebServerURL());
+//        testConnection(null);
     }
 
     /**

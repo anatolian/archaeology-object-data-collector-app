@@ -132,4 +132,5 @@
     <string name="right_bracket">]</string>
     <string name="test">testjson.txt</string>
     <string name="search_history">Search history</string>
+    <string name="title_activity_test">TestActivity</string>
 </resources>

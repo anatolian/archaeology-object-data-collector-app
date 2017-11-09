@@ -14,21 +14,21 @@
             <ImageView
                 android:layout_width = "0dp"
                 android:layout_height = "match_parent"
-                android:src = "@mipmap/bookmarks_0000_topleft"
+                android:src = "@drawable/bookmarks_0000_topleft"
                 android:id = "@+id/imageView6"
                 android:layout_weight = "5"
                 android:scaleType = "fitXY"/>
             <ImageView
                 android:layout_width = "0dp"
                 android:layout_height = "match_parent"
-                android:src = "@mipmap/bookmarks_0001_top"
+                android:src = "@drawable/bookmarks_0001_top"
                 android:id = "@+id/imageView7"
                 android:layout_weight = "40"
                 android:scaleType = "fitXY"/>
             <ImageView
                 android:layout_width = "0dp"
                 android:layout_height = "match_parent"
-                android:src = "@mipmap/bookmarks_0002_topright"
+                android:src = "@drawable/bookmarks_0002_topright"
                 android:id = "@+id/imageView8"
                 android:layout_weight = "3"
                 android:scaleType = "fitXY"/>
@@ -41,7 +41,7 @@
             <ImageView
                 android:layout_width = "0dp"
                 android:layout_height = "match_parent"
-                android:src = "@mipmap/bookmarks_0003_midleft"
+                android:src = "@drawable/bookmarks_0003_midleft"
                 android:id = "@+id/imageView"
                 android:layout_weight = "5"
                 android:scaleType = "fitXY"/>
@@ -54,7 +54,7 @@
             <ImageView
                 android:layout_width = "0dp"
                 android:layout_height = "match_parent"
-                android:src = "@mipmap/bookmarks_0005_midright"
+                android:src = "@drawable/bookmarks_0005_midright"
                 android:id = "@+id/imageView2"
                 android:layout_weight = "3"
                 android:scaleType = "fitXY"/>
@@ -67,21 +67,21 @@
             <ImageView
                 android:layout_width = "0dp"
                 android:layout_height = "match_parent"
-                android:src = "@mipmap/bookmarks_0006_downleft"
+                android:src = "@drawable/bookmarks_0006_downleft"
                 android:id = "@+id/imageView3"
                 android:layout_weight = "5"
                 android:scaleType = "fitXY"/>
             <ImageView
                 android:layout_width = "0dp"
                 android:layout_height = "match_parent"
-                android:src = "@mipmap/bookmarks_0007_down"
+                android:src = "@drawable/bookmarks_0007_down"
                 android:id = "@+id/imageView4"
                 android:layout_weight = "40"
                 android:scaleType = "fitXY"/>
             <ImageView
                 android:layout_width = "0dp"
                 android:layout_height = "match_parent"
-                android:src = "@mipmap/bookmarks_0008_downright"
+                android:src = "@drawable/bookmarks_0008_downright"
                 android:id = "@+id/imageView5"
                 android:layout_weight = "3"
                 android:scaleType = "fitXY"/>

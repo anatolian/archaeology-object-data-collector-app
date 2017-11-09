@@ -49,7 +49,7 @@ public class CameraUIActivity extends AppCompatActivity
     private CameraLiveView cam = null;
     private RelativeLayout parent;
     private ScannerLiveView scan = null;
-    private FloatingActionButton fab;
+    private FloatingActionButton fab, fab2;
     /**
      * Activity is launched
      * @param savedInstanceState - state from memory
@@ -106,7 +106,10 @@ public class CameraUIActivity extends AppCompatActivity
         parent = (RelativeLayout) findViewById(R.id.parent);
         fab = (FloatingActionButton) findViewById(R.id.fab);
         shutter = (FloatingActionButton) findViewById(R.id.shutter);
-        fab.setImageResource(R.mipmap.qr);
+        fab.setImageResource(R.drawable.qr);
+        shutter.setImageResource(R.drawable.camera_icon);
+        fab2 = (FloatingActionButton) findViewById(R.id.fab2);
+        fab2.setImageResource(R.drawable.pen);
         createCamera();
     }
 
@@ -222,18 +225,17 @@ public class CameraUIActivity extends AppCompatActivity
                 // from manual search
                 JSONObject json = null;
                 String jsonString = loadJSONFromAsset();
+                String searchUrl = null;
                 try
                 {
                     json = new JSONObject(jsonString);
-                    System.out.println(json.names().toString());
                 }
                 catch (Exception e)
                 {
-                    e.printStackTrace();
+                    searchUrl = "https://www.penn.museum/collections/object/" + data;
                 }
                 JSONObject translatedSearch;
                 String searchItem = "";
-                String searchUrl;
                 String searchDescription = "";
                 String searchProvenience = "";
                 String searchMaterial = "";
@@ -241,7 +243,6 @@ public class CameraUIActivity extends AppCompatActivity
                 try
                 {
                     translatedSearch = json.getJSONObject(data);
-                    System.out.println(translatedSearch);
                     searchUrl = translatedSearch.getString("url");
                     searchItem = translatedSearch.getString("object_name");
                     searchDescription = translatedSearch.getString("description");
@@ -249,9 +250,9 @@ public class CameraUIActivity extends AppCompatActivity
                     searchMaterial = translatedSearch.getString("material");
                     searchCuratorialSection = translatedSearch.getString("curatorial_section");
                 }
-                catch (JSONException e)
+                catch (Exception e)
                 {
-                    searchUrl = "https://www.penn.museum/collections/object/" + data;
+                    e.printStackTrace();
                 }
                 Intent intent = new Intent(getApplicationContext(), SearchActivity.class);
                 intent.putExtra("search", searchUrl);
@@ -401,13 +402,13 @@ public class CameraUIActivity extends AppCompatActivity
         if (flag < 0)
         {
             createScanner();
-            fab.setImageResource(R.mipmap.ocr);
+            fab.setImageResource(R.drawable.ocr);
             flag *= -1;
         }
         else
         {
             createCamera();
-            fab.setImageResource(R.mipmap.qr);
+            fab.setImageResource(R.drawable.qr);
             flag *= -1;
         }
     }
@@ -464,7 +465,6 @@ public class CameraUIActivity extends AppCompatActivity
         jsonFixedContents = jsonFixedContents.replaceAll(Pattern.quote("}"), "\\},");
         jsonFixedContents = jsonFixedContents.substring(0, jsonFixed.length() - 1);
         jsonFixedContents += "}";
-        System.out.println(jsonFixedContents);
         return jsonFixedContents;
     }
 

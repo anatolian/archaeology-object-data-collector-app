@@ -87,7 +87,6 @@ public class DownloadActivity extends AppCompatActivity
      */
     private void showPermission()
     {
-        int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET);
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET) !=
                 PackageManager.PERMISSION_GRANTED)
         {
@@ -208,7 +207,7 @@ public class DownloadActivity extends AppCompatActivity
         }
         if (files != null)
         {
-            for (String filename : files)
+            for (String filename: files)
             {
                 InputStream in = null;
                 OutputStream out = null;

@@ -14,8 +14,6 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 public class LocalRetriever extends AppCompatActivity implements Retriever
 {
-    String stringJson;
-    private JSONObject json;
     Context context;
     private String location;
     /**
@@ -75,7 +73,7 @@ public class LocalRetriever extends AppCompatActivity implements Retriever
         InputStream in = retrieve(location);
         BufferedReader reader = new BufferedReader(new InputStreamReader(in));
         // Hashmap to store database
-        HashMap<String, String> map = new HashMap<String, String>();
+        HashMap<String, String> map = new HashMap<>();
         try
         {
             String line;
@@ -105,27 +103,27 @@ public class LocalRetriever extends AppCompatActivity implements Retriever
             }
         }
         // Return possible search features
-        String searchitem = "";
-        String searchdescription = "";
-        String searchprovenience = "";
-        String searchmaterial = "";
-        String searchcuratorial_section = "";
-        String[] endresult = new String[7];
-        endresult[0] = item;
-        endresult[1] = searchitem;
+        String searchItem = "";
+        String searchDescription = "";
+        String searchProvenience = "";
+        String searchMaterial = "";
+        String searchCuratorialSection = "";
+        String[] endResult = new String[7];
+        endResult[0] = item;
+        endResult[1] = searchItem;
         if (map.containsKey(item))
         {
-            endresult[2] = map.get(item);
+            endResult[2] = map.get(item);
         }
         else
         {
-            endresult[2] = "https://www.penn.museum/collections/object/";
+            endResult[2] = "https://www.penn.museum/collections/object/";
         }
-        endresult[3] = searchdescription;
-        endresult[4] = searchprovenience;
-        endresult[5] = searchmaterial;
-        endresult[6] = searchcuratorial_section;
+        endResult[3] = searchDescription;
+        endResult[4] = searchProvenience;
+        endResult[5] = searchMaterial;
+        endResult[6] = searchCuratorialSection;
         // return final result
-        return endresult;
+        return endResult;
     }
 }

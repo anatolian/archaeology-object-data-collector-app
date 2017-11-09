@@ -16,21 +16,21 @@
             <ImageView
                 android:layout_width = "0dp"
                 android:layout_height = "match_parent"
-                android:src = "@mipmap/history_0002_topright"
+                android:src = "@drawable/history_0002_topright"
                 android:id = "@+id/imageView8"
                 android:layout_weight = "3"
                 android:scaleType = "fitXY"/>
             <ImageView
                 android:layout_width = "0dp"
                 android:layout_height = "match_parent"
-                android:src = "@mipmap/history_0001_top"
+                android:src = "@drawable/history_0001_top"
                 android:id = "@+id/imageView7"
                 android:layout_weight = "40"
                 android:scaleType ="fitXY"/>
             <ImageView
                 android:layout_width = "0dp"
                 android:layout_height = "match_parent"
-                android:src = "@mipmap/history_0000_topleft"
+                android:src = "@drawable/history_0000_topleft"
                 android:id = "@+id/imageView6"
                 android:layout_weight = "5"
                 android:scaleType = "fitXY"/>
@@ -43,7 +43,7 @@
             <ImageView
                 android:layout_width = "0dp"
                 android:layout_height = "match_parent"
-                android:src = "@mipmap/history_0005_midright"
+                android:src = "@drawable/history_0005_midright"
                 android:id = "@+id/imageView2"
                 android:layout_weight = "3"
                 android:scaleType = "fitXY"/>
@@ -56,7 +56,7 @@
             <ImageView
                 android:layout_width = "0dp"
                 android:layout_height = "match_parent"
-                android:src = "@mipmap/history_0003_midleft"
+                android:src = "@drawable/history_0003_midleft"
                 android:id = "@+id/imageView"
                 android:layout_weight = "5"
                 android:scaleType = "fitXY"/>
@@ -69,21 +69,21 @@
             <ImageView
                 android:layout_width = "0dp"
                 android:layout_height = "match_parent"
-                android:src = "@mipmap/history_0008_downright"
+                android:src = "@drawable/history_0008_downright"
                 android:id = "@+id/imageView5"
                 android:layout_weight = "3"
                 android:scaleType = "fitXY"/>
             <ImageView
                 android:layout_width = "0dp"
                 android:layout_height = "match_parent"
-                android:src = "@mipmap/history_0007_down"
+                android:src = "@drawable/history_0007_down"
                 android:id = "@+id/imageView4"
                 android:layout_weight = "40"
                 android:scaleType = "fitXY"/>
             <ImageView
                 android:layout_width = "0dp"
                 android:layout_height = "match_parent"
-                android:src = "@mipmap/history_0006_downleft"
+                android:src = "@drawable/history_0006_downleft"
                 android:id = "@+id/imageView3"
                 android:layout_weight = "5"
                 android:scaleType = "fitXY"/>
@@ -130,7 +130,7 @@
             android:layout_weight = "5.5"/>
     </LinearLayout>
     <android.support.design.widget.FloatingActionButton
-        android:src = "@mipmap/delete"
+        android:src = "@drawable/delete"
         app:fabSize = "normal"
         android:backgroundTint = "@color/colorPrimaryDark"
         android:id = "@+id/fab"
