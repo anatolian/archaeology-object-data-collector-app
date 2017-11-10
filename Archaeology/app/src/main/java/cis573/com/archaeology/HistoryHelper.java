@@ -54,6 +54,7 @@ public class HistoryHelper extends SQLiteOpenHelper
                 FAVORITE_COLUMN_ITEM + " text, " + FAVORITE_COLUMN_URL + " text, " +
                 FAVORITE_COLUMN_DESCRIPTION + " text, " + FAVORITE_COLUMN_PROVENIENCE + " text, " +
                 FAVORITE_COLUMN_MATERIAL + " text, " + FAVORITE_COLUMN_CURATORIAL + " text )");
+        db.close();
     }
 
     /**
@@ -94,6 +95,7 @@ public class HistoryHelper extends SQLiteOpenHelper
         contentValues.put("searchmaterial", mat);
         contentValues.put("searchcuratorial_section", cur);
         db.insert("searchhistory", null, contentValues);
+        db.close();
         return true;
     }
 
@@ -122,6 +124,7 @@ public class HistoryHelper extends SQLiteOpenHelper
         contentValues.put("favoritematerial", mat);
         contentValues.put("favoritecuratorial_section", cur);
         db.insert("favoritehistory", null, contentValues);
+        db.close();
         return true;
     }
 
@@ -136,9 +139,11 @@ public class HistoryHelper extends SQLiteOpenHelper
         System.out.println("db");
         System.out.println((int) DatabaseUtils.queryNumEntries(db, HISTORY_TABLE_NAME));
         System.out.println("db");
-        return db.rawQuery("SELECT search,searchitem,searchurl,searchdescription" +
+        Cursor cursor = db.rawQuery("SELECT search,searchitem,searchurl,searchdescription" +
                 ",searchprovenience,searchmaterial,searchcuratorial_section FROM " +
                 "searchhistory", null);
+        db.close();
+        return cursor;
     }
 
     /**
@@ -152,9 +157,11 @@ public class HistoryHelper extends SQLiteOpenHelper
         System.out.println("db");
         System.out.println((int) DatabaseUtils.queryNumEntries(db, FAVORITE_TABLE_NAME));
         System.out.println("db");
-        return db.rawQuery("SELECT favorite,favoriteitem,favoriteurl,favoritedescription," +
+        Cursor cursor = db.rawQuery("SELECT favorite,favoriteitem,favoriteurl,favoritedescription," +
                 "favoriteprovenience,favoritematerial,favoritecuratorial_section FROM " +
                 "favoritehistory", null);
+        db.close();
+        return cursor;
     }
 
     /**
@@ -164,6 +171,7 @@ public class HistoryHelper extends SQLiteOpenHelper
     {
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("DELETE FROM searchhistory");
+        db.close();
     }
 
     /**
@@ -174,5 +182,6 @@ public class HistoryHelper extends SQLiteOpenHelper
     {
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("DELETE FROM favoritehistory where favoriteurl='" + item + "'");
+        db.close();
     }
 }

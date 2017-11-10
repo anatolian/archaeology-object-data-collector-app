@@ -5,219 +5,261 @@
     <ScrollView
         android:layout_width = "match_parent"
         android:layout_height = "match_parent">
+
         <RelativeLayout
-            android:layout_width = "match_parent"
-            android:layout_height = "wrap_content" android:paddingLeft = "@dimen/activity_horizontal_margin"
-            android:paddingRight = "@dimen/activity_horizontal_margin"
-            android:paddingTop = "@dimen/activity_vertical_margin"
-            android:paddingBottom = "@dimen/activity_vertical_margin">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/activity_vertical_margin"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/activity_vertical_margin">
+
             <TextView
-                android:layout_width = "wrap_content"
-                android:layout_height = "wrap_content"
-                android:textAppearance = "?android:attr/textAppearanceLarge"
-                android:background = "#d7c474"
-                android:text = "@string/sample"
-                android:id = "@+id/sampleNumberLabel"
-                android:layout_alignParentTop = "true"
-                android:layout_alignParentStart = "true"
-                android:textStyle = "bold"
-                android:layout_marginBottom = "10dp"/>
+                android:id="@+id/sampleNumberLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginBottom="10dp"
+                android:background="#d7c474"
+                android:text="@string/sample"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textStyle="bold" />
+
             <TextView
-                android:layout_width = "wrap_content"
-                android:layout_height = "wrap_content"
-                android:textAppearance = "?android:attr/textAppearanceLarge"
-                android:background = "#d7c474"
-                android:textStyle = "bold"
-                android:text = ""
-                android:id = "@+id/sampleInfo"
-                android:layout_alignParentTop = "true"
-                android:layout_toEndOf = "@+id/sampleNumberLabel"/>
+                android:id="@+id/sampleInfo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_toEndOf="@+id/sampleNumberLabel"
+                android:background="#d7c474"
+                android:text=""
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textStyle="bold" />
+
             <Spinner
-                android:layout_width = "wrap_content"
-                android:layout_height = "wrap_content"
-                android:layout_toEndOf = "@+id/sampleInfo"
-                android:layout_alignParentTop = "true"
-                android:id = "@+id/sample_spinner"/>
+                android:id="@+id/sample_spinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_toEndOf="@+id/sampleInfo" />
+
             <Button
-                android:layout_width = "wrap_content"
-                android:layout_height = "wrap_content"
-                android:text = "@string/next"
-                android:id = "@+id/nextObjectButton"
-                android:layout_toEndOf = "@+id/sample_spinner"
-                android:layout_alignParentTop = "true"
-                android:onClick = "goToNextItemIfAvailable"/>
-            <TextView
-                android:layout_width = "150dp"
-                android:layout_height = "wrap_content"
-                android:textAppearance = "?android:attr/textAppearanceMedium"
-                android:id = "@+id/weightInput"
-                android:layout_toStartOf = "@+id/textView26"
-                android:gravity = "end"/>
-            <TextView
-                android:layout_width = "wrap_content"
-                android:layout_height = "wrap_content"
-                android:textAppearance = "?android:attr/textAppearanceMedium"
-                android:text = "@string/gram"
-                android:layout_toStartOf = "@+id/button16"
-                android:id = "@+id/textView26"/>
+                android:id="@+id/nextObjectButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/previousObjectButton"
+                android:layout_alignBottom="@+id/previousObjectButton"
+                android:layout_toEndOf="@+id/previousObjectButton"
+                android:onClick="goToNextItemIfAvailable"
+                android:text="@string/next" />
+
             <Button
-                android:layout_width = "wrap_content"
-                android:layout_height = "wrap_content"
-                android:text = "@string/record_weight"
-                android:id = "@+id/button16"
-                android:layout_alignParentEnd = "true"
-                android:layout_alignParentTop = "true"
-                android:onClick = "startRecordWeight"/>
+                android:id="@+id/previousObjectButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/sampleInfo"
+                android:onClick="goToPreviousItemIfAvailable"
+                android:text="@string/previous" />
+
+            <TextView
+                android:id="@+id/weightInput"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_toStartOf="@+id/textView26"
+                android:gravity="end"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                android:id="@+id/textView26"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/sample_spinner"
+                android:layout_alignParentEnd="true"
+                android:text="@string/gram"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <Button
+                android:id="@+id/button16"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/nextObjectButton"
+                android:layout_alignBottom="@+id/nextObjectButton"
+                android:layout_alignEnd="@+id/textView26"
+                android:onClick="startRecordWeight"
+                android:text="@string/record_weight" />
+
             <TableLayout
-                android:layout_width = "match_parent"
-                android:layout_height = "match_parent"
-                android:layout_below = "@+id/sampleNumberLabel"
-                android:layout_alignParentStart = "true"
-                android:stretchColumns = "*"
-                android:layout_marginTop = "30dp"
-                android:id = "@+id/tableLayout">
+                android:id="@+id/tableLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/sampleNumberLabel"
+                android:layout_marginTop="30dp"
+                android:stretchColumns="*">
+
                 <TableRow
-                    android:layout_width = "match_parent"
-                    android:layout_height = "match_parent">
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
                     <TextView
-                        android:layout_width = "1dp"
-                        android:layout_height = "wrap_content"
-                        android:textAppearance = "?android:attr/textAppearanceMedium"
-                        android:text = "@string/surface"
-                        android:id = "@+id/textView2"
-                        android:textStyle = "bold"/>
+                        android:id="@+id/textView2"
+                        android:layout_width="1dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/surface"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textStyle="bold" />
+
                     <TextView
-                        android:layout_width = "1dp"
-                        android:layout_height = "wrap_content"
-                        android:textAppearance = "?android:attr/textAppearanceMedium"
-                        android:text = "@string/hue"
-                        android:id = "@+id/textView28"
-                        android:textStyle = "bold"/>
+                        android:id="@+id/textView28"
+                        android:layout_width="1dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/hue"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textStyle="bold" />
+
                     <TextView
-                        android:layout_width = "1dp"
-                        android:layout_height = "wrap_content"
-                        android:textAppearance = "?android:attr/textAppearanceMedium"
-                        android:text = "@string/lightness"
-                        android:id = "@+id/textView29"
-                        android:textStyle = "bold"/>
+                        android:id="@+id/textView29"
+                        android:layout_width="1dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/lightness"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textStyle="bold" />
+
                     <TextView
-                        android:layout_width = "1dp"
-                        android:layout_height = "wrap_content"
-                        android:textAppearance = "?android:attr/textAppearanceMedium"
-                        android:text = "@string/chroma"
-                        android:id = "@+id/textView30"
-                        android:textStyle = "bold"/>
+                        android:id="@+id/textView30"
+                        android:layout_width="1dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/chroma"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textStyle="bold" />
                 </TableRow>
+
                 <TableRow
-                    android:layout_width = "match_parent"
-                    android:layout_height = "match_parent"
-                    android:id = "@+id/exteriorColorRow">
+                    android:id="@+id/exteriorColorRow"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
                     <TextView
-                        android:layout_width = "1dp"
-                        android:layout_height = "wrap_content"
-                        android:textAppearance = "?android:attr/textAppearanceMedium"
-                        android:text = "@string/exterior_color"
-                        android:id = "@+id/textView31"
-                        android:textStyle = "italic"/>
+                        android:id="@+id/textView31"
+                        android:layout_width="1dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/exterior_color"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textStyle="italic" />
+
                     <TextView
-                        android:layout_width = "1dp"
-                        android:layout_height = "wrap_content"
-                        android:textAppearance = "?android:attr/textAppearanceMedium"
-                        android:id = "@+id/exterior_color_hue"
-                        android:layout_column = "1"/>
+                        android:id="@+id/exterior_color_hue"
+                        android:layout_width="1dp"
+                        android:layout_height="wrap_content"
+                        android:layout_column="1"
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
+
                     <TextView
-                        android:layout_width = "1dp"
-                        android:layout_height = "wrap_content"
-                        android:textAppearance = "?android:attr/textAppearanceMedium"
-                        android:id = "@+id/exterior_color_lightness"
-                        android:layout_column = "2"/>
+                        android:id="@+id/exterior_color_lightness"
+                        android:layout_width="1dp"
+                        android:layout_height="wrap_content"
+                        android:layout_column="2"
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
+
                     <TextView
-                        android:layout_width = "1dp"
-                        android:layout_height = "wrap_content"
-                        android:textAppearance = "?android:attr/textAppearanceMedium"
-                        android:id = "@+id/exterior_color_chroma"
-                        android:layout_column = "3"/>
+                        android:id="@+id/exterior_color_chroma"
+                        android:layout_width="1dp"
+                        android:layout_height="wrap_content"
+                        android:layout_column="3"
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
                 </TableRow>
+
                 <TableRow
-                    android:layout_width = "match_parent"
-                    android:layout_height = "match_parent"
-                    android:id = "@+id/interiorColorRow">
+                    android:id="@+id/interiorColorRow"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
                     <TextView
-                        android:layout_width = "1dp"
-                        android:layout_height = "wrap_content"
-                        android:textAppearance = "?android:attr/textAppearanceMedium"
-                        android:text = "@string/interior_color"
-                        android:id = "@+id/textView35"
-                        android:textStyle = "italic"/>
+                        android:id="@+id/textView35"
+                        android:layout_width="1dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/interior_color"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textStyle="italic" />
+
                     <TextView
-                        android:layout_width = "1dp"
-                        android:layout_height = "wrap_content"
-                        android:textAppearance = "?android:attr/textAppearanceMedium"
-                        android:id = "@+id/interior_color_hue"
-                        android:layout_column = "1"/>
+                        android:id="@+id/interior_color_hue"
+                        android:layout_width="1dp"
+                        android:layout_height="wrap_content"
+                        android:layout_column="1"
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
+
                     <TextView
-                        android:layout_width = "1dp"
-                        android:layout_height = "wrap_content"
-                        android:textAppearance = "?android:attr/textAppearanceMedium"
-                        android:id = "@+id/interior_color_lightness"
-                        android:layout_column = "2"/>
+                        android:id="@+id/interior_color_lightness"
+                        android:layout_width="1dp"
+                        android:layout_height="wrap_content"
+                        android:layout_column="2"
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
+
                     <TextView
-                        android:layout_width = "1dp"
-                        android:layout_height = "wrap_content"
-                        android:textAppearance = "?android:attr/textAppearanceMedium"
-                        android:id = "@+id/interior_color_chroma"
-                        android:layout_column = "3"/>
+                        android:id="@+id/interior_color_chroma"
+                        android:layout_width="1dp"
+                        android:layout_height="wrap_content"
+                        android:layout_column="3"
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
                 </TableRow>
             </TableLayout>
+
             <Button
-                android:layout_width = "wrap_content"
-                android:layout_height = "wrap_content"
-                android:text = "@string/no_remote_camera"
-                android:id = "@+id/connectToCameraButton"
-                android:onClick = "connectToRemoteCamera"
-                android:enabled = "false"
-                android:layout_alignParentStart = "true"
-                android:layout_below = "@id/tableLayout"/>
+                android:id="@+id/connectToCameraButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_below="@id/tableLayout"
+                android:enabled="false"
+                android:onClick="connectToRemoteCamera"
+                android:text="@string/no_remote_camera" />
+
             <Button
-                android:layout_width = "wrap_content"
-                android:layout_height = "wrap_content"
-                android:text = "@string/add_photo"
-                android:id = "@+id/button26"
-                android:layout_below = "@+id/tableLayout"
-                android:layout_alignParentEnd = "true"
-                android:onClick = "addPhotoAction"/>
+                android:id="@+id/button26"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_below="@+id/tableLayout"
+                android:onClick="addPhotoAction"
+                android:text="@string/add_photo" />
+
             <HorizontalScrollView
-                android:layout_width = "match_parent"
-                android:layout_height = "200dp"
-                android:id = "@+id/photoScrollWrapper"
-                android:layout_below = "@+id/connectToCameraButton">
+                android:id="@+id/photoScrollWrapper"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_below="@+id/connectToCameraButton">
+
                 <fragment
-                    android:layout_width = "wrap_content"
-                    android:layout_height = "wrap_content"
-                    android:name = "cis573.com.archaeology.PhotoFragment"
-                    android:id = "@+id/fragment"
-                    tools:layout = "@layout/photo_fragment"/>
+                    android:id="@+id/fragment"
+                    android:name="cis573.com.archaeology.PhotoFragment"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:layout="@layout/photo_fragment" />
             </HorizontalScrollView>
 
             <Button
-                android:text = "@string/correct_color"
-                android:layout_width = "wrap_content"
-                android:layout_height = "wrap_content"
-                android:layout_below = "@+id/connectToCameraButton"
-                android:layout_marginTop = "187dp"
-                android:id = "@+id/correct_color"
-                android:layout_alignParentBottom = "true"
-                android:layout_alignParentStart = "true"
-                android:onClick = "goToImageGallery"/>
+                android:id="@+id/correct_color"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/connectToCameraButton"
+                android:layout_marginTop="187dp"
+                android:onClick="goToImageGallery"
+                android:text="@string/correct_color" />
+
             <Button
-                android:text = ""
-                android:layout_width = "wrap_content"
-                android:layout_height = "wrap_content"
-                android:layout_alignParentBottom = "true"
-                android:layout_alignParentEnd = "true"
-                android:layout_marginEnd = "71dp"
-                android:onClick = "goToWifiActivity"
-                android:id = "@+id/wifiActivity"/>
+                android:id="@+id/wifiActivity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="71dp"
+                android:onClick="goToWifiActivity"
+                android:text="" />
         </RelativeLayout>
     </ScrollView>
 </RelativeLayout>

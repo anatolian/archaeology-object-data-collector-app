@@ -44,7 +44,7 @@
         <activity android:name=".CeramicInputActivity" />
         <activity android:name=".ObjectDetailActivity" />
         <activity android:name=".PhotosActivity" />
-        <activity android:name=".MyWiFiActivity"></activity>
+        <activity android:name=".MyWiFiActivity"/>
     </application>
 
 </manifest>

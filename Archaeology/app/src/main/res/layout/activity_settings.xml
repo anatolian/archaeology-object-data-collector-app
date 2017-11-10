@@ -28,7 +28,7 @@
                 android:layout_below = "@+id/textView5"
                 android:layout_centerHorizontal = "true"
                 android:minWidth = "400dp"
-                android:maxLines = "1"
+                android:maxLines = "3"
                 android:lines = "1"
                 android:textAppearance = "?android:attr/textAppearanceMedium"/>
             <TextView
@@ -105,7 +105,7 @@
         </RelativeLayout>
     </ScrollView>
     <LinearLayout
-        android:orientation = "horizontal"
+        android:orientation = "vertical"
         android:layout_width = "match_parent"
         android:layout_height = "wrap_content"
         android:layout_alignParentBottom = "true"

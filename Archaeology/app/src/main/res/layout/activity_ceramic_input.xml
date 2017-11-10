@@ -57,7 +57,7 @@
                         android:textAppearance = "?android:attr/textAppearanceMedium"
                         android:text = "@string/context_number"
                         android:id = "@+id/textView20"
-                        android:gravity = "center"
+                        android:gravity = "start"
                         android:textAlignment="gravity"/>
                     <Spinner
                         android:layout_width = "1dp"
@@ -73,7 +73,7 @@
                         android:textAppearance = "?android:attr/textAppearanceMedium"
                         android:text = "@string/sample_number"
                         android:id = "@+id/textView21"
-                        android:gravity = "center"
+                        android:gravity = "start"
                         android:textAlignment="gravity"/>
                     <Spinner
                         android:layout_width = "1dp"

@@ -41,7 +41,7 @@ public class CeramicInputActivity extends AppCompatActivity
     {
         areaEasting, areaNorthing, contextNumber, sampleNumber
     }
-
+    Spinner easting, northing, context, sample;
     /**
      * Launch the activity
      * @param savedInstanceState - state from memory
@@ -53,15 +53,38 @@ public class CeramicInputActivity extends AppCompatActivity
         setContentView(R.layout.activity_ceramic_input);
         queue = Volley.newRequestQueue(this);
         // storing load state values
-        allDataLoadInfo = new HashMap<>(LoadState.values().length);
-        for (LoadState ls: LoadState.values())
-        {
-            allDataLoadInfo.put(ls, false);
-        }
-        barProgressDialog = new ProgressDialog(this);
-        barProgressDialog.setTitle("Downloading Information From Database ...");
-        barProgressDialog.setIndeterminate(true);
-        if (getAreaEastingSpinner() == null || getAreaEastingSpinner().getSelectedItem() == null)
+        // TODO: Uncomment
+//        allDataLoadInfo = new HashMap<>(LoadState.values().length);
+//        for (LoadState ls: LoadState.values())
+//        {
+//            allDataLoadInfo.put(ls, false);
+//        }
+//        barProgressDialog = new ProgressDialog(this);
+//        barProgressDialog.setTitle("Downloading Information From Database ...");
+//        barProgressDialog.setIndeterminate(true);
+        // TODO: replace with commented code
+        easting = (Spinner) findViewById(R.id.easting_spinner);
+        northing = (Spinner) findViewById(R.id.northing_spinner);
+        context = (Spinner) findViewById(R.id.context_spinner);
+        sample = (Spinner) findViewById(R.id.sample_spinner);
+        ArrayList<String> eastings = new ArrayList<>(2);
+        eastings.add("1");
+        eastings.add("2");
+        ArrayList<String> northings = new ArrayList<>(2);
+        northings.add("3");
+        northings.add("4");
+        ArrayList<String> contexts = new ArrayList<>(2);
+        contexts.add("5");
+        contexts.add("6");
+        ArrayList<String> samples = new ArrayList<>(2);
+        samples.add("7");
+        samples.add("8");
+        fillEastingSpinner(eastings);
+        fillNorthingSpinner(northings);
+        fillContextNumberSpinner(contexts);
+        fillSampleNumberSpinner(samples);
+        // TODO: end todo
+        if (northing == null || northing.getSelectedItem() == null)
         {
             findViewById(R.id.continue_button).setVisibility(View.INVISIBLE);
         }
@@ -76,7 +99,7 @@ public class CeramicInputActivity extends AppCompatActivity
         super.onStart();
         // calls methods to populate spinners with data gathered from the database
         // northing, easting, context number, etc.
-        getAreaEastingSpinner().setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        easting.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             /**
              * User selected an item
              * @param parent - spinner
@@ -87,8 +110,9 @@ public class CeramicInputActivity extends AppCompatActivity
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
             {
-                clearNorthingSpinner();
-                asyncGetAreaNorthingFromDB();
+                // TODO: Uncomment
+//                clearNorthingSpinner();
+//                asyncGetAreaNorthingFromDB();
             }
 
             /**
@@ -100,7 +124,7 @@ public class CeramicInputActivity extends AppCompatActivity
             {
             }
         });
-        getAreaNorthingSpinner().setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        northing.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             /**
              * User selected an item
              * @param parent - spinner
@@ -111,8 +135,9 @@ public class CeramicInputActivity extends AppCompatActivity
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
             {
-                clearContextNumberSpinner();
-                asyncGetContextNumberFromDB();
+                // TODO: Uncomment
+//                clearContextNumberSpinner();
+//                asyncGetContextNumberFromDB();
             }
 
             /**
@@ -124,7 +149,7 @@ public class CeramicInputActivity extends AppCompatActivity
             {
             }
         });
-        getContextNumberSpinner().setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        context.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             /**
              * User selected a value
              * @param parent - spinner
@@ -135,8 +160,9 @@ public class CeramicInputActivity extends AppCompatActivity
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
             {
-                clearSampleNumberSpinner();
-                asyncGetSampleNumberFromDB();
+                // TODO: Uncomment
+//                clearSampleNumberSpinner();
+//                asyncGetSampleNumberFromDB();
             }
 
             /**
@@ -158,16 +184,17 @@ public class CeramicInputActivity extends AppCompatActivity
     {
         super.onResume();
         Log.v(LOG_TAG, "Resuming CeramicInputActivity reloading sample numbers");
-        if (allDataLoadInfo.get(LoadState.areaEasting) && allDataLoadInfo.get(LoadState.areaNorthing)
-                && allDataLoadInfo.get(LoadState.contextNumber))
-        {
-            clearSampleNumberSpinner();
-            asyncGetSampleNumberFromDB();
-        }
-        else
-        {
-            asyncGetAreaEastingFromDB();
-        }
+        // TODO: Uncomment
+//        if (allDataLoadInfo.get(LoadState.areaEasting) && allDataLoadInfo.get(LoadState.areaNorthing)
+//                && allDataLoadInfo.get(LoadState.contextNumber))
+//        {
+//            clearSampleNumberSpinner();
+//            asyncGetSampleNumberFromDB();
+//        }
+//        else
+//        {
+//            asyncGetAreaEastingFromDB();
+//        }
     }
 
     /**
@@ -207,7 +234,7 @@ public class CeramicInputActivity extends AppCompatActivity
      */
     public void fillEastingSpinner(ArrayList<String> entries)
     {
-        CheatSheet.setSpinnerItems(this, getAreaEastingSpinner(), entries);
+        CheatSheet.setSpinnerItems(this, easting, entries);
     }
 
     /**
@@ -216,7 +243,7 @@ public class CeramicInputActivity extends AppCompatActivity
      */
     public void fillNorthingSpinner(ArrayList<String> entries)
     {
-        CheatSheet.setSpinnerItems(this, getAreaNorthingSpinner(), entries);
+        CheatSheet.setSpinnerItems(this, northing, entries);
     }
 
     /**
@@ -225,7 +252,7 @@ public class CeramicInputActivity extends AppCompatActivity
      */
     public void fillContextNumberSpinner(ArrayList<String> entries)
     {
-        CheatSheet.setSpinnerItems(this, getContextNumberSpinner(), entries);
+        CheatSheet.setSpinnerItems(this, context, entries);
     }
 
     /**
@@ -234,7 +261,7 @@ public class CeramicInputActivity extends AppCompatActivity
      */
     public void fillSampleNumberSpinner(ArrayList<String> entries)
     {
-        CheatSheet.setSpinnerItems(this, getSampleNumberSpinner(), entries);
+        CheatSheet.setSpinnerItems(this, sample, entries);
     }
 
     /**
@@ -242,7 +269,7 @@ public class CeramicInputActivity extends AppCompatActivity
      */
     public void clearNorthingSpinner()
     {
-        CheatSheet.setSpinnerItems(this, getAreaNorthingSpinner(), new ArrayList<String>());
+        CheatSheet.setSpinnerItems(this, northing, new ArrayList<String>());
     }
 
     /**
@@ -250,7 +277,7 @@ public class CeramicInputActivity extends AppCompatActivity
      */
     public void clearContextNumberSpinner()
     {
-        CheatSheet.setSpinnerItems(this, getContextNumberSpinner(), new ArrayList<String>());
+        CheatSheet.setSpinnerItems(this, context, new ArrayList<String>());
     }
 
     /**
@@ -258,7 +285,7 @@ public class CeramicInputActivity extends AppCompatActivity
      */
     public void clearSampleNumberSpinner()
     {
-        CheatSheet.setSpinnerItems(this, getSampleNumberSpinner(), new ArrayList<String>());
+        CheatSheet.setSpinnerItems(this, sample, new ArrayList<String>());
     }
 
     /**
@@ -267,7 +294,6 @@ public class CeramicInputActivity extends AppCompatActivity
     public void asyncGetAreaEastingFromDB()
     {
         allDataLoadInfo.put(LoadState.areaEasting, false);
-        toggleContinueButton();
         String url = getGlobalWebServerURL() + "/get_area_easting.php";
         makeVolleyJSONArrayRequest(url, queue, new JSONArrayResponseWrapper(this) {
             /**
@@ -311,7 +337,6 @@ public class CeramicInputActivity extends AppCompatActivity
     private void asyncGetAreaNorthingFromDB()
     {
         allDataLoadInfo.put(LoadState.areaNorthing, false);
-        toggleContinueButton();
         String url = getGlobalWebServerURL() + "/get_area_northing.php?area_easting="
                 + getSelectedAreaEasting();
         makeVolleyJSONArrayRequest(url, queue, new JSONArrayResponseWrapper(this) {
@@ -357,7 +382,6 @@ public class CeramicInputActivity extends AppCompatActivity
     private void asyncGetContextNumberFromDB()
     {
         allDataLoadInfo.put(LoadState.contextNumber, false);
-        toggleContinueButton();
         String url = getGlobalWebServerURL() + "/get_context_number.php?area_easting="
                 + getSelectedAreaEasting() + "&area_northing=" + getSelectedAreaNorthing();
         Log.v(LOG_TAG, "the url is " + url);
@@ -447,7 +471,7 @@ public class CeramicInputActivity extends AppCompatActivity
      */
     public String getSelectedAreaEasting()
     {
-        return getAreaEastingSpinner().getSelectedItem().toString();
+        return easting.getSelectedItem().toString();
     }
 
     /**
@@ -456,7 +480,7 @@ public class CeramicInputActivity extends AppCompatActivity
      */
     public String getSelectedAreaNorthing()
     {
-        return getAreaNorthingSpinner().getSelectedItem().toString();
+        return northing.getSelectedItem().toString();
     }
 
     /**
@@ -465,7 +489,7 @@ public class CeramicInputActivity extends AppCompatActivity
      */
     public String getSelectedContextNumber()
     {
-        return getContextNumberSpinner().getSelectedItem().toString();
+        return context.getSelectedItem().toString();
     }
 
     /**
@@ -474,43 +498,7 @@ public class CeramicInputActivity extends AppCompatActivity
      */
     public String getSelectedSampleNumber()
     {
-        return getSampleNumberSpinner().getSelectedItem().toString();
-    }
-
-    /**
-     * getters for spinners
-     * @return Returns easting spinner
-     */
-    public Spinner getAreaEastingSpinner()
-    {
-        return (Spinner) findViewById(R.id.easting_spinner);
-    }
-
-    /**
-     * Get northing spinner
-     * @return Returns northing spinner
-     */
-    public Spinner getAreaNorthingSpinner()
-    {
-        return (Spinner) findViewById(R.id.northing_spinner);
-    }
-
-    /**
-     * Get context number spinner
-     * @return Returns context number spinner
-     */
-    public Spinner getContextNumberSpinner()
-    {
-        return (Spinner) findViewById(R.id.context_spinner);
-    }
-
-    /**
-     * Get sample number spinner
-     * @return Returns sample number spinner
-     */
-    public Spinner getSampleNumberSpinner()
-    {
-        return (Spinner) findViewById(R.id.sample_spinner);
+        return sample.getSelectedItem().toString();
     }
 
     /**
@@ -572,7 +560,7 @@ public class CeramicInputActivity extends AppCompatActivity
         tmpIntent.putExtra(AREA_NORTHING, getSelectedAreaNorthing());
         tmpIntent.putExtra(CONTEXT_NUMBER, getSelectedContextNumber());
         tmpIntent.putExtra(SAMPLE_NUMBER, getSelectedSampleNumber());
-        List<String> availableSampleNumbers = CheatSheet.getSpinnerItems(getSampleNumberSpinner());
+        List<String> availableSampleNumbers = CheatSheet.getSpinnerItems(sample);
         tmpIntent.putExtra(ALL_SAMPLE_NUMBER,
                 availableSampleNumbers.toArray(new String[availableSampleNumbers.size()]));
         startActivity(tmpIntent);

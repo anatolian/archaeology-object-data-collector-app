@@ -155,7 +155,7 @@ public class ObjectDetailActivity extends AppCompatActivity implements PhotoFrag
         areaEasting = Integer.parseInt(myBundle.getString("area_easting"));
         areaNorthing = Integer.parseInt(myBundle.getString("area_northing"));
         contextNumber = Integer.parseInt(myBundle.getString("context_number"));
-        sampleNumber = Integer.parseInt(myBundle.getString(""));
+        sampleNumber = Integer.parseInt(myBundle.getString("sample_number"));
         // adding info about object to text field in view
         fillSampleInfo(areaEasting + "", areaNorthing + "",
                 contextNumber + "");
@@ -221,8 +221,9 @@ public class ObjectDetailActivity extends AppCompatActivity implements PhotoFrag
         //check to see if bluetooth is enabled
         if (mBluetoothAdapter == null || !isBluetoothEnabled())
         {
-            Toast.makeText(this, "Bluetooth not supported or disabled in settings",
-                    Toast.LENGTH_SHORT).show();
+            // TODO: Uncomment when WiDeC is integrated
+//            Toast.makeText(this, "Bluetooth not supported or disabled in settings",
+//                    Toast.LENGTH_SHORT).show();
         }
         else
         {
@@ -1408,13 +1409,31 @@ public class ObjectDetailActivity extends AppCompatActivity implements PhotoFrag
      */
     public void goToNextItemIfAvailable(View view)
     {
-        int selectedItemPos = ((Spinner) findViewById(R.id.sample_spinner)).getSelectedItemPosition();
-        int itemCount = ((Spinner) findViewById(R.id.sample_spinner)).getCount();
-        Log.v(LOG_TAG, "selectedItemPos: "+ selectedItemPos);
-        Log.v(LOG_TAG, "count: "+ itemCount);
+        Spinner sample = (Spinner) findViewById(R.id.sample_spinner);
+        int selectedItemPos = sample.getSelectedItemPosition();
+        int itemCount = sample.getCount();
+        Log.v(LOG_TAG, "selectedItemPos: " + selectedItemPos);
+        Log.v(LOG_TAG, "count: " + itemCount);
         if (selectedItemPos + 1 <= itemCount - 1)
         {
-            ((Spinner) findViewById(R.id.sample_spinner)).setSelection(selectedItemPos+1);
+            sample.setSelection(selectedItemPos + 1);
+        }
+    }
+
+    /**
+     * navigate through items in spinner
+     * @param view - button
+     */
+    public void goToPreviousItemIfAvailable(View view)
+    {
+        Spinner sample = (Spinner) findViewById(R.id.sample_spinner);
+        int selectedItemPos = sample.getSelectedItemPosition();
+        int itemCount = sample.getCount();
+        Log.v(LOG_TAG, "selectedItemPos: " + selectedItemPos);
+        Log.v(LOG_TAG, "count: " + itemCount);
+        if (selectedItemPos - 1 >= 0)
+        {
+            sample.setSelection(selectedItemPos - 1);
         }
     }
 
