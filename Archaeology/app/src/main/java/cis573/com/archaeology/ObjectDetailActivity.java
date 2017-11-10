@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.net.wifi.p2p.WifiP2pConfig;
@@ -140,6 +141,13 @@ public class ObjectDetailActivity extends AppCompatActivity implements PhotoFrag
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_object_detail);
+        if (getIntent() != null)
+        {
+            Bitmap bmp = getIntent().getParcelableExtra("preview");
+            ImageView iv = (ImageView) findViewById(R.id.imageView17);
+            iv.setImageBitmap(bmp);
+            iv.setVisibility(View.VISIBLE);
+        }
         queue = Volley.newRequestQueue(this);
         mManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
         mChannel = mManager.initialize(this, getMainLooper(), null);

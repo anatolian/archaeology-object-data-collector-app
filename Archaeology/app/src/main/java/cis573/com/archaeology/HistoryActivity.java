@@ -73,9 +73,9 @@ public class HistoryActivity extends AppCompatActivity
         Cursor resultSet = myDB.getDataSearch(1);
         // add items to the list
         String[] items = {};
-        ArrayList<String> itemList = new ArrayList<String>(Arrays.asList(items));
+        ArrayList<String> itemList = new ArrayList<>(Arrays.asList(items));
         ArrayAdapter<String> adapter =
-                new ArrayAdapter<String>(this, R.layout.list_item, R.id.txtview, itemList);
+                new ArrayAdapter<>(this, R.layout.list_item, R.id.txtview, itemList);
         lv.setAdapter(adapter);
         while (resultSet.moveToNext())
         {

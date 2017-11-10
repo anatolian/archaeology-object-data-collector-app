@@ -3,6 +3,7 @@
 package cis573.com.archaeology;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -11,6 +12,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
@@ -36,6 +39,7 @@ public class CeramicInputActivity extends AppCompatActivity
     RequestQueue queue;
     public ProgressDialog barProgressDialog;
     public HashMap<LoadState, Boolean> allDataLoadInfo;
+    private Bitmap bmp;
     // representing database fields for object
     enum LoadState
     {
@@ -51,6 +55,13 @@ public class CeramicInputActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ceramic_input);
+        if (getIntent() != null)
+        {
+            bmp = getIntent().getParcelableExtra("preview");
+            ImageView iv = (ImageView) findViewById(R.id.imageView16);
+            iv.setImageBitmap(bmp);
+            iv.setVisibility(View.VISIBLE);
+        }
         queue = Volley.newRequestQueue(this);
         // storing load state values
         // TODO: Uncomment
@@ -563,6 +574,7 @@ public class CeramicInputActivity extends AppCompatActivity
         List<String> availableSampleNumbers = CheatSheet.getSpinnerItems(sample);
         tmpIntent.putExtra(ALL_SAMPLE_NUMBER,
                 availableSampleNumbers.toArray(new String[availableSampleNumbers.size()]));
+        tmpIntent.putExtra("preview", bmp);
         startActivity(tmpIntent);
     }
 }

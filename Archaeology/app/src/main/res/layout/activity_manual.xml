@@ -18,7 +18,8 @@
             android:id = "@+id/prev"
             android:scaleType = "fitCenter"
             android:layout_height = "0dp"
-            android:layout_weight = "1"/>
+            android:layout_weight = "1"
+            android:contentDescription="@string/captured_picture"/>
         <EditText
             android:layout_width = "match_parent"
             android:layout_height = "wrap_content"

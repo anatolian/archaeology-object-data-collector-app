@@ -5,7 +5,6 @@
     <ScrollView
         android:layout_width = "match_parent"
         android:layout_height = "match_parent">
-
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -13,7 +12,6 @@
             android:paddingLeft="@dimen/activity_horizontal_margin"
             android:paddingRight="@dimen/activity_horizontal_margin"
             android:paddingTop="@dimen/activity_vertical_margin">
-
             <TextView
                 android:id="@+id/sampleNumberLabel"
                 android:layout_width="wrap_content"
@@ -25,7 +23,6 @@
                 android:text="@string/sample"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textStyle="bold" />
-
             <TextView
                 android:id="@+id/sampleInfo"
                 android:layout_width="wrap_content"
@@ -36,14 +33,12 @@
                 android:text=""
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textStyle="bold" />
-
             <Spinner
                 android:id="@+id/sample_spinner"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:layout_toEndOf="@+id/sampleInfo" />
-
             <Button
                 android:id="@+id/nextObjectButton"
                 android:layout_width="wrap_content"
@@ -53,7 +48,6 @@
                 android:layout_toEndOf="@+id/previousObjectButton"
                 android:onClick="goToNextItemIfAvailable"
                 android:text="@string/next" />
-
             <Button
                 android:id="@+id/previousObjectButton"
                 android:layout_width="wrap_content"
@@ -62,7 +56,6 @@
                 android:layout_below="@+id/sampleInfo"
                 android:onClick="goToPreviousItemIfAvailable"
                 android:text="@string/previous" />
-
             <TextView
                 android:id="@+id/weightInput"
                 android:layout_width="150dp"
@@ -70,7 +63,6 @@
                 android:layout_toStartOf="@+id/textView26"
                 android:gravity="end"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
-
             <TextView
                 android:id="@+id/textView26"
                 android:layout_width="wrap_content"
@@ -79,7 +71,6 @@
                 android:layout_alignParentEnd="true"
                 android:text="@string/gram"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
-
             <Button
                 android:id="@+id/button16"
                 android:layout_width="wrap_content"
@@ -89,7 +80,6 @@
                 android:layout_alignEnd="@+id/textView26"
                 android:onClick="startRecordWeight"
                 android:text="@string/record_weight" />
-
             <TableLayout
                 android:id="@+id/tableLayout"
                 android:layout_width="match_parent"
@@ -98,11 +88,9 @@
                 android:layout_below="@+id/sampleNumberLabel"
                 android:layout_marginTop="30dp"
                 android:stretchColumns="*">
-
                 <TableRow
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
-
                     <TextView
                         android:id="@+id/textView2"
                         android:layout_width="1dp"
@@ -110,7 +98,6 @@
                         android:text="@string/surface"
                         android:textAppearance="?android:attr/textAppearanceMedium"
                         android:textStyle="bold" />
-
                     <TextView
                         android:id="@+id/textView28"
                         android:layout_width="1dp"
@@ -118,7 +105,6 @@
                         android:text="@string/hue"
                         android:textAppearance="?android:attr/textAppearanceMedium"
                         android:textStyle="bold" />
-
                     <TextView
                         android:id="@+id/textView29"
                         android:layout_width="1dp"
@@ -126,7 +112,6 @@
                         android:text="@string/lightness"
                         android:textAppearance="?android:attr/textAppearanceMedium"
                         android:textStyle="bold" />
-
                     <TextView
                         android:id="@+id/textView30"
                         android:layout_width="1dp"
@@ -135,12 +120,10 @@
                         android:textAppearance="?android:attr/textAppearanceMedium"
                         android:textStyle="bold" />
                 </TableRow>
-
                 <TableRow
                     android:id="@+id/exteriorColorRow"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
-
                     <TextView
                         android:id="@+id/textView31"
                         android:layout_width="1dp"
@@ -148,21 +131,18 @@
                         android:text="@string/exterior_color"
                         android:textAppearance="?android:attr/textAppearanceMedium"
                         android:textStyle="italic" />
-
                     <TextView
                         android:id="@+id/exterior_color_hue"
                         android:layout_width="1dp"
                         android:layout_height="wrap_content"
                         android:layout_column="1"
                         android:textAppearance="?android:attr/textAppearanceMedium" />
-
                     <TextView
                         android:id="@+id/exterior_color_lightness"
                         android:layout_width="1dp"
                         android:layout_height="wrap_content"
                         android:layout_column="2"
                         android:textAppearance="?android:attr/textAppearanceMedium" />
-
                     <TextView
                         android:id="@+id/exterior_color_chroma"
                         android:layout_width="1dp"
@@ -170,12 +150,10 @@
                         android:layout_column="3"
                         android:textAppearance="?android:attr/textAppearanceMedium" />
                 </TableRow>
-
                 <TableRow
                     android:id="@+id/interiorColorRow"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
-
                     <TextView
                         android:id="@+id/textView35"
                         android:layout_width="1dp"
@@ -183,21 +161,18 @@
                         android:text="@string/interior_color"
                         android:textAppearance="?android:attr/textAppearanceMedium"
                         android:textStyle="italic" />
-
                     <TextView
                         android:id="@+id/interior_color_hue"
                         android:layout_width="1dp"
                         android:layout_height="wrap_content"
                         android:layout_column="1"
                         android:textAppearance="?android:attr/textAppearanceMedium" />
-
                     <TextView
                         android:id="@+id/interior_color_lightness"
                         android:layout_width="1dp"
                         android:layout_height="wrap_content"
                         android:layout_column="2"
                         android:textAppearance="?android:attr/textAppearanceMedium" />
-
                     <TextView
                         android:id="@+id/interior_color_chroma"
                         android:layout_width="1dp"
@@ -206,7 +181,6 @@
                         android:textAppearance="?android:attr/textAppearanceMedium" />
                 </TableRow>
             </TableLayout>
-
             <Button
                 android:id="@+id/connectToCameraButton"
                 android:layout_width="wrap_content"
@@ -216,7 +190,6 @@
                 android:enabled="false"
                 android:onClick="connectToRemoteCamera"
                 android:text="@string/no_remote_camera" />
-
             <Button
                 android:id="@+id/button26"
                 android:layout_width="wrap_content"
@@ -225,13 +198,11 @@
                 android:layout_below="@+id/tableLayout"
                 android:onClick="addPhotoAction"
                 android:text="@string/add_photo" />
-
             <HorizontalScrollView
                 android:id="@+id/photoScrollWrapper"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:layout_below="@+id/connectToCameraButton">
-
                 <fragment
                     android:id="@+id/fragment"
                     android:name="cis573.com.archaeology.PhotoFragment"
@@ -239,18 +210,25 @@
                     android:layout_height="wrap_content"
                     tools:layout="@layout/photo_fragment" />
             </HorizontalScrollView>
-
+            <ImageView
+                android:layout_width = "match_parent"
+                android:visibility = "gone"
+                android:layout_marginTop = "10dp"
+                android:id = "@+id/imageView17"
+                android:scaleType = "fitCenter"
+                android:layout_height = "0dp"
+                android:contentDescription="@string/captured_picture"
+                android:layout_below="@+id/connectToCameraButton"/>
             <Button
                 android:id="@+id/correct_color"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentStart="true"
-                android:layout_below="@+id/connectToCameraButton"
+                android:layout_below="@+id/imageView17"
                 android:layout_marginTop="187dp"
                 android:onClick="goToImageGallery"
                 android:text="@string/correct_color" />
-
             <Button
                 android:id="@+id/wifiActivity"
                 android:layout_width="wrap_content"
