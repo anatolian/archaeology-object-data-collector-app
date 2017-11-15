@@ -133,5 +133,23 @@
     <string name="test">testjson.txt</string>
     <string name="search_history">Search history</string>
     <string name="title_activity_test">TestActivity</string>
-    <string name = "captured_picture">Captured Picture</string>
+    <string name="captured_picture">Captured Picture</string>
+    <string name="pair_device">Pair New Device</string>
+    <string name="paired">Paired Devices</string>
+    <string name="visualization">Visualization</string>
+    <string name="session_report">Session Report</string>
+    <string name = "deviation">Std. Deviation</string>
+    <string name = "total_frmt">Total: %d</string>
+    <string name = "num_frmt">%d</string>
+    <string name = "average_weight">Average Weight</string>
+    <string name = "average_size">Average Size</string>
+    <string name = "glass">Glass</string>
+    <string name = "ceramic">Ceramic</string>
+    <string name = "metal">Metal</string>
+    <string name = "stone">Stone</string>
+    <string name = "organic">Organic</string>
+    <string name = "collected"># Collected</string>
+    <string name = "configure_camera">Connect to Camera</string>
+    <string name = "update_bluetooth">Record from Scale</string>
+    <string name = "weight_int_frmt">Weight" %dg</string>
 </resources>

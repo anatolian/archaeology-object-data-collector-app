@@ -13,12 +13,6 @@ import java.util.UUID;
 public class StateStatic
 {
     // This class holds global state variables. This class should be only used in static way
-    // tells you whether you need to go to CeramicInput or CeramicInput2 & ObjectActivity or
-    // ObjectActivity2
-    public enum DataType
-    {
-        type1, type2
-    }
     public static final String LOG_TAG = "Ceramic App";
     public static final String LOG_TAG_WIFI_DIRECT = "WIFIDIRECT";
     public static final String LOG_TAG_BLUETOOTH = "BLUETOOTH";
@@ -27,7 +21,8 @@ public class StateStatic
     public static final int MESSAGE_STATUS_CHANGE = 502;
     public static final int REQUEST_ENABLE_BT = 301;
     public static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
-    public static final String DEFAULT_WEB_SERVER_URL = "http://192.168.1.27";
+    public static final String DEFAULT_WEB_SERVER_URL
+            = "https://thawing-plains-16187.herokuapp.com/web/";
     public static final String DEFAULT_CAMERA_MAC = "bc:f5:ac:dc:f3:7e";
     // 30 minutes
     public static final long DEFAULT_CALIBRATION_INTERVAL = 1800000;
@@ -47,14 +42,13 @@ public class StateStatic
     // offset values that help you to locate the correct fields in the data tables to store
     // information. the global webserver is being set to a default value
     // need to make sure that app is able to find ip address on its own
-    private static String globalWebServerURL = "https://thawing-plains-16187.herokuapp.com/web";
+    private static String globalWebServerURL = DEFAULT_WEB_SERVER_URL;
     // DEFAULTWEBSERVERURL; connection to current mac camera address
     private static String globalCameraMAC = DEFAULT_CAMERA_MAC;
     // global current object most likely is used to track the current object from the database that
     // you are trying to view.
     private static long remoteCameraCalibrationInterval = DEFAULT_CALIBRATION_INTERVAL;
     private static long tabletCameraCalibrationInterval = DEFAULT_CALIBRATION_INTERVAL;
-    private static DataType globalDataStructureType = DataType.type2;
     private static int scaleTare = 0;
     // variable to track connections
     private static boolean isRemoteCameraSelect = true;
@@ -106,24 +100,6 @@ public class StateStatic
     public static String getGlobalPhotoSavePath()
     {
         return DEFAULT_PHOTO_PATH;
-    }
-
-    /**
-     * Get data structure type
-     * @return Returns data structure type
-     */
-    public static DataType getGlobalDataStructureType()
-    {
-        return globalDataStructureType;
-    }
-
-    /**
-     * Change data structure type
-     * @param globalDataStructureType - new data structure type
-     */
-    public static void setGlobalDataStructureType(DataType globalDataStructureType)
-    {
-        StateStatic.globalDataStructureType = globalDataStructureType;
     }
 
     /**

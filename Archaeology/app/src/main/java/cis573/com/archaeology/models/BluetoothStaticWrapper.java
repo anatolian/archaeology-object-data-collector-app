@@ -1,6 +1,6 @@
 // Bluetooth communication
 // @author: msenol86, ygowda
-package cis573.com.archaeology.services;
+package cis573.com.archaeology.models;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;

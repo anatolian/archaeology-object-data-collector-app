@@ -25,7 +25,7 @@ import java.util.List;
 import cis573.com.archaeology.util.CheatSheet;
 import cis573.com.archaeology.R;
 import cis573.com.archaeology.util.StateStatic;
-import cis573.com.archaeology.services.JSONArrayResponseWrapper;
+import cis573.com.archaeology.models.JSONArrayResponseWrapper;
 import static cis573.com.archaeology.util.CheatSheet.goToSettings;
 import static cis573.com.archaeology.util.StateStatic.ALL_SAMPLE_NUMBER;
 import static cis573.com.archaeology.util.StateStatic.AREA_EASTING;
@@ -102,6 +102,38 @@ public class CeramicInputActivity extends AppCompatActivity
         {
             findViewById(R.id.continue_button).setVisibility(View.INVISIBLE);
         }
+        initializeButtons();
+    }
+
+    /**
+     * Initialize the buttons
+     */
+    private void initializeButtons()
+    {
+        Button visualization = (Button) findViewById(R.id.visualization_button);
+        visualization.setOnClickListener(new View.OnClickListener() {
+            /**
+             * User clicked Visualization
+             * @param view - button view
+             */
+            @Override
+            public void onClick(View view)
+            {
+                onVisualizationButtonClick();
+            }
+        });
+        Button sessionsReport = (Button) findViewById(R.id.sessionReport_button);
+        sessionsReport.setOnClickListener(new View.OnClickListener() {
+            /**
+             * User clicked Sessions
+             * @param view - the button
+             */
+            @Override
+            public void onClick(View view)
+            {
+                onSessionReportButtonClick();
+            }
+        });
     }
 
     /**
@@ -554,16 +586,6 @@ public class CeramicInputActivity extends AppCompatActivity
     }
 
     /**
-     * Go to previous item
-     * @param view - previous button
-     */
-    public void goPrevious(View view)
-    {
-        cancelAllVolleyRequests(queue);
-        finish();
-    }
-
-    /**
      * once all the data has been received you can go to the ObjectDetailActivity, which can call
      * the camera intent
      * @param view - object view
@@ -581,5 +603,23 @@ public class CeramicInputActivity extends AppCompatActivity
                 availableSampleNumbers.toArray(new String[availableSampleNumbers.size()]));
         tmpIntent.putExtra("preview", bmp);
         startActivity(tmpIntent);
+    }
+
+    /**
+     * User pressed Visualization
+     */
+    public void onVisualizationButtonClick()
+    {
+        Intent i = new Intent(this, VisualizationActivity.class);
+        startActivityForResult(i, 1);
+    }
+
+    /**
+     * User pressed SessionReport
+     */
+    public void onSessionReportButtonClick()
+    {
+        Intent i = new Intent(this, SessionReportActivity.class);
+        startActivityForResult(i, 1);
     }
 }

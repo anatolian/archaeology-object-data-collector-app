@@ -1,6 +1,6 @@
 // JSONArray Response
 // @author: msenol
-package cis573.com.archaeology.services;
+package cis573.com.archaeology.models;
 import android.content.Context;
 import com.android.volley.VolleyError;
 import org.json.JSONArray;

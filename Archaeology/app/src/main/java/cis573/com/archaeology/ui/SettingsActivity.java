@@ -1,33 +1,36 @@
 // Settings Screen
-// @author: msenol86, ygowda
+// @author: msenol86, ygowda, JPT2, matthewliang, ashutosh56
 package cis573.com.archaeology.ui;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Spinner;
+import java.util.Set;
 import cis573.com.archaeology.R;
-import static cis573.com.archaeology.util.StateStatic.*;
+import cis573.com.archaeology.services.Session;
 import static cis573.com.archaeology.util.StateStatic.DEFAULT_CALIBRATION_INTERVAL;
 import static cis573.com.archaeology.util.StateStatic.DEFAULT_WEB_SERVER_URL;
 import static cis573.com.archaeology.util.StateStatic.DEFAULT_CAMERA_MAC;
 import static cis573.com.archaeology.util.StateStatic.getGlobalCameraMAC;
-import static cis573.com.archaeology.util.StateStatic.getGlobalDataStructureType;
 import static cis573.com.archaeology.util.StateStatic.getGlobalWebServerURL;
 import static cis573.com.archaeology.util.StateStatic.getRemoteCameraCalibrationInterval;
 import static cis573.com.archaeology.util.StateStatic.getTabletCameraCalibrationInterval;
 import static cis573.com.archaeology.util.StateStatic.isIsRemoteCameraSelect;
 import static cis573.com.archaeology.util.StateStatic.setGlobalCameraMAC;
-import static cis573.com.archaeology.util.StateStatic.setGlobalDataStructureType;
 import static cis573.com.archaeology.util.StateStatic.setGlobalWebServerURL;
 import static cis573.com.archaeology.util.StateStatic.setIsRemoteCameraSelect;
 import static cis573.com.archaeology.util.StateStatic.setRemoteCameraCalibrationInterval;
 import static cis573.com.archaeology.util.StateStatic.setTabletCameraCalibrationInterval;
 public class SettingsActivity extends AppCompatActivity
 {
+    String[] devices;
     /**
      * Launch the activity
      * @param savedInstanceState - state from memory
@@ -37,6 +40,42 @@ public class SettingsActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
+        // Populate the currently paired devices list. Add currently paired devices to list
+        getPairedDevices();
+        if (devices != null)
+        {
+            ListView list = (ListView) findViewById(R.id.paired_devices_list);
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(list.getContext(),
+                    android.R.layout.simple_list_item_1, devices);
+            list.setAdapter(adapter);
+            list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                /**
+                 * An item was selected
+                 * @param parent   - the spinner
+                 * @param view     - the container view
+                 * @param position - the selected item
+                 * @param id       - the item's id
+                 */
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+                {
+                    Set<BluetoothDevice> pairedDevices = BluetoothAdapter.getDefaultAdapter()
+                            .getBondedDevices();
+                    if (pairedDevices.size() > 0)
+                    {
+                        // There are paired devices. Get the name and address of each paired device.
+                        for (BluetoothDevice device: pairedDevices)
+                        {
+                            String deviceName = device.getName();
+                            if (deviceName.equals(devices[position]))
+                            {
+                                Session.deviceName = deviceName;
+                            }
+                        }
+                    }
+                }
+            });
+        }
         EditText webServerEditText = (EditText) findViewById(R.id.settingsWebServiceUrl);
         EditText cameraIP = (EditText) findViewById(R.id.settingsCameraIP);
         EditText calibrationInterval = (EditText) findViewById(R.id.calibrationInterval);
@@ -72,42 +111,34 @@ public class SettingsActivity extends AppCompatActivity
         {
             cameraSelectBox.setSelection(0);
         }
-        Spinner dataStructureTypeSelectBox = (Spinner) findViewById(R.id.data_structure_type_spinner);
-        dataStructureTypeSelectBox.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            /**
-             * User selected item
-             * @param parent - spinner
-             * @param view - selected item
-             * @param position - item position
-             * @param id - item id
-             */
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
-            {
-                dataStructureSelect(view);
-            }
-
-            /**
-             * Nothing selected
-             * @param parent - spinner
-             */
-            @Override
-            public void onNothingSelected(AdapterView<?> parent)
-            {
-            }
-        });
-        if (getGlobalDataStructureType().equals(DataType.type1))
-        {
-            dataStructureTypeSelectBox.setSelection(0);
-        }
-        else
-        {
-            dataStructureTypeSelectBox.setSelection(1);
-        }
         webServerEditText.setText(getGlobalWebServerURL());
         cameraIP.setText(getGlobalCameraMAC());
         calibrationInterval.setText(getString(R.string.long_frmt,
                 getRemoteCameraCalibrationInterval()));
+    }
+
+    /**
+     * Get the connected devices
+     */
+    private void getPairedDevices()
+    {
+        BluetoothAdapter ba = BluetoothAdapter.getDefaultAdapter();
+        if (ba != null)
+        {
+            Set<BluetoothDevice> pairedDevices = ba.getBondedDevices();
+            if (pairedDevices.size() > 0)
+            {
+                // There are paired devices. Get the name and address of each paired device.
+                devices = new String[pairedDevices.size()];
+                int index = 0;
+                for (BluetoothDevice device: pairedDevices)
+                {
+                    String deviceName = device.getName();
+                    devices[index] = deviceName;
+                    index++;
+                }
+            }
+        }
     }
 
     /**
@@ -116,7 +147,7 @@ public class SettingsActivity extends AppCompatActivity
      */
     public void saveSettings(View view)
     {
-        setGlobalWebServerURL(getWebserverFromLayout());
+        setGlobalWebServerURL(getWebServerFromLayout());
         if (isTabletCameraSelectedOnLayout())
         {
             setTabletCameraCalibrationInterval(getCalibrationIntervalFromLayout());
@@ -152,48 +183,6 @@ public class SettingsActivity extends AppCompatActivity
     }
 
     /**
-     * Cancel update
-     * @param view - button
-     */
-    public void cancelSettings(View view)
-    {
-        finish();
-    }
-
-    /**
-     * Populate action overflow
-     * @param menu - overflow actions
-     * @return Returns true
-     */
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu)
-    {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_settings, menu);
-        return true;
-    }
-
-    /**
-     * User selected action
-     * @param item - action selected
-     * @return Returns whether the action succeeded
-     */
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item)
-    {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        // noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings)
-        {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    /**
      * Camera
      * @param view - button
      */
@@ -220,27 +209,10 @@ public class SettingsActivity extends AppCompatActivity
     }
 
     /**
-     * Data structure selected
-     * @param view - button
-     */
-    public void dataStructureSelect(View view)
-    {
-        Spinner tmp = (Spinner) findViewById(R.id.data_structure_type_spinner);
-        if(tmp.getSelectedItemPosition() == 0)
-        {
-            setGlobalDataStructureType(DataType.type1);
-        }
-        else if(tmp.getSelectedItemPosition() == 1)
-        {
-            setGlobalDataStructureType(DataType.type2);
-        }
-    }
-
-    /**
      * Get the server location
      * @return @return Returns the server location
      */
-    public String getWebserverFromLayout()
+    public String getWebServerFromLayout()
     {
         EditText tmpET = (EditText) findViewById(R.id.settingsWebServiceUrl);
         return tmpET.getText().toString().trim();
@@ -274,5 +246,16 @@ public class SettingsActivity extends AppCompatActivity
     {
         Spinner cameraSelectBox = (Spinner) findViewById(R.id.cameraSelectBox);
         return (cameraSelectBox.getSelectedItemPosition() == 0);
+    }
+
+    /**
+     * Opens phone settings to pair devices
+     * @param v - the button
+     */
+    public void onPairDeviceClick(View v)
+    {
+        Intent intentOpenBluetoothSettings = new Intent();
+        intentOpenBluetoothSettings.setAction(android.provider.Settings.ACTION_BLUETOOTH_SETTINGS);
+        startActivity(intentOpenBluetoothSettings);
     }
 }

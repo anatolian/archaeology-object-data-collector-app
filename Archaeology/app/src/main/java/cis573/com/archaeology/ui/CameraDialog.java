@@ -19,12 +19,12 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import cis573.com.archaeology.util.CheatSheet;
-import cis573.com.archaeology.services.ImageResponseWrapper;
-import cis573.com.archaeology.services.JSONObjectResponseWrapper;
+import cis573.com.archaeology.models.ImageResponseWrapper;
+import cis573.com.archaeology.models.JSONObjectResponseWrapper;
 import cis573.com.archaeology.R;
 import cis573.com.archaeology.util.Utils;
 import cis573.com.archaeology.services.VolleyWrapper;
-import cis573.com.archaeology.services.AfterImageSavedMethodWrapper;
+import cis573.com.archaeology.models.AfterImageSavedMethodWrapper;
 import static cis573.com.archaeology.util.StateStatic.LOG_TAG_WIFI_DIRECT;
 import static cis573.com.archaeology.util.StateStatic.showToastError;
 public class CameraDialog

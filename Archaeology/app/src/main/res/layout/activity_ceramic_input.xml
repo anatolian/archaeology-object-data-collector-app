@@ -14,84 +14,81 @@
         android:scaleType = "fitCenter"
         android:layout_height = "0dp"
         android:contentDescription="@string/captured_picture"/>
-    <ScrollView
+    <TableLayout
+        android:layout_below = "@+id/imageView16"
+        android:id = "@+id/table"
         android:layout_width = "match_parent"
         android:layout_height = "match_parent"
-        android:layout_above = "@+id/linearLayout2">
-        <RelativeLayout
+        android:stretchColumns = "*">
+        <TableRow
             android:layout_width = "match_parent"
-            android:layout_height = "wrap_content">
-            <TableLayout
-                android:layout_width = "match_parent"
-                android:layout_height = "match_parent"
-                android:stretchColumns = "*">
-                <TableRow
-                    android:layout_width = "match_parent"
-                    android:layout_height = "match_parent">
-                    <TextView
-                        android:layout_width = "wrap_content"
-                        android:layout_height = "wrap_content"
-                        android:textAppearance = "?android:attr/textAppearanceMedium"
-                        android:text = "@string/easting"
-                        android:textAlignment="gravity"
-                        android:id = "@+id/textView18"
-                        android:gravity = "start"/>
-                    <Spinner
-                        android:layout_width = "1dp"
-                        android:layout_height = "wrap_content"
-                        android:id = "@+id/easting_spinner"/>
-                </TableRow>
-                <TableRow
-                    android:layout_width = "match_parent"
-                    android:layout_height = "match_parent">
-                    <TextView
-                        android:layout_width = "wrap_content"
-                        android:layout_height = "wrap_content"
-                        android:textAppearance = "?android:attr/textAppearanceMedium"
-                        android:text = "@string/northing"
-                        android:id = "@+id/textView19"
-                        android:gravity = "start"
-                        android:textAlignment="gravity"/>
-                    <Spinner
-                        android:layout_width = "1dp"
-                        android:layout_height = "wrap_content"
-                        android:id = "@+id/northing_spinner"/>
-                </TableRow>
-                <TableRow
-                    android:layout_width = "match_parent"
-                    android:layout_height = "match_parent">
-                    <TextView
-                        android:layout_width = "wrap_content"
-                        android:layout_height = "wrap_content"
-                        android:textAppearance = "?android:attr/textAppearanceMedium"
-                        android:text = "@string/context_number"
-                        android:id = "@+id/textView20"
-                        android:gravity = "start"
-                        android:textAlignment="gravity"/>
-                    <Spinner
-                        android:layout_width = "1dp"
-                        android:layout_height = "wrap_content"
-                        android:id = "@+id/sample_spinner"/>
-                </TableRow>
-                <TableRow
-                    android:layout_width = "match_parent"
-                    android:layout_height = "match_parent">
-                    <TextView
-                        android:layout_width = "wrap_content"
-                        android:layout_height = "wrap_content"
-                        android:textAppearance = "?android:attr/textAppearanceMedium"
-                        android:text = "@string/sample_number"
-                        android:id = "@+id/textView21"
-                        android:gravity = "start"
-                        android:textAlignment="gravity"/>
-                    <Spinner
-                        android:layout_width = "1dp"
-                        android:layout_height = "wrap_content"
-                        android:id = "@+id/context_spinner"/>
-                </TableRow>
-            </TableLayout>
-        </RelativeLayout>
-    </ScrollView>
+            android:layout_height = "match_parent">
+            <TextView
+                android:id="@+id/textView18"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:text="@string/easting"
+                android:textAlignment="gravity"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@android:color/black" />
+            <Spinner
+                android:layout_width = "1dp"
+                android:layout_height = "wrap_content"
+                android:id = "@+id/easting_spinner"/>
+        </TableRow>
+        <TableRow
+            android:layout_width = "match_parent"
+            android:layout_height = "match_parent">
+            <TextView
+                android:id="@+id/textView19"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:text="@string/northing"
+                android:textAlignment="gravity"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@android:color/black" />
+            <Spinner
+                android:layout_width = "1dp"
+                android:layout_height = "wrap_content"
+                android:id = "@+id/northing_spinner"/>
+        </TableRow>
+        <TableRow
+            android:layout_width = "match_parent"
+            android:layout_height = "match_parent">
+            <TextView
+                android:id="@+id/textView20"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:text="@string/context_number"
+                android:textAlignment="gravity"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@android:color/black" />
+            <Spinner
+                android:layout_width = "1dp"
+                android:layout_height = "wrap_content"
+                android:id = "@+id/sample_spinner"/>
+        </TableRow>
+        <TableRow
+            android:layout_width = "match_parent"
+            android:layout_height = "match_parent">
+            <TextView
+                android:id="@+id/textView21"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:text="@string/sample_number"
+                android:textAlignment="gravity"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@android:color/black" />
+            <Spinner
+                android:layout_width = "1dp"
+                android:layout_height = "wrap_content"
+                android:id = "@+id/context_spinner"/>
+        </TableRow>
+    </TableLayout>
     <LinearLayout
         android:orientation = "horizontal"
         android:layout_width = "match_parent"
@@ -101,18 +98,30 @@
         android:weightSum = "2"
         android:id = "@+id/linearLayout2">
         <Button
-            android:layout_width = "wrap_content"
-            android:layout_height = "wrap_content"
-            android:text = "@string/cancel"
-            android:id = "@+id/button13"
-            android:layout_weight = "1"
-            android:onClick = "goPrevious"/>
-        <Button
-            android:layout_width = "wrap_content"
+            android:layout_width = "match_parent"
             android:layout_height = "wrap_content"
             android:text = "@string/continue_string"
             android:id = "@+id/continue_button"
             android:layout_weight = "1"
             android:onClick = "goToObjectDetail"/>
     </LinearLayout>
+    <Button
+        android:id="@+id/visualization_button"
+        style="?android:textAppearanceSmall"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/linearLayout2"
+        android:layout_alignParentStart="true"
+        android:text="@string/visualization"
+        android:textColor="@android:color/black"
+        android:textStyle="bold" />
+    <Button
+        android:id="@+id/sessionReport_button"
+        style="?android:textAppearanceSmall"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/visualization_button"
+        android:text="@string/session_report"
+        android:textColor="@android:color/black"
+        android:textStyle="bold" />
 </RelativeLayout>

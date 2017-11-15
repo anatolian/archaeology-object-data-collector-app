@@ -17,8 +17,6 @@ import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -37,7 +35,7 @@ import cis573.com.archaeology.R;
 import cis573.com.archaeology.util.Utils;
 import cis573.com.archaeology.services.VolleyWrapper;
 import cis573.com.archaeology.services.WiFiDirectBroadcastReceiver;
-import cis573.com.archaeology.services.JSONObjectResponseWrapper;
+import cis573.com.archaeology.models.JSONObjectResponseWrapper;
 import static cis573.com.archaeology.util.StateStatic.LOG_TAG_WIFI_DIRECT;
 import static cis573.com.archaeology.util.StateStatic.showToastError;
 // camera can be accessed through this class as well as ObjectActivity classes
@@ -84,38 +82,6 @@ public class MyWiFiActivity extends AppCompatActivity
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
-    }
-
-    /**
-     * Populate action overflow
-     * @param menu - overflow actions
-     * @return Returns true
-     */
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu)
-    {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_my_wi_fi, menu);
-        return true;
-    }
-
-    /**
-     * Action selected from overflow
-     * @param item - selected action
-     * @return Returns whether the action succeeded
-     */
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item)
-    {
-        // Handle action bar item clicks here. The action bar will automatically handle clicks on
-        // the Home/Up button, so long as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        // noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings)
-        {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     /**
@@ -261,11 +227,11 @@ public class MyWiFiActivity extends AppCompatActivity
      * Show found IP address
      * @param view - view for IP address
      */
-    public void showIpAddress(View view)
+    public void showIPAddress(View view)
     {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         Log.v(LOG_TAG_WIFI_DIRECT, "remote macAddress " + connectedMACAddress);
-        Log.v(LOG_TAG_WIFI_DIRECT, "my macAddress "  + getMyMacAddress());
+        Log.v(LOG_TAG_WIFI_DIRECT, "my macAddress "  + getMyMACAddress());
         builder.setTitle("IP Address").setMessage(Utils.getIPFromMac());
         builder.create().show();
     }
@@ -275,7 +241,7 @@ public class MyWiFiActivity extends AppCompatActivity
      * connect with the server as well
      * @return Returns MAC address
      */
-    public String getMyMacAddress()
+    public String getMyMACAddress()
     {
         WifiManager manager = (WifiManager) getApplicationContext()
                 .getSystemService(Context.WIFI_SERVICE);
@@ -288,7 +254,7 @@ public class MyWiFiActivity extends AppCompatActivity
      * @param ip - IP to connect to
      * @return Returns IP's URL
      */
-    private String buildApiURLFromIP(String ip)
+    private String buildAPIURLFromIP(String ip)
     {
         return "http://" + ip + ":8080/sony/camera";
     }
@@ -299,7 +265,7 @@ public class MyWiFiActivity extends AppCompatActivity
      */
     public void getApiCommands(View view)
     {
-        String url = buildApiURLFromIP(Utils.getIPFromMac());
+        String url = buildAPIURLFromIP(Utils.getIPFromMac());
         try
         {
             VolleyWrapper.makeVolleySonyApiGetApiCommands(url, queue, requestID++,
@@ -337,7 +303,7 @@ public class MyWiFiActivity extends AppCompatActivity
      */
     public void takePhoto(View view)
     {
-        String url = buildApiURLFromIP(Utils.getIPFromMac());
+        String url = buildAPIURLFromIP(Utils.getIPFromMac());
         try
         {
             VolleyWrapper.makeVolleySonyApiTakePhotoRequest(url, queue, requestID++,
@@ -429,7 +395,7 @@ public class MyWiFiActivity extends AppCompatActivity
      */
     public void startLiveView(final View view)
     {
-        final String url = buildApiURLFromIP(Utils.getIPFromMac());
+        final String url = buildAPIURLFromIP(Utils.getIPFromMac());
         try
         {
             VolleyWrapper.makeVolleySonyApiStartLiveViewRequest(url, queue, requestID++,
@@ -496,7 +462,7 @@ public class MyWiFiActivity extends AppCompatActivity
      */
     public void stopLiveView(View view)
     {
-        final String url = buildApiURLFromIP(Utils.getIPFromMac());
+        final String url = buildAPIURLFromIP(Utils.getIPFromMac());
         try
         {
             VolleyWrapper.makeVolleySonyApiStopLiveViewRequest(url, queue, requestID++,
@@ -534,7 +500,7 @@ public class MyWiFiActivity extends AppCompatActivity
      */
     public void zoomIn(View view)
     {
-        final String url = buildApiURLFromIP(Utils.getIPFromMac());
+        final String url = buildAPIURLFromIP(Utils.getIPFromMac());
         try
         {
             VolleyWrapper.makeVolleySonyApiActZoomRequest("in", queue, url, requestID++,
@@ -572,7 +538,7 @@ public class MyWiFiActivity extends AppCompatActivity
      */
     public void callSpecificApiFunction(View view)
     {
-        final String url = buildApiURLFromIP(Utils.getIPFromMac());
+        final String url = buildAPIURLFromIP(Utils.getIPFromMac());
         final String functionName = getCustomFunctionNameFromLayout();
         try
         {

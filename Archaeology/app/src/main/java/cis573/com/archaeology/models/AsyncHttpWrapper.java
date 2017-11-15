@@ -1,6 +1,6 @@
 // Async HTTP wrapper
 // @author: msenol
-package cis573.com.archaeology.services;
+package cis573.com.archaeology.models;
 import android.app.Activity;
 import android.net.Uri;
 import android.util.Log;
@@ -9,6 +9,9 @@ import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.TextHttpResponseHandler;
 import java.io.File;
 import java.io.FileNotFoundException;
+
+import cis573.com.archaeology.models.AsyncHttpCallbackWrapper;
+
 import static cis573.com.archaeology.util.StateStatic.LOG_TAG;
 import static cis573.com.archaeology.util.StateStatic.showToastError;
 public class AsyncHttpWrapper

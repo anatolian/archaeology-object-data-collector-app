@@ -1,6 +1,6 @@
 // Image Response
 // @author: msenol
-package cis573.com.archaeology.services;
+package cis573.com.archaeology.models;
 import android.graphics.Bitmap;
 import com.android.volley.VolleyError;
 abstract public class ImageResponseWrapper

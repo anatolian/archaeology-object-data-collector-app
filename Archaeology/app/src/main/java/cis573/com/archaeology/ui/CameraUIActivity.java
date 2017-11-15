@@ -381,8 +381,6 @@ public class CameraUIActivity extends AppCompatActivity
         recognizedText = recognizedText.trim();
         cam.stopCamera();
         cam.startCamera();
-        // TODO: Make sure we don't need manual search
-        //Intent intent = new Intent(getApplicationContext(), CeramicInputActivity.class);
         Intent intent = new Intent(getApplicationContext(), ManualActivity.class);
         intent.putExtra("search", recognizedText);
         intent.putExtra("preview", toSend);
@@ -429,8 +427,6 @@ public class CameraUIActivity extends AppCompatActivity
      */
     public void manual(View view)
     {
-        // TODO: make sure we don't need manual search
-//        Intent intent = new Intent(this, ManualActivity.class);
         Intent intent = new Intent(this, CeramicInputActivity.class);
         startActivity(intent);
     }

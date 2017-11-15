@@ -4,6 +4,7 @@ package cis573.com.archaeology.ui;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -43,13 +44,16 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Set;
 import cis573.com.archaeology.R;
+import cis573.com.archaeology.services.BluetoothService;
+import cis573.com.archaeology.services.Session;
 import cis573.com.archaeology.util.StateStatic;
 import cis573.com.archaeology.util.Utils;
 import cis573.com.archaeology.services.WiFiDirectBroadcastReceiver;
-import cis573.com.archaeology.services.AfterImageSavedMethodWrapper;
-import cis573.com.archaeology.services.BluetoothStaticWrapper;
-import cis573.com.archaeology.services.JSONObjectResponseWrapper;
+import cis573.com.archaeology.models.AfterImageSavedMethodWrapper;
+import cis573.com.archaeology.models.BluetoothStaticWrapper;
+import cis573.com.archaeology.models.JSONObjectResponseWrapper;
 import cis573.com.archaeology.services.NutriScaleBroadcastReceiver;
 import cis573.com.archaeology.util.CheatSheet;
 import static cis573.com.archaeology.util.CheatSheet.deleteOriginalAndThumbnailPhoto;
@@ -111,6 +115,37 @@ public class ObjectDetailActivity extends AppCompatActivity
             }
         }
     };
+    // The BroadcastReceiver that listens for bluetooth broadcasts
+    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        /**
+         * Broadcast received
+         * @param context - current app context
+         * @param intent - calling intent
+         */
+        @Override
+        public void onReceive(Context context, Intent intent)
+        {
+            String action = intent.getAction();
+            BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+            if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action))
+            {
+                // Device is now connected
+                Toast.makeText(context, "Connected", Toast.LENGTH_SHORT).show();
+            }
+            else if (BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED.equals(action))
+            {
+                // Device is about to disconnect
+                Toast.makeText(context, "Disconnect requested", Toast.LENGTH_SHORT).show();
+            }
+            else if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action))
+            {
+                bluetoothService.reconnect(device);
+                // Device has disconnected
+                Toast.makeText(context, "Disconnected from scale: please restart the scale",
+                        Toast.LENGTH_SHORT).show();
+            }
+        }
+    };
     public String tempFileName;
     public int sonyApiRequestID = 1;
     private String currentScaleWeight = "";
@@ -124,6 +159,9 @@ public class ObjectDetailActivity extends AppCompatActivity
     private boolean isPickPeersDialogAppeared = false;
     // correspond to columns in database associated with finds
     int areaEasting, areaNorthing, contextNumber, sampleNumber;
+    public BluetoothService bluetoothService;
+    public BluetoothDevice device = null;
+    private IntentFilter filter;
     /**
      * Get temporary file name
      * @return Returns temp file name
@@ -158,6 +196,33 @@ public class ObjectDetailActivity extends AppCompatActivity
             iv.setImageBitmap(bmp);
             iv.setVisibility(View.VISIBLE);
         }
+        if (bluetoothService != null)
+        {
+            bluetoothService.closeThread();
+        }
+        bluetoothService = null;
+        device = null;
+        Set<BluetoothDevice> pairedDevices = BluetoothAdapter.getDefaultAdapter().getBondedDevices();
+        if (pairedDevices.size() > 0)
+        {
+            // There are paired devices. Get the name and address of each paired device.
+            for (BluetoothDevice pairedDv: pairedDevices)
+            {
+                String deviceName = pairedDv.getName();
+                if (deviceName.equals(Session.deviceName))
+                {
+                    device = pairedDv;
+                    bluetoothService = new BluetoothService(this);
+                    bluetoothService.reconnect(device);
+                }
+            }
+        }
+        Toast.makeText(this, "Connected to: " + Session.deviceName, Toast.LENGTH_SHORT).show();
+        filter = new IntentFilter();
+        filter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
+        filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED);
+        filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);
+        this.registerReceiver(mReceiver, filter);
         queue = Volley.newRequestQueue(this);
         mManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
         mChannel = mManager.initialize(this, getMainLooper(), null);
@@ -503,7 +568,8 @@ public class ObjectDetailActivity extends AppCompatActivity
                 catch (JSONException e)
                 {
                     showToastError(e, getApplicationContext());
-                    e.printStackTrace();
+                    // TODO: Uncomment
+//                    e.printStackTrace();
                 }
             }
 
@@ -561,7 +627,8 @@ public class ObjectDetailActivity extends AppCompatActivity
                 catch (JSONException e)
                 {
                     showToastError(e, currentContext);
-                    e.printStackTrace();
+                    // TODO: Uncomment
+                    //e.printStackTrace();
                 }
             }
 
@@ -609,7 +676,8 @@ public class ObjectDetailActivity extends AppCompatActivity
                 catch (JSONException e)
                 {
                     showToastError(e, getApplicationContext());
-                    e.printStackTrace();
+                    // TODO: Uncomment
+                    //e.printStackTrace();
                 }
             }
 
@@ -658,7 +726,8 @@ public class ObjectDetailActivity extends AppCompatActivity
                 catch (JSONException e)
                 {
                     showToastError(e, getApplicationContext());
-                    e.printStackTrace();
+                    // TODO: Uncomment
+                    //e.printStackTrace();
                 }
             }
 
@@ -703,7 +772,8 @@ public class ObjectDetailActivity extends AppCompatActivity
                 }
                 catch (JSONException e)
                 {
-                    e.printStackTrace();
+                    // TODO: Uncomment
+                    //e.printStackTrace();
                 }
             }
 
@@ -788,10 +858,17 @@ public class ObjectDetailActivity extends AppCompatActivity
      */
     public void saveWeight(String weight)
     {
-        ((TextView) findViewById(R.id.weightInput)).setText(weight);
-        asyncModifyWeightFieldInDB(Double.parseDouble(getWeightInputText().getText().toString()),
-                areaEasting, areaNorthing, contextNumber, sampleNumber);
-
+        try
+        {
+            ((TextView) findViewById(R.id.weightInput)).setText(weight);
+            asyncModifyWeightFieldInDB(Double.parseDouble(getWeightInputText().getText().toString()),
+                    areaEasting, areaNorthing, contextNumber, sampleNumber);
+        }
+        catch (NumberFormatException e)
+        {
+            Toast.makeText(getApplicationContext(), "Invalid Weight",
+                    Toast.LENGTH_SHORT).show();
+        }
     }
 
     /**
@@ -854,17 +931,58 @@ public class ObjectDetailActivity extends AppCompatActivity
             @Override
             public void onClick(View v)
             {
-                String weightOnScale = ((EditText) weightDialog.findViewById(R.id.weightOnScaleText))
-                        .getText().toString().trim();
-                setScaleTare(Integer.parseInt(weightOnScale));
-                Toast.makeText(getApplicationContext(), "Tare weight is " + getScaleTare()
-                        + " gram", Toast.LENGTH_SHORT).show();
+                try
+                {
+                    String weightOnScale
+                            = ((EditText) weightDialog.findViewById(R.id.weightOnScaleText))
+                            .getText().toString().trim();
+                    setScaleTare(Integer.parseInt(weightOnScale));
+                    Toast.makeText(getApplicationContext(), "Tare weight is " + getScaleTare()
+                            + " gram", Toast.LENGTH_SHORT).show();
+                }
+                catch (NumberFormatException e)
+                {
+                    Toast.makeText(getApplicationContext(), "Invalid weight",
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        weightDialog.findViewById(R.id.update_bluetooth)
+                .setOnClickListener(new View.OnClickListener() {
+            /**
+             * User clicked copy weight
+             * @param v - dialog
+             */
+            @Override
+            public void onClick(View v)
+            {
+                try
+                {
+                    runBluetooth();
+                    Toast.makeText(getApplicationContext(), "Weight updated",
+                            Toast.LENGTH_SHORT).show();
+                }
+                catch (NullPointerException e)
+                {
+                    Toast.makeText(getApplicationContext(), "No Scale Connected",
+                            Toast.LENGTH_SHORT).show();
+                }
             }
         });
         ((EditText) weightDialog.findViewById(R.id.weightOnScaleText))
                 .setText(getCurrentScaleWeight());
         ((TextView) weightDialog.findViewById(R.id.btConnectionStatusText))
                 .setText(getBluetoothConnectionStatus());
+    }
+
+    /**
+     * Connect to Bluetooth
+     */
+    public void runBluetooth()
+    {
+        bluetoothService.runService(device);
+        TextView weightText = (TextView) findViewById(R.id.weightOnScaleText);
+        weightText.setText(getString(R.string.weight_int_frmt, BluetoothService.currWeight));
     }
 
     /**
@@ -913,7 +1031,8 @@ public class ObjectDetailActivity extends AppCompatActivity
             @Override
             public void onCancel(DialogInterface dialog)
             {
-                CameraDialog.stopLiveView(parentActivity, queue, sonyApiRequestID++, getLiveViewSurface());
+                CameraDialog.stopLiveView(parentActivity, queue, sonyApiRequestID++,
+                        getLiveViewSurface());
             }
         });
         remoteCameraDialog.findViewById(R.id.take_photo)
@@ -1148,7 +1267,8 @@ public class ObjectDetailActivity extends AppCompatActivity
                         Log.v(LOG_TAG_WIFI_DIRECT, "Connection request sent. Arp file modified "
                                 + Utils.getLastModifiedDateOfArpFile());
                         findViewById(R.id.connectToCameraButton).setEnabled(false);
-                        ((Button) findViewById(R.id.connectToCameraButton)).setText(getString(R.string.wait));
+                        ((Button) findViewById(R.id.connectToCameraButton))
+                                .setText(getString(R.string.wait));
                     }
 
                     /**
@@ -1192,7 +1312,7 @@ public class ObjectDetailActivity extends AppCompatActivity
 
                 /**
                  * Connection failed
-                 * @param reason - errof
+                 * @param reason - error
                  */
                 @Override
                 public void onFailure(int reason)

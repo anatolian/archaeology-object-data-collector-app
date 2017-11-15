@@ -6,7 +6,7 @@
  *  -A list of items collected
  *      -List should either contain a id to be used to query database or all information needed
  */
-package widac.cis350.upenn.edu.widac;
+package cis573.com.archaeology.ui;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -16,40 +16,17 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import cis573.com.archaeology.R;
+import cis573.com.archaeology.services.Session;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import widac.cis350.upenn.edu.widac.models.Sample;
-import widac.cis350.upenn.edu.widac.models.SampleStaging;
+import cis573.com.archaeology.models.Sample;
+import cis573.com.archaeology.models.SampleStaging;
 public class SessionReportActivity extends AppCompatActivity
 {
     // List of ids
     private Map<String, TypeData> types = new HashMap<>();
-    /**
-     * Activity is launched
-     * @param savedInstanceState - app state from memory
-     */
-    @Override
-    @SuppressWarnings("unchecked")
-    protected void onCreate(Bundle savedInstanceState)
-    {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.session_report);
-        // Get Session data and create table from it
-        Session.getCurrentSessionIDs();
-        // Put in a request for data from the database
-        Session.asyncPullFromDB(collectEntries);
-    }
-
-    /**
-     * Create the report
-     */
-    // Create the session report (only called by the callback)
-    private void createSessionReport()
-    {
-        Log.d("SessionReport", "Create Report");
-        generateStatistics();
-    }
     // Called when the database returns the data
     Callback collectEntries = new Callback<Sample>() {
         /**
@@ -89,6 +66,31 @@ public class SessionReportActivity extends AppCompatActivity
     };
 
     /**
+     * Activity is launched
+     * @param savedInstanceState - app state from memory
+     */
+    @Override
+    @SuppressWarnings("unchecked")
+    protected void onCreate(Bundle savedInstanceState)
+    {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_session_report);
+        // Get Session data and create table from it
+        Session.getCurrentSessionIDs();
+        // Put in a request for data from the database
+        Session.asyncPullFromDB(collectEntries);
+    }
+
+    /**
+     * Create the session report (only called by the callback)
+     */
+    private void createSessionReport()
+    {
+        Log.d("SessionReport", "Create Report");
+        generateStatistics();
+    }
+
+    /**
      * Process the returned entries
      * @param entries - entries to process
      */
@@ -114,8 +116,8 @@ public class SessionReportActivity extends AppCompatActivity
     private void generateStatistics()
     {
         int itemsCollected = types.get("Glass").num + types.get("Ceramic").num
-                           + types.get("Metal").num + types.get("Stone").num
-                           + types.get("Organic").num;
+                + types.get("Metal").num + types.get("Stone").num
+                + types.get("Organic").num;
         // Add number of items collected to table
         TextView tv = (TextView) findViewById(R.id.TotalNum);
         tv.setText(getString(R.string.total_frmt, itemsCollected));

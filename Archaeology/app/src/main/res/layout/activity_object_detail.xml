@@ -70,7 +70,8 @@
                 android:layout_alignBottom="@+id/sample_spinner"
                 android:layout_alignParentEnd="true"
                 android:text="@string/gram"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@android:color/black" />
             <Button
                 android:id="@+id/button16"
                 android:layout_width="wrap_content"
@@ -97,6 +98,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/surface"
                         android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="@android:color/black"
                         android:textStyle="bold" />
                     <TextView
                         android:id="@+id/textView28"
@@ -104,6 +106,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/hue"
                         android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="@android:color/black"
                         android:textStyle="bold" />
                     <TextView
                         android:id="@+id/textView29"
@@ -111,6 +114,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/lightness"
                         android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="@android:color/black"
                         android:textStyle="bold" />
                     <TextView
                         android:id="@+id/textView30"
@@ -118,6 +122,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/chroma"
                         android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="@android:color/black"
                         android:textStyle="bold" />
                 </TableRow>
                 <TableRow
@@ -130,25 +135,29 @@
                         android:layout_height="wrap_content"
                         android:text="@string/exterior_color"
                         android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="@android:color/black"
                         android:textStyle="italic" />
                     <TextView
                         android:id="@+id/exterior_color_hue"
                         android:layout_width="1dp"
                         android:layout_height="wrap_content"
                         android:layout_column="1"
-                        android:textAppearance="?android:attr/textAppearanceMedium" />
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="@android:color/black" />
                     <TextView
                         android:id="@+id/exterior_color_lightness"
                         android:layout_width="1dp"
                         android:layout_height="wrap_content"
                         android:layout_column="2"
-                        android:textAppearance="?android:attr/textAppearanceMedium" />
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="@android:color/black" />
                     <TextView
                         android:id="@+id/exterior_color_chroma"
                         android:layout_width="1dp"
                         android:layout_height="wrap_content"
                         android:layout_column="3"
-                        android:textAppearance="?android:attr/textAppearanceMedium" />
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="@android:color/black" />
                 </TableRow>
                 <TableRow
                     android:id="@+id/interiorColorRow"
@@ -160,25 +169,29 @@
                         android:layout_height="wrap_content"
                         android:text="@string/interior_color"
                         android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="@android:color/black"
                         android:textStyle="italic" />
                     <TextView
                         android:id="@+id/interior_color_hue"
                         android:layout_width="1dp"
                         android:layout_height="wrap_content"
                         android:layout_column="1"
-                        android:textAppearance="?android:attr/textAppearanceMedium" />
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="@android:color/black" />
                     <TextView
                         android:id="@+id/interior_color_lightness"
                         android:layout_width="1dp"
                         android:layout_height="wrap_content"
                         android:layout_column="2"
-                        android:textAppearance="?android:attr/textAppearanceMedium" />
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="@android:color/black" />
                     <TextView
                         android:id="@+id/interior_color_chroma"
                         android:layout_width="1dp"
                         android:layout_height="wrap_content"
                         android:layout_column="3"
-                        android:textAppearance="?android:attr/textAppearanceMedium" />
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="@android:color/black" />
                 </TableRow>
             </TableLayout>
             <Button
@@ -235,9 +248,10 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentEnd="true"
+                android:layout_toEndOf="@+id/correct_color"
                 android:layout_marginEnd="71dp"
                 android:onClick="goToWifiActivity"
-                android:text="" />
+                android:text="@string/configure_camera" />
         </RelativeLayout>
     </ScrollView>
 </RelativeLayout>
