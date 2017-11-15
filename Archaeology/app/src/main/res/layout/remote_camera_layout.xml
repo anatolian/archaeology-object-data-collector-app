@@ -10,7 +10,7 @@
         <view
             android:layout_width = "wrap_content"
             android:layout_height = "450dp"
-            class = "cis573.com.archaeology.SimpleStreamSurfaceView"
+            class = "cis573.com.archaeology.ui.SimpleStreamSurfaceView"
             android:id = "@+id/surfaceview_liveview"
             android:layout_weight = "19"/>
         <LinearLayout

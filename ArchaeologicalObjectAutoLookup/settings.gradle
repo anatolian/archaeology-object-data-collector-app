@@ -1,2 +1,0 @@
-include ':app', ':postgresql-42.0.0.jre6'
-include ':tesseractandroidtools'

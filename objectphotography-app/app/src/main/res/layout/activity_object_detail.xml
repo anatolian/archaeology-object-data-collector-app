@@ -119,14 +119,15 @@
                 android:visibility = "invisible"
                 android:layout_alignParentStart = "true"
                 android:onClick = "deletePhotosButtonAction"/>
+
             <Button
-                android:layout_width = "wrap_content"
-                android:layout_height = "wrap_content"
-                android:text = "@string/async"
-                android:id = "@+id/button17"
-                android:layout_alignBottom = "@+id/textView7"
-                android:layout_toEndOf = "@+id/objectID"
-                android:onClick = "printAsyncState"/>
+                android:id="@+id/button17"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/textView7"
+                android:layout_alignParentEnd="true"
+                android:onClick="printAsyncState"
+                android:text="@string/async" />
             <TextView
                 android:layout_width = "wrap_content"
                 android:layout_height = "38dp"

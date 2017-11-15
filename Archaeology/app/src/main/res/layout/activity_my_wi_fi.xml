@@ -1,11 +1,11 @@
 <RelativeLayout xmlns:android = "http://schemas.android.com/apk/res/android"
     xmlns:tools = "http://schemas.android.com/tools" android:layout_width = "match_parent"
     android:layout_height = "match_parent"
-    tools:context = "cis573.com.archaeology.MyWiFiActivity">
+    tools:context = "cis573.com.archaeology.ui.MyWiFiActivity">
     <view
         android:layout_width = "wrap_content"
         android:layout_height = "200dp"
-        class = "cis573.com.archaeology.SimpleStreamSurfaceView"
+        class = "cis573.com.archaeology.ui.SimpleStreamSurfaceView"
         android:id = "@+id/surfaceview_liveview"
         android:layout_centerHorizontal = "true"/>
     <ScrollView

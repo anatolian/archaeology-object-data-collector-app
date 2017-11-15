@@ -23,28 +23,28 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".InitialActivity" />
-        <activity android:name=".SettingsActivity" />
-        <activity android:name=".DownloadActivity">
+        <activity android:name=".ui.InitialActivity" />
+        <activity android:name=".ui.SettingsActivity" />
+        <activity android:name=".ui.DownloadActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".LocalRetriever" />
+        <activity android:name=".util.LocalRetriever" />
         <activity
-            android:name=".CameraUIActivity"
+            android:name=".ui.CameraUIActivity"
             android:screenOrientation="landscape"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
-        <activity android:name=".FavoriteActivity" />
-        <activity android:name=".SearchActivity" />
-        <activity android:name=".HistoryActivity" />
-        <activity android:name=".ManualActivity" />
-        <activity android:name=".CeramicInputActivity" />
-        <activity android:name=".ObjectDetailActivity" />
-        <activity android:name=".PhotosActivity" />
-        <activity android:name=".MyWiFiActivity"/>
+        <activity android:name=".ui.FavoriteActivity" />
+        <activity android:name=".ui.SearchActivity" />
+        <activity android:name=".ui.HistoryActivity" />
+        <activity android:name=".ui.ManualActivity" />
+        <activity android:name=".ui.CeramicInputActivity" />
+        <activity android:name=".ui.ObjectDetailActivity" />
+        <activity android:name=".ui.PhotosActivity" />
+        <activity android:name=".ui.MyWiFiActivity"/>
     </application>
 
 </manifest>

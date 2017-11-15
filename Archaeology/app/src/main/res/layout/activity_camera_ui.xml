@@ -72,6 +72,17 @@
             android:backgroundTint = "@android:color/transparent"
             android:id = "@+id/imageView14"
             android:layout_weight = "0.2"/>
+        <android.support.design.widget.FloatingActionButton
+            android:layout_width = "wrap_content"
+            android:layout_height = "wrap_content"
+            android:clickable = "true"
+            android:focusable="true"
+            android:backgroundTint = "#971c20"
+            android:onClick = "updateDatabase"
+            app:fabSize = "mini"
+            android:id = "@+id/floatingActionButton"
+            android:src = "@android:drawable/stat_sys_download"
+            android:layout_marginTop = "10dp"/>
         <ImageView
             android:layout_width = "wrap_content"
             android:layout_height = "wrap_content"
