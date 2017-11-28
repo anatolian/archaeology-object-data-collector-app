@@ -221,12 +221,13 @@ public class CameraUIActivity extends AppCompatActivity
             }
 
             /**
-             * Data found
+             * Scanned QR code
              * @param data - located data
              */
             @Override
             public void onCodeScanned(String data)
             {
+                Log.v("QRCode Scanned", data);
                 // from manual search
                 JSONObject json = null;
                 String jsonString = loadJSONFromAsset();
@@ -237,7 +238,7 @@ public class CameraUIActivity extends AppCompatActivity
                 }
                 catch (Exception e)
                 {
-                    searchUrl = "https://www.penn.museum/collections/object/" + data;
+                    searchUrl = data;
                 }
                 JSONObject translatedSearch;
                 String searchItem = "";

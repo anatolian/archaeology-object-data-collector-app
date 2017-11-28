@@ -14,15 +14,17 @@
         <RelativeLayout
             android:layout_width = "match_parent"
             android:layout_height = "wrap_content">
+
             <TextView
-                android:layout_width = "wrap_content"
-                android:layout_height = "wrap_content"
-                android:textAppearance = "?android:attr/textAppearanceMedium"
-                android:text = "@string/baseURL"
-                android:id = "@+id/textView5"
-                android:minWidth = "400dp"
-                android:layout_alignParentTop = "true"
-                android:layout_alignStart = "@+id/settingsWebServiceUrl"/>
+                android:id="@+id/textView5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignStart="@+id/settingsWebServiceUrl"
+                android:minWidth="400dp"
+                android:text="@string/baseURL"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@android:color/black" />
             <EditText
                 android:layout_width = "wrap_content"
                 android:layout_height = "wrap_content"
@@ -33,15 +35,17 @@
                 android:maxLines = "3"
                 android:lines = "1"
                 android:textAppearance = "?android:attr/textAppearanceMedium"/>
+
             <TextView
-                android:layout_width = "wrap_content"
-                android:layout_height = "wrap_content"
-                android:textAppearance = "?android:attr/textAppearanceMedium"
-                android:text = "@string/cameraIP"
-                android:id = "@+id/textView6"
-                android:minWidth = "400dp"
-                android:layout_centerHorizontal = "true"
-                android:layout_below = "@+id/cameraSelectBox"/>
+                android:id="@+id/textView6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/cameraSelectBox"
+                android:layout_centerHorizontal="true"
+                android:minWidth="400dp"
+                android:text="@string/cameraIP"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@android:color/black" />
             <EditText
                 android:layout_width = "wrap_content"
                 android:layout_height = "wrap_content"
@@ -52,15 +56,17 @@
                 android:lines = "1"
                 android:maxLines = "1"
                 android:textAppearance = "?android:attr/textAppearanceMedium"/>
+
             <TextView
-                android:layout_width = "wrap_content"
-                android:layout_height = "wrap_content"
-                android:textAppearance = "?android:attr/textAppearanceMedium"
-                android:text = "@string/camera_calibration"
-                android:id = "@+id/textView10"
-                android:layout_below = "@+id/settingsCameraIP"
-                android:layout_centerHorizontal = "true"
-                android:minWidth = "400dp"/>
+                android:id="@+id/textView10"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/settingsCameraIP"
+                android:layout_centerHorizontal="true"
+                android:minWidth="400dp"
+                android:text="@string/camera_calibration"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@android:color/black" />
             <EditText
                 android:layout_width = "wrap_content"
                 android:layout_height = "wrap_content"
@@ -69,15 +75,17 @@
                 android:layout_centerHorizontal = "true"
                 android:minWidth = "400dp"
                 android:textAppearance = "?android:attr/textAppearanceMedium"/>
+
             <TextView
-                android:layout_width = "wrap_content"
-                android:layout_height = "wrap_content"
-                android:textAppearance = "?android:attr/textAppearanceMedium"
-                android:text = "@string/select_camera"
-                android:id = "@+id/textView11"
-                android:layout_below = "@+id/settingsWebServiceUrl"
-                android:layout_centerHorizontal = "true"
-                android:minWidth = "400dp"/>
+                android:id="@+id/textView11"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/settingsWebServiceUrl"
+                android:layout_centerHorizontal="true"
+                android:minWidth="400dp"
+                android:text="@string/select_camera"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@android:color/black" />
             <Spinner
                 android:layout_width = "wrap_content"
                 android:layout_height = "wrap_content"
@@ -86,30 +94,34 @@
                 android:layout_centerHorizontal = "true"
                 android:minWidth = "400dp"
                 android:entries = "@array/camera_list"/>
+
             <TextView
-                android:text = "@string/paired"
-                android:layout_below = "@+id/calibrationInterval"
-                android:id = "@+id/paired_label"
-                android:layout_width = "match_parent"
-                android:layout_height = "wrap_content"
-                android:layout_marginTop = "10dp"
-                android:textSize = "12pt"/>
+                android:id="@+id/paired_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/calibrationInterval"
+                android:layout_marginTop="10dp"
+                android:text="@string/paired"
+                android:textColor="@android:color/black"
+                android:textSize="12pt" />
             <ListView
                 android:layout_width = "match_parent"
                 android:layout_height = "225dp"
                 android:layout_below = "@+id/paired_label"
                 android:id = "@+id/paired_devices_list">
             </ListView>
+
             <Button
-                android:id = "@+id/pair_new_device"
-                style = "?android:textAppearanceSmall"
-                android:layout_width = "match_parent"
+                android:id="@+id/pair_new_device"
+                style="?android:textAppearanceSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_below="@id/paired_devices_list"
-                android:layout_height = "wrap_content"
-                android:layout_marginTop = "16dp"
-                android:onClick = "onPairDeviceClick"
-                android:text = "@string/pair_device"
-                android:textStyle = "bold"/>
+                android:layout_marginTop="16dp"
+                android:onClick="onPairDeviceClick"
+                android:text="@string/pair_device"
+                android:textColor="@android:color/black"
+                android:textStyle="bold" />
         </RelativeLayout>
     </ScrollView>
     <LinearLayout

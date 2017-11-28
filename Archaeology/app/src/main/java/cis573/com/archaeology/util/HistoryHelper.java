@@ -80,7 +80,7 @@ public class HistoryHelper extends SQLiteOpenHelper
      * @param cur - curatorial section
      */
     public void insertSearch(String search, String name, String url, String desc, String prov,
-                                String mat, String cur)
+                             String mat, String cur)
     {
         SQLiteDatabase db = this.getWritableDatabase();
         System.out.print((int) DatabaseUtils.queryNumEntries(db, HISTORY_TABLE_NAME));

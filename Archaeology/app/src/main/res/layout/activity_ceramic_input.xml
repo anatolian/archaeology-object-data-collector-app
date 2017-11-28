@@ -103,7 +103,8 @@
             android:text = "@string/continue_string"
             android:id = "@+id/continue_button"
             android:layout_weight = "1"
-            android:onClick = "goToObjectDetail"/>
+            android:onClick = "goToObjectDetail"
+            android:textStyle="bold"/>
     </LinearLayout>
     <Button
         android:id="@+id/visualization_button"
