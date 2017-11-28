@@ -15,11 +15,9 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import cis573.com.archaeology.models.ImageResponseWrapper;
 import cis573.com.archaeology.models.JSONArrayResponseWrapper;
 import cis573.com.archaeology.models.JSONObjectResponseWrapper;
-
 import static com.android.volley.Request.Method;
 import static cis573.com.archaeology.util.StateStatic.DEFAULT_VOLLEY_TIMEOUT;
 import static cis573.com.archaeology.util.StateStatic.LOG_TAG;
@@ -81,7 +79,8 @@ public class VolleyWrapper
      * @throws JSONException if the JSON is malformed
      */
     public static void makeVolleySonyApiTakePhotoRequest(final String url, RequestQueue queue,
-                                                         final int id, final JSONObjectResponseWrapper lambdaWrapper)
+                                                         final int id,
+                                                         final JSONObjectResponseWrapper lambdaWrapper)
             throws JSONException
     {
         final String postBody = new JSONObject().put("method",

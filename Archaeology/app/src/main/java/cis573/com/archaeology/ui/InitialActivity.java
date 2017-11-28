@@ -21,14 +21,12 @@ import com.android.volley.VolleyError;
 import org.json.JSONException;
 import org.json.JSONObject;
 import cis573.com.archaeology.R;
-import cis573.com.archaeology.models.JSONObjectResponseWrapper;
+import cis573.com.archaeology.models.StringObjectResponseWrapper;
+import static cis573.com.archaeology.services.VolleyStringWrapper.makeVolleyStringObjectRequest;
 import static cis573.com.archaeology.util.StateStatic.LOG_TAG;
 import static cis573.com.archaeology.util.StateStatic.getGlobalWebServerURL;
 import static cis573.com.archaeology.util.StateStatic.setGlobalWebServerURL;
 import static cis573.com.archaeology.services.VolleyWrapper.cancelAllVolleyRequests;
-import static cis573.com.archaeology.services.VolleyWrapper.makeVolleyJSONObjectRequest;
-import static cis573.com.arcaheology.services.VolleyWrapper.makeVolleyStringObjectRequest;
-
 public class InitialActivity extends AppCompatActivity
 {
     RequestQueue queue;
@@ -130,8 +128,7 @@ public class InitialActivity extends AppCompatActivity
     }
 
     /**
-     * makes a call to php file to test the connection
-     * returns boolean value depending on whether it is connected or not
+     * Makes a call to php file to test the connection
      * @param aView - container view
      */
     public void testConnection(View aView)
@@ -142,22 +139,22 @@ public class InitialActivity extends AppCompatActivity
         barProgressDialog.show();
         Log.v(LOG_TAG, "Test Connection Button Clicked");
         cancelAllVolleyRequests(queue);
-        makeVolleyStringObjectRequest(getWebserverFromLayout() + "/test_service.php", queue, new StringObjectResponseWrapper(this) {
+        makeVolleyStringObjectRequest(getWebServerFromLayout() + "/test_service.php", queue,
+                new StringObjectResponseWrapper(this) {
             /**
              * Response received
-             *
              * @param response - database response
              */
             @Override
-            void responseMethod(String response)
+            public void responseMethod(String response)
             {
                 try
                 {
                     Toast.makeText(getApplicationContext(), "trying to connect", Toast.LENGTH_SHORT).show();
-                    Log.v(LOGTAG, "here is the response " + response);
+                    Log.v(LOG_TAG, "here is the response " + response);
                     response = response.substring(1, response.length() - 1);
                     response = response.replace("\\", "");
-                    Log.v(LOGTAG, "response removed slash and double quotes " + response);
+                    Log.v(LOG_TAG, "response removed slash and double quotes " + response);
                     JSONObject responseJSON = new JSONObject(response);
                     boolean connStatus = responseJSON.getBoolean("status");
                     if (connStatus)
@@ -171,8 +168,10 @@ public class InitialActivity extends AppCompatActivity
 
                         connectionTestFailedCallback();
                     }
-                } catch (JSONException e) {
-                    Log.v(LOGTAG, "thrown json exception");
+                }
+                catch (JSONException e)
+                {
+                    Log.v(LOG_TAG, "thrown json exception");
                     e.printStackTrace();
                 }
             }

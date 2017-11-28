@@ -242,14 +242,13 @@
                 android:layout_marginTop="187dp"
                 android:onClick="goToImageGallery"
                 android:text="@string/correct_color" />
+
             <Button
                 android:id="@+id/wifiActivity"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:layout_alignParentEnd="true"
                 android:layout_toEndOf="@+id/correct_color"
-                android:layout_marginEnd="71dp"
                 android:onClick="goToWifiActivity"
                 android:text="@string/configure_camera" />
         </RelativeLayout>
