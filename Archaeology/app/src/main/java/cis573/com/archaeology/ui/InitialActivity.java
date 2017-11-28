@@ -18,7 +18,6 @@ import com.android.volley.RequestQueue;
 import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 import cis573.com.archaeology.R;

@@ -11,18 +11,17 @@ public class UpdateDatabaseMuseum implements UpdateDatabase
      * Is an update necessary
      * @return - Returns if an update is necessary
      */
-    @Override
     public boolean updateNecessary()
     {
         File file = new File(Environment.getExternalStorageDirectory().getPath() + FILE);
-        return !file.exists();
+        long week = 3600000 * 24 * 7;
+        return !file.exists() || (System.currentTimeMillis() - file.lastModified()) > week;
     }
 
     /**
      * Update database
      * @param activity - calling activity
      */
-    @Override
     public void doUpdate(Activity activity)
     {
         new DatabaseUpdater(new DatabaseUpdater.AsyncResponse() {
@@ -39,7 +38,6 @@ public class UpdateDatabaseMuseum implements UpdateDatabase
      * Get the database location
      * @return - Returns the database location
      */
-    @Override
     public String getDatabaseLocation()
     {
         return Environment.getExternalStorageDirectory().getPath() + FILE;

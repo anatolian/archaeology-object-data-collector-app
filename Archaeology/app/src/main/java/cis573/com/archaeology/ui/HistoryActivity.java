@@ -29,8 +29,7 @@ public class HistoryActivity extends AppCompatActivity
         myDB = new HistoryHelper(this);
         lv = (ListView) findViewById(R.id.listView);
         loadList();
-        lv.setOnTouchListener(new View.OnTouchListener()
-        {
+        lv.setOnTouchListener(new View.OnTouchListener() {
             /**
              * User touched list
              * @param v - item

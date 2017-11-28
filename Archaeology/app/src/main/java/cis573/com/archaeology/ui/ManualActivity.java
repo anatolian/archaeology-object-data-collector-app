@@ -68,7 +68,6 @@ public class ManualActivity extends AppCompatActivity
         EditText t = (EditText) findViewById(R.id.editText);
         Intent intent = new Intent(this, SearchActivity.class);
         String search = t.getText().toString();
-        // Abstract data retrieval
         String[] list = localRetriever.search(search);
         // Add all possible search features
         intent.putExtra("search", list[2]);
@@ -79,8 +78,7 @@ public class ManualActivity extends AppCompatActivity
         intent.putExtra("searchmaterial", list[5]);
         intent.putExtra("searchcuratorial_section", list[6]);
         // Add to history
-        myDatabase.insertSearch(t.getText().toString(), list[1], list[2], list[3], list[4], list[5],
-                list[6]);
+        myDatabase.insertSearch(search, list[1], list[2], list[3], list[4], list[5], list[6]);
         startActivity(intent);
     }
 }

@@ -85,7 +85,7 @@ public class DatabaseUpdater extends AsyncTask<String, Object, Void>
         ZipInputStream zis;
         try
         {
-            String filename;
+            String filename = "";
             is = new FileInputStream(path + "/a.zip");
             zis = new ZipInputStream(new BufferedInputStream(is));
             ZipEntry ze;
