@@ -28,6 +28,8 @@ import static cis573.com.archaeology.util.StateStatic.getGlobalWebServerURL;
 import static cis573.com.archaeology.util.StateStatic.setGlobalWebServerURL;
 import static cis573.com.archaeology.services.VolleyWrapper.cancelAllVolleyRequests;
 import static cis573.com.archaeology.services.VolleyWrapper.makeVolleyJSONObjectRequest;
+import static cis573.com.arcaheology.services.VolleyWrapper.makeVolleyStringObjectRequest;
+
 public class InitialActivity extends AppCompatActivity
 {
     RequestQueue queue;
@@ -141,21 +143,24 @@ public class InitialActivity extends AppCompatActivity
         barProgressDialog.show();
         Log.v(LOG_TAG, "Test Connection Button Clicked");
         cancelAllVolleyRequests(queue);
-        makeVolleyJSONObjectRequest(getWebServerFromLayout() + "/test_service.php", queue,
-                new JSONObjectResponseWrapper(this) {
+        makeVolleyStringObjectRequest(getWebserverFromLayout() + "/test_service.php", queue, new StringObjectResponseWrapper(this) {
             /**
              * Response received
+             *
              * @param response - database response
              */
             @Override
-            public void responseMethod(JSONObject response)
+            void responseMethod(String response)
             {
                 try
                 {
-                    Toast.makeText(getApplicationContext(), "trying to connect",
-                            Toast.LENGTH_SHORT).show();
-                    Log.v(LOG_TAG, "here is the response " + response.toString());
-                    boolean connStatus = response.getBoolean("status");
+                    Toast.makeText(getApplicationContext(), "trying to connect", Toast.LENGTH_SHORT).show();
+                    Log.v(LOGTAG, "here is the response " + response);
+                    response = response.substring(1, response.length() - 1);
+                    response = response.replace("\\", "");
+                    Log.v(LOGTAG, "response removed slash and double quotes " + response);
+                    JSONObject responseJSON = new JSONObject(response);
+                    boolean connStatus = responseJSON.getBoolean("status");
                     if (connStatus)
                     {
                         barProgressDialog.dismiss();
@@ -164,12 +169,11 @@ public class InitialActivity extends AppCompatActivity
                     else
                     {
                         barProgressDialog.dismiss();
+
                         connectionTestFailedCallback();
                     }
-                }
-                catch (JSONException e)
-                {
-                    Log.v(LOG_TAG, "thrown json exception");
+                } catch (JSONException e) {
+                    Log.v(LOGTAG, "thrown json exception");
                     e.printStackTrace();
                 }
             }
