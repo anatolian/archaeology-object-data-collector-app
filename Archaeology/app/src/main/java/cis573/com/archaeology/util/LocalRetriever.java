@@ -10,7 +10,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.HashMap;
 import cis573.com.archaeology.services.Retriever;
 public class LocalRetriever extends AppCompatActivity implements Retriever
 {
@@ -65,19 +64,30 @@ public class LocalRetriever extends AppCompatActivity implements Retriever
         // Set input stream based on file location
         InputStream in = retrieve(location);
         BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-        // Hashmap to store database
-        HashMap<String, String> map = new HashMap<>();
+        String searchItem = "";
+        String searchDescription = "";
+        String searchProvenience = "";
+        String searchMaterial = "";
+        String searchCuratorialSection = "";
+        String[] endResult = new String[7];
+        endResult[0] = item;
+        endResult[1] = searchItem;
+        endResult[2] = "https://www.penn.museum/collections/object/";
         try
         {
             String line;
             while ((line = reader.readLine()) != null)
             {
-                String[] RowData = line.split(",");
+                String[] rowData = line.split(",");
                 // First item: object id
-                String date = RowData[2];
+                String date = rowData[2];
                 // Second item: url
-                String value = RowData[RowData.length - 1];
-                map.put(date, value);
+                String value = rowData[rowData.length - 1];
+                if (date.equals(item))
+                {
+                    endResult[2] = value;
+                    break;
+                }
             }
         }
         catch (IOException ex)
@@ -96,22 +106,6 @@ public class LocalRetriever extends AppCompatActivity implements Retriever
             }
         }
         // Return possible search features
-        String searchItem = "";
-        String searchDescription = "";
-        String searchProvenience = "";
-        String searchMaterial = "";
-        String searchCuratorialSection = "";
-        String[] endResult = new String[7];
-        endResult[0] = item;
-        endResult[1] = searchItem;
-        if (map.containsKey(item))
-        {
-            endResult[2] = map.get(item);
-        }
-        else
-        {
-            endResult[2] = "https://www.penn.museum/collections/object/";
-        }
         endResult[3] = searchDescription;
         endResult[4] = searchProvenience;
         endResult[5] = searchMaterial;
