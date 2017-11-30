@@ -12,6 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.Toast;
 import java.util.Set;
 import cis573.com.archaeology.R;
 import cis573.com.archaeology.services.Session;
@@ -51,10 +52,10 @@ public class SettingsActivity extends AppCompatActivity
             list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 /**
                  * An item was selected
-                 * @param parent   - the spinner
-                 * @param view     - the container view
+                 * @param parent - the spinner
+                 * @param view - the container view
                  * @param position - the selected item
-                 * @param id       - the item's id
+                 * @param id - the item's id
                  */
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id)
@@ -70,6 +71,8 @@ public class SettingsActivity extends AppCompatActivity
                             if (deviceName.equals(devices[position]))
                             {
                                 Session.deviceName = deviceName;
+                                Toast.makeText(getApplicationContext(),"Connected to " +
+                                        deviceName, Toast.LENGTH_SHORT).show();
                             }
                         }
                     }

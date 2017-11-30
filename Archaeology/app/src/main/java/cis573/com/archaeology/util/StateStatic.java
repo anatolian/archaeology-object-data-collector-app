@@ -38,7 +38,7 @@ public class StateStatic
     public static final String AREA_NORTHING = "area_northing";
     public static final String CONTEXT_NUMBER = "context_number";
     public static final String SAMPLE_NUMBER = "sample_number";
-    public static final String ALL_SAMPLE_NUMBER = "all_avaiable_sample_number";
+    public static final String ALL_SAMPLE_NUMBER = "all_available_sample_number";
     // offset values that help you to locate the correct fields in the data tables to store
     // information. the global webserver is being set to a default value
     // need to make sure that app is able to find ip address on its own

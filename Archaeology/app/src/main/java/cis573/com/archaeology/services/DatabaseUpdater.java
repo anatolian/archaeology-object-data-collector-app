@@ -48,8 +48,8 @@ public class DatabaseUpdater extends AsyncTask<String, Object, Void>
         {
             response = client.newCall(request).execute();
             InputStream inputStream = response.body().byteStream();
-            OutputStream outputStream = new FileOutputStream(
-                    new File(Environment.getExternalStorageDirectory(), "a.zip"));
+            File dir = new File(Environment.getExternalStorageDirectory(), "a.zip");
+            OutputStream outputStream = new FileOutputStream(dir);
             byte[] buffer = new byte[2 * 1024];
             int len;
             while ((len = inputStream.read(buffer)) != -1)
@@ -57,6 +57,7 @@ public class DatabaseUpdater extends AsyncTask<String, Object, Void>
                 outputStream.write(buffer, 0, len);
             }
             unpackZip(Environment.getExternalStorageDirectory().getPath());
+            dir.delete();
         }
         catch (IOException e)
         {

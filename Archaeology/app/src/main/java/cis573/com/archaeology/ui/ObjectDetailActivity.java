@@ -78,7 +78,6 @@ import static cis573.com.archaeology.util.StateStatic.getTimeStamp;
 import static cis573.com.archaeology.util.StateStatic.isBluetoothEnabled;
 import static cis573.com.archaeology.util.StateStatic.isIsRemoteCameraSelect;
 import static cis573.com.archaeology.util.StateStatic.isTakePhotoButtonClicked;
-import static cis573.com.archaeology.util.StateStatic.setScaleTare;
 import static cis573.com.archaeology.util.StateStatic.showToastError;
 import static cis573.com.archaeology.services.VolleyWrapper.makeVolleyJSONObjectRequest;
 public class ObjectDetailActivity extends AppCompatActivity
@@ -161,7 +160,6 @@ public class ObjectDetailActivity extends AppCompatActivity
     int areaEasting, areaNorthing, contextNumber, sampleNumber;
     public BluetoothService bluetoothService;
     public BluetoothDevice device = null;
-    private IntentFilter filter;
     /**
      * Get temporary file name
      * @return Returns temp file name
@@ -217,8 +215,9 @@ public class ObjectDetailActivity extends AppCompatActivity
                 }
             }
         }
-        Toast.makeText(this, "Connected to: " + Session.deviceName, Toast.LENGTH_SHORT).show();
-        filter = new IntentFilter();
+        Toast.makeText(this, "Connected to: " + Session.deviceName,
+                Toast.LENGTH_SHORT).show();
+        IntentFilter filter = new IntentFilter();
         filter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
         filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED);
         filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);
@@ -244,7 +243,8 @@ public class ObjectDetailActivity extends AppCompatActivity
         fillSampleInfo(areaEasting + "", areaNorthing + "",
                 contextNumber + "");
         fillSampleNumberSpinner();
-        ((Spinner) findViewById(R.id.sample_spinner)).setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        ((Spinner) findViewById(R.id.sample_spinner))
+                .setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             /**
              * User selected item
              * @param parent - spinner
@@ -257,7 +257,8 @@ public class ObjectDetailActivity extends AppCompatActivity
             {
                 // if the item you selected from the spinner has a different sample number than the
                 // item returned from the last intent then cancel the request.
-                String x = ((Spinner) findViewById(R.id.sample_spinner)).getItemAtPosition(position).toString();
+                String x = ((Spinner) findViewById(R.id.sample_spinner))
+                        .getItemAtPosition(position).toString();
                 int tmpSampleNumber = Integer.parseInt(x);
                 if (sampleNumber != tmpSampleNumber)
                 {
@@ -881,18 +882,6 @@ public class ObjectDetailActivity extends AppCompatActivity
         dialogVisible = true;
         // set up buttons on record_weight_dialog.xml so that you can view and save weight
         // information
-        weightDialog.findViewById(R.id.dialogReconnect)
-                .setOnClickListener(new View.OnClickListener() {
-            /**
-             * User clicked reconnect
-             * @param v - dialog
-             */
-            @Override
-            public void onClick(View v)
-            {
-                reconnectButtonAction(v);
-            }
-        });
         weightDialog.findViewById(R.id.dialogSaveWeightButton)
                 .setOnClickListener(new View.OnClickListener() {
             /**
@@ -920,31 +909,6 @@ public class ObjectDetailActivity extends AppCompatActivity
                         .getText().toString().trim();
                 ((EditText) weightDialog.findViewById(R.id.dialogCurrentWeightInDBText))
                         .setText(weightOnScale);
-            }
-        });
-        weightDialog.findViewById(R.id.tare_scale_button)
-                .setOnClickListener(new View.OnClickListener() {
-            /**
-             * User clicked tare
-             * @param v - dialog
-             */
-            @Override
-            public void onClick(View v)
-            {
-                try
-                {
-                    String weightOnScale
-                            = ((EditText) weightDialog.findViewById(R.id.weightOnScaleText))
-                            .getText().toString().trim();
-                    setScaleTare(Integer.parseInt(weightOnScale));
-                    Toast.makeText(getApplicationContext(), "Tare weight is " + getScaleTare()
-                            + " gram", Toast.LENGTH_SHORT).show();
-                }
-                catch (NumberFormatException e)
-                {
-                    Toast.makeText(getApplicationContext(), "Invalid weight",
-                            Toast.LENGTH_SHORT).show();
-                }
             }
         });
         weightDialog.findViewById(R.id.update_bluetooth)

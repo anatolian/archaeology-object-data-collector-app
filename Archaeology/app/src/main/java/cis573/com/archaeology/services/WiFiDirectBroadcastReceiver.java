@@ -97,7 +97,8 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver
         }
     };
     private List<WifiP2pDevice> peers = new ArrayList<>();
-    private WifiP2pManager.PeerListListener peerListListener = new WifiP2pManager.PeerListListener() {
+    private WifiP2pManager.PeerListListener peerListListener =
+            new WifiP2pManager.PeerListListener() {
         /**
          * Peers found
          * @param peerList - located peers
@@ -146,7 +147,7 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver
     {
         myIntent = intent;
         String action = intent.getAction();
-        Log.v(LOG_TAG, "the action is "+action);
+        Log.v(LOG_TAG, "the action is " + action);
         Log.v(LOG_TAG, "you are in the receive method");
         Log.v(LOG_TAG, "have not gone into state changed if condition");
         if (WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION.equals(action))
@@ -181,7 +182,6 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver
             }
             else
             {
-                // TODO: could this work??
                 Log.v(LOG_TAG, "peers changed and setting info listener");
                 mActivity.enableGetIpButton();
                 int state = intent.getIntExtra(WifiP2pManager.EXTRA_WIFI_STATE, -1);
@@ -216,6 +216,5 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver
             mActivity.connectionStatusChangedCallback(networkInfo);
             // Respond to new connection or disconnections
         }
-        // TODO: Respond to this device's wifi state changing
     }
 }

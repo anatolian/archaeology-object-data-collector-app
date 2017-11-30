@@ -5,7 +5,6 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
-import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 import java.io.IOException;
@@ -38,7 +37,8 @@ public class BluetoothService
     {
         if (connectedThread == null)
         {
-            Toast.makeText(context, "Device not found: try to reconnect", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Device not found: try to reconnect",
+                    Toast.LENGTH_SHORT).show();
         }
         else
         {
@@ -155,7 +155,8 @@ public class BluetoothService
                 }
                 catch (IOException closeException)
                 {
-                    Toast.makeText(context, "COULD NOT CLOSE SOCKET", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "COULD NOT CLOSE SOCKET",
+                            Toast.LENGTH_SHORT).show();
                     Log.e(TAG, "Could not close the client socket", closeException);
                 }
                 return;

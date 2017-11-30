@@ -152,4 +152,5 @@
     <string name = "configure_camera">Connect to Camera</string>
     <string name = "update_bluetooth">Record from Scale</string>
     <string name = "weight_int_frmt">Weight" %dg</string>
+    <string name = "camera_live_view">Camera Live View</string>
 </resources>

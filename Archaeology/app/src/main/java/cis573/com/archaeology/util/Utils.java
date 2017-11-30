@@ -26,7 +26,7 @@ public class Utils
         String[] mac2Splitted = mac2.trim().split(":");
         if (mac1Splitted.length == mac2Splitted.length)
         {
-            for (int i = 0 ; i < mac1Splitted.length; i++)
+            for (int i = 0; i < mac1Splitted.length; i++)
             {
                 if (mac1Splitted[i].equals(mac2Splitted[i]))
                 {
@@ -57,8 +57,6 @@ public class Utils
      */
     public static String getIPFromMac()
     {
-        // method modified from:
-        // http://www.flattermann.net/2011/02/android-howto-find-the-hardware-mac-address-of-a-remote-host/
         BufferedReader br = null;
         try
         {
@@ -70,9 +68,6 @@ public class Utils
                 String[] splitted = line.split(" +");
                 if (line.matches(".*" + p2pInt + ".*"))
                 {
-                    assertTrue(macEquals("c2:bd:d1:69:81:ee", "c2:bd:d1:69:01:ee"));
-                    assertFalse(macEquals("c2:bd:d1:63:81:ee", "c2:bd:d1:62:01:ee"));
-                    assertTrue(macEquals("bc:f5:ac:dc:f3:7e", "be:f5:ac:dc:f3:7e"));
                     return splitted[0];
                 }
             }
