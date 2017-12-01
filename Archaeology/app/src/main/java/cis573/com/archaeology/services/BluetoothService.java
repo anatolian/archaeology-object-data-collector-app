@@ -9,7 +9,6 @@ import android.util.Log;
 import android.widget.Toast;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.lang.reflect.Method;
 import java.util.UUID;
 public class BluetoothService
@@ -17,7 +16,7 @@ public class BluetoothService
     private static final String TAG = "WiDaC DEBUG";
     // handler that gets info from Bluetooth service
     private Context context;
-    private static ConnectedThread connectedThread = null;
+    private ConnectedThread connectedThread = null;
     public static int currWeight;
     // Defines several constants used when transmitting messages between the service and the UI.
     /**
@@ -31,9 +30,8 @@ public class BluetoothService
 
     /**
      * Connect to Bluetooth
-     * @param device - the device to connect to
      */
-    public void runService(BluetoothDevice device)
+    public void runService()
     {
         if (connectedThread == null)
         {
@@ -117,7 +115,8 @@ public class BluetoothService
             }
             catch (NullPointerException e)
             {
-                Log.d(TAG, " UUID from device is null, Using Default UUID, Device name: " + device.getName());
+                Log.d(TAG, " UUID from device is null, Using Default UUID, Device name: "
+                        + device.getName());
                 try
                 {
                     tmp = device.createInsecureRfcommSocketToServiceRecord(DEFAULT_UUID);
@@ -166,28 +165,12 @@ public class BluetoothService
             // separate thread.
             connectedThread = new ConnectedThread(mmSocket);
         }
-
-        /**
-         * Closes the client socket and causes the thread to finish.
-         */
-        public void cancel()
-        {
-            try
-            {
-                mmSocket.close();
-            }
-            catch (IOException e)
-            {
-                Log.e(TAG, "Could not close the client socket", e);
-            }
-        }
     }
 
     private class ConnectedThread extends Thread
     {
         private final BluetoothSocket mmSocket;
         private final InputStream mmInStream;
-        private final OutputStream mmOutStream;
         // mmBuffer store for the stream
         private byte[] mmBuffer;
         /**
@@ -198,7 +181,6 @@ public class BluetoothService
         {
             mmSocket = socket;
             InputStream tmpIn = null;
-            OutputStream tmpOut = null;
             // Get the input and output streams; using temp objects because member streams are final.
             try
             {
@@ -209,17 +191,7 @@ public class BluetoothService
                 Toast.makeText(context, "Error occurred when creating input stream",
                         Toast.LENGTH_SHORT).show();
             }
-            try
-            {
-                tmpOut = socket.getOutputStream();
-            }
-            catch (IOException e)
-            {
-                Toast.makeText(context, "Error occurred when creating output stream",
-                        Toast.LENGTH_SHORT).show();
-            }
             mmInStream = tmpIn;
-            mmOutStream = tmpOut;
         }
 
         /**
@@ -256,14 +228,9 @@ public class BluetoothService
                 connectedThread.cancel();
                 connectedThread = null;
             }
-            catch (NullPointerException e)
-            {
-                Toast.makeText(context, "input stream null " + e.toString(),
-                        Toast.LENGTH_SHORT).show();
-            }
             catch (Exception e)
             {
-                Toast.makeText(context, "jesus " + e.toString(), Toast.LENGTH_SHORT).show();
+                Log.v("Error ", e.toString());
             }
         }
 

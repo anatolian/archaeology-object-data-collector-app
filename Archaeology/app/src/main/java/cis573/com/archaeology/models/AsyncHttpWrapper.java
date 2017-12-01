@@ -1,7 +1,6 @@
 // Async HTTP wrapper
 // @author: msenol
 package cis573.com.archaeology.models;
-import android.app.Activity;
 import android.net.Uri;
 import android.util.Log;
 import com.loopj.android.http.AsyncHttpClient;
@@ -9,21 +8,16 @@ import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.TextHttpResponseHandler;
 import java.io.File;
 import java.io.FileNotFoundException;
-
-import cis573.com.archaeology.models.AsyncHttpCallbackWrapper;
-
 import static cis573.com.archaeology.util.StateStatic.LOG_TAG;
-import static cis573.com.archaeology.util.StateStatic.showToastError;
 public class AsyncHttpWrapper
 {
     /**
      * upload image
      * @param url - destination URL
      * @param imageUri - image location
-     * @param anActivity - calling activity
      * @param callbackWrapper - callback function
      */
-    public static void makeImageUpload(String url, Uri imageUri, Activity anActivity,
+    public static void makeImageUpload(String url, Uri imageUri,
                                        final AsyncHttpCallbackWrapper callbackWrapper)
     {
         // setting up variables to establish connection with server
@@ -32,12 +26,12 @@ public class AsyncHttpWrapper
         RequestParams params = new RequestParams();
         try
         {
-            Log.v(LOG_TAG,"upload_picture=" + myFile.getPath());
+            Log.v(LOG_TAG,"upload_picture = " + myFile.getPath());
             params.put("upload_picture", myFile);
         }
-        catch(FileNotFoundException e)
+        catch (FileNotFoundException e)
         {
-            showToastError(e, anActivity);
+            e.printStackTrace();
         }
         // send to database
         client.post(url, params, new TextHttpResponseHandler() {

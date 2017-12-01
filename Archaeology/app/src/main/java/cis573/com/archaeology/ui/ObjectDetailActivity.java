@@ -52,7 +52,6 @@ import cis573.com.archaeology.util.StateStatic;
 import cis573.com.archaeology.util.Utils;
 import cis573.com.archaeology.services.WiFiDirectBroadcastReceiver;
 import cis573.com.archaeology.models.AfterImageSavedMethodWrapper;
-import cis573.com.archaeology.models.BluetoothStaticWrapper;
 import cis573.com.archaeology.models.JSONObjectResponseWrapper;
 import cis573.com.archaeology.services.NutriScaleBroadcastReceiver;
 import cis573.com.archaeology.util.CheatSheet;
@@ -69,16 +68,14 @@ import static cis573.com.archaeology.util.StateStatic.MESSAGE_STATUS_CHANGE;
 import static cis573.com.archaeology.util.StateStatic.MESSAGE_WEIGHT;
 import static cis573.com.archaeology.util.StateStatic.REQUEST_IMAGE_CAPTURE;
 import static cis573.com.archaeology.util.StateStatic.REQUEST_ENABLE_BT;
-import static cis573.com.archaeology.util.StateStatic.connectedMacAddress;
+import static cis573.com.archaeology.util.StateStatic.connectedMACAddress;
 import static cis573.com.archaeology.util.StateStatic.connectedToRemoteCamera;
 import static cis573.com.archaeology.util.StateStatic.convertDpToPixel;
 import static cis573.com.archaeology.util.StateStatic.getGlobalWebServerURL;
-import static cis573.com.archaeology.util.StateStatic.getScaleTare;
 import static cis573.com.archaeology.util.StateStatic.getTimeStamp;
 import static cis573.com.archaeology.util.StateStatic.isBluetoothEnabled;
 import static cis573.com.archaeology.util.StateStatic.isIsRemoteCameraSelect;
 import static cis573.com.archaeology.util.StateStatic.isTakePhotoButtonClicked;
-import static cis573.com.archaeology.util.StateStatic.showToastError;
 import static cis573.com.archaeology.services.VolleyWrapper.makeVolleyJSONObjectRequest;
 public class ObjectDetailActivity extends AppCompatActivity
         implements PhotoFragment.PhotoLoadDeleteInterface,
@@ -101,12 +98,13 @@ public class ObjectDetailActivity extends AppCompatActivity
         @Override
         public void handleMessage(Message msg)
         {
-            Log.v(LOG_TAG, "Message received: " + msg.obj + " : " + msg.getData() + " : "
+            Log.v(LOG_TAG, "Message received: " + msg.obj + ": " + msg.getData() + " : "
                     + msg.what);
             if (msg.what == MESSAGE_WEIGHT)
             {
                 int weightOnScale = Integer.parseInt(msg.obj.toString().trim());
-                setCurrentScaleWeight(weightOnScale - getScaleTare() + "");
+                Log.v("SCALE READING", "" + weightOnScale);
+                setCurrentScaleWeight(weightOnScale + "");
             }
             else if(msg.what == MESSAGE_STATUS_CHANGE)
             {
@@ -126,12 +124,7 @@ public class ObjectDetailActivity extends AppCompatActivity
         {
             String action = intent.getAction();
             BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-            if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action))
-            {
-                // Device is now connected
-                Toast.makeText(context, "Connected", Toast.LENGTH_SHORT).show();
-            }
-            else if (BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED.equals(action))
+            if (BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED.equals(action))
             {
                 // Device is about to disconnect
                 Toast.makeText(context, "Disconnect requested", Toast.LENGTH_SHORT).show();
@@ -146,14 +139,14 @@ public class ObjectDetailActivity extends AppCompatActivity
         }
     };
     public String tempFileName;
-    public int sonyApiRequestID = 1;
+    public int sonyAPIRequestID = 1;
     private String currentScaleWeight = "";
     private String bluetoothConnectionStatus = "";
     boolean dialogVisible = false;
     // dialogs set up in order to provide interface to interact with other devices
     AlertDialog remoteCameraDialog, weightDialog, pickPeersDialog;
     // broadcast receiver objects used to receive messages from other devices
-    BroadcastReceiver nutriScaleBroadcastReceiver, wifiDirectBroadcastReceiver;
+    BroadcastReceiver nutriScaleBroadcastReceiver, wiFiDirectBroadcastReceiver;
     private boolean activityPaused = false;
     private boolean isPickPeersDialogAppeared = false;
     // correspond to columns in database associated with finds
@@ -200,23 +193,6 @@ public class ObjectDetailActivity extends AppCompatActivity
         }
         bluetoothService = null;
         device = null;
-        Set<BluetoothDevice> pairedDevices = BluetoothAdapter.getDefaultAdapter().getBondedDevices();
-        if (pairedDevices.size() > 0)
-        {
-            // There are paired devices. Get the name and address of each paired device.
-            for (BluetoothDevice pairedDv: pairedDevices)
-            {
-                String deviceName = pairedDv.getName();
-                if (deviceName.equals(Session.deviceName))
-                {
-                    device = pairedDv;
-                    bluetoothService = new BluetoothService(this);
-                    bluetoothService.reconnect(device);
-                }
-            }
-        }
-        Toast.makeText(this, "Connected to: " + Session.deviceName,
-                Toast.LENGTH_SHORT).show();
         IntentFilter filter = new IntentFilter();
         filter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
         filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED);
@@ -225,7 +201,7 @@ public class ObjectDetailActivity extends AppCompatActivity
         queue = Volley.newRequestQueue(this);
         mManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
         mChannel = mManager.initialize(this, getMainLooper(), null);
-        wifiDirectBroadcastReceiver = new WiFiDirectBroadcastReceiver(mManager, mChannel,
+        wiFiDirectBroadcastReceiver = new WiFiDirectBroadcastReceiver(mManager, mChannel,
                 this);
         // adding actions to intent filter
         mIntentFilter = new IntentFilter();
@@ -303,27 +279,25 @@ public class ObjectDetailActivity extends AppCompatActivity
         asyncPopulatePhotos();
         toggleAddPhotoButton();
         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        //check to see if bluetooth is enabled
-        if (mBluetoothAdapter == null || !isBluetoothEnabled())
+        // check to see if bluetooth is enabled
+        if (mBluetoothAdapter == null)
         {
-            Toast.makeText(this, "Bluetooth not supported or disabled in settings",
+            Toast.makeText(this, "Bluetooth not supported", Toast.LENGTH_SHORT).show();
+        }
+        else if (!isBluetoothEnabled())
+        {
+            Toast.makeText(this, "Bluetooth disabled in settings",
                     Toast.LENGTH_SHORT).show();
         }
         else
         {
-            nutriScaleBroadcastReceiver = new NutriScaleBroadcastReceiver(handler);
-            Toast.makeText(this, "Bluetooth supported", Toast.LENGTH_SHORT).show();
             // checking once again if not enabled. if it is not then enable it
             if (!mBluetoothAdapter.isEnabled())
             {
                 Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                 startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
             }
-            else
-            {
-                BluetoothStaticWrapper.discoverAndConnectToNutriScale(mBluetoothAdapter,
-                        nutriScaleBroadcastReceiver, this, handler);
-            }
+            nutriScaleBroadcastReceiver = new NutriScaleBroadcastReceiver(handler);
         }
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = this.getLayoutInflater();
@@ -339,8 +313,7 @@ public class ObjectDetailActivity extends AppCompatActivity
             @Override
             public void onClick(DialogInterface dialog, int id)
             {
-                saveWeight((((EditText) weightDialog.findViewById(R.id.dialogCurrentWeightInDBText))
-                        .getText().toString().trim()));
+                saveWeight("" + BluetoothService.currWeight);
                 dialogVisible = false;
             }
         }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -364,6 +337,22 @@ public class ObjectDetailActivity extends AppCompatActivity
                 dialogVisible = false;
             }
         });
+        Set<BluetoothDevice> pairedDevices = BluetoothAdapter.getDefaultAdapter()
+                .getBondedDevices();
+        if (pairedDevices.size() > 0)
+        {
+            // There are paired devices. Get the name and address of each paired device.
+            for (BluetoothDevice pairedDv: pairedDevices)
+            {
+                String deviceName = pairedDv.getName();
+                if (deviceName.equals(Session.deviceName))
+                {
+                    device = pairedDv;
+                    bluetoothService = new BluetoothService(this);
+                    bluetoothService.reconnect(device);
+                }
+            }
+        }
         weightDialog = builder.create();
         // creating the camera dialog and setting up photo fragment to store the photos
         remoteCameraDialog = CameraDialog.createCameraDialog(this);
@@ -486,7 +475,7 @@ public class ObjectDetailActivity extends AppCompatActivity
         try
         {
             unregisterReceiver(nutriScaleBroadcastReceiver);
-            unregisterReceiver(wifiDirectBroadcastReceiver);
+            unregisterReceiver(wiFiDirectBroadcastReceiver);
         }
         catch (IllegalArgumentException e)
         {
@@ -503,7 +492,7 @@ public class ObjectDetailActivity extends AppCompatActivity
         super.onResume();
         Log.v(LOG_TAG, "Resuming Activity");
         activityPaused = false;
-        registerReceiver(wifiDirectBroadcastReceiver, mIntentFilter);
+        registerReceiver(wiFiDirectBroadcastReceiver, mIntentFilter);
     }
 
     /**
@@ -522,7 +511,7 @@ public class ObjectDetailActivity extends AppCompatActivity
         }
         try
         {
-            unregisterReceiver(wifiDirectBroadcastReceiver);
+            unregisterReceiver(wiFiDirectBroadcastReceiver);
             unregisterReceiver(nutriScaleBroadcastReceiver);
         }
         catch (IllegalArgumentException e)
@@ -568,9 +557,7 @@ public class ObjectDetailActivity extends AppCompatActivity
                 }
                 catch (JSONException e)
                 {
-                    showToastError(e, getApplicationContext());
-                    // TODO: Uncomment
-//                    e.printStackTrace();
+                    e.printStackTrace();
                 }
             }
 
@@ -581,7 +568,6 @@ public class ObjectDetailActivity extends AppCompatActivity
             @Override
             public void errorMethod(VolleyError error)
             {
-                showToastError(error, getApplicationContext());
                 error.printStackTrace();
             }
         });
@@ -627,9 +613,7 @@ public class ObjectDetailActivity extends AppCompatActivity
                 }
                 catch (JSONException e)
                 {
-                    showToastError(e, currentContext);
-                    // TODO: Uncomment
-                    //e.printStackTrace();
+                    e.printStackTrace();
                 }
             }
 
@@ -640,7 +624,6 @@ public class ObjectDetailActivity extends AppCompatActivity
             @Override
             public void errorMethod(VolleyError error)
             {
-                showToastError(error, currentContext);
                 error.printStackTrace();
             }
         });
@@ -676,9 +659,7 @@ public class ObjectDetailActivity extends AppCompatActivity
                 }
                 catch (JSONException e)
                 {
-                    showToastError(e, getApplicationContext());
-                    // TODO: Uncomment
-                    //e.printStackTrace();
+                    e.printStackTrace();
                 }
             }
 
@@ -689,7 +670,6 @@ public class ObjectDetailActivity extends AppCompatActivity
             @Override
             public void errorMethod(VolleyError error)
             {
-                showToastError(error, getApplicationContext());
                 error.printStackTrace();
             }
         });
@@ -726,9 +706,7 @@ public class ObjectDetailActivity extends AppCompatActivity
                 }
                 catch (JSONException e)
                 {
-                    showToastError(e, getApplicationContext());
-                    // TODO: Uncomment
-                    //e.printStackTrace();
+                    e.printStackTrace();
                 }
             }
 
@@ -739,7 +717,6 @@ public class ObjectDetailActivity extends AppCompatActivity
             @Override
             public void errorMethod(VolleyError error)
             {
-                showToastError(error, getApplicationContext());
                 error.printStackTrace();
             }
         });
@@ -834,7 +811,7 @@ public class ObjectDetailActivity extends AppCompatActivity
         this.currentScaleWeight = currentScaleWeight;
         if (dialogVisible)
         {
-            ((EditText) weightDialog.findViewById(R.id.weightOnScaleText))
+            ((EditText) weightDialog.findViewById(R.id.dialogCurrentWeightInDBText))
                     .setText(currentScaleWeight.trim());
         }
     }
@@ -859,6 +836,7 @@ public class ObjectDetailActivity extends AppCompatActivity
      */
     public void saveWeight(String weight)
     {
+        Log.v("RECORDED WEIGHT", weight);
         try
         {
             ((TextView) findViewById(R.id.weightInput)).setText(weight);
@@ -891,24 +869,9 @@ public class ObjectDetailActivity extends AppCompatActivity
             @Override
             public void onClick(View v)
             {
-                saveWeight((((EditText) weightDialog.findViewById(R.id.weightOnScaleText)).getText()
-                        .toString().trim()));
+                saveWeight((((EditText) weightDialog.findViewById(R.id.dialogCurrentWeightInDBText))
+                        .getText().toString().trim()));
                 weightDialog.dismiss();
-            }
-        });
-        weightDialog.findViewById(R.id.dialogCopyWeightBelowButton)
-                .setOnClickListener(new View.OnClickListener() {
-            /**
-             * User clicked copy weight
-             * @param v - dialog
-             */
-            @Override
-            public void onClick(View v)
-            {
-                String weightOnScale = ((EditText) weightDialog.findViewById(R.id.weightOnScaleText))
-                        .getText().toString().trim();
-                ((EditText) weightDialog.findViewById(R.id.dialogCurrentWeightInDBText))
-                        .setText(weightOnScale);
             }
         });
         weightDialog.findViewById(R.id.update_bluetooth)
@@ -928,12 +891,11 @@ public class ObjectDetailActivity extends AppCompatActivity
                 }
                 catch (NullPointerException e)
                 {
-                    Toast.makeText(getApplicationContext(), "No Scale Connected",
-                            Toast.LENGTH_SHORT).show();
+                    Log.v("SCALE CONNECTION", e.toString());
                 }
             }
         });
-        ((EditText) weightDialog.findViewById(R.id.weightOnScaleText))
+        ((EditText) weightDialog.findViewById(R.id.dialogCurrentWeightInDBText))
                 .setText(getCurrentScaleWeight());
         ((TextView) weightDialog.findViewById(R.id.btConnectionStatusText))
                 .setText(getBluetoothConnectionStatus());
@@ -944,8 +906,9 @@ public class ObjectDetailActivity extends AppCompatActivity
      */
     public void runBluetooth()
     {
-        bluetoothService.runService(device);
-        TextView weightText = (TextView) findViewById(R.id.weightOnScaleText);
+        bluetoothService.runService();
+        Log.v("SCALE CONNECTION", "" + BluetoothService.currWeight);
+        TextView weightText = (TextView) findViewById(R.id.dialogCurrentWeightInDBText);
         weightText.setText(getString(R.string.weight_int_frmt, BluetoothService.currWeight));
     }
 
@@ -962,19 +925,9 @@ public class ObjectDetailActivity extends AppCompatActivity
         }
         else
         {
-            Toast.makeText(this, "tablet camera selected", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Tablet camera selected", Toast.LENGTH_SHORT).show();
             startLocalCameraIntent();
         }
-    }
-
-    /**
-     * Reconnect to scale
-     * @param view - button
-     */
-    public void reconnectButtonAction(View view)
-    {
-        BluetoothStaticWrapper.discoverAndConnectToNutriScale(BluetoothAdapter.getDefaultAdapter(),
-                nutriScaleBroadcastReceiver, this, handler);
     }
 
     /**
@@ -995,7 +948,7 @@ public class ObjectDetailActivity extends AppCompatActivity
             @Override
             public void onCancel(DialogInterface dialog)
             {
-                CameraDialog.stopLiveView(parentActivity, queue, sonyApiRequestID++,
+                CameraDialog.stopLiveView(parentActivity, queue, sonyAPIRequestID++,
                         getLiveViewSurface());
             }
         });
@@ -1013,8 +966,8 @@ public class ObjectDetailActivity extends AppCompatActivity
                     isTakePhotoButtonClicked = true;
                     remoteCameraDialog.findViewById(R.id.take_photo).setEnabled(false);
                     Log.v(LOG_TAG_WIFI_DIRECT, "Take photo button clicked");
-                    CameraDialog.takePhoto(parentActivity, queue, sonyApiRequestID++, getTimeStamp(),
-                            new AfterImageSavedMethodWrapper() {
+                    CameraDialog.takePhoto(parentActivity, queue, sonyAPIRequestID++,
+                            getTimeStamp(), new AfterImageSavedMethodWrapper() {
                         /**
                          * Process saved image
                          * @param thumbnailImageUri - image URI
@@ -1077,7 +1030,7 @@ public class ObjectDetailActivity extends AppCompatActivity
             @Override
             public void onClick(View v)
             {
-                CameraDialog.zoomIn(parentActivity, queue, sonyApiRequestID++);
+                CameraDialog.zoomIn(parentActivity, queue, sonyAPIRequestID++);
             }
         });
         remoteCameraDialog.findViewById(R.id.zoom_out)
@@ -1089,11 +1042,11 @@ public class ObjectDetailActivity extends AppCompatActivity
             @Override
             public void onClick(View v)
             {
-                CameraDialog.zoomOut(parentActivity, queue, sonyApiRequestID++);
+                CameraDialog.zoomOut(parentActivity, queue, sonyAPIRequestID++);
             }
         });
         // should allow you to see what the camera is seeing
-        CameraDialog.startLiveView(this, queue, sonyApiRequestID++, getLiveViewSurface());
+        CameraDialog.startLiveView(this, queue, sonyAPIRequestID++, getLiveViewSurface());
     }
 
     /**
@@ -1225,7 +1178,7 @@ public class ObjectDetailActivity extends AppCompatActivity
                     @Override
                     public void onSuccess()
                     {
-                        connectedMacAddress = macAddress;
+                        connectedMACAddress = macAddress;
                         Log.v(LOG_TAG, "mac address is " + macAddress);
                         // so at this point the connection has been made
                         Log.v(LOG_TAG_WIFI_DIRECT, "Connection request sent. Arp file modified "
@@ -1299,7 +1252,7 @@ public class ObjectDetailActivity extends AppCompatActivity
      * getting the IP address in order to establish a connection
      */
     @Override
-    public void enableGetIpButton()
+    public void enableGetIPButton()
     {
         // so at this point you were able to establish a connection with the camera
         connectedToRemoteCamera = true;
@@ -1419,7 +1372,7 @@ public class ObjectDetailActivity extends AppCompatActivity
                 connectedToRemoteCamera = true;
                 findViewById(R.id.connectToCameraButton).setEnabled(true);
                 ((Button) findViewById(R.id.connectToCameraButton))
-                        .setText(getString(R.string.mac_connection, connectedMacAddress));
+                        .setText(getString(R.string.mac_connection, connectedMACAddress));
                 findViewById(R.id.connectToCameraButton)
                         .setOnClickListener(new View.OnClickListener() {
                     /**
@@ -1432,9 +1385,9 @@ public class ObjectDetailActivity extends AppCompatActivity
                         disconnectRemoteCameraAction(v);
                     }
                 });
-                Log.v(LOG_TAG_WIFI_DIRECT, "Connected to device " + connectedMacAddress + " ip "
+                Log.v(LOG_TAG_WIFI_DIRECT, "Connected to device " + connectedMACAddress + " ip "
                         + Utils.getIPFromMac());
-                StateStatic.setGlobalCameraMAC(connectedMacAddress);
+                StateStatic.setGlobalCameraMAC(connectedMACAddress);
                 toggleAddPhotoButton();
             }
         });

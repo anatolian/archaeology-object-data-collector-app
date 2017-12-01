@@ -233,9 +233,8 @@ public class CheatSheet
      */
     public static void clearThePhotosDirectory()
     {
-        File mediaStorageDir =
-                new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
-                getGlobalPhotoSavePath());
+        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES), getGlobalPhotoSavePath());
         if (mediaStorageDir.isDirectory())
         {
             for (File file: mediaStorageDir.listFiles())

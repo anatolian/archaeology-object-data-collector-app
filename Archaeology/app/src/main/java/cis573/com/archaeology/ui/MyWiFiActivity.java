@@ -37,7 +37,6 @@ import cis573.com.archaeology.services.VolleyWrapper;
 import cis573.com.archaeology.services.WiFiDirectBroadcastReceiver;
 import cis573.com.archaeology.models.JSONObjectResponseWrapper;
 import static cis573.com.archaeology.util.StateStatic.LOG_TAG_WIFI_DIRECT;
-import static cis573.com.archaeology.util.StateStatic.showToastError;
 // camera can be accessed through this class as well as ObjectActivity classes
 public class MyWiFiActivity extends AppCompatActivity
         implements WiFiDirectBroadcastReceiver.WifiDirectBroadcastReceivable
@@ -108,7 +107,7 @@ public class MyWiFiActivity extends AppCompatActivity
      * this should help you connect to the camera
      * @param macAddress - camera MAC address
      */
-    public void connectToWifiDirectDevice(final String macAddress)
+    public void connectToWiFiDirectDevice(final String macAddress)
     {
         WifiP2pDevice device = new WifiP2pDevice();
         device.deviceAddress = macAddress;
@@ -165,7 +164,7 @@ public class MyWiFiActivity extends AppCompatActivity
             public void onClick(DialogInterface dialog, int which)
             {
                 connectButtonClicked = true;
-                connectToWifiDirectDevice(pairsOfAddressAndNames.get(listOfDeviceNames.get(which)));
+                connectToWiFiDirectDevice(pairsOfAddressAndNames.get(listOfDeviceNames.get(which)));
                 // The 'which' argument contains the index position of the selected item
             }
         });
@@ -202,7 +201,7 @@ public class MyWiFiActivity extends AppCompatActivity
     /**
      * Enable get IP button
      */
-    public void enableGetIpButton()
+    public void enableGetIPButton()
     {
         findViewById(R.id.button15).setEnabled(true);
     }
@@ -263,7 +262,7 @@ public class MyWiFiActivity extends AppCompatActivity
      * use url for sony camera and get list of APIs for camera
      * @param view - view for commands
      */
-    public void getApiCommands(View view)
+    public void getAPICommands(View view)
     {
         String url = buildAPIURLFromIP(Utils.getIPFromMac());
         try
@@ -287,13 +286,13 @@ public class MyWiFiActivity extends AppCompatActivity
                 @Override
                 public void errorMethod(VolleyError error)
                 {
-                    showToastError(error, currentContext);
+                    error.printStackTrace();
                 }
             });
         }
         catch (JSONException e)
         {
-            showToastError(e, this);
+            e.printStackTrace();
         }
     }
 
@@ -358,7 +357,7 @@ public class MyWiFiActivity extends AppCompatActivity
                     }
                     catch (JSONException e)
                     {
-                        showToastError(e, currentContext);
+                        e.printStackTrace();
                     }
                 }
 
@@ -369,14 +368,14 @@ public class MyWiFiActivity extends AppCompatActivity
                 @Override
                 public void errorMethod(VolleyError error)
                 {
-                    showToastError(error, currentContext);
+                    error.printStackTrace();
                     Log.v(LOG_TAG_WIFI_DIRECT, error.toString());
                 }
             });
         }
         catch (JSONException e)
         {
-            showToastError(e, this);
+            e.printStackTrace();
         }
     }
 
@@ -435,7 +434,7 @@ public class MyWiFiActivity extends AppCompatActivity
                     }
                     catch (JSONException e)
                     {
-                        showToastError(e, currentContext);
+                        e.printStackTrace();
                     }
                 }
 
@@ -446,13 +445,13 @@ public class MyWiFiActivity extends AppCompatActivity
                 @Override
                 public void errorMethod(VolleyError error)
                 {
-                    showToastError(error, currentContext);
+                    error.printStackTrace();
                 }
             });
         }
         catch (JSONException e)
         {
-            showToastError(e, this);
+            e.printStackTrace();
         }
     }
 
@@ -484,13 +483,13 @@ public class MyWiFiActivity extends AppCompatActivity
                 @Override
                 public void errorMethod(VolleyError error)
                 {
-                    showToastError(error, currentContext);
+                    error.printStackTrace();
                 }
             });
         }
         catch (JSONException e)
         {
-            showToastError(e, this);
+            e.printStackTrace();
         }
     }
 
@@ -522,13 +521,13 @@ public class MyWiFiActivity extends AppCompatActivity
                 @Override
                 public void errorMethod(VolleyError error)
                 {
-                    showToastError(error, currentContext);
+                    error.printStackTrace();
                 }
             });
         }
         catch (JSONException e)
         {
-            showToastError(e, this);
+            e.printStackTrace();
         }
     }
 
@@ -562,13 +561,13 @@ public class MyWiFiActivity extends AppCompatActivity
                 @Override
                 public void errorMethod(VolleyError error)
                 {
-                    showToastError(error, currentContext);
+                    error.printStackTrace();
                 }
             });
         }
         catch (JSONException e)
         {
-            showToastError(e, this);
+            e.printStackTrace();
         }
     }
 

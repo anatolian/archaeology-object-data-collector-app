@@ -38,7 +38,7 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver
         /**
          * Enable get IP button
          */
-        void enableGetIpButton();
+        void enableGetIPButton();
 
         /**
          * Connected message
@@ -84,7 +84,7 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver
                 isGroupOwner = true;
                 connectedToDevice = true;
                 Log.v(LOG_TAG, "the group has been formed and you found the owner");
-                mActivity.enableGetIpButton();
+                mActivity.enableGetIPButton();
             }
             else if (info.groupFormed)
             {
@@ -92,7 +92,7 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver
                 // thread that connects to the group owner.
                 Log.v(LOG_TAG, "the group has been formed but you cannot find the owner");
                 connectedToDevice = true;
-                mActivity.enableGetIpButton();
+                mActivity.enableGetIPButton();
             }
         }
     };
@@ -183,7 +183,7 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver
             else
             {
                 Log.v(LOG_TAG, "peers changed and setting info listener");
-                mActivity.enableGetIpButton();
+                mActivity.enableGetIPButton();
                 int state = intent.getIntExtra(WifiP2pManager.EXTRA_WIFI_STATE, -1);
                 Log.v(LOG_TAG, "the state is " + String.valueOf(state));
                 if (state == WifiP2pManager.WIFI_P2P_STATE_ENABLED)

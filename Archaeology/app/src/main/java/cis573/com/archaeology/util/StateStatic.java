@@ -1,15 +1,13 @@
 // Static stuff
 // @author: msenol
 package cis573.com.archaeology.util;
-import android.content.Context;
+import android.bluetooth.BluetoothAdapter;
 import android.content.res.Resources;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.widget.Toast;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-import java.util.UUID;
 public class StateStatic
 {
     // This class holds global state variables. This class should be only used in static way
@@ -20,10 +18,9 @@ public class StateStatic
     public static final int MESSAGE_WEIGHT = 501;
     public static final int MESSAGE_STATUS_CHANGE = 502;
     public static final int REQUEST_ENABLE_BT = 301;
-    public static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     public static final String DEFAULT_WEB_SERVER_URL
             = "https://thawing-plains-16187.herokuapp.com/web/";
-    public static final String DEFAULT_CAMERA_MAC = "bc:f5:ac:dc:f3:7e";
+    public static final String DEFAULT_CAMERA_MAC = "fe:c2:de:31:0a:e1";
     // 30 minutes
     public static final long DEFAULT_CALIBRATION_INTERVAL = 1800000;
     // default url to connect to database to send photos back and forth
@@ -49,11 +46,10 @@ public class StateStatic
     // you are trying to view.
     private static long remoteCameraCalibrationInterval = DEFAULT_CALIBRATION_INTERVAL;
     private static long tabletCameraCalibrationInterval = DEFAULT_CALIBRATION_INTERVAL;
-    private static int scaleTare = 0;
     // variable to track connections
     private static boolean isRemoteCameraSelect = true;
     public static boolean connectedToRemoteCamera = false;
-    public static String connectedMacAddress = "";
+    public static String connectedMACAddress = "";
     public static boolean isTakePhotoButtonClicked = false;
     /**
      * return webserver url that is used to connect to the main database
@@ -100,24 +96,6 @@ public class StateStatic
     public static String getGlobalPhotoSavePath()
     {
         return DEFAULT_PHOTO_PATH;
-    }
-
-    /**
-     * Get tare
-     * @return Returns tare
-     */
-    public static int getScaleTare()
-    {
-        return scaleTare;
-    }
-
-    /**
-     * Set tare
-     * @param scaleTare - new tare
-     */
-    public static void setScaleTare(int scaleTare)
-    {
-        StateStatic.scaleTare = scaleTare;
     }
 
     /**
@@ -180,7 +158,8 @@ public class StateStatic
      */
     public static boolean isBluetoothEnabled()
     {
-        return false;
+        BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        return mBluetoothAdapter != null && mBluetoothAdapter.isEnabled();
     }
 
     /**
@@ -212,15 +191,5 @@ public class StateStatic
     public static String getTimeStamp()
     {
         return new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.ENGLISH).format(new Date());
-    }
-
-    /**
-     * Display error
-     * @param error - error to display
-     * @param cont - calling context
-     */
-    public static void showToastError(Exception error, Context cont)
-    {
-        Toast.makeText(cont, error.toString(), Toast.LENGTH_SHORT).show();
     }
 }

@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.List;
 import cis573.com.archaeology.util.CheatSheet;
 import cis573.com.archaeology.R;
-import cis573.com.archaeology.util.StateStatic;
 import cis573.com.archaeology.models.JSONArrayResponseWrapper;
 import static cis573.com.archaeology.util.CheatSheet.goToSettings;
 import static cis573.com.archaeology.util.StateStatic.ALL_SAMPLE_NUMBER;
@@ -34,7 +33,6 @@ import static cis573.com.archaeology.util.StateStatic.CONTEXT_NUMBER;
 import static cis573.com.archaeology.util.StateStatic.LOG_TAG;
 import static cis573.com.archaeology.util.StateStatic.SAMPLE_NUMBER;
 import static cis573.com.archaeology.util.StateStatic.getGlobalWebServerURL;
-import static cis573.com.archaeology.util.StateStatic.showToastError;
 import static cis573.com.archaeology.services.VolleyWrapper.cancelAllVolleyRequests;
 import static cis573.com.archaeology.services.VolleyWrapper.makeVolleyJSONArrayRequest;
 public class CeramicInputActivity extends AppCompatActivity
@@ -357,7 +355,7 @@ public class CeramicInputActivity extends AppCompatActivity
                 }
                 catch (JSONException e)
                 {
-                    StateStatic.showToastError(e, currentContext);
+                    e.printStackTrace();
                 }
                 allDataLoadInfo.put(LoadState.areaEasting, true);
                 toggleContinueButton();
@@ -371,7 +369,7 @@ public class CeramicInputActivity extends AppCompatActivity
             public void errorMethod(VolleyError error)
             {
                 error.printStackTrace();
-                StateStatic.showToastError(error, currentContext);
+                error.printStackTrace();
                 Log.v(LOG_TAG, "there was an error in getting area easting");
             }
         });
@@ -400,7 +398,7 @@ public class CeramicInputActivity extends AppCompatActivity
                 }
                 catch (JSONException e)
                 {
-                    StateStatic.showToastError(e, currentContext);
+                    e.printStackTrace();
                 }
                 // if data was received successfully you can put sample number as true and enable
                 // buttons
@@ -416,8 +414,6 @@ public class CeramicInputActivity extends AppCompatActivity
             public void errorMethod(VolleyError error)
             {
                 error.printStackTrace();
-                StateStatic.showToastError(error, currentContext);
-                Log.v(LOG_TAG, "there was an error in getting area easting");
             }
         });
     }
@@ -446,7 +442,7 @@ public class CeramicInputActivity extends AppCompatActivity
                 }
                 catch (JSONException e)
                 {
-                    showToastError(e, currentContext);
+                    e.printStackTrace();
                 }
                 // if data was received successfully you can put sample number as true and enable
                 // buttons
@@ -462,7 +458,6 @@ public class CeramicInputActivity extends AppCompatActivity
             public void errorMethod(VolleyError error)
             {
                 error.printStackTrace();
-                StateStatic.showToastError(error, currentContext);
             }
         });
     }
@@ -492,7 +487,7 @@ public class CeramicInputActivity extends AppCompatActivity
                 }
                 catch (JSONException e)
                 {
-                    StateStatic.showToastError(e, currentContext);
+                    e.printStackTrace();
                 }
                 // if data was received successfully you can put sample number as true and enable
                 // buttons
@@ -508,7 +503,6 @@ public class CeramicInputActivity extends AppCompatActivity
             public void errorMethod(VolleyError error)
             {
                 error.printStackTrace();
-                StateStatic.showToastError(error, currentContext);
             }
         });
     }

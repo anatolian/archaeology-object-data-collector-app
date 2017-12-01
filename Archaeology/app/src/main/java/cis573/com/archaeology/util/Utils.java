@@ -7,40 +7,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Date;
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertTrue;
 import static cis573.com.archaeology.util.StateStatic.LOG_TAG_WIFI_DIRECT;
 public class Utils
 {
     private final static String p2pInt = "p2p";
-    /**
-     * MAC address equality
-     * @param mac1 - MAC address 1
-     * @param mac2 - MAC address 2
-     * @return Returns whether mac1 = mac2
-     */
-    private static boolean macEquals(String mac1, String mac2)
-    {
-        int numberOfCorrectColumns = 0;
-        String[] mac1Splitted = mac1.trim().split(":");
-        String[] mac2Splitted = mac2.trim().split(":");
-        if (mac1Splitted.length == mac2Splitted.length)
-        {
-            for (int i = 0; i < mac1Splitted.length; i++)
-            {
-                if (mac1Splitted[i].equals(mac2Splitted[i]))
-                {
-                    numberOfCorrectColumns++;
-                }
-            }
-            return numberOfCorrectColumns >= 5;
-        }
-        else
-        {
-            return false;
-        }
-    }
-
     /**
      * Get last modified date
      * @return - return date last modified

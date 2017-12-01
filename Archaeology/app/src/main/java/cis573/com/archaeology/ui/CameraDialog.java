@@ -26,7 +26,6 @@ import cis573.com.archaeology.util.Utils;
 import cis573.com.archaeology.services.VolleyWrapper;
 import cis573.com.archaeology.models.AfterImageSavedMethodWrapper;
 import static cis573.com.archaeology.util.StateStatic.LOG_TAG_WIFI_DIRECT;
-import static cis573.com.archaeology.util.StateStatic.showToastError;
 public class CameraDialog
 {
     // interface that will be used by camera dialogs
@@ -53,8 +52,8 @@ public class CameraDialog
         AlertDialog.Builder builder = new AlertDialog.Builder(anActivity);
         // Get the layout inflater
         LayoutInflater inflater = anActivity.getLayoutInflater();
-        // Inflate and set the layout for the dialog
-        // Pass null as the parent view because its going in the dialog layout
+        // Inflate and set the layout for the dialog. Pass null as the parent view because its
+        // going in the dialog layout
         builder.setView(inflater.inflate(R.layout.remote_camera_layout, null));
         return builder.create();
     }
@@ -107,7 +106,7 @@ public class CameraDialog
     }
 
     /**
-     * this is going to be called from ObjectDetailActivity or ObjectDetailActivity2 class
+     * This is going to be called from ObjectDetailActivity or ObjectDetailActivity2 class
      * should allow you to see what the camera is seeing. requests are stored in a RequestQueue
      * that is passed in as an argument
      * @param anActivity - calling activity
@@ -161,7 +160,7 @@ public class CameraDialog
                     }
                     catch (JSONException e)
                     {
-                        showToastError(e, currentContext);
+                        e.printStackTrace();
                     }
                 }
 
@@ -172,13 +171,13 @@ public class CameraDialog
                 @Override
                 public void errorMethod(VolleyError error)
                 {
-                    showToastError(error, currentContext);
+                    error.printStackTrace();
                 }
             });
         }
         catch (JSONException e)
         {
-            showToastError(e, anActivity);
+            e.printStackTrace();
         }
     }
 
@@ -216,13 +215,13 @@ public class CameraDialog
                 @Override
                 public void errorMethod(VolleyError error)
                 {
-                    showToastError(error, currentContext);
+                    error.printStackTrace();
                 }
             });
         }
         catch (JSONException e)
         {
-            showToastError(e, anActivity);
+            e.printStackTrace();
         }
     }
 
@@ -338,7 +337,7 @@ public class CameraDialog
                                                         }
                                                         catch (FileNotFoundException e)
                                                         {
-                                                            showToastError(e, currentContext);
+                                                            e.printStackTrace();
                                                             loadingDialog.dismiss();
                                                         }
                                                         finally
@@ -352,7 +351,7 @@ public class CameraDialog
                                                             }
                                                             catch (IOException e)
                                                             {
-                                                                showToastError(e, currentContext);
+                                                                e.printStackTrace();
                                                                 loadingDialog.dismiss();
                                                             }
                                                         }
@@ -369,7 +368,7 @@ public class CameraDialog
                                                     @Override
                                                     public void errorMethod(VolleyError error)
                                                     {
-                                                        showToastError(error, currentContext);
+                                                        error.printStackTrace();
                                                         loadingDialog.dismiss();
                                                         startLiveView(anActivity, queue, id + 27,
                                                                 liveViewSurface);
@@ -378,7 +377,7 @@ public class CameraDialog
                                             }
                                             catch (JSONException e)
                                             {
-                                                showToastError(e, currentContext);
+                                                e.printStackTrace();
                                             }
                                         }
 
@@ -389,14 +388,14 @@ public class CameraDialog
                                         @Override
                                         public void errorMethod(VolleyError error)
                                         {
-                                            showToastError(error, currentContext);
+                                            error.printStackTrace();
                                             Log.v(LOG_TAG_WIFI_DIRECT, error.toString());
                                         }
                                     });
                                 }
                                 catch (JSONException e)
                                 {
-                                    showToastError(e, anActivity);
+                                    e.printStackTrace();
                                 }
                             }
 
@@ -407,13 +406,13 @@ public class CameraDialog
                             @Override
                             public void errorMethod(VolleyError error)
                             {
-                                showToastError(error, anActivity);
+                                error.printStackTrace();
                             }
                         });
                     }
                     catch (JSONException e)
                     {
-                        showToastError(e, anActivity);
+                        e.printStackTrace();
                     }
                 }
 
@@ -424,13 +423,13 @@ public class CameraDialog
                 @Override
                 public void errorMethod(VolleyError error)
                 {
-                    showToastError(error, currentContext);
+                    error.printStackTrace();
                 }
             });
         }
         catch (JSONException e)
         {
-            showToastError(e, anActivity);
+            e.printStackTrace();
         }
     }
 
@@ -464,13 +463,13 @@ public class CameraDialog
                 @Override
                 public void errorMethod(VolleyError error)
                 {
-                    showToastError(error, currentContext);
+                    error.printStackTrace();
                 }
             });
         }
         catch (JSONException e)
         {
-            showToastError(e, anActivity);
+            e.printStackTrace();
         }
     }
 
@@ -504,13 +503,13 @@ public class CameraDialog
                 @Override
                 public void errorMethod(VolleyError error)
                 {
-                    showToastError(error, currentContext);
+                    error.printStackTrace();
                 }
             });
         }
         catch (JSONException e)
         {
-            showToastError(e, anActivity);
+            e.printStackTrace();
         }
     }
 }

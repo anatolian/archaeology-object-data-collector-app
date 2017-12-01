@@ -25,42 +25,6 @@
         android:textColor = "#AAAAAA"
         android:typeface = "monospace"/>
     <TextView
-        android:id="@+id/textView23"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="@string/weight"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="@android:color/black" />
-    <EditText
-        android:layout_width = "match_parent"
-        android:layout_height = "wrap_content"
-        android:inputType = "none|number"
-        android:ems = "10"
-        android:id = "@+id/weightOnScaleText"
-        android:layout_gravity = "center_horizontal"
-        style = "@style/EditTextNumber.NonEditable"/>
-    <LinearLayout
-        android:orientation = "horizontal"
-        android:layout_width = "match_parent"
-        android:layout_height = "wrap_content"
-        android:layout_gravity = "center_horizontal"
-        android:weightSum = "2">
-        <Button
-            android:layout_width = "wrap_content"
-            android:layout_height = "wrap_content"
-            android:text = "@string/save_weight"
-            android:id = "@+id/dialogSaveWeightButton"
-            android:layout_weight = "1"/>
-        <Button
-            android:layout_width = "wrap_content"
-            android:layout_height = "wrap_content"
-            android:text = "@string/copy_weight"
-            android:id = "@+id/dialogCopyWeightBelowButton"
-            android:layout_weight = "1"/>
-    </LinearLayout>
-
-    <TextView
         android:id="@+id/textView24"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -77,7 +41,6 @@
         android:maxLines = "1"
         android:lines = "1"
         style = "@style/EditTextNumber"/>
-
     <Button
         android:id="@+id/update_bluetooth"
         style="?android:textAppearanceSmall"
@@ -86,4 +49,10 @@
         android:text="@string/update_bluetooth"
         android:textColor="@android:color/black"
         android:textStyle="bold" />
+    <Button
+        android:layout_width = "match_parent"
+        android:layout_height = "0dp"
+        android:text = "@string/save_weight"
+        android:id = "@+id/dialogSaveWeightButton"
+        android:layout_weight = "1"/>
 </LinearLayout>

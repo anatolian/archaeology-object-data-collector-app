@@ -140,7 +140,7 @@ public class InitialActivity extends AppCompatActivity
         Log.v(LOG_TAG, "Test Connection Button Clicked");
         cancelAllVolleyRequests(queue);
         makeVolleyStringObjectRequest(getWebServerFromLayout() + "/test_service.php", queue,
-                new StringObjectResponseWrapper(this) {
+                new StringObjectResponseWrapper() {
             /**
              * Response received
              * @param response - database response

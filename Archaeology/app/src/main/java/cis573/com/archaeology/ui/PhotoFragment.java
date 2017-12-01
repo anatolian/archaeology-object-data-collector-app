@@ -262,7 +262,7 @@ public class PhotoFragment extends Fragment
                             + areaEasting + "&area_northing=" + areaNorthing + "&context_number="
                             + contextNumber + "&sample_number=" + sampleNumber;
                     Log.v(LOG_TAG, "Image to be uploaded" + dictEntry.getKey());
-                    AsyncHttpWrapper.makeImageUpload(url, dictEntry.getKey(), getActivity(),
+                    AsyncHttpWrapper.makeImageUpload(url, dictEntry.getKey(),
                             new AsyncHttpCallbackWrapper() {
                         /**
                          * Connection succeeded

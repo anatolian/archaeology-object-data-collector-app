@@ -13,7 +13,7 @@ public class Samples
      */
     public Samples()
     {
-        samples = new ArrayList<Sample>();
+        samples = new ArrayList<>();
     }
 
     /**

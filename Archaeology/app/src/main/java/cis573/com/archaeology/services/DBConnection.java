@@ -10,8 +10,8 @@ import cis573.com.archaeology.remote.WidacService;
 import cis573.com.archaeology.models.Sample;
 public class DBConnection
 {
-    Retrofit retrofit;
-    WidacService widacService;
+    private Retrofit retrofit;
+    private WidacService widacService;
     /**
      * Constructor
      */
@@ -30,11 +30,11 @@ public class DBConnection
     {
         Log.d("DBConnection", "Retrieving sample");
         String[] types = {"A", "B", "C", "D", "E"};
-        String type = types[(int)(Math.random() * types.length)];
+        String type = types[(int) (Math.random() * types.length)];
         Log.d("DBConnection", "Type: " + type);
-        return new Sample((int)(Math.random() * 1000), (int)(Math.random() * 1000), -1,
-                -1, type, Math.random() * 2, Math.random() * 4,
-                (int) (Math.random() * 1000));
+        return new Sample((int)(Math.random() * 1000), (int) (Math.random() * 1000),
+                -1,-1, type, Math.random() * 2,
+                Math.random() * 4, (int) (Math.random() * 1000));
     }
 
     /**

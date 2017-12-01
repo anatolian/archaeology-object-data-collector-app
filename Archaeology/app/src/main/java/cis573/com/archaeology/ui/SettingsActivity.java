@@ -71,7 +71,7 @@ public class SettingsActivity extends AppCompatActivity
                             if (deviceName.equals(devices[position]))
                             {
                                 Session.deviceName = deviceName;
-                                Toast.makeText(getApplicationContext(),"Connected to " +
+                                Toast.makeText(getApplicationContext(),"Connected to: " +
                                         deviceName, Toast.LENGTH_SHORT).show();
                             }
                         }

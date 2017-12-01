@@ -5,14 +5,11 @@ import android.content.Context;
 import com.android.volley.VolleyError;
 public abstract class StringObjectResponseWrapper
 {
-    private Context currentContext;
     /**
      * Constructor
-     * @param aContext - calling context
      */
-    public StringObjectResponseWrapper(Context aContext)
+    public StringObjectResponseWrapper()
     {
-        this.currentContext = aContext;
     }
 
     /**
