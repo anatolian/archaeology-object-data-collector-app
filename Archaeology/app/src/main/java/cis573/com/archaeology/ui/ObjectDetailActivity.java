@@ -1,6 +1,7 @@
 // Object information
 // @author: msenol86, ygowda
 package cis573.com.archaeology.ui;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
@@ -34,27 +35,35 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Set;
+
 import cis573.com.archaeology.R;
-import cis573.com.archaeology.services.BluetoothService;
-import cis573.com.archaeology.services.Session;
-import cis573.com.archaeology.util.StateStatic;
-import cis573.com.archaeology.util.Utils;
-import cis573.com.archaeology.services.WiFiDirectBroadcastReceiver;
 import cis573.com.archaeology.models.AfterImageSavedMethodWrapper;
 import cis573.com.archaeology.models.JSONObjectResponseWrapper;
+import cis573.com.archaeology.models.StringObjectResponseWrapper;
+import cis573.com.archaeology.services.BluetoothService;
 import cis573.com.archaeology.services.NutriScaleBroadcastReceiver;
+import cis573.com.archaeology.services.Session;
+import cis573.com.archaeology.services.WiFiDirectBroadcastReceiver;
 import cis573.com.archaeology.util.CheatSheet;
+import cis573.com.archaeology.util.StateStatic;
+import cis573.com.archaeology.util.Utils;
+
+import static cis573.com.archaeology.services.VolleyStringWrapper.makeVolleyStringObjectRequest;
+import static cis573.com.archaeology.services.VolleyWrapper.makeVolleyJSONObjectRequest;
 import static cis573.com.archaeology.util.CheatSheet.deleteOriginalAndThumbnailPhoto;
 import static cis573.com.archaeology.util.CheatSheet.getOutputMediaFileUri;
 import static cis573.com.archaeology.util.CheatSheet.goToSettings;
@@ -66,8 +75,8 @@ import static cis573.com.archaeology.util.StateStatic.MARKED_AS_ADDED;
 import static cis573.com.archaeology.util.StateStatic.MARKED_AS_TO_DOWNLOAD;
 import static cis573.com.archaeology.util.StateStatic.MESSAGE_STATUS_CHANGE;
 import static cis573.com.archaeology.util.StateStatic.MESSAGE_WEIGHT;
-import static cis573.com.archaeology.util.StateStatic.REQUEST_IMAGE_CAPTURE;
 import static cis573.com.archaeology.util.StateStatic.REQUEST_ENABLE_BT;
+import static cis573.com.archaeology.util.StateStatic.REQUEST_IMAGE_CAPTURE;
 import static cis573.com.archaeology.util.StateStatic.connectedMACAddress;
 import static cis573.com.archaeology.util.StateStatic.connectedToRemoteCamera;
 import static cis573.com.archaeology.util.StateStatic.convertDpToPixel;
@@ -76,7 +85,6 @@ import static cis573.com.archaeology.util.StateStatic.getTimeStamp;
 import static cis573.com.archaeology.util.StateStatic.isBluetoothEnabled;
 import static cis573.com.archaeology.util.StateStatic.isIsRemoteCameraSelect;
 import static cis573.com.archaeology.util.StateStatic.isTakePhotoButtonClicked;
-import static cis573.com.archaeology.services.VolleyWrapper.makeVolleyJSONObjectRequest;
 public class ObjectDetailActivity extends AppCompatActivity
         implements PhotoFragment.PhotoLoadDeleteInterface,
         WiFiDirectBroadcastReceiver.WifiDirectBroadcastReceivable
@@ -530,28 +538,31 @@ public class ObjectDetailActivity extends AppCompatActivity
     public void asyncPopulateWeightFieldFromDB(int areaEasting, int areaNorthing, int contextNumber,
                                                int sampleNumber)
     {
-        makeVolleyJSONObjectRequest(getGlobalWebServerURL()
-                + "/get_item_weight_2.php?area_easting=" + areaEasting + "&area_northing="
+        makeVolleyStringObjectRequest(getGlobalWebServerURL()
+                + "/get_item_weight.php?area_easting=" + areaEasting + "&area_northing="
                 + areaNorthing + "&context_number=" + contextNumber + "&sample_number="
-                + sampleNumber, queue, new JSONObjectResponseWrapper(this) {
+                + sampleNumber, queue, new StringObjectResponseWrapper(this) {
             /**
              * Response received
              * @param response - database response
              */
             @Override
-            public void responseMethod(JSONObject response)
+            public void responseMethod(String response)
             {
                 try
                 {
-                    if (response.getString("weight_kilograms").equals("null"))
+                    response = response.substring(response.indexOf("{"), response.indexOf("}") + 1);
+                    response = response.replace("\\", "");
+                    JSONObject responseJSON = new JSONObject(response);
+
+                    if (responseJSON.getString("weight_kilograms").equals("null"))
                     {
                         getWeightInputText().setText(getString(R.string.nil));
                     }
                     else
                     {
-                        getWeightInputText().setText(getString(R.string.scale_reading,
-                                Double.parseDouble(response.getString(
-                                        "weight_kilograms")) * 1000.0));
+                        System.out.println(responseJSON.get("weight_kilograms"));
+                        getWeightInputText().setText(responseJSON.getString("weight_kilograms"));
                     }
                     // indicates weight field has been populated
                 }

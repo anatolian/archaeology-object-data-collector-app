@@ -96,10 +96,10 @@ public class CeramicInputActivity extends AppCompatActivity
 //        fillContextNumberSpinner(contexts);
 //        fillSampleNumberSpinner(samples);
         // TODO: end todo
-        if (northing == null || northing.getSelectedItem() == null)
-        {
-            findViewById(R.id.continue_button).setVisibility(View.INVISIBLE);
-        }
+//        if (northing == null || northing.getSelectedItem() == null)
+//        {
+//            findViewById(R.id.continue_button).setVisibility(View.INVISIBLE);
+//        }
         initializeButtons();
     }
 
