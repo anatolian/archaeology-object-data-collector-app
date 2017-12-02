@@ -66,35 +66,35 @@ public class CeramicInputActivity extends AppCompatActivity
         queue = Volley.newRequestQueue(this);
         // storing load state values
         // TODO: Uncomment
-//        allDataLoadInfo = new HashMap<>(LoadState.values().length);
-//        for (LoadState ls: LoadState.values())
-//        {
-//            allDataLoadInfo.put(ls, false);
-//        }
-//        barProgressDialog = new ProgressDialog(this);
-//        barProgressDialog.setTitle("Downloading Information From Database ...");
-//        barProgressDialog.setIndeterminate(true);
-        // TODO: replace with commented code
+        allDataLoadInfo = new HashMap<>(LoadState.values().length);
+        for (LoadState ls: LoadState.values())
+        {
+            allDataLoadInfo.put(ls, false);
+        }
+        barProgressDialog = new ProgressDialog(this);
+        barProgressDialog.setTitle("Downloading Information From Database ...");
+        barProgressDialog.setIndeterminate(true);
         easting = (Spinner) findViewById(R.id.easting_spinner);
         northing = (Spinner) findViewById(R.id.northing_spinner);
         context = (Spinner) findViewById(R.id.context_spinner);
         sample = (Spinner) findViewById(R.id.sample_spinner);
-        ArrayList<String> eastings = new ArrayList<>(2);
-        eastings.add("1");
-        eastings.add("2");
-        ArrayList<String> northings = new ArrayList<>(2);
-        northings.add("3");
-        northings.add("4");
-        ArrayList<String> contexts = new ArrayList<>(2);
-        contexts.add("5");
-        contexts.add("6");
-        ArrayList<String> samples = new ArrayList<>(2);
-        samples.add("7");
-        samples.add("8");
-        fillEastingSpinner(eastings);
-        fillNorthingSpinner(northings);
-        fillContextNumberSpinner(contexts);
-        fillSampleNumberSpinner(samples);
+        // TODO: replace with commented code
+//        ArrayList<String> eastings = new ArrayList<>(2);
+//        eastings.add("1");
+//        eastings.add("2");
+//        ArrayList<String> northings = new ArrayList<>(2);
+//        northings.add("3");
+//        northings.add("4");
+//        ArrayList<String> contexts = new ArrayList<>(2);
+//        contexts.add("5");
+//        contexts.add("6");
+//        ArrayList<String> samples = new ArrayList<>(2);
+//        samples.add("7");
+//        samples.add("8");
+//        fillEastingSpinner(eastings);
+//        fillNorthingSpinner(northings);
+//        fillContextNumberSpinner(contexts);
+//        fillSampleNumberSpinner(samples);
         // TODO: end todo
         if (northing == null || northing.getSelectedItem() == null)
         {
@@ -155,8 +155,8 @@ public class CeramicInputActivity extends AppCompatActivity
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
             {
                 // TODO: Uncomment
-//                clearNorthingSpinner();
-//                asyncGetAreaNorthingFromDB();
+                clearNorthingSpinner();
+                asyncGetAreaNorthingFromDB();
             }
 
             /**
@@ -180,8 +180,8 @@ public class CeramicInputActivity extends AppCompatActivity
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
             {
                 // TODO: Uncomment
-//                clearContextNumberSpinner();
-//                asyncGetContextNumberFromDB();
+                clearContextNumberSpinner();
+                asyncGetContextNumberFromDB();
             }
 
             /**
@@ -205,8 +205,8 @@ public class CeramicInputActivity extends AppCompatActivity
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
             {
                 // TODO: Uncomment
-//                clearSampleNumberSpinner();
-//                asyncGetSampleNumberFromDB();
+                clearSampleNumberSpinner();
+                asyncGetSampleNumberFromDB();
             }
 
             /**
@@ -229,16 +229,16 @@ public class CeramicInputActivity extends AppCompatActivity
         super.onResume();
         Log.v(LOG_TAG, "Resuming CeramicInputActivity reloading sample numbers");
         // TODO: Uncomment
-//        if (allDataLoadInfo.get(LoadState.areaEasting) && allDataLoadInfo.get(LoadState.areaNorthing)
-//                && allDataLoadInfo.get(LoadState.contextNumber))
-//        {
-//            clearSampleNumberSpinner();
-//            asyncGetSampleNumberFromDB();
-//        }
-//        else
-//        {
-//            asyncGetAreaEastingFromDB();
-//        }
+        if (allDataLoadInfo.get(LoadState.areaEasting) && allDataLoadInfo.get(LoadState.areaNorthing)
+                && allDataLoadInfo.get(LoadState.contextNumber))
+        {
+            clearSampleNumberSpinner();
+            asyncGetSampleNumberFromDB();
+        }
+        else
+        {
+            asyncGetAreaEastingFromDB();
+        }
     }
 
     /**

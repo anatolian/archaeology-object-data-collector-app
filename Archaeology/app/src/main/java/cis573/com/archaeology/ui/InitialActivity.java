@@ -12,12 +12,17 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 import com.android.volley.AuthFailureError;
+import com.android.volley.Cache;
+import com.android.volley.Network;
 import com.android.volley.NoConnectionError;
 import com.android.volley.ParseError;
 import com.android.volley.RequestQueue;
 import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.BasicNetwork;
+import com.android.volley.toolbox.DiskBasedCache;
+import com.android.volley.toolbox.HurlStack;
 import org.json.JSONException;
 import org.json.JSONObject;
 import cis573.com.archaeology.R;
@@ -39,14 +44,10 @@ public class InitialActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_initial);
-        // TODO: Revert
-        Intent i = new Intent(this, CameraUIActivity.class);
-        startActivity(i);
-        // TODO: uncomment
-//        Cache cache = new DiskBasedCache(getCacheDir(), 1024 * 1024);
-//        Network network = new BasicNetwork(new HurlStack());
-//        queue = new RequestQueue(cache, network);
-//        queue.start();
+        Cache cache = new DiskBasedCache(getCacheDir(), 1024 * 1024);
+        Network network = new BasicNetwork(new HurlStack());
+        queue = new RequestQueue(cache, network);
+        queue.start();
         EditText webServer = (EditText) findViewById(R.id.urlText);
         webServer.setText(getGlobalWebServerURL());
     }
@@ -89,10 +90,9 @@ public class InitialActivity extends AppCompatActivity
     public void onResume()
     {
         super.onResume();
-        // TODO: uncomment
-//        EditText webServer = (EditText) findViewById(R.id.urlText);
-//        webServer.setText(getGlobalWebServerURL());
-//        testConnection(null);
+        EditText webServer = (EditText) findViewById(R.id.urlText);
+        webServer.setText(getGlobalWebServerURL());
+        testConnection(null);
     }
 
     /**
@@ -150,10 +150,12 @@ public class InitialActivity extends AppCompatActivity
             {
                 try
                 {
-                    Toast.makeText(getApplicationContext(), "trying to connect", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "trying to connect",
+                            Toast.LENGTH_SHORT).show();
                     Log.v(LOG_TAG, "here is the response " + response);
-                    response = response.substring(1, response.length() - 1);
+                    response = response.substring(response.indexOf("{"), response.indexOf("}") + 1);
                     response = response.replace("\\", "");
+                    Log.v("READ_DATABASE", response);
                     Log.v(LOG_TAG, "response removed slash and double quotes " + response);
                     JSONObject responseJSON = new JSONObject(response);
                     boolean connStatus = responseJSON.getBoolean("status");
@@ -165,7 +167,6 @@ public class InitialActivity extends AppCompatActivity
                     else
                     {
                         barProgressDialog.dismiss();
-
                         connectionTestFailedCallback();
                     }
                 }

@@ -19,7 +19,7 @@ public class StateStatic
     public static final int MESSAGE_STATUS_CHANGE = 502;
     public static final int REQUEST_ENABLE_BT = 301;
     public static final String DEFAULT_WEB_SERVER_URL
-            = "https://thawing-plains-16187.herokuapp.com/web/";
+            = "https://fa17archaeology-service.herokuapp.com";
     public static final String DEFAULT_CAMERA_MAC = "fe:c2:de:31:0a:e1";
     // 30 minutes
     public static final long DEFAULT_CALIBRATION_INTERVAL = 1800000;

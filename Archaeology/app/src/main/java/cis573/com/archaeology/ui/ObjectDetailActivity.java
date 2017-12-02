@@ -750,8 +750,7 @@ public class ObjectDetailActivity extends AppCompatActivity
                 }
                 catch (JSONException e)
                 {
-                    // TODO: Uncomment
-                    //e.printStackTrace();
+                    e.printStackTrace();
                 }
             }
 
