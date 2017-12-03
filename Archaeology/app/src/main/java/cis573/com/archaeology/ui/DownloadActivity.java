@@ -67,7 +67,6 @@ public class DownloadActivity extends AppCompatActivity
             System.out.println(fileList()[i]);
         }
         setUpLocalDB(uD.getDatabaseLocation());
-        //setUpOnlineDB("http://owainwest.me/samplejson.txt");
         Intent intent = new Intent(this, InitialActivity.class);
         startActivity(intent);
     }

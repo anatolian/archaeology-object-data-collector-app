@@ -150,8 +150,6 @@ public class InitialActivity extends AppCompatActivity
             {
                 try
                 {
-                    Toast.makeText(getApplicationContext(), "trying to connect",
-                            Toast.LENGTH_SHORT).show();
                     Log.v(LOG_TAG, "here is the response " + response);
                     response = response.substring(response.indexOf("{"), response.indexOf("}") + 1);
                     response = response.replace("\\", "");
