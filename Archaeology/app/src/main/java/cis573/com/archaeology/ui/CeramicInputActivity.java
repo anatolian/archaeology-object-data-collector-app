@@ -65,7 +65,6 @@ public class CeramicInputActivity extends AppCompatActivity
         }
         queue = Volley.newRequestQueue(this);
         // storing load state values
-        // TODO: Uncomment
         allDataLoadInfo = new HashMap<>(LoadState.values().length);
         for (LoadState ls: LoadState.values())
         {
@@ -78,25 +77,7 @@ public class CeramicInputActivity extends AppCompatActivity
         northing = (Spinner) findViewById(R.id.northing_spinner);
         context = (Spinner) findViewById(R.id.context_spinner);
         sample = (Spinner) findViewById(R.id.sample_spinner);
-        // TODO: replace with commented code
-//        ArrayList<String> eastings = new ArrayList<>(2);
-//        eastings.add("1");
-//        eastings.add("2");
-//        ArrayList<String> northings = new ArrayList<>(2);
-//        northings.add("3");
-//        northings.add("4");
-//        ArrayList<String> contexts = new ArrayList<>(2);
-//        contexts.add("5");
-//        contexts.add("6");
-//        ArrayList<String> samples = new ArrayList<>(2);
-//        samples.add("7");
-//        samples.add("8");
-//        fillEastingSpinner(eastings);
-//        fillNorthingSpinner(northings);
-//        fillContextNumberSpinner(contexts);
-//        fillSampleNumberSpinner(samples);
-        // TODO: end todo
-        if (northing == null || northing.getSelectedItem() == null)
+        if (northing == null)
         {
             findViewById(R.id.continue_button).setVisibility(View.INVISIBLE);
         }
@@ -154,7 +135,6 @@ public class CeramicInputActivity extends AppCompatActivity
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
             {
-                // TODO: Uncomment
                 clearNorthingSpinner();
                 asyncGetAreaNorthingFromDB();
             }
@@ -179,7 +159,6 @@ public class CeramicInputActivity extends AppCompatActivity
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
             {
-                // TODO: Uncomment
                 clearContextNumberSpinner();
                 asyncGetContextNumberFromDB();
             }
@@ -204,7 +183,6 @@ public class CeramicInputActivity extends AppCompatActivity
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
             {
-                // TODO: Uncomment
                 clearSampleNumberSpinner();
                 asyncGetSampleNumberFromDB();
             }
@@ -228,8 +206,8 @@ public class CeramicInputActivity extends AppCompatActivity
     {
         super.onResume();
         Log.v(LOG_TAG, "Resuming CeramicInputActivity reloading sample numbers");
-        // TODO: Uncomment
-        if (allDataLoadInfo.get(LoadState.areaEasting) && allDataLoadInfo.get(LoadState.areaNorthing)
+        if (allDataLoadInfo.get(LoadState.areaEasting)
+                && allDataLoadInfo.get(LoadState.areaNorthing)
                 && allDataLoadInfo.get(LoadState.contextNumber))
         {
             clearSampleNumberSpinner();

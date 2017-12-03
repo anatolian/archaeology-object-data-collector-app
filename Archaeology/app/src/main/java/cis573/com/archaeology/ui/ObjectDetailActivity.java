@@ -531,7 +531,7 @@ public class ObjectDetailActivity extends AppCompatActivity
                                                int sampleNumber)
     {
         makeVolleyJSONObjectRequest(getGlobalWebServerURL()
-                + "/get_item_weight_2.php?area_easting=" + areaEasting + "&area_northing="
+                + "/get_item_weight_2_from_DB.php?area_easting=" + areaEasting + "&area_northing="
                 + areaNorthing + "&context_number=" + contextNumber + "&sample_number="
                 + sampleNumber, queue, new JSONObjectResponseWrapper(this) {
             /**
@@ -587,9 +587,9 @@ public class ObjectDetailActivity extends AppCompatActivity
         double weightInKg = weightInGrams / 1000.0;
         // making php request to call the update method with updated params
         makeVolleyJSONObjectRequest(getGlobalWebServerURL()
-                        + "/set_item_weight_2.php?area_easting=" + areaEasting + "&area_northing="
-                        + areaNorthing + "&context_number=" + contextNumber + "&sample_number="
-                        + sampleNumber + "&weight_in_kg=" + weightInKg, queue,
+                        + "/set_item_weight_2_from_DB.php?area_easting=" + areaEasting
+                        + "&area_northing=" + areaNorthing + "&context_number=" + contextNumber
+                        + "&sample_number=" + sampleNumber + "&weight_in_kg=" + weightInKg, queue,
                 new JSONObjectResponseWrapper(this) {
             /**
              * Response received
@@ -640,9 +640,10 @@ public class ObjectDetailActivity extends AppCompatActivity
                                                        int contextNumber, int sampleNumber)
     {
         makeVolleyJSONObjectRequest(getGlobalWebServerURL()
-                + "/get_exterior_color_2.php?area_easting=" + areaEasting + "&area_northing="
-                + areaNorthing + "&context_number=" + contextNumber + "&sample_number="
-                + sampleNumber, queue, new JSONObjectResponseWrapper(this) {
+                + "/get_exterior_color_2_from_DB.php?area_easting=" + areaEasting
+                + "&area_northing=" + areaNorthing + "&context_number=" + contextNumber
+                + "&sample_number=" + sampleNumber, queue,
+                new JSONObjectResponseWrapper(this) {
             /**
              * Response received
              * @param response - database response
@@ -676,7 +677,7 @@ public class ObjectDetailActivity extends AppCompatActivity
     }
 
     /**
-     * http://localhost/get_image_2.php?area_easting=1&area_northing=1&context_number=2&sample_number=3
+     * http://localhost/get_image_2_from_DB.php?area_easting=1&area_northing=1&context_number=2&sample_number=3
      * query database for munsell color data for interior fields
      * @param areaEasting - easting
      * @param areaNorthing - northing
@@ -687,9 +688,10 @@ public class ObjectDetailActivity extends AppCompatActivity
                                                        int contextNumber, int sampleNumber)
     {
         makeVolleyJSONObjectRequest(getGlobalWebServerURL()
-                + "/get_interior_color_2.php?area_easting=" + areaEasting + "&area_northing="
-                + areaNorthing + "&context_number=" + contextNumber + "&sample_number="
-                + sampleNumber, queue, new JSONObjectResponseWrapper(this) {
+                + "/get_interior_color_2_from_DB.php?area_easting=" + areaEasting
+                + "&area_northing=" + areaNorthing + "&context_number=" + contextNumber
+                + "&sample_number=" + sampleNumber, queue,
+                new JSONObjectResponseWrapper(this) {
             /**
              * Response received
              * @param response - database response
@@ -727,9 +729,9 @@ public class ObjectDetailActivity extends AppCompatActivity
      */
     public void asyncPopulatePhotos()
     {
-        String url = getGlobalWebServerURL() + "/get_image_2.php?area_easting=" + areaEasting
-                + "&area_northing=" + areaNorthing + "&context_number=" + contextNumber
-                + "&sample_number=" + sampleNumber;
+        String url = getGlobalWebServerURL() + "/get_image_2_from_DB.php?area_easting="
+                + areaEasting + "&area_northing=" + areaNorthing + "&context_number="
+                + contextNumber + "&sample_number=" + sampleNumber;
         makeVolleyJSONObjectRequest(url, queue, new JSONObjectResponseWrapper(this) {
             /**
              * Database response
