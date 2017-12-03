@@ -77,10 +77,10 @@ public class CeramicInputActivity extends AppCompatActivity
         northing = (Spinner) findViewById(R.id.northing_spinner);
         context = (Spinner) findViewById(R.id.context_spinner);
         sample = (Spinner) findViewById(R.id.sample_spinner);
-        if (northing == null)
-        {
-            findViewById(R.id.continue_button).setVisibility(View.INVISIBLE);
-        }
+        fillEastingSpinner(eastings);
+        fillNorthingSpinner(northings);
+        fillContextNumberSpinner(contexts);
+        fillSampleNumberSpinner(samples);
         initializeButtons();
     }
 
