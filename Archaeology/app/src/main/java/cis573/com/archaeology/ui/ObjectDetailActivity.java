@@ -34,24 +34,19 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Set;
-
 import cis573.com.archaeology.R;
 import cis573.com.archaeology.models.AfterImageSavedMethodWrapper;
-import cis573.com.archaeology.models.JSONObjectResponseWrapper;
 import cis573.com.archaeology.models.StringObjectResponseWrapper;
 import cis573.com.archaeology.services.BluetoothService;
 import cis573.com.archaeology.services.NutriScaleBroadcastReceiver;
@@ -60,9 +55,7 @@ import cis573.com.archaeology.services.WiFiDirectBroadcastReceiver;
 import cis573.com.archaeology.util.CheatSheet;
 import cis573.com.archaeology.util.StateStatic;
 import cis573.com.archaeology.util.Utils;
-
 import static cis573.com.archaeology.services.VolleyStringWrapper.makeVolleyStringObjectRequest;
-import static cis573.com.archaeology.services.VolleyWrapper.makeVolleyJSONObjectRequest;
 import static cis573.com.archaeology.util.CheatSheet.deleteOriginalAndThumbnailPhoto;
 import static cis573.com.archaeology.util.CheatSheet.getOutputMediaFileUri;
 import static cis573.com.archaeology.util.CheatSheet.goToSettings;
@@ -564,7 +557,7 @@ public class ObjectDetailActivity extends AppCompatActivity
                     }
                     // indicates weight field has been populated
                 }
-                catch (JSONException e)
+                catch (JSONException | StringIndexOutOfBoundsException e)
                 {
                     e.printStackTrace();
                 }
@@ -595,21 +588,23 @@ public class ObjectDetailActivity extends AppCompatActivity
     {
         double weightInKg = weightInGrams / 1000.0;
         // making php request to call the update method with updated params
-        makeVolleyJSONObjectRequest(getGlobalWebServerURL()
+        makeVolleyStringObjectRequest(getGlobalWebServerURL()
                         + "/set_item_weight_2_from_DB.php?area_easting=" + areaEasting
                         + "&area_northing=" + areaNorthing + "&context_number=" + contextNumber
                         + "&sample_number=" + sampleNumber + "&weight_in_kg=" + weightInKg, queue,
-                new JSONObjectResponseWrapper(this) {
+                new StringObjectResponseWrapper(this) {
             /**
              * Response received
              * @param response - database response
              */
             @Override
-            public void responseMethod(JSONObject response)
+            public void responseMethod(String response)
             {
                 try
                 {
-                    if (response.getString("status").equals("ok"))
+                    JSONObject obj = new JSONObject(response.substring(response.indexOf("{"),
+                            response.indexOf("}") + 1));
+                    if (obj.getString("status").equals("ok"))
                     {
                         Toast.makeText(currentContext, "New Weight Value Stored into DB",
                                 Toast.LENGTH_LONG).show();
@@ -620,7 +615,7 @@ public class ObjectDetailActivity extends AppCompatActivity
                                 Toast.LENGTH_LONG).show();
                     }
                 }
-                catch (JSONException e)
+                catch (JSONException | StringIndexOutOfBoundsException e)
                 {
                     e.printStackTrace();
                 }
@@ -648,26 +643,28 @@ public class ObjectDetailActivity extends AppCompatActivity
     public void asyncPopulateExteriorColorFieldsFromDB(int areaEasting, int areaNorthing,
                                                        int contextNumber, int sampleNumber)
     {
-        makeVolleyJSONObjectRequest(getGlobalWebServerURL()
+        makeVolleyStringObjectRequest(getGlobalWebServerURL()
                 + "/get_exterior_color_2_from_DB.php?area_easting=" + areaEasting
                 + "&area_northing=" + areaNorthing + "&context_number=" + contextNumber
                 + "&sample_number=" + sampleNumber, queue,
-                new JSONObjectResponseWrapper(this) {
+                new StringObjectResponseWrapper(this) {
             /**
              * Response received
              * @param response - database response
              */
             @Override
-            public void responseMethod(JSONObject response)
+            public void responseMethod(String response)
             {
                 try
                 {
+                    JSONObject obj = new JSONObject(response.substring(response.indexOf("{"),
+                            response.indexOf("}") + 1));
                     // displays color fields in textfields in view
-                    populateExteriorColorFields(response.getString("exterior_color_hue"),
-                            response.getString("exterior_color_lightness_value"),
-                            response.getString("exterior_color_chroma"));
+                    populateExteriorColorFields(obj.getString("exterior_color_hue"),
+                            obj.getString("exterior_color_lightness_value"),
+                            obj.getString("exterior_color_chroma"));
                 }
-                catch (JSONException e)
+                catch (JSONException | StringIndexOutOfBoundsException e)
                 {
                     e.printStackTrace();
                 }
@@ -696,26 +693,28 @@ public class ObjectDetailActivity extends AppCompatActivity
     public void asyncPopulateInteriorColorFieldsFromDB(int areaEasting, int areaNorthing,
                                                        int contextNumber, int sampleNumber)
     {
-        makeVolleyJSONObjectRequest(getGlobalWebServerURL()
+        makeVolleyStringObjectRequest(getGlobalWebServerURL()
                 + "/get_interior_color_2_from_DB.php?area_easting=" + areaEasting
                 + "&area_northing=" + areaNorthing + "&context_number=" + contextNumber
                 + "&sample_number=" + sampleNumber, queue,
-                new JSONObjectResponseWrapper(this) {
+                new StringObjectResponseWrapper(this) {
             /**
              * Response received
              * @param response - database response
              */
             @Override
-            public void responseMethod(JSONObject response)
+            public void responseMethod(String response)
             {
                 try
                 {
+                    JSONObject obj = new JSONObject(response.substring(response.indexOf("{"),
+                            response.indexOf("}") + 1));
                     // add color data to text fields
-                    populateInteriorColorFields(response.getString("interior_color_hue"),
-                            response.getString("interior_color_lightness_value"),
-                            response.getString("interior_color_chroma"));
+                    populateInteriorColorFields(obj.getString("interior_color_hue"),
+                            obj.getString("interior_color_lightness_value"),
+                            obj.getString("interior_color_chroma"));
                 }
-                catch (JSONException e)
+                catch (JSONException | StringIndexOutOfBoundsException e)
                 {
                     e.printStackTrace();
                 }
@@ -741,25 +740,27 @@ public class ObjectDetailActivity extends AppCompatActivity
         String url = getGlobalWebServerURL() + "/get_image_2_from_DB.php?area_easting="
                 + areaEasting + "&area_northing=" + areaNorthing + "&context_number="
                 + contextNumber + "&sample_number=" + sampleNumber;
-        makeVolleyJSONObjectRequest(url, queue, new JSONObjectResponseWrapper(this) {
+        makeVolleyStringObjectRequest(url, queue, new StringObjectResponseWrapper(this) {
             /**
              * Database response
              * @param response - response received
              */
             @Override
-            public void responseMethod(JSONObject response)
+            public void responseMethod(String response)
             {
                 try
                 {
+                    JSONObject obj = new JSONObject(response.substring(response.indexOf("{"),
+                            response.indexOf("}") + 1));
                     // get images from response array
-                    JSONArray photoList = response.getJSONArray("images");
+                    JSONArray photoList = obj.getJSONArray("images");
                     for (int i = 0; i < photoList.length(); i++)
                     {
                         String photoUrl = photoList.getString(i);
                         loadPhotoIntoPhotoFragment(Uri.parse(photoUrl), MARKED_AS_TO_DOWNLOAD);
                     }
                 }
-                catch (JSONException e)
+                catch (JSONException | StringIndexOutOfBoundsException e)
                 {
                     e.printStackTrace();
                 }

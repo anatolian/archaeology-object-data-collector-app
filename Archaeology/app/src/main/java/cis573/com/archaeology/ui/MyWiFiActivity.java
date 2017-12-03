@@ -267,7 +267,7 @@ public class MyWiFiActivity extends AppCompatActivity
         String url = buildAPIURLFromIP(Utils.getIPFromMac());
         try
         {
-            VolleyWrapper.makeVolleySonyApiGetApiCommands(url, queue, requestID++,
+            VolleyWrapper.makeVolleySonyAPIGetAPICommands(url, queue, requestID++,
                     new JSONObjectResponseWrapper(this) {
                 /**
                  * Response received
@@ -305,7 +305,7 @@ public class MyWiFiActivity extends AppCompatActivity
         String url = buildAPIURLFromIP(Utils.getIPFromMac());
         try
         {
-            VolleyWrapper.makeVolleySonyApiTakePhotoRequest(url, queue, requestID++,
+            VolleyWrapper.makeVolleySonyAPITakePhotoRequest(url, queue, requestID++,
                     new JSONObjectResponseWrapper(this) {
                 /**
                  * Response received
@@ -397,7 +397,7 @@ public class MyWiFiActivity extends AppCompatActivity
         final String url = buildAPIURLFromIP(Utils.getIPFromMac());
         try
         {
-            VolleyWrapper.makeVolleySonyApiStartLiveViewRequest(url, queue, requestID++,
+            VolleyWrapper.makeVolleySonyAPIStartLiveViewRequest(url, queue, requestID++,
                     new JSONObjectResponseWrapper(this) {
                 /**
                  * Response received
@@ -464,7 +464,7 @@ public class MyWiFiActivity extends AppCompatActivity
         final String url = buildAPIURLFromIP(Utils.getIPFromMac());
         try
         {
-            VolleyWrapper.makeVolleySonyApiStopLiveViewRequest(url, queue, requestID++,
+            VolleyWrapper.makeVolleySonyAPIStopLiveViewRequest(url, queue, requestID++,
                     new JSONObjectResponseWrapper(this) {
                 /**
                  * Response received
@@ -502,7 +502,7 @@ public class MyWiFiActivity extends AppCompatActivity
         final String url = buildAPIURLFromIP(Utils.getIPFromMac());
         try
         {
-            VolleyWrapper.makeVolleySonyApiActZoomRequest("in", queue, url, requestID++,
+            VolleyWrapper.makeVolleySonyAPIActZoomRequest("in", queue, url, requestID++,
                     new JSONObjectResponseWrapper(this) {
                 /**
                  * Response received
@@ -541,7 +541,7 @@ public class MyWiFiActivity extends AppCompatActivity
         final String functionName = getCustomFunctionNameFromLayout();
         try
         {
-            VolleyWrapper.makeVolleySonyApiCustomFunctionCall(functionName, url, queue, requestID++,
+            VolleyWrapper.makeVolleySonyAPICustomFunctionCall(functionName, url, queue, requestID++,
                     new JSONObjectResponseWrapper(this) {
                 /**
                  * Camera response

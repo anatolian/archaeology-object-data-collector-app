@@ -58,7 +58,7 @@
     <string name="exterior_color">Exterior Color</string>
     <string name="surface">Surface Type</string>
     <string name="record_weight">Record Weight</string>
-    <string name="gram"> gram</string>
+    <string name="gram"> grams</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
     <string name="sample"> Sample: </string>

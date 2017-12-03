@@ -32,7 +32,7 @@ public class VolleyWrapper
      * @param lambdaWrapper - request wrapper
      * @throws JSONException if response is malformed
      */
-    public static void makeVolleySonyApiGetApiCommands(final String url, RequestQueue queue,
+    public static void makeVolleySonyAPIGetAPICommands(final String url, RequestQueue queue,
                                                        final int id,
                                                        final JSONObjectResponseWrapper lambdaWrapper)
             throws JSONException
@@ -78,7 +78,7 @@ public class VolleyWrapper
      * @param lambdaWrapper - request wrapper
      * @throws JSONException if the JSON is malformed
      */
-    public static void makeVolleySonyApiTakePhotoRequest(final String url, RequestQueue queue,
+    public static void makeVolleySonyAPITakePhotoRequest(final String url, RequestQueue queue,
                                                          final int id,
                                                          final JSONObjectResponseWrapper lambdaWrapper)
             throws JSONException
@@ -124,7 +124,7 @@ public class VolleyWrapper
      * @param lambdaWrapper - request wrapper
      * @throws JSONException if the JSON is malformed
      */
-    public static void makeVolleySonyApiStartLiveViewRequest(final String url, RequestQueue queue,
+    public static void makeVolleySonyAPIStartLiveViewRequest(final String url, RequestQueue queue,
                                                              final int id,
                                                              final JSONObjectResponseWrapper lambdaWrapper)
             throws JSONException
@@ -172,7 +172,7 @@ public class VolleyWrapper
      * @param id - request id
      * @param lambdaWrapper - request wrapper
      */
-    public static void makeVolleySonyApiStopLiveViewRequest(final String url, RequestQueue queue,
+    public static void makeVolleySonyAPIStopLiveViewRequest(final String url, RequestQueue queue,
                                                             final int id,
                                                             final JSONObjectResponseWrapper lambdaWrapper)
             throws JSONException
@@ -227,7 +227,7 @@ public class VolleyWrapper
      * @param lambdaWrapper - request wrapper
      * @throws JSONException if the JSON is malformed
      */
-    public static void makeVolleySonyApiActZoomRequest(String direction, RequestQueue queue,
+    public static void makeVolleySonyAPIActZoomRequest(String direction, RequestQueue queue,
                                                        final String url, final int id,
                                                        final JSONObjectResponseWrapper lambdaWrapper)
             throws JSONException
@@ -274,7 +274,7 @@ public class VolleyWrapper
      * @param lambdaWrapper - request wrapper
      * @throws JSONException if the JSON is malformed
      */
-    public static void makeVolleySonyApiCustomFunctionCall(String methodName, final String url,
+    public static void makeVolleySonyAPICustomFunctionCall(String methodName, final String url,
                                                            RequestQueue queue, final int id,
                                                            final JSONObjectResponseWrapper lambdaWrapper)
             throws JSONException
@@ -320,9 +320,8 @@ public class VolleyWrapper
      * @param lambdaWrapper - request wrapper
      * @throws JSONException if the JSON is malformed
      */
-    public static void makeVolleySonyApiSetImageSizeToOriginal(final String url, RequestQueue queue,
-                                                               final int id,
-                                                               final JSONObjectResponseWrapper lambdaWrapper)
+    public static void makeVolleySonyAPISetImageSizeToOriginal(final String url, RequestQueue queue,
+                                                               final int id, final JSONObjectResponseWrapper lambdaWrapper)
             throws JSONException
     {
         final String postBody = new JSONObject().put("method", "setPostviewImageSize")
@@ -365,9 +364,8 @@ public class VolleyWrapper
      * @param lambdaWrapper - request wrapper
      * @throws JSONException if the JSON is malformed
      */
-    public static void makeVolleySonyApiSetJpegQualityToFine(final String url, RequestQueue queue,
-                                                             final int id,
-                                                             final JSONObjectResponseWrapper lambdaWrapper)
+    public static void makeVolleySonyAPISetJPEGQualityToFine(final String url, RequestQueue queue,
+                                                             final int id, final JSONObjectResponseWrapper lambdaWrapper)
             throws JSONException
     {
         final String postBody = new JSONObject().put("method", "setStillQuality")
@@ -401,49 +399,6 @@ public class VolleyWrapper
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         queue.add(myRequest);
-    }
-
-    /**
-     * will take in the a queue and add object that is returned to the queue depending on the
-     * params that are put in
-     * @param url - camera URL
-     * @param queue - request queue
-     * @param lambdaWrapper - request wrapper
-     */
-    public static void makeVolleyJSONObjectRequest(final String url, RequestQueue queue,
-                                                   final JSONObjectResponseWrapper lambdaWrapper)
-    {
-        Log.v(LOG_TAG, "volley url:" + url);
-        // creating the listener to respond to object request
-        JsonObjectRequest myRequest = new JsonObjectRequest(Request.Method.GET, url,
-                null, new Response.Listener<JSONObject>() {
-            /**
-             * Response received
-             * @param response - camera response
-             */
-            @Override
-            public void onResponse(JSONObject response)
-            {
-                Log.v(LOG_TAG, "here is the response" + String.valueOf(response));
-                lambdaWrapper.responseMethod(response);
-            }
-        }, new Response.ErrorListener() {
-            /**
-             * Connection failed
-             * @param error - failure
-             */
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.v(LOG_TAG, "an error was thrown");
-                lambdaWrapper.errorMethod(error);
-            }
-        });
-        // Add the request to the RequestQueue.
-        myRequest.setRetryPolicy(new DefaultRetryPolicy(DEFAULT_VOLLEY_TIMEOUT,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        queue.add(myRequest);
-        // request has been added to the queue
-        Log.v(LOG_TAG, "contents of queue "+queue.toString());
     }
 
     /**

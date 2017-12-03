@@ -120,7 +120,7 @@ public class CameraDialog
         final String url = buildAPIURLFromIP(Utils.getIPFromMac());
         try
         {
-            VolleyWrapper.makeVolleySonyApiStartLiveViewRequest(url, queue, id,
+            VolleyWrapper.makeVolleySonyAPIStartLiveViewRequest(url, queue, id,
                     new JSONObjectResponseWrapper(anActivity) {
                 /**
                  * Response received
@@ -194,7 +194,7 @@ public class CameraDialog
         final String url = buildAPIURLFromIP(Utils.getIPFromMac());
         try
         {
-            VolleyWrapper.makeVolleySonyApiStopLiveViewRequest(url, queue, id,
+            VolleyWrapper.makeVolleySonyAPIStopLiveViewRequest(url, queue, id,
                     new JSONObjectResponseWrapper(anActivity) {
                 /**
                  * Response received
@@ -244,7 +244,7 @@ public class CameraDialog
         final String url = buildAPIURLFromIP(Utils.getIPFromMac());
         try
         {
-            VolleyWrapper.makeVolleySonyApiSetJpegQualityToFine(url, queue, id + 3,
+            VolleyWrapper.makeVolleySonyAPISetJPEGQualityToFine(url, queue, id + 3,
                     new JSONObjectResponseWrapper(anActivity) {
                 /**
                  * Response received
@@ -255,7 +255,7 @@ public class CameraDialog
                 {
                     try
                     {
-                        VolleyWrapper.makeVolleySonyApiSetImageSizeToOriginal(url, queue, id + 5,
+                        VolleyWrapper.makeVolleySonyAPISetImageSizeToOriginal(url, queue, id + 5,
                                 new JSONObjectResponseWrapper(anActivity) {
                             /**
                              * Response received
@@ -268,7 +268,7 @@ public class CameraDialog
                                 try
                                 {
                                     // make request to take photo
-                                    VolleyWrapper.makeVolleySonyApiTakePhotoRequest(url, queue, id,
+                                    VolleyWrapper.makeVolleySonyAPITakePhotoRequest(url, queue, id,
                                             new JSONObjectResponseWrapper(anActivity) {
                                         /**
                                          * Response received
@@ -444,7 +444,7 @@ public class CameraDialog
         final String url = buildAPIURLFromIP(Utils.getIPFromMac());
         try
         {
-            VolleyWrapper.makeVolleySonyApiActZoomRequest("in", queue, url, id,
+            VolleyWrapper.makeVolleySonyAPIActZoomRequest("in", queue, url, id,
                     new JSONObjectResponseWrapper(anActivity) {
                 /**
                  * Response received
@@ -484,7 +484,7 @@ public class CameraDialog
         final String url = buildAPIURLFromIP(Utils.getIPFromMac());
         try
         {
-            VolleyWrapper.makeVolleySonyApiActZoomRequest("out", queue, url, id,
+            VolleyWrapper.makeVolleySonyAPIActZoomRequest("out", queue, url, id,
                     new JSONObjectResponseWrapper(anActivity) {
                 /**
                  * Response received
