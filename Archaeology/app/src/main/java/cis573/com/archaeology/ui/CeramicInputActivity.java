@@ -77,10 +77,6 @@ public class CeramicInputActivity extends AppCompatActivity
         northing = (Spinner) findViewById(R.id.northing_spinner);
         context = (Spinner) findViewById(R.id.context_spinner);
         sample = (Spinner) findViewById(R.id.sample_spinner);
-        fillEastingSpinner(eastings);
-        fillNorthingSpinner(northings);
-        fillContextNumberSpinner(contexts);
-        fillSampleNumberSpinner(samples);
         initializeButtons();
     }
 

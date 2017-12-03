@@ -1,7 +1,6 @@
 // Object information
 // @author: msenol86, ygowda
 package cis573.com.archaeology.ui;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;

@@ -56,13 +56,16 @@
                 android:layout_below="@+id/sampleInfo"
                 android:onClick="goToPreviousItemIfAvailable"
                 android:text="@string/previous" />
+
             <TextView
                 android:id="@+id/weightInput"
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
+                android:layout_toEndOf="@+id/nextObjectButton"
                 android:layout_toStartOf="@+id/textView26"
-                android:gravity="end"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+                android:gravity="center"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@android:color/black" />
             <TextView
                 android:id="@+id/textView26"
                 android:layout_width="wrap_content"
