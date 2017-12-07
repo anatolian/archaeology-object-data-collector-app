@@ -539,7 +539,7 @@ public class ObjectDetailActivity extends AppCompatActivity
                                                int sampleNumber)
     {
         makeVolleyStringObjectRequest(getGlobalWebServerURL()
-                + "/get_item_weight.php?area_easting=" + areaEasting + "&area_northing="
+                + "/get_item_weight_2.php?area_easting=" + areaEasting + "&area_northing="
                 + areaNorthing + "&context_number=" + contextNumber + "&sample_number="
                 + sampleNumber, queue, new StringObjectResponseWrapper(this) {
             /**

@@ -467,8 +467,10 @@ public class VolleyWrapper
                 try
                 {
                     JSONArray responseArray = new JSONArray();
-                    responseArray.put(response.getString(0));
-                    Log.v(LOG_TAG, "the response is " + response.getString(0));
+                    for (int i = 0; i < response.length(); i++) {
+                        responseArray.put(response.getString(i));
+                        Log.v(LOG_TAG, "the response is " + response.getString(i));
+                    }
                     lambdaWrapper.responseMethod(responseArray);
                 }
                 catch(Exception e)
