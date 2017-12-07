@@ -69,11 +69,11 @@ import static cis573.com.archaeology.util.StateStatic.REQUEST_ENABLE_BT;
 import static cis573.com.archaeology.util.StateStatic.REQUEST_IMAGE_CAPTURE;
 import static cis573.com.archaeology.util.StateStatic.cameraIPAddress;
 import static cis573.com.archaeology.util.StateStatic.connectedToRemoteCamera;
-import static cis573.com.archaeology.util.StateStatic.convertDpToPixel;
+import static cis573.com.archaeology.util.StateStatic.convertDPToPixel;
 import static cis573.com.archaeology.util.StateStatic.getGlobalWebServerURL;
 import static cis573.com.archaeology.util.StateStatic.getTimeStamp;
 import static cis573.com.archaeology.util.StateStatic.isBluetoothEnabled;
-import static cis573.com.archaeology.util.StateStatic.isIsRemoteCameraSelect;
+import static cis573.com.archaeology.util.StateStatic.isRemoteCameraSelected;
 import static cis573.com.archaeology.util.StateStatic.isTakePhotoButtonClicked;
 public class ObjectDetailActivity extends AppCompatActivity
         implements WiFiDirectBroadcastReceiver.WifiDirectBroadcastReceivable
@@ -540,9 +540,10 @@ public class ObjectDetailActivity extends AppCompatActivity
                     else
                     {
                         System.out.println(responseJSON.get("weight_kilograms"));
-                        getWeightInputText().setText(String.valueOf(1000 *
+                        BluetoothService.currWeight = (int) (1000 *
                                 Double.parseDouble(responseJSON.getString(
-                                        "weight_kilograms"))));
+                                "weight_kilograms")));
+                        getWeightInputText().setText(String.valueOf(BluetoothService.currWeight));
                     }
                     // indicates weight field has been populated
                 }
@@ -836,7 +837,6 @@ public class ObjectDetailActivity extends AppCompatActivity
      */
     public void saveWeight(String weight)
     {
-        Log.v("RECORDED WEIGHT", weight);
         try
         {
             ((TextView) findViewById(R.id.weightInput)).setText(weight);
@@ -919,7 +919,7 @@ public class ObjectDetailActivity extends AppCompatActivity
     public void addPhotoAction(View view)
     {
         Log.v(LOG_TAG, "Add Photo Action Method Called");
-        if (isIsRemoteCameraSelect())
+        if (isRemoteCameraSelected())
         {
             showRemoteCameraDialog(view);
         }
@@ -936,7 +936,7 @@ public class ObjectDetailActivity extends AppCompatActivity
     public void showRemoteCameraDialog(final View view)
     {
         remoteCameraDialog.show();
-        remoteCameraDialog.getWindow().setLayout(convertDpToPixel(700),
+        remoteCameraDialog.getWindow().setLayout(convertDPToPixel(700),
                 WindowManager.LayoutParams.WRAP_CONTENT);
         final Activity parentActivity = this;
         remoteCameraDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
@@ -1098,8 +1098,7 @@ public class ObjectDetailActivity extends AppCompatActivity
     }
 
     /**
-     * TODO: how are you going to access the photo when you have saved the fragment within the
-     * scope of this method?
+     * Fill photo fragment
      * @param imageURI - image location
      * @param SYNC_STATUS - how the camera is syncing
      */
@@ -1129,9 +1128,7 @@ public class ObjectDetailActivity extends AppCompatActivity
     public void peersDiscovered(Collection<WifiP2pDevice> collectionOfDevices)
     {
         Log.v(LOG_TAG_WIFI_DIRECT, collectionOfDevices.size() + " device discovered");
-        // so you can connect with camera
-        ((TextView) findViewById(R.id.connectToCameraText)).setVisibility(View.INVISIBLE);
-        // organizing all devices phone can connect to
+        // so you can connect with camera organizing all devices phone can connect to
         final ArrayList<String> listOfDeviceNames = new ArrayList<>(collectionOfDevices.size());
         for (WifiP2pDevice myDevice: collectionOfDevices)
         {
@@ -1253,7 +1250,7 @@ public class ObjectDetailActivity extends AppCompatActivity
                     {
                         if (cameraIPAddress != null)
                         {
-                            Log.v(LOG_TAG, "so you were able to get the ip address");
+                            Log.v(LOG_TAG, "so you were able to get the IP address");
                             ipInsertedIntoARPCallback();
                             break;
                         }
@@ -1427,7 +1424,7 @@ public class ObjectDetailActivity extends AppCompatActivity
      */
     public void toggleAddPhotoButton()
     {
-        if (isIsRemoteCameraSelect())
+        if (isRemoteCameraSelected())
         {
             if (connectedToRemoteCamera)
             {

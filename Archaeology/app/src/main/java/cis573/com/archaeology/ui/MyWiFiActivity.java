@@ -154,7 +154,7 @@ public class MyWiFiActivity extends AppCompatActivity
         }
         // load peer devices and addresses to dialog box
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Pick Color").setItems(listOfDeviceNames.toArray(new String[] {}),
+        builder.setTitle("Pick Device").setItems(listOfDeviceNames.toArray(new String[] {}),
                 new DialogInterface.OnClickListener() {
             /**
              * User clicked the alert
@@ -164,7 +164,8 @@ public class MyWiFiActivity extends AppCompatActivity
             public void onClick(DialogInterface dialog, int which)
             {
                 connectButtonClicked = true;
-                connectToWiFiDirectDevice(pairsOfAddressAndNames.get(listOfDeviceNames.get(which)));
+                connectToWiFiDirectDevice(pairsOfAddressAndNames.get(
+                        listOfDeviceNames.get(which)));
                 // The 'which' argument contains the index position of the selected item
             }
         });

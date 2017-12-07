@@ -3,19 +3,16 @@
 package cis573.com.archaeology.services;
 import retrofit2.Call;
 import retrofit2.Callback;
-import retrofit2.Retrofit;
 import cis573.com.archaeology.models.Sample;
 public class DBConnection
 {
-    private Retrofit retrofit;
     private WiDaCService wiDaCService;
     /**
      * Constructor
      */
     public DBConnection()
     {
-        retrofit = RetrofitClient.getClient();
-        wiDaCService = retrofit.create(WiDaCService.class);
+        wiDaCService = RetrofitClient.getClient().create(WiDaCService.class);
     }
 
     /**

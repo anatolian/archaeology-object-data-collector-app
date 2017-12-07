@@ -23,10 +23,10 @@ import static cis573.com.archaeology.util.StateStatic.getGlobalCameraIP;
 import static cis573.com.archaeology.util.StateStatic.getGlobalWebServerURL;
 import static cis573.com.archaeology.util.StateStatic.getRemoteCameraCalibrationInterval;
 import static cis573.com.archaeology.util.StateStatic.getTabletCameraCalibrationInterval;
-import static cis573.com.archaeology.util.StateStatic.isIsRemoteCameraSelect;
+import static cis573.com.archaeology.util.StateStatic.isRemoteCameraSelected;
 import static cis573.com.archaeology.util.StateStatic.setGlobalCameraIP;
 import static cis573.com.archaeology.util.StateStatic.setGlobalWebServerURL;
-import static cis573.com.archaeology.util.StateStatic.setIsRemoteCameraSelect;
+import static cis573.com.archaeology.util.StateStatic.setIsRemoteCameraSelected;
 import static cis573.com.archaeology.util.StateStatic.setRemoteCameraCalibrationInterval;
 import static cis573.com.archaeology.util.StateStatic.setTabletCameraCalibrationInterval;
 public class SettingsActivity extends AppCompatActivity
@@ -106,7 +106,7 @@ public class SettingsActivity extends AppCompatActivity
             {
             }
         });
-        if (isIsRemoteCameraSelect())
+        if (isRemoteCameraSelected())
         {
             cameraSelectBox.setSelection(1);
         }
@@ -173,7 +173,7 @@ public class SettingsActivity extends AppCompatActivity
         setGlobalCameraIP(DEFAULT_CAMERA_IP);
         setRemoteCameraCalibrationInterval(DEFAULT_CALIBRATION_INTERVAL);
         setTabletCameraCalibrationInterval(DEFAULT_CALIBRATION_INTERVAL);
-        setIsRemoteCameraSelect(false);
+        setIsRemoteCameraSelected(false);
         EditText webServerEditText = (EditText) findViewById(R.id.settingsWebServiceUrl);
         Spinner cameraSelectBox = (Spinner) findViewById(R.id.cameraSelectBox);
         EditText cameraIP = (EditText) findViewById(R.id.settingsCameraIP);
@@ -199,7 +199,7 @@ public class SettingsActivity extends AppCompatActivity
             cameraIPText.setEnabled(false);
             calibrationInterval.setText(getString(R.string.long_frmt,
                     getTabletCameraCalibrationInterval()));
-            setIsRemoteCameraSelect(false);
+            setIsRemoteCameraSelected(false);
         }
         else
         {
@@ -207,7 +207,7 @@ public class SettingsActivity extends AppCompatActivity
             cameraIPText.setEnabled(true);
             calibrationInterval.setText(getString(R.string.long_frmt,
                     getRemoteCameraCalibrationInterval()));
-            setIsRemoteCameraSelect(true);
+            setIsRemoteCameraSelected(true);
         }
     }
 

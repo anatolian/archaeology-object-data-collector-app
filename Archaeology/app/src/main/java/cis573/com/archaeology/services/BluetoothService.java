@@ -29,6 +29,25 @@ public class BluetoothService
     }
 
     /**
+     * Parse the data received from scale
+     * @param bytes - the bytes received from the scale
+     * @param size - the size of the object
+     * @return Returns the weight of the object
+     */
+    public static int parseBytesNutriScale(byte[] bytes, int size)
+    {
+        int sign = 1;
+        int value;
+        if (bytes[size - 2] > 0)
+        {
+            sign = -1;
+        }
+        // bits 12-0 gives value of the scale
+        value = ((bytes[size - 2] & 0xf) * 256) + (((int) bytes[size - 1]) & 0xff);
+        return sign * value;
+    }
+
+    /**
      * Connect to Bluetooth
      */
     public void runService()
@@ -210,7 +229,7 @@ public class BluetoothService
                 if (mmInStream.available() >= 2)
                 {
                     numBytes = mmInStream.read(mmBuffer);
-                    currWeight = BluetoothHelper.parseBytesNutriscale(mmBuffer, numBytes);
+                    currWeight = parseBytesNutriScale(mmBuffer, numBytes);
                     Toast.makeText(context, "Weight: " + currWeight,
                             Toast.LENGTH_SHORT).show();
                 }

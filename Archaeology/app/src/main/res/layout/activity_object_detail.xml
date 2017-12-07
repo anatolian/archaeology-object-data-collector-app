@@ -5,6 +5,7 @@
     <ScrollView
         android:layout_width = "match_parent"
         android:layout_height = "match_parent">
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -12,6 +13,7 @@
             android:paddingLeft="@dimen/activity_horizontal_margin"
             android:paddingRight="@dimen/activity_horizontal_margin"
             android:paddingTop="@dimen/activity_vertical_margin">
+
             <TextView
                 android:id="@+id/sampleNumberLabel"
                 android:layout_width="wrap_content"
@@ -23,6 +25,7 @@
                 android:text="@string/sample"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textStyle="bold" />
+
             <TextView
                 android:id="@+id/sampleInfo"
                 android:layout_width="wrap_content"
@@ -33,12 +36,14 @@
                 android:text=""
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textStyle="bold" />
+
             <Spinner
                 android:id="@+id/sample_spinner"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:layout_toEndOf="@+id/sampleInfo" />
+
             <Button
                 android:id="@+id/nextObjectButton"
                 android:layout_width="wrap_content"
@@ -48,6 +53,7 @@
                 android:layout_toEndOf="@+id/previousObjectButton"
                 android:onClick="goToNextItemIfAvailable"
                 android:text="@string/next" />
+
             <Button
                 android:id="@+id/previousObjectButton"
                 android:layout_width="wrap_content"
@@ -66,6 +72,7 @@
                 android:gravity="center"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="@android:color/black" />
+
             <TextView
                 android:id="@+id/textView26"
                 android:layout_width="wrap_content"
@@ -75,6 +82,7 @@
                 android:text="@string/gram"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="@android:color/black" />
+
             <Button
                 android:id="@+id/button16"
                 android:layout_width="wrap_content"
@@ -84,6 +92,7 @@
                 android:layout_alignEnd="@+id/textView26"
                 android:onClick="startRecordWeight"
                 android:text="@string/record_weight" />
+
             <TableLayout
                 android:id="@+id/tableLayout"
                 android:layout_width="match_parent"
@@ -92,121 +101,136 @@
                 android:layout_below="@+id/sampleNumberLabel"
                 android:layout_marginTop="30dp"
                 android:stretchColumns="*">
+
                 <TableRow
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
+
                     <TextView
                         android:id="@+id/textView2"
                         android:layout_width="1dp"
                         android:layout_height="wrap_content"
-                        android:text="@string/surface"
                         android:gravity="center"
+                        android:text="@string/surface"
                         android:textAppearance="?android:attr/textAppearanceMedium"
                         android:textColor="@android:color/black"
-                        android:textStyle="bold"/>
+                        android:textStyle="bold" />
+
                     <TextView
                         android:id="@+id/textView28"
                         android:layout_width="1dp"
                         android:layout_height="wrap_content"
+                        android:gravity="center"
                         android:text="@string/hue"
                         android:textAppearance="?android:attr/textAppearanceMedium"
                         android:textColor="@android:color/black"
-                        android:textStyle="bold"
-                        android:gravity="center"/>
+                        android:textStyle="bold" />
+
                     <TextView
                         android:id="@+id/textView29"
                         android:layout_width="1dp"
                         android:layout_height="wrap_content"
+                        android:gravity="center"
                         android:text="@string/lightness"
                         android:textAppearance="?android:attr/textAppearanceMedium"
                         android:textColor="@android:color/black"
-                        android:textStyle="bold"
-                        android:gravity="center"/>
+                        android:textStyle="bold" />
+
                     <TextView
                         android:id="@+id/textView30"
                         android:layout_width="1dp"
                         android:layout_height="wrap_content"
+                        android:gravity="center"
                         android:text="@string/chroma"
                         android:textAppearance="?android:attr/textAppearanceMedium"
                         android:textColor="@android:color/black"
-                        android:textStyle="bold"
-                        android:gravity="center"/>
+                        android:textStyle="bold" />
                 </TableRow>
+
                 <TableRow
                     android:id="@+id/exteriorColorRow"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
+
                     <TextView
                         android:id="@+id/textView31"
                         android:layout_width="1dp"
                         android:layout_height="wrap_content"
-                        android:text="@string/exterior_color"
                         android:gravity="center"
+                        android:text="@string/exterior_color"
                         android:textAppearance="?android:attr/textAppearanceMedium"
                         android:textColor="@android:color/black"
                         android:textStyle="italic" />
+
                     <TextView
                         android:id="@+id/exterior_color_hue"
                         android:layout_width="1dp"
                         android:layout_height="wrap_content"
                         android:layout_column="1"
+                        android:gravity="center"
                         android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:textColor="@android:color/black"
-                        android:gravity="center"/>
+                        android:textColor="@android:color/black" />
+
                     <TextView
                         android:id="@+id/exterior_color_lightness"
                         android:layout_width="1dp"
                         android:layout_height="wrap_content"
                         android:layout_column="2"
+                        android:gravity="center"
                         android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:textColor="@android:color/black"
-                        android:gravity="center"/>
+                        android:textColor="@android:color/black" />
+
                     <TextView
                         android:id="@+id/exterior_color_chroma"
                         android:layout_width="1dp"
                         android:layout_height="wrap_content"
                         android:layout_column="3"
+                        android:gravity="center"
                         android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:textColor="@android:color/black"
-                        android:gravity="center"/>
+                        android:textColor="@android:color/black" />
                 </TableRow>
+
                 <TableRow
                     android:id="@+id/interiorColorRow"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
+
                     <TextView
                         android:id="@+id/textView35"
                         android:layout_width="1dp"
                         android:layout_height="wrap_content"
-                        android:text="@string/interior_color"
                         android:gravity="center"
+                        android:text="@string/interior_color"
                         android:textAppearance="?android:attr/textAppearanceMedium"
                         android:textColor="@android:color/black"
                         android:textStyle="italic" />
+
                     <TextView
                         android:id="@+id/interior_color_hue"
                         android:layout_width="1dp"
                         android:layout_height="wrap_content"
                         android:layout_column="1"
+                        android:gravity="center"
                         android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:textColor="@android:color/black"
-                        android:gravity="center"/>
+                        android:textColor="@android:color/black" />
+
                     <TextView
                         android:id="@+id/interior_color_lightness"
                         android:layout_width="1dp"
                         android:layout_height="wrap_content"
                         android:layout_column="2"
+                        android:gravity="center"
                         android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:textColor="@android:color/black"
-                        android:gravity="center"/>
+                        android:textColor="@android:color/black" />
+
                     <TextView
                         android:id="@+id/interior_color_chroma"
                         android:layout_width="1dp"
                         android:layout_height="wrap_content"
                         android:layout_column="3"
+                        android:gravity="center"
                         android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:textColor="@android:color/black"
-                        android:gravity="center"/>
+                        android:textColor="@android:color/black" />
                 </TableRow>
             </TableLayout>
 
@@ -217,20 +241,15 @@
                 android:layout_below="@id/tableLayout"
                 android:gravity="center"
                 android:text="@string/no_remote_camera"
-                android:textColor="@android:color/black" />
-            <Button
-                android:id="@+id/button26"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_below="@+id/photoScrollWrapper"
-                android:onClick="addPhotoAction"
-                android:text="@string/add_photo" />
+                android:textColor="@android:color/holo_red_dark" />
+
             <HorizontalScrollView
                 android:id="@+id/photoScrollWrapper"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
+                android:layout_alignParentStart="true"
                 android:layout_below="@+id/connectToCameraText">
+
                 <fragment
                     android:id="@+id/fragment"
                     android:name="cis573.com.archaeology.ui.PhotoFragment"
@@ -238,22 +257,28 @@
                     android:layout_height="wrap_content"
                     tools:layout="@layout/photo_fragment" />
             </HorizontalScrollView>
+
+            <Button
+                android:id="@+id/button26"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/photoScrollWrapper"
+                android:onClick="addPhotoAction"
+                android:text="@string/add_photo" />
+
             <Button
                 android:id="@+id/correct_color"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentStart="true"
                 android:layout_below="@+id/button26"
-                android:layout_marginTop="187dp"
                 android:onClick="goToImageGallery"
                 android:text="@string/correct_color" />
+
             <Button
                 android:id="@+id/wifiActivity"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_toEndOf="@+id/correct_color"
+                android:layout_below="@+id/correct_color"
                 android:onClick="goToWiFiActivity"
                 android:text="@string/configure_camera" />
         </RelativeLayout>

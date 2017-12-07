@@ -18,6 +18,7 @@ public class LocalRetriever extends AppCompatActivity implements Retriever
     /**
      * Useless constructor
      */
+    @SuppressWarnings("unused")
     public LocalRetriever()
     {
     }
@@ -92,7 +93,7 @@ public class LocalRetriever extends AppCompatActivity implements Retriever
         }
         catch (IOException ex)
         {
-            // handle exception
+            ex.printStackTrace();
         }
         finally
         {
@@ -102,7 +103,7 @@ public class LocalRetriever extends AppCompatActivity implements Retriever
             }
             catch (IOException e)
             {
-                // handle exception
+                e.printStackTrace();
             }
         }
         // Return possible search features

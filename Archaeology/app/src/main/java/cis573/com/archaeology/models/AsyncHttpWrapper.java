@@ -12,17 +12,17 @@ import static cis573.com.archaeology.util.StateStatic.LOG_TAG;
 public class AsyncHttpWrapper
 {
     /**
-     * upload image
-     * @param url - destination URL
-     * @param imageUri - image location
+     * Upload image
+     * @param URL - destination URL
+     * @param imageURI - image location
      * @param callbackWrapper - callback function
      */
-    public static void makeImageUpload(String url, Uri imageUri,
+    public static void makeImageUpload(String URL, Uri imageURI,
                                        final AsyncHttpCallbackWrapper callbackWrapper)
     {
         // setting up variables to establish connection with server
         AsyncHttpClient client = new AsyncHttpClient();
-        File myFile = new File(imageUri.getPath());
+        File myFile = new File(imageURI.getPath());
         RequestParams params = new RequestParams();
         try
         {
@@ -34,7 +34,7 @@ public class AsyncHttpWrapper
             e.printStackTrace();
         }
         // send to database
-        client.post(url, params, new TextHttpResponseHandler() {
+        client.post(URL, params, new TextHttpResponseHandler() {
             /**
              * methods implemented from AsyncHttpWrapper.java
              * @param statusCode - HTTP status

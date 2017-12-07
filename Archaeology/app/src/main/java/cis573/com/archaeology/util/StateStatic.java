@@ -37,22 +37,22 @@ public class StateStatic
     public static final String SAMPLE_NUMBER = "sample_number";
     public static final String ALL_SAMPLE_NUMBER = "all_available_sample_number";
     // offset values that help you to locate the correct fields in the data tables to store
-    // information. the global webserver is being set to a default value
-    // need to make sure that app is able to find ip address on its own
-    private static String globalWebServerURL = DEFAULT_WEB_SERVER_URL;
+    // information. the global webserver is being set to a default value. need to make sure that
+    // app is able to find ip address on its own
     // DEFAULTWEBSERVERURL; connection to current IP camera address
+    private static String globalWebServerURL = DEFAULT_WEB_SERVER_URL;
     private static String globalCameraIP = DEFAULT_CAMERA_IP;
     // global current object most likely is used to track the current object from the database that
     // you are trying to view.
     private static long remoteCameraCalibrationInterval = DEFAULT_CALIBRATION_INTERVAL;
     private static long tabletCameraCalibrationInterval = DEFAULT_CALIBRATION_INTERVAL;
     // variable to track connections
-    private static boolean isRemoteCameraSelect = true;
+    private static boolean isRemoteCameraSelected = false;
     public static boolean connectedToRemoteCamera = false;
     public static String cameraIPAddress = "";
     public static boolean isTakePhotoButtonClicked = false;
     /**
-     * return webserver url that is used to connect to the main database
+     * Return web server URL that is used to connect to the main database
      * @return Returns the web server URL
      */
     public static String getGlobalWebServerURL()
@@ -138,18 +138,18 @@ public class StateStatic
      * Are we using Sony camera?
      * @return Returns whether Sony camera is used
      */
-    public static boolean isIsRemoteCameraSelect()
+    public static boolean isRemoteCameraSelected()
     {
-        return isRemoteCameraSelect;
+        return isRemoteCameraSelected;
     }
 
     /**
      * Change active camera
-     * @param isRemoteCameraSelect - true if Sony is used
+     * @param isRemoteCameraSelected - true if Sony is used
      */
-    public static void setIsRemoteCameraSelect(boolean isRemoteCameraSelect)
+    public static void setIsRemoteCameraSelected(boolean isRemoteCameraSelected)
     {
-        StateStatic.isRemoteCameraSelect = isRemoteCameraSelect;
+        StateStatic.isRemoteCameraSelected = isRemoteCameraSelected;
     }
 
     /**
@@ -167,7 +167,7 @@ public class StateStatic
      * @param dp - pixel
      * @return - return px of dp
      */
-    public static float convertDpToPixel(float dp)
+    public static float convertDPToPixel(float dp)
     {
         DisplayMetrics metrics = Resources.getSystem().getDisplayMetrics();
         return dp * (metrics.densityDpi / 160f);
@@ -178,7 +178,7 @@ public class StateStatic
      * @param dp - pixel
      * @return Returns px of dp
      */
-    public static int convertDpToPixel(int dp)
+    public static int convertDPToPixel(int dp)
     {
         DisplayMetrics metrics = Resources.getSystem().getDisplayMetrics();
         return dp * (metrics.densityDpi / 160);

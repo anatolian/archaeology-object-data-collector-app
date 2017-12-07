@@ -57,7 +57,8 @@ public class NutriScaleBroadcastReceiver extends BroadcastReceiver
         }
         else if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action))
         {
-            mHandler.obtainMessage(MESSAGE_STATUS_CHANGE, "Device Disconnected").sendToTarget();
+            mHandler.obtainMessage(MESSAGE_STATUS_CHANGE, "Device Disconnected")
+                    .sendToTarget();
             Log.v(LOG_TAG_BLUETOOTH, "Device Disconnected");
         }
     }

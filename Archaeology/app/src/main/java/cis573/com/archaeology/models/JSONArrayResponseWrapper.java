@@ -1,19 +1,15 @@
 // JSONArray Response
 // @author: msenol
 package cis573.com.archaeology.models;
-import android.content.Context;
 import com.android.volley.VolleyError;
 import org.json.JSONArray;
 abstract public class JSONArrayResponseWrapper
 {
-    protected Context currentContext;
     /**
      * Constructor
-     * @param aContext - calling context
      */
-    protected JSONArrayResponseWrapper(Context aContext)
+    protected JSONArrayResponseWrapper()
     {
-        this.currentContext = aContext;
     }
 
     /**

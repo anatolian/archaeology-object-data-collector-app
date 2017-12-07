@@ -230,7 +230,7 @@ public class SessionReportActivity extends AppCompatActivity
             Log.d("SessionReport", "Before Instance: Type = " + type + ", wt = " + avgWt +
                     ", sz = " + avgSize + ", num = " + num);
             avgWt = ((avgWt * num) + d.getWeight()) / (num + 1);
-            avgSize = ((avgSize * num) + d.getSize()) / (num + 1);
+            avgSize = (avgSize * num) / (num + 1);
             instances.add(d);
             num++;
             changed = true;
@@ -274,7 +274,7 @@ public class SessionReportActivity extends AppCompatActivity
             for (Sample d: instances)
             {
                 devWt += Math.pow(avgWt - d.getWeight(), 2);
-                devSize += Math.pow(avgSize - d.getSize(), 2);
+                devSize += Math.pow(avgSize, 2);
             }
             devWt = Math.sqrt(devWt);
             devSize = Math.sqrt(devSize);

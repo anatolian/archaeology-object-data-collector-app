@@ -5,17 +5,18 @@ import android.content.Context;
 import com.android.volley.VolleyError;
 public abstract class StringObjectResponseWrapper
 {
-    public Context currentContext;
+    protected Context currentContext;
     /**
      * Constructor
      */
-    public StringObjectResponseWrapper(Context aContext)
+    protected StringObjectResponseWrapper(Context aContext)
     {
         this.currentContext = aContext;
     }
 
     /**
-     * this will be overrided in many of the api calls that will be used to interact with the camera
+     * This will be overrided in many of the api calls that will be used to interact with the
+     * camera
      * @param response - camera response
      */
     public abstract void responseMethod(String response);

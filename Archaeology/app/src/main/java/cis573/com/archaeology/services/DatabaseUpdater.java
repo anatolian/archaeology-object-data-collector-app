@@ -94,7 +94,6 @@ public class DatabaseUpdater extends AsyncTask<String, Object, Void>
             int count;
             while ((ze = zis.getNextEntry()) != null)
             {
-                // zapis do souboru
                 filename = "/museumjson.csv";
                 System.out.println(ze.getName());
                 // Need to create directories if not exists, or it will generate an Exception...
@@ -105,7 +104,6 @@ public class DatabaseUpdater extends AsyncTask<String, Object, Void>
                     continue;
                 }
                 FileOutputStream fOut = new FileOutputStream(path + filename);
-                // cteni zipu a zapis
                 while ((count = zis.read(buffer)) != -1)
                 {
                     fOut.write(buffer, 0, count);

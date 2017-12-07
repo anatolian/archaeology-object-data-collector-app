@@ -13,7 +13,7 @@ abstract public class ImageResponseWrapper
     }
 
     /**
-     * these are abstract methods that will be implemented in the VolleyWrapper class
+     * These are abstract methods that will be implemented in the VolleyWrapper class
      * @param bitmap - returned image
      */
     public abstract void responseMethod(Bitmap bitmap);

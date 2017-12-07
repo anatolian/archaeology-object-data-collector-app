@@ -57,7 +57,7 @@ public class SampleStaging
         }
     };
     /**
-     * TODO: Might be better to be public?
+     * Prevent other classes from using default constructor
      */
     private SampleStaging()
     {

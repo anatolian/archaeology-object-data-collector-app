@@ -15,7 +15,7 @@ import com.squareup.picasso.Transformation;
 import cis573.com.archaeology.ui.TaggedImageView;
 import cis573.com.archaeology.ui.PhotoFragment;
 import static cis573.com.archaeology.util.StateStatic.LOG_TAG;
-import static cis573.com.archaeology.util.StateStatic.convertDpToPixel;
+import static cis573.com.archaeology.util.StateStatic.convertDPToPixel;
 public class PicassoWrapper
 {
     public class ResizeAccordingToSpecificHeightTransformation implements Transformation
@@ -28,7 +28,7 @@ public class PicassoWrapper
         @Override
         public Bitmap transform(Bitmap source)
         {
-            int requestedHeight = convertDpToPixel(250);
+            int requestedHeight = convertDPToPixel(250);
             float ratio = source.getHeight() / requestedHeight;
             int width = Math.round(source.getWidth() / ratio);
             int height = Math.round(source.getHeight() / ratio);
@@ -78,7 +78,8 @@ public class PicassoWrapper
     public void fetchAndInsertImage(LinearLayout photoLayout, final Uri remoteImageURL,
                                     final Context aContext, String syncStatus,
                                     View.OnClickListener anOnClickListener,
-                                    final PhotoFragment.CustomPicassoCallback onPhotoFetchedCallback)
+                                    final PhotoFragment.CustomPicassoCallback
+                                            onPhotoFetchedCallback)
     {
         Log.v(LOG_TAG, "Fetch and Insert Image function called for image " + remoteImageURL);
         final TaggedImageView photoView = new TaggedImageView(aContext, syncStatus);
@@ -91,7 +92,8 @@ public class PicassoWrapper
         onPhotoFetchedCallback.setActualImageView(photoView);
         Picasso.with(aContext).load(remoteImageURL)
                 .transform(new ResizeAccordingToSpecificHeightTransformation())
-                .placeholder(android.R.drawable.ic_delete).error(android.R.drawable.ic_dialog_alert)
+                .placeholder(android.R.drawable.ic_delete)
+                .error(android.R.drawable.ic_dialog_alert)
                 .into(photoView, onPhotoFetchedCallback);
         photoView.setOnClickListener(anOnClickListener);
         photoLayout.addView(photoView, 0, layoutParams);
