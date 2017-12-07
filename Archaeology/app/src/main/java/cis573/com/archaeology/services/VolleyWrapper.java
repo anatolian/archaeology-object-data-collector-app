@@ -403,15 +403,15 @@ public class VolleyWrapper
 
     /**
      * Request JSON array
-     * @param url - camera URL
+     * @param URL - camera URL
      * @param queue - request queue
      * @param lambdaWrapper - request wrapper
      */
-    public static void makeVolleyJSONArrayRequest(final String url, RequestQueue queue,
+    public static void makeVolleyJSONArrayRequest(final String URL, RequestQueue queue,
                                                   final JSONArrayResponseWrapper lambdaWrapper)
     {
-        Log.v(LOG_TAG, "volley url:" + url);
-        JsonArrayRequest myRequest = new JsonArrayRequest(url, new Response.Listener<JSONArray>() {
+        Log.v(LOG_TAG, "volley url:" + URL);
+        JsonArrayRequest myRequest = new JsonArrayRequest(URL, new Response.Listener<JSONArray>() {
             /**
              * Response received
              * @param response - camera response
@@ -422,7 +422,8 @@ public class VolleyWrapper
                 try
                 {
                     JSONArray responseArray = new JSONArray();
-                    for (int i = 0; i < response.length(); i++) {
+                    for (int i = 0; i < response.length(); i++)
+                    {
                         responseArray.put(response.getString(i));
                         Log.v(LOG_TAG, "the response is " + response.getString(i));
                     }

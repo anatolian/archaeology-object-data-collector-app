@@ -886,12 +886,11 @@ public class ObjectDetailActivity extends AppCompatActivity
                 try
                 {
                     runBluetooth();
-                    Toast.makeText(getApplicationContext(), "Weight updated",
-                            Toast.LENGTH_SHORT).show();
+                    weightDialog.dismiss();
                 }
                 catch (NullPointerException e)
                 {
-                    Log.v("SCALE CONNECTION", e.toString());
+                    e.printStackTrace();
                 }
             }
         });
@@ -906,15 +905,23 @@ public class ObjectDetailActivity extends AppCompatActivity
      */
     public void runBluetooth()
     {
+        if (bluetoothService == null)
+        {
+            Toast.makeText(getApplicationContext(), "Not connected to scale",
+                    Toast.LENGTH_SHORT).show();
+        }
         bluetoothService.runService();
         Log.v("SCALE CONNECTION", "" + BluetoothService.currWeight);
-        TextView weightText = (TextView) findViewById(R.id.dialogCurrentWeightInDBText);
-        weightText.setText(getString(R.string.weight_int_frmt, BluetoothService.currWeight));
+        ((TextView) findViewById(R.id.weightInput))
+                .setText(String.valueOf(BluetoothService.currWeight));
+        asyncModifyWeightFieldInDB(BluetoothService.currWeight, areaEasting, areaNorthing,
+                contextNumber, sampleNumber);
     }
 
     /**
      * Called from add photo button. shows remoteCameraDialog, which is used to open camera view
      * and take picture
+     * @param view - add photo button
      */
     public void addPhotoAction(View view)
     {
