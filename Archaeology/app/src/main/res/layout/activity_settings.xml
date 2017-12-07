@@ -22,18 +22,20 @@
                 android:layout_alignParentTop="true"
                 android:layout_alignStart="@+id/settingsWebServiceUrl"
                 android:minWidth="400dp"
-                android:text="@string/baseURL"
+                android:text="@string/base_url"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="@android:color/black" />
             <EditText
                 android:layout_width = "wrap_content"
                 android:layout_height = "wrap_content"
                 android:id = "@+id/settingsWebServiceUrl"
+                android:inputType="textUri"
                 android:layout_below = "@+id/textView5"
                 android:layout_centerHorizontal = "true"
                 android:minWidth = "400dp"
                 android:maxLines = "3"
                 android:lines = "1"
+                android:hint = "@string/base_url"
                 android:textAppearance = "?android:attr/textAppearanceMedium"/>
 
             <TextView
@@ -43,7 +45,7 @@
                 android:layout_below="@+id/cameraSelectBox"
                 android:layout_centerHorizontal="true"
                 android:minWidth="400dp"
-                android:text="@string/cameraIP"
+                android:text="@string/camera_IP"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="@android:color/black" />
             <EditText
@@ -55,6 +57,7 @@
                 android:minWidth = "400dp"
                 android:lines = "1"
                 android:maxLines = "1"
+                android:hint = "@string/camera_IP"
                 android:textAppearance = "?android:attr/textAppearanceMedium"/>
 
             <TextView
@@ -74,7 +77,8 @@
                 android:layout_below = "@+id/textView10"
                 android:layout_centerHorizontal = "true"
                 android:minWidth = "400dp"
-                android:textAppearance = "?android:attr/textAppearanceMedium"/>
+                android:textAppearance = "?android:attr/textAppearanceMedium"
+                android:hint="@string/camera_calibration"/>
 
             <TextView
                 android:id="@+id/textView11"

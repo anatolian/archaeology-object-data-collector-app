@@ -32,7 +32,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import cis573.com.archaeology.R;
-import cis573.com.archaeology.util.Utils;
+import cis573.com.archaeology.util.StateStatic;
 import cis573.com.archaeology.services.VolleyWrapper;
 import cis573.com.archaeology.services.WiFiDirectBroadcastReceiver;
 import cis573.com.archaeology.models.JSONObjectResponseWrapper;
@@ -48,16 +48,16 @@ public class MyWiFiActivity extends AppCompatActivity
     RequestQueue queue;
     int requestID;
     IntentFilter mIntentFilter;
-    String connectedMACAddress = "";
-    private boolean connectDialogAppeared = false;
+    String cameraIPAddress = "";
+    private boolean connectedDialogVisible = false;
     public boolean connectButtonClicked = false;
     /**
      * Open connected dialog
      * @return Returns whether the dialog appeared
      */
-    public boolean isConnectDialogAppeared()
+    public boolean isConnectedDialogVisible()
     {
-        return connectDialogAppeared;
+        return connectedDialogVisible;
     }
 
     /**
@@ -105,15 +105,15 @@ public class MyWiFiActivity extends AppCompatActivity
 
     /**
      * this should help you connect to the camera
-     * @param macAddress - camera MAC address
+     * @param ipAddress - camera MAC address
      */
-    public void connectToWiFiDirectDevice(final String macAddress)
+    public void connectToWiFiDirectDevice(final String ipAddress)
     {
         WifiP2pDevice device = new WifiP2pDevice();
-        device.deviceAddress = macAddress;
+        device.deviceAddress = ipAddress;
         WifiP2pConfig config = new WifiP2pConfig();
         config.deviceAddress = device.deviceAddress;
-        connectedMACAddress = macAddress;
+        cameraIPAddress = ipAddress;
         mManager.connect(mChannel, config, new WifiP2pManager.ActionListener() {
             /**
              * TODO: does this not require implementation or still yet to be implemented?
@@ -154,7 +154,7 @@ public class MyWiFiActivity extends AppCompatActivity
         }
         // load peer devices and addresses to dialog box
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Pick Color").setItems(listOfDeviceNames.toArray(new String[]{}),
+        builder.setTitle("Pick Color").setItems(listOfDeviceNames.toArray(new String[] {}),
                 new DialogInterface.OnClickListener() {
             /**
              * User clicked the alert
@@ -169,7 +169,7 @@ public class MyWiFiActivity extends AppCompatActivity
             }
         });
         builder.create().show();
-        connectDialogAppeared = true;
+        connectedDialogVisible = true;
     }
 
     /**
@@ -229,23 +229,23 @@ public class MyWiFiActivity extends AppCompatActivity
     public void showIPAddress(View view)
     {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        Log.v(LOG_TAG_WIFI_DIRECT, "remote macAddress " + connectedMACAddress);
-        Log.v(LOG_TAG_WIFI_DIRECT, "my macAddress "  + getMyMACAddress());
-        builder.setTitle("IP Address").setMessage(Utils.getIPFromMac());
+        Log.v(LOG_TAG_WIFI_DIRECT, "remote IPAddress " + cameraIPAddress);
+        Log.v(LOG_TAG_WIFI_DIRECT, "my IPAddress "  + getMyIPAddress());
+        builder.setTitle("IP Address").setMessage(StateStatic.cameraIPAddress);
         builder.create().show();
     }
 
     /**
-     * gets the ip address of the peer device it is connected to. this may help to create a url to
+     * Gets the IP address of the peer device it is connected to. This may help to create a URL to
      * connect with the server as well
-     * @return Returns MAC address
+     * @return Returns IP address
      */
-    public String getMyMACAddress()
+    public int getMyIPAddress()
     {
         WifiManager manager = (WifiManager) getApplicationContext()
                 .getSystemService(Context.WIFI_SERVICE);
         WifiInfo info = manager.getConnectionInfo();
-        return info.getMacAddress();
+        return info.getIpAddress();
     }
 
     /**
@@ -264,7 +264,7 @@ public class MyWiFiActivity extends AppCompatActivity
      */
     public void getAPICommands(View view)
     {
-        String url = buildAPIURLFromIP(Utils.getIPFromMac());
+        String url = buildAPIURLFromIP(cameraIPAddress);
         try
         {
             VolleyWrapper.makeVolleySonyAPIGetAPICommands(url, queue, requestID++,
@@ -276,7 +276,7 @@ public class MyWiFiActivity extends AppCompatActivity
                 @Override
                 public void responseMethod(JSONObject response)
                 {
-                    Log.v(LOG_TAG_WIFI_DIRECT, "Available Api Commands: \n" + response);
+                    Log.v(LOG_TAG_WIFI_DIRECT, "Available API Commands: \n" + response);
                 }
 
                 /**
@@ -302,7 +302,7 @@ public class MyWiFiActivity extends AppCompatActivity
      */
     public void takePhoto(View view)
     {
-        String url = buildAPIURLFromIP(Utils.getIPFromMac());
+        String url = buildAPIURLFromIP(cameraIPAddress);
         try
         {
             VolleyWrapper.makeVolleySonyAPITakePhotoRequest(url, queue, requestID++,
@@ -389,12 +389,12 @@ public class MyWiFiActivity extends AppCompatActivity
     }
 
     /**
-     * live view from camera
+     * Live view from camera
      * @param view - camera view
      */
     public void startLiveView(final View view)
     {
-        final String url = buildAPIURLFromIP(Utils.getIPFromMac());
+        final String url = buildAPIURLFromIP(cameraIPAddress);
         try
         {
             VolleyWrapper.makeVolleySonyAPIStartLiveViewRequest(url, queue, requestID++,
@@ -461,7 +461,7 @@ public class MyWiFiActivity extends AppCompatActivity
      */
     public void stopLiveView(View view)
     {
-        final String url = buildAPIURLFromIP(Utils.getIPFromMac());
+        final String url = buildAPIURLFromIP(cameraIPAddress);
         try
         {
             VolleyWrapper.makeVolleySonyAPIStopLiveViewRequest(url, queue, requestID++,
@@ -499,7 +499,7 @@ public class MyWiFiActivity extends AppCompatActivity
      */
     public void zoomIn(View view)
     {
-        final String url = buildAPIURLFromIP(Utils.getIPFromMac());
+        final String url = buildAPIURLFromIP(cameraIPAddress);
         try
         {
             VolleyWrapper.makeVolleySonyAPIActZoomRequest("in", queue, url, requestID++,
@@ -532,12 +532,12 @@ public class MyWiFiActivity extends AppCompatActivity
     }
 
     /**
-     * allows you to call a specific api from the camera
+     * Allows you to call a specific API from the camera
      * @param view - camera view
      */
-    public void callSpecificApiFunction(View view)
+    public void callSpecificAPIFunction(View view)
     {
-        final String url = buildAPIURLFromIP(Utils.getIPFromMac());
+        final String url = buildAPIURLFromIP(cameraIPAddress);
         final String functionName = getCustomFunctionNameFromLayout();
         try
         {
@@ -550,7 +550,7 @@ public class MyWiFiActivity extends AppCompatActivity
                 @Override
                 public void responseMethod(JSONObject response)
                 {
-                    Log.v(LOG_TAG_WIFI_DIRECT, "Custom Api Function Call Response: "
+                    Log.v(LOG_TAG_WIFI_DIRECT, "Custom API Function Call Response: "
                             + response);
                 }
 
@@ -572,7 +572,7 @@ public class MyWiFiActivity extends AppCompatActivity
     }
 
     /**
-     * returns a custom api for the sony camera
+     * Returns a custom api for the sony camera
      * @return Returns function name
      */
     public String getCustomFunctionNameFromLayout()

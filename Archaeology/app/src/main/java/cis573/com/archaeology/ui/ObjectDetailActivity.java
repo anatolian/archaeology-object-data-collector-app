@@ -20,6 +20,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,7 +29,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
@@ -54,10 +54,9 @@ import cis573.com.archaeology.services.Session;
 import cis573.com.archaeology.services.WiFiDirectBroadcastReceiver;
 import cis573.com.archaeology.util.CheatSheet;
 import cis573.com.archaeology.util.StateStatic;
-import cis573.com.archaeology.util.Utils;
 import static cis573.com.archaeology.services.VolleyStringWrapper.makeVolleyStringObjectRequest;
 import static cis573.com.archaeology.util.CheatSheet.deleteOriginalAndThumbnailPhoto;
-import static cis573.com.archaeology.util.CheatSheet.getOutputMediaFileUri;
+import static cis573.com.archaeology.util.CheatSheet.getOutputMediaFile;
 import static cis573.com.archaeology.util.CheatSheet.goToSettings;
 import static cis573.com.archaeology.util.StateStatic.ALL_SAMPLE_NUMBER;
 import static cis573.com.archaeology.util.StateStatic.LOG_TAG;
@@ -69,7 +68,7 @@ import static cis573.com.archaeology.util.StateStatic.MESSAGE_STATUS_CHANGE;
 import static cis573.com.archaeology.util.StateStatic.MESSAGE_WEIGHT;
 import static cis573.com.archaeology.util.StateStatic.REQUEST_ENABLE_BT;
 import static cis573.com.archaeology.util.StateStatic.REQUEST_IMAGE_CAPTURE;
-import static cis573.com.archaeology.util.StateStatic.connectedMACAddress;
+import static cis573.com.archaeology.util.StateStatic.cameraIPAddress;
 import static cis573.com.archaeology.util.StateStatic.connectedToRemoteCamera;
 import static cis573.com.archaeology.util.StateStatic.convertDpToPixel;
 import static cis573.com.archaeology.util.StateStatic.getGlobalWebServerURL;
@@ -78,8 +77,7 @@ import static cis573.com.archaeology.util.StateStatic.isBluetoothEnabled;
 import static cis573.com.archaeology.util.StateStatic.isIsRemoteCameraSelect;
 import static cis573.com.archaeology.util.StateStatic.isTakePhotoButtonClicked;
 public class ObjectDetailActivity extends AppCompatActivity
-        implements PhotoFragment.PhotoLoadDeleteInterface,
-        WiFiDirectBroadcastReceiver.WifiDirectBroadcastReceivable
+        implements WiFiDirectBroadcastReceiver.WifiDirectBroadcastReceivable
 {
     // wifi manager will help you get information for wifi to build the url that you will need to
     // communicate with camera and the database (peer to peer connectivity)
@@ -148,7 +146,7 @@ public class ObjectDetailActivity extends AppCompatActivity
     // broadcast receiver objects used to receive messages from other devices
     BroadcastReceiver nutriScaleBroadcastReceiver, wiFiDirectBroadcastReceiver;
     private boolean activityPaused = false;
-    private boolean isPickPeersDialogAppeared = false;
+    private boolean isPickPeersDialogVisible = false;
     // correspond to columns in database associated with finds
     int areaEasting, areaNorthing, contextNumber, sampleNumber;
     public BluetoothService bluetoothService;
@@ -304,19 +302,7 @@ public class ObjectDetailActivity extends AppCompatActivity
         // Inflate and set the layout for the weight dialog. Pass null as the parent view because
         // its going in the dialog layout save or cancel weight data
         builder.setView(inflater.inflate(R.layout.record_weight_dialog, null))
-                .setPositiveButton("Save", new DialogInterface.OnClickListener() {
-            /**
-             * User pressed Save
-             * @param dialog - alert dialog
-             * @param id - selection
-             */
-            @Override
-            public void onClick(DialogInterface dialog, int id)
-            {
-                saveWeight("" + BluetoothService.currWeight);
-                dialogVisible = false;
-            }
-        }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             /**
              * User clicked Cancel
              * @param dialog - alert dialog
@@ -422,8 +408,8 @@ public class ObjectDetailActivity extends AppCompatActivity
                 }
                 // creating URI to save photo to once taken
                 String originalFileName = getTempFileName() + ".jpg";
-                final Uri fileUri = CheatSheet.getThumbnail(originalFileName);
-                Log.v(LOG_TAG, fileUri.toString());
+                final Uri fileURI = CheatSheet.getThumbnail(originalFileName);
+                Log.v(LOG_TAG, fileURI.toString());
                 // ApproveDialogCallback is an interface. see CameraDialog class
                 CameraDialog.ApproveDialogCallback approveDialogCallback
                         = new CameraDialog.ApproveDialogCallback() {
@@ -434,7 +420,7 @@ public class ObjectDetailActivity extends AppCompatActivity
                     public void onSaveButtonClicked()
                     {
                         // store image data into photo fragments
-                        loadPhotoIntoPhotoFragment(fileUri, MARKED_AS_ADDED);
+                        loadPhotoIntoPhotoFragment(fileURI, MARKED_AS_ADDED);
                     }
 
                     /**
@@ -443,7 +429,7 @@ public class ObjectDetailActivity extends AppCompatActivity
                     @Override
                     public void onCancelButtonClicked()
                     {
-                        deleteOriginalAndThumbnailPhoto(fileUri);
+                        deleteOriginalAndThumbnailPhoto(fileURI);
                     }
                 };
                 // set up camera dialog
@@ -453,13 +439,13 @@ public class ObjectDetailActivity extends AppCompatActivity
                 // view photo you are trying to approve
                 ImageView approvePhotoImage
                         = (ImageView) approveDialog.findViewById(R.id.approvePhotoImage);
-                approvePhotoImage.setImageURI(fileUri);
+                approvePhotoImage.setImageURI(fileURI);
             }
         }
     }
 
     /**
-     * breaks connections with nutriscale and connections with camera and other external devices
+     * Breaks connections with nutriscale and connections with camera and other external devices
      */
     @Override
     protected void onDestroy()
@@ -467,7 +453,7 @@ public class ObjectDetailActivity extends AppCompatActivity
         super.onDestroy();
         Log.v(LOG_TAG, "Destroying Activity");
         activityPaused = true;
-        isPickPeersDialogAppeared = false;
+        isPickPeersDialogVisible = false;
         if (pickPeersDialog != null)
         {
             pickPeersDialog.dismiss();
@@ -496,7 +482,7 @@ public class ObjectDetailActivity extends AppCompatActivity
     }
 
     /**
-     * break connections with other devices
+     * Break connections with other devices
      */
     @Override
     protected void onStop()
@@ -504,7 +490,7 @@ public class ObjectDetailActivity extends AppCompatActivity
         super.onStop();
         Log.v(LOG_TAG, "Stopping Activity");
         activityPaused = true;
-        isPickPeersDialogAppeared = false;
+        isPickPeersDialogVisible = false;
         if (pickPeersDialog != null)
         {
             pickPeersDialog.dismiss();
@@ -521,17 +507,17 @@ public class ObjectDetailActivity extends AppCompatActivity
     }
 
     /**
-     * making php request to get weight data
+     * Making php request to get weight data
      * @param areaEasting - easting
      * @param areaNorthing - northing
      * @param contextNumber - context
      * @param sampleNumber - sample
      */
-    public void asyncPopulateWeightFieldFromDB(int areaEasting, int areaNorthing, int contextNumber,
-                                               int sampleNumber)
+    public void asyncPopulateWeightFieldFromDB(int areaEasting, int areaNorthing,
+                                               int contextNumber, int sampleNumber)
     {
         makeVolleyStringObjectRequest(getGlobalWebServerURL()
-                + "/get_item_weight.php?area_easting=" + areaEasting + "&area_northing="
+                + "/get_item_weight_2.php?area_easting=" + areaEasting + "&area_northing="
                 + areaNorthing + "&context_number=" + contextNumber + "&sample_number="
                 + sampleNumber, queue, new StringObjectResponseWrapper(this) {
             /**
@@ -543,7 +529,8 @@ public class ObjectDetailActivity extends AppCompatActivity
             {
                 try
                 {
-                    response = response.substring(response.indexOf("{"), response.indexOf("}") + 1);
+                    response = response.substring(response.indexOf("{"),
+                            response.indexOf("}") + 1);
                     response = response.replace("\\", "");
                     JSONObject responseJSON = new JSONObject(response);
                     if (responseJSON.getString("weight_kilograms").equals("null"))
@@ -553,7 +540,9 @@ public class ObjectDetailActivity extends AppCompatActivity
                     else
                     {
                         System.out.println(responseJSON.get("weight_kilograms"));
-                        getWeightInputText().setText(responseJSON.getString("weight_kilograms"));
+                        getWeightInputText().setText(String.valueOf(1000 *
+                                Double.parseDouble(responseJSON.getString(
+                                        "weight_kilograms"))));
                     }
                     // indicates weight field has been populated
                 }
@@ -576,7 +565,7 @@ public class ObjectDetailActivity extends AppCompatActivity
     }
 
     /**
-     * updates database with changes in weight data for object
+     * Updates database with changes in weight data for object
      * @param weightInGrams - weight from scale
      * @param areaEasting - easting
      * @param areaNorthing - northing
@@ -589,9 +578,9 @@ public class ObjectDetailActivity extends AppCompatActivity
         double weightInKg = weightInGrams / 1000.0;
         // making php request to call the update method with updated params
         makeVolleyStringObjectRequest(getGlobalWebServerURL()
-                        + "/set_item_weight_2_from_DB.php?area_easting=" + areaEasting
-                        + "&area_northing=" + areaNorthing + "&context_number=" + contextNumber
-                        + "&sample_number=" + sampleNumber + "&weight_in_kg=" + weightInKg, queue,
+                        + "/set_item_weight_2.php?area_easting=" + areaEasting + "&area_northing="
+                        + areaNorthing + "&context_number=" + contextNumber + "&sample_number="
+                        + sampleNumber + "&weight_in_kg=" + weightInKg, queue,
                 new StringObjectResponseWrapper(this) {
             /**
              * Response received
@@ -634,7 +623,7 @@ public class ObjectDetailActivity extends AppCompatActivity
     }
 
     /**
-     * populates exterior color fields for samples with munsell color values
+     * Populates exterior color fields for samples with Munsell color values
      * @param areaEasting - easting
      * @param areaNorthing - northing
      * @param contextNumber - context
@@ -644,9 +633,9 @@ public class ObjectDetailActivity extends AppCompatActivity
                                                        int contextNumber, int sampleNumber)
     {
         makeVolleyStringObjectRequest(getGlobalWebServerURL()
-                + "/get_exterior_color_2_from_DB.php?area_easting=" + areaEasting
-                + "&area_northing=" + areaNorthing + "&context_number=" + contextNumber
-                + "&sample_number=" + sampleNumber, queue,
+                + "/get_exterior_color_2.php?area_easting=" + areaEasting + "&area_northing=" +
+                        areaNorthing + "&context_number=" + contextNumber + "&sample_number=" +
+                        sampleNumber, queue,
                 new StringObjectResponseWrapper(this) {
             /**
              * Response received
@@ -683,7 +672,7 @@ public class ObjectDetailActivity extends AppCompatActivity
     }
 
     /**
-     * http://localhost/get_image_2_from_DB.php?area_easting=1&area_northing=1&context_number=2&sample_number=3
+     * http://localhost/get_image_2.php?area_easting=1&area_northing=1&context_number=2&sample_number=3
      * query database for munsell color data for interior fields
      * @param areaEasting - easting
      * @param areaNorthing - northing
@@ -694,9 +683,9 @@ public class ObjectDetailActivity extends AppCompatActivity
                                                        int contextNumber, int sampleNumber)
     {
         makeVolleyStringObjectRequest(getGlobalWebServerURL()
-                + "/get_interior_color_2_from_DB.php?area_easting=" + areaEasting
-                + "&area_northing=" + areaNorthing + "&context_number=" + contextNumber
-                + "&sample_number=" + sampleNumber, queue,
+                + "/get_interior_color_2.php?area_easting=" + areaEasting + "&area_northing=" +
+                        areaNorthing + "&context_number=" + contextNumber +
+                        "&sample_number=" + sampleNumber, queue,
                 new StringObjectResponseWrapper(this) {
             /**
              * Response received
@@ -733,11 +722,11 @@ public class ObjectDetailActivity extends AppCompatActivity
     }
 
     /**
-     * get images from response and store so that they can be viewed later
+     * Get images from response and store so that they can be viewed later
      */
     public void asyncPopulatePhotos()
     {
-        String url = getGlobalWebServerURL() + "/get_image_2_from_DB.php?area_easting="
+        String url = getGlobalWebServerURL() + "/get_image_2.php?area_easting="
                 + areaEasting + "&area_northing=" + areaNorthing + "&context_number="
                 + contextNumber + "&sample_number=" + sampleNumber;
         makeVolleyStringObjectRequest(url, queue, new StringObjectResponseWrapper(this) {
@@ -779,7 +768,7 @@ public class ObjectDetailActivity extends AppCompatActivity
     }
 
     /**
-     * populate text fields with interior and exterior color
+     * Populate text fields with interior and exterior color
      * @param hue - image hue
      * @param lightness - image lightness
      * @param chroma - image colors
@@ -862,7 +851,7 @@ public class ObjectDetailActivity extends AppCompatActivity
     }
 
     /**
-     * makes weight dialog visible and add functionality to buttons
+     * Makes weight dialog visible and add functionality to buttons
      * @param view - weight dialog
      */
     public void startRecordWeight(View view)
@@ -924,19 +913,18 @@ public class ObjectDetailActivity extends AppCompatActivity
     }
 
     /**
-     * called from add photo button. shows remoteCameraDialog, which is used to open camera view
+     * Called from add photo button. shows remoteCameraDialog, which is used to open camera view
      * and take picture
      */
     public void addPhotoAction(View view)
     {
         Log.v(LOG_TAG, "Add Photo Action Method Called");
-        if(isIsRemoteCameraSelect())
+        if (isIsRemoteCameraSelect())
         {
             showRemoteCameraDialog(view);
         }
         else
         {
-            Toast.makeText(this, "Tablet camera selected", Toast.LENGTH_SHORT).show();
             startLocalCameraIntent();
         }
     }
@@ -986,8 +974,8 @@ public class ObjectDetailActivity extends AppCompatActivity
                         @Override
                         public void doStuffWithSavedImage(final Uri thumbnailImageUri)
                         {
-                            final Uri originalImageUri
-                                    = CheatSheet.getOriginalImageUri(thumbnailImageUri);
+                            final Uri originalImageURI
+                                    = CheatSheet.getOriginalImageURI(thumbnailImageUri);
                             // implementing interface from CameraDialog class
                             CameraDialog.ApproveDialogCallback approveDialogCallback
                                     = new CameraDialog.ApproveDialogCallback() {
@@ -998,7 +986,7 @@ public class ObjectDetailActivity extends AppCompatActivity
                                 public void onSaveButtonClicked()
                                 {
                                     // take picture and add as photo fragment
-                                    loadPhotoIntoPhotoFragment(originalImageUri, MARKED_AS_ADDED);
+                                    loadPhotoIntoPhotoFragment(originalImageURI, MARKED_AS_ADDED);
                                     isTakePhotoButtonClicked = false;
                                     remoteCameraDialog.findViewById(R.id.take_photo)
                                             .setEnabled(true);
@@ -1010,7 +998,7 @@ public class ObjectDetailActivity extends AppCompatActivity
                                 @Override
                                 public void onCancelButtonClicked()
                                 {
-                                    deleteOriginalAndThumbnailPhoto(originalImageUri);
+                                    deleteOriginalAndThumbnailPhoto(originalImageURI);
                                     isTakePhotoButtonClicked = false;
                                     remoteCameraDialog.findViewById(R.id.take_photo)
                                             .setEnabled(true);
@@ -1061,28 +1049,34 @@ public class ObjectDetailActivity extends AppCompatActivity
     }
 
     /**
-     * starts the local camera
+     * Starts the local camera
      */
     public void startLocalCameraIntent()
     {
         Intent photoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         String stamp = getTimeStamp();
         // create a file to save the image
-        Uri fileUri = getOutputMediaFileUri(stamp);
-        Log.v(LOG_TAG, "fileUri: " + fileUri.toString());
-        photoIntent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
+        Context context = getApplicationContext();
+        Log.v(LOG_TAG, "Stamp: " + stamp);
+        Uri fileURI = FileProvider.getUriForFile(context,
+                context.getApplicationContext().getPackageName()
+                        + ".my.package.name.provider", getOutputMediaFile(stamp));
+        Log.v(LOG_TAG, "fileURI: " + fileURI.toString());
+        photoIntent.putExtra(MediaStore.EXTRA_OUTPUT, fileURI);
+        photoIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         setTempFileName(stamp);
         startActivityForResult(photoIntent, REQUEST_IMAGE_CAPTURE);
     }
 
     /**
-     * allows you to see what camera is seeing. used in remote_camera_layout.xml and
+     * Allows you to see what camera is seeing. used in remote_camera_layout.xml and
      * activity_my_wifi.xml
      * @return Returns the camera view
      */
     public SimpleStreamSurfaceView getLiveViewSurface()
     {
-        return (SimpleStreamSurfaceView) remoteCameraDialog.findViewById(R.id.surfaceview_liveview);
+        return (SimpleStreamSurfaceView) remoteCameraDialog.findViewById(
+                R.id.surfaceview_liveview);
     }
 
     /**
@@ -1106,20 +1100,20 @@ public class ObjectDetailActivity extends AppCompatActivity
     /**
      * TODO: how are you going to access the photo when you have saved the fragment within the
      * scope of this method?
-     * @param imageUri - image location
+     * @param imageURI - image location
      * @param SYNC_STATUS - how the camera is syncing
      */
-    public void loadPhotoIntoPhotoFragment(Uri imageUri, final String SYNC_STATUS)
+    public void loadPhotoIntoPhotoFragment(Uri imageURI, final String SYNC_STATUS)
     {
         Log.v(LOG_TAG, "loadPhotoIntoPhotoFragment method called");
         // loading PhotoFragment class to add photo URIs
         PhotoFragment photoFragment =
                 (PhotoFragment) getFragmentManager().findFragmentById(R.id.fragment);
-        Log.v(LOG_TAG, "imageUri: " + imageUri);
+        Log.v(LOG_TAG, "imageURI: " + imageURI);
         if (photoFragment != null)
         {
             // photo URIs are added to hashmap in PhotoFragment class
-            photoFragment.addPhoto(imageUri, SYNC_STATUS);
+            photoFragment.addPhoto(imageURI, SYNC_STATUS);
         }
         else
         {
@@ -1128,16 +1122,7 @@ public class ObjectDetailActivity extends AppCompatActivity
     }
 
     /**
-     * Delete photo
-     * @param deletePhotoStatus - whether to delete the photo
-     */
-    public void toggleDeletePhotoStatus(boolean deletePhotoStatus)
-    {
-        // TODO
-    }
-
-    /**
-     * interface from WiFiDirectBroadcastReceiver.java. will help to connect with external devices
+     * Interface from WiFiDirectBroadcastReceiver.java. will help to connect with external devices
      * @param collectionOfDevices - connected devices
      */
     @Override
@@ -1145,19 +1130,7 @@ public class ObjectDetailActivity extends AppCompatActivity
     {
         Log.v(LOG_TAG_WIFI_DIRECT, collectionOfDevices.size() + " device discovered");
         // so you can connect with camera
-        findViewById(R.id.connectToCameraButton).setEnabled(true);
-        ((Button) findViewById(R.id.connectToCameraButton)).setText(getString(R.string.pick_camera));
-        findViewById(R.id.connectToCameraButton).setOnClickListener(new View.OnClickListener() {
-            /**
-             * User clicked on a peer
-             * @param v - connection view
-             */
-            @Override
-            public void onClick(View v)
-            {
-                pickARemoteCameraAction(v);
-            }
-        });
+        ((TextView) findViewById(R.id.connectToCameraText)).setVisibility(View.INVISIBLE);
         // organizing all devices phone can connect to
         final ArrayList<String> listOfDeviceNames = new ArrayList<>(collectionOfDevices.size());
         for (WifiP2pDevice myDevice: collectionOfDevices)
@@ -1165,7 +1138,7 @@ public class ObjectDetailActivity extends AppCompatActivity
             listOfDeviceNames.add(myDevice.deviceAddress);
         }
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Pick Remote Camera").setItems(listOfDeviceNames.toArray(new String[]{}),
+        builder.setTitle("Pick Remote Camera").setItems(listOfDeviceNames.toArray(new String[] {}),
                 new DialogInterface.OnClickListener() {
             /**
              * User clicked remote camera
@@ -1176,9 +1149,9 @@ public class ObjectDetailActivity extends AppCompatActivity
             {
                 // The 'which' argument contains the index position of the selected item.
                 // setting up connection with mac device
-                final String macAddress = listOfDeviceNames.get(which);
+                final String ipAddress = listOfDeviceNames.get(which);
                 WifiP2pDevice device = new WifiP2pDevice();
-                device.deviceAddress = macAddress;
+                device.deviceAddress = ipAddress;
                 WifiP2pConfig config = new WifiP2pConfig();
                 config.deviceAddress = device.deviceAddress;
                 Log.v(LOG_TAG, "the device address is " + config.deviceAddress);
@@ -1189,13 +1162,10 @@ public class ObjectDetailActivity extends AppCompatActivity
                     @Override
                     public void onSuccess()
                     {
-                        connectedMACAddress = macAddress;
-                        Log.v(LOG_TAG, "mac address is " + macAddress);
+                        cameraIPAddress = ipAddress;
+                        Log.v(LOG_TAG, "IP address is " + ipAddress);
                         // so at this point the connection has been made
-                        Log.v(LOG_TAG_WIFI_DIRECT, "Connection request sent. Arp file modified "
-                                + Utils.getLastModifiedDateOfArpFile());
-                        findViewById(R.id.connectToCameraButton).setEnabled(false);
-                        ((Button) findViewById(R.id.connectToCameraButton))
+                        ((TextView) findViewById(R.id.connectToCameraText))
                                 .setText(getString(R.string.wait));
                     }
 
@@ -1207,7 +1177,7 @@ public class ObjectDetailActivity extends AppCompatActivity
                     public void onFailure(int reason)
                     {
                         // TODO: failure logic
-                        Log.v(LOG_TAG, "the connection has failed " + String.valueOf(reason));
+                        Log.v(LOG_TAG, "the connection has failed " + reason);
                     }
                 });
             }
@@ -1216,12 +1186,12 @@ public class ObjectDetailActivity extends AppCompatActivity
     }
 
     /**
-     * allows you to connect with other devices
+     * Allows you to connect with other devices
      */
     @Override
     public void enableDiscoverPeersButton()
     {
-        if(!connectedToRemoteCamera)
+        if (!connectedToRemoteCamera)
         {
             mManager.removeGroup(mChannel, null);
             // if connection is successful then disable connect to camera button
@@ -1232,8 +1202,7 @@ public class ObjectDetailActivity extends AppCompatActivity
                 @Override
                 public void onSuccess()
                 {
-                    findViewById(R.id.connectToCameraButton).setEnabled(false);
-                    ((Button) findViewById(R.id.connectToCameraButton))
+                    ((TextView) findViewById(R.id.connectToCameraText))
                             .setText(getString(R.string.no_remote_camera));
                     Log.v(LOG_TAG_WIFI_DIRECT, "Peer discovery started");
                 }
@@ -1254,21 +1223,19 @@ public class ObjectDetailActivity extends AppCompatActivity
     /**
      * Disable discover peers button
      */
-    @Override
     public void disableDiscoverPeersButton()
     {
     }
 
     /**
-     * getting the IP address in order to establish a connection
+     * Getting the IP address in order to establish a connection
      */
     @Override
     public void enableGetIPButton()
     {
         // so at this point you were able to establish a connection with the camera
         connectedToRemoteCamera = true;
-        findViewById(R.id.connectToCameraButton).setEnabled(false);
-        ((Button) findViewById(R.id.connectToCameraButton)).setText(getString(R.string.arp_ip));
+        ((TextView) findViewById(R.id.connectToCameraText)).setText(getString(R.string.arp_ip));
         new Thread() {
             /**
              * Run the Thread
@@ -1276,7 +1243,7 @@ public class ObjectDetailActivity extends AppCompatActivity
             @Override
             public void run()
             {
-                // using thread to continuously try to get IP address of mac
+                // using thread to continuously try to connect to camera
                 int retryCount = 0;
                 int retryLimit = 5;
                 while (true)
@@ -1284,10 +1251,10 @@ public class ObjectDetailActivity extends AppCompatActivity
                     Log.v(LOG_TAG, "inside the loop");
                     if (retryCount < retryLimit && connectedToRemoteCamera)
                     {
-                        if (Utils.getIPFromMac() != null)
+                        if (cameraIPAddress != null)
                         {
-                            Log.v(LOG_TAG, "so you were able to get the mac ip address");
-                            ipInsertedIntoArpCallback();
+                            Log.v(LOG_TAG, "so you were able to get the ip address");
+                            ipInsertedIntoARPCallback();
                             break;
                         }
                         else
@@ -1305,7 +1272,7 @@ public class ObjectDetailActivity extends AppCompatActivity
                     }
                     else
                     {
-                        ipNotFoundOnArpCallback();
+                        ipNotFoundOnARPCallback();
                         Log.v(LOG_TAG, "could not find the ip");
                         break;
                     }
@@ -1319,59 +1286,15 @@ public class ObjectDetailActivity extends AppCompatActivity
      * @return Returns whether the dialog opened
      */
     @Override
-    public boolean isConnectDialogAppeared()
+    public boolean isConnectedDialogVisible()
     {
-        return isPickPeersDialogAppeared;
+        return isPickPeersDialogVisible;
     }
 
     /**
-     * Pick a camera action
-     * @param view - camera view
+     * Called after IP inserted into ARP file
      */
-    public void pickARemoteCameraAction(View view)
-    {
-        Log.v(LOG_TAG, "Activity pause status: " + activityPaused);
-        if (!activityPaused)
-        {
-            if (!connectedToRemoteCamera)
-            {
-                if (!isPickPeersDialogAppeared)
-                {
-                    pickPeersDialog.show();
-                    isPickPeersDialogAppeared = true;
-                }
-            }
-        }
-    }
-
-    /**
-     * Disconnect from camera
-     * @param view - camera view
-     */
-    public void disconnectRemoteCameraAction(View view)
-    {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Disconnect from Camera?")
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-            /**
-             * User confirmed disconnect
-             * @param dialog - alert window
-             * @param which - selection
-             */
-            @Override
-            public void onClick(DialogInterface dialog, int which)
-            {
-                connectedToRemoteCamera = false;
-                enableDiscoverPeersButton();
-            }
-        }).setNegativeButton(android.R.string.no, null);
-        builder.create().show();
-    }
-
-    /**
-     * Called after IP inserted into ARPANET
-     */
-    public void ipInsertedIntoArpCallback()
+    public void ipInsertedIntoARPCallback()
     {
         runOnUiThread(new Runnable() {
             /**
@@ -1381,24 +1304,11 @@ public class ObjectDetailActivity extends AppCompatActivity
             public void run()
             {
                 connectedToRemoteCamera = true;
-                findViewById(R.id.connectToCameraButton).setEnabled(true);
-                ((Button) findViewById(R.id.connectToCameraButton))
-                        .setText(getString(R.string.mac_connection, connectedMACAddress));
-                findViewById(R.id.connectToCameraButton)
-                        .setOnClickListener(new View.OnClickListener() {
-                    /**
-                     * User pressed disconnect
-                     * @param v - the button
-                     */
-                    @Override
-                    public void onClick(View v)
-                    {
-                        disconnectRemoteCameraAction(v);
-                    }
-                });
-                Log.v(LOG_TAG_WIFI_DIRECT, "Connected to device " + connectedMACAddress + " ip "
-                        + Utils.getIPFromMac());
-                StateStatic.setGlobalCameraMAC(connectedMACAddress);
+                ((TextView) findViewById(R.id.connectToCameraText))
+                        .setText(getString(R.string.mac_connection, cameraIPAddress));
+                Log.v(LOG_TAG_WIFI_DIRECT, "Connected to device " + cameraIPAddress + " IP "
+                        + cameraIPAddress);
+                StateStatic.setGlobalCameraIP(cameraIPAddress);
                 toggleAddPhotoButton();
             }
         });
@@ -1407,9 +1317,9 @@ public class ObjectDetailActivity extends AppCompatActivity
     /**
      * Called after IP not found
      */
-    public void ipNotFoundOnArpCallback()
+    public void ipNotFoundOnARPCallback()
     {
-        Log.v(LOG_TAG_WIFI_DIRECT, "Ip not Found On Arp Callback called");
+        Log.v(LOG_TAG_WIFI_DIRECT, "IP not Found On ARP Callback called");
         connectedToRemoteCamera = false;
         runOnUiThread(new Runnable() {
             /**
@@ -1425,7 +1335,7 @@ public class ObjectDetailActivity extends AppCompatActivity
     }
 
     /**
-     * display sample number of items in spinner
+     * Display sample number of items in spinner
      */
     public void fillSampleNumberSpinner()
     {
@@ -1439,7 +1349,7 @@ public class ObjectDetailActivity extends AppCompatActivity
     }
 
     /**
-     * populate text fields with info about sample/object
+     * Populate text fields with info about sample/object
      * @param areaEasting - easting
      * @param areaNorthing - northing
      * @param contextNumber - context
@@ -1451,7 +1361,7 @@ public class ObjectDetailActivity extends AppCompatActivity
     }
 
     /**
-     * clear current photos and populate with photos from database
+     * Clear current photos and populate with photos from database
      */
     public void clearCurrentPhotosOnLayoutAndFetchPhotosAsync()
     {
@@ -1462,14 +1372,14 @@ public class ObjectDetailActivity extends AppCompatActivity
     }
 
     /**
-     * notify if connection status has been changed
+     * Notify if connection status has been changed
      * @param networkInfo - network changed
      */
     public void connectionStatusChangedCallback(NetworkInfo networkInfo)
     {
         if (!networkInfo.isConnectedOrConnecting())
         {
-            if (Utils.getIPFromMac() == null)
+            if (cameraIPAddress == null)
             {
                 connectedToRemoteCamera = false;
                 toggleAddPhotoButton();
@@ -1479,7 +1389,7 @@ public class ObjectDetailActivity extends AppCompatActivity
     }
 
     /**
-     * navigate through items in spinner
+     * Navigate through items in spinner
      * @param view - button
      */
     public void goToNextItemIfAvailable(View view)
@@ -1496,7 +1406,7 @@ public class ObjectDetailActivity extends AppCompatActivity
     }
 
     /**
-     * navigate through items in spinner
+     * Navigate through items in spinner
      * @param view - button
      */
     public void goToPreviousItemIfAvailable(View view)
@@ -1513,7 +1423,7 @@ public class ObjectDetailActivity extends AppCompatActivity
     }
 
     /**
-     * enable buttons depending on connection with remote camera
+     * Enable buttons depending on connection with remote camera
      */
     public void toggleAddPhotoButton()
     {
@@ -1545,29 +1455,12 @@ public class ObjectDetailActivity extends AppCompatActivity
     }
 
     /**
-     * Photos loaded
-     */
-    public void setAllPhotosLoaded()
-    {
-        // TODO
-    }
-
-    /**
      * Open Wifi
      * @param v - Wifi view
      */
-    public void goToWifiActivity(View v)
+    public void goToWiFiActivity(View v)
     {
         Intent wifiActivity = new Intent(this, MyWiFiActivity.class);
         startActivity(wifiActivity);
-    }
-
-    /**
-     * Connect to remote camera
-     * @param v - button
-     */
-    public void connectToRemoteCamera(View v)
-    {
-        // TODO: Needed?
     }
 }

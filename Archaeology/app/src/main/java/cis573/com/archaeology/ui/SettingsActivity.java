@@ -18,13 +18,13 @@ import cis573.com.archaeology.R;
 import cis573.com.archaeology.services.Session;
 import static cis573.com.archaeology.util.StateStatic.DEFAULT_CALIBRATION_INTERVAL;
 import static cis573.com.archaeology.util.StateStatic.DEFAULT_WEB_SERVER_URL;
-import static cis573.com.archaeology.util.StateStatic.DEFAULT_CAMERA_MAC;
-import static cis573.com.archaeology.util.StateStatic.getGlobalCameraMAC;
+import static cis573.com.archaeology.util.StateStatic.DEFAULT_CAMERA_IP;
+import static cis573.com.archaeology.util.StateStatic.getGlobalCameraIP;
 import static cis573.com.archaeology.util.StateStatic.getGlobalWebServerURL;
 import static cis573.com.archaeology.util.StateStatic.getRemoteCameraCalibrationInterval;
 import static cis573.com.archaeology.util.StateStatic.getTabletCameraCalibrationInterval;
 import static cis573.com.archaeology.util.StateStatic.isIsRemoteCameraSelect;
-import static cis573.com.archaeology.util.StateStatic.setGlobalCameraMAC;
+import static cis573.com.archaeology.util.StateStatic.setGlobalCameraIP;
 import static cis573.com.archaeology.util.StateStatic.setGlobalWebServerURL;
 import static cis573.com.archaeology.util.StateStatic.setIsRemoteCameraSelect;
 import static cis573.com.archaeology.util.StateStatic.setRemoteCameraCalibrationInterval;
@@ -115,7 +115,7 @@ public class SettingsActivity extends AppCompatActivity
             cameraSelectBox.setSelection(0);
         }
         webServerEditText.setText(getGlobalWebServerURL());
-        cameraIP.setText(getGlobalCameraMAC());
+        cameraIP.setText(getGlobalCameraIP());
         calibrationInterval.setText(getString(R.string.long_frmt,
                 getRemoteCameraCalibrationInterval()));
     }
@@ -158,7 +158,7 @@ public class SettingsActivity extends AppCompatActivity
         else
         {
             setRemoteCameraCalibrationInterval(getCalibrationIntervalFromLayout());
-            setGlobalCameraMAC(getCameraIPFromLayout());
+            setGlobalCameraIP(getCameraIPFromLayout());
         }
         finish();
     }
@@ -170,7 +170,7 @@ public class SettingsActivity extends AppCompatActivity
     public void setDefaultSettings(View view)
     {
         setGlobalWebServerURL(DEFAULT_WEB_SERVER_URL);
-        setGlobalCameraMAC(DEFAULT_CAMERA_MAC);
+        setGlobalCameraIP(DEFAULT_CAMERA_IP);
         setRemoteCameraCalibrationInterval(DEFAULT_CALIBRATION_INTERVAL);
         setTabletCameraCalibrationInterval(DEFAULT_CALIBRATION_INTERVAL);
         setIsRemoteCameraSelect(false);
@@ -180,7 +180,7 @@ public class SettingsActivity extends AppCompatActivity
         EditText calibrationInterval = (EditText) findViewById(R.id.calibrationInterval);
         webServerEditText.setText(getGlobalWebServerURL());
         cameraSelectBox.setSelection(0);
-        cameraIP.setText(getGlobalCameraMAC());
+        cameraIP.setText(getGlobalCameraIP());
         calibrationInterval.setText(getString(R.string.long_frmt,
                 getRemoteCameraCalibrationInterval()));
     }
@@ -203,7 +203,7 @@ public class SettingsActivity extends AppCompatActivity
         }
         else
         {
-            cameraIPText.setText(getGlobalCameraMAC());
+            cameraIPText.setText(getGlobalCameraIP());
             cameraIPText.setEnabled(true);
             calibrationInterval.setText(getString(R.string.long_frmt,
                     getRemoteCameraCalibrationInterval()));
@@ -217,8 +217,7 @@ public class SettingsActivity extends AppCompatActivity
      */
     public String getWebServerFromLayout()
     {
-        EditText tmpET = (EditText) findViewById(R.id.settingsWebServiceUrl);
-        return tmpET.getText().toString().trim();
+        return ((EditText) findViewById(R.id.settingsWebServiceUrl)).getText().toString().trim();
     }
 
     /**
@@ -227,8 +226,7 @@ public class SettingsActivity extends AppCompatActivity
      */
     public String getCameraIPFromLayout()
     {
-        EditText tmpET = (EditText) findViewById(R.id.settingsCameraIP);
-        return tmpET.getText().toString().trim();
+        return ((EditText) findViewById(R.id.settingsCameraIP)).getText().toString().trim();
     }
 
     /**
@@ -237,8 +235,8 @@ public class SettingsActivity extends AppCompatActivity
      */
     public long getCalibrationIntervalFromLayout()
     {
-        EditText tmpET = (EditText) findViewById(R.id.calibrationInterval);
-        return Long.parseLong(tmpET.getText().toString().trim());
+        return Long.parseLong(((EditText) findViewById(R.id.calibrationInterval)).getText()
+                .toString().trim());
     }
 
     /**
@@ -247,8 +245,7 @@ public class SettingsActivity extends AppCompatActivity
      */
     public boolean isTabletCameraSelectedOnLayout()
     {
-        Spinner cameraSelectBox = (Spinner) findViewById(R.id.cameraSelectBox);
-        return (cameraSelectBox.getSelectedItemPosition() == 0);
+        return (((Spinner) findViewById(R.id.cameraSelectBox)).getSelectedItemPosition() == 0);
     }
 
     /**

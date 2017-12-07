@@ -25,7 +25,7 @@ import static cis573.com.archaeology.util.StateStatic.getGlobalPhotoSavePath;
 public class CheatSheet
 {
     /**
-     * returns all the items in the spinner
+     * Returns all the items in the spinner
      * @param aSpinner - spinner to read
      */
     public static List<String> getSpinnerItems(Spinner aSpinner)
@@ -40,7 +40,7 @@ public class CheatSheet
     }
 
     /**
-     * set items to spinner
+     * Set items to spinner
      * @param aContext - calling context
      * @param aSpinner - spinner to set
      * @param items - items for spinner
@@ -54,32 +54,7 @@ public class CheatSheet
     }
 
     /**
-     * set items to spinner
-     * @param aContext - calling context
-     * @param aSpinner - spinner to fill
-     * @param items - spinner items
-     * @param selectedItem - default item
-     */
-    public static void setSpinnerItems(Context aContext, Spinner aSpinner, List<String> items,
-                                       String selectedItem)
-    {
-        int selectedItemIndex = 0;
-        for (int i = 0; i < items.size(); i++)
-        {
-            if (items.get(i).equals(selectedItem))
-            {
-                selectedItemIndex = i;
-            }
-        }
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(aContext,
-                android.R.layout.simple_spinner_item, items);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        aSpinner.setAdapter(adapter);
-        aSpinner.setSelection(selectedItemIndex);
-    }
-
-    /**
-     * set items to spinner
+     * Set items to spinner
      * @param aContext - calling context
      * @param aSpinner - spinner to fill
      * @param items - spinner items
@@ -104,17 +79,16 @@ public class CheatSheet
     }
 
     /**
-     * creating a thumbnail for requested image
-     * @param inputFilename - image file
+     * Creating a thumbnail for requested image
+     * @param inputFileName - image file
      * @return Returns image URI
      */
-    public static Uri getThumbnail(String inputFilename)
+    public static Uri getThumbnail(String inputFileName)
     {
-        File mediaStorageDir =
-                new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
-                getGlobalPhotoSavePath());
-        String originalFilePath = mediaStorageDir.getPath() + File.separator + inputFilename;
-        String thumbPath = mediaStorageDir.getPath() + File.separator + inputFilename
+        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES), getGlobalPhotoSavePath());
+        String originalFilePath = mediaStorageDir.getPath() + File.separator + inputFileName;
+        String thumbPath = mediaStorageDir.getPath() + File.separator + inputFileName
                 + THUMBNAIL_EXTENSION_STRING;
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
@@ -144,21 +118,21 @@ public class CheatSheet
     }
 
     /**
-     * returns the URI of the original image
-     * @param thumbnailUri - thumbnail location
+     * Returns the URI of the original image
+     * @param thumbnailURI - thumbnail location
      * @return Returns the original's location
      */
-    public static Uri getOriginalImageUri(Uri thumbnailUri)
+    public static Uri getOriginalImageURI(Uri thumbnailURI)
     {
-        String thumbnailUriString = thumbnailUri.toString();
-        String x = thumbnailUriString.substring(0, thumbnailUriString.length()
+        String thumbnailURIString = thumbnailURI.toString();
+        String x = thumbnailURIString.substring(0, thumbnailURIString.length()
                 - THUMBNAIL_EXTENSION_STRING.length());
-        Log.v(LOG_TAG, "Original file uri: " + x);
+        Log.v(LOG_TAG, "Original file URI: " + x);
         return Uri.parse(x);
     }
 
     /**
-     * takes incoming json array and converts to a regular array
+     * Takes incoming JSON array and converts to a regular array
      * @param aJsonArray - JSON array to convert
      * @return Returns an array of the JSON array
      * @throws JSONException if the JSON is malformed
@@ -176,60 +150,46 @@ public class CheatSheet
     }
 
     /**
-     * Scale and combine bytes
-     * @param byte1 - first
-     * @param byte2 - second
-     * @return Returns the combination
-     */
-    public static int combineScaleBytes(String byte1, String byte2)
-    {
-        Log.v(LOG_TAG, "Incoming byte1: " + byte1);
-        Log.v(LOG_TAG, "Incoming byte2: " + byte2);
-        Log.v(LOG_TAG, "Byte1 stripped: " + byte1.substring(3));
-        return Integer.parseInt(byte1.substring(3) + byte2, 2);
-    }
-
-    /**
-     * Create a file Uri for saving an image
-     * @param filename - image location
+     * Create a file URI for saving an image
+     * @param fileName - image location
      * @return Returns the image URI
      */
-    public static Uri getOutputMediaFileUri(String filename)
+    public static Uri getOutputMediaFileURI(String fileName)
     {
-        return Uri.fromFile(getOutputMediaFile(filename));
+        return Uri.fromFile(getOutputMediaFile(fileName));
     }
 
     /**
      * Create a File for saving an image
-     * @param filename - name of file
+     * @param fileName - name of file
      * @return Returns the file
      */
-    private static File getOutputMediaFile(String filename)
+    public static File getOutputMediaFile(String fileName)
     {
         // To be safe, you should check that the SDCard is mounted
         // using Environment.getExternalStorageState() before doing this.
         File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_PICTURES), getGlobalPhotoSavePath());
-        // This location works best if you want the created images to be shared
-        // between applications and persist after your app has been uninstalled.
-        // Create the storage directory if it does not exist
+        // This location works best if you want the created images to be shared between
+        // applications and persist after your app has been uninstalled. Create the storage
+        // directory if it does not exist
         Log.v(LOG_TAG, "Photo Directory exists?");
-        if (! mediaStorageDir.isDirectory())
+        if (!mediaStorageDir.isDirectory())
         {
             Log.v(LOG_TAG, "isDirectory returns false");
-            if (! mediaStorageDir.mkdirs())
+            if (!mediaStorageDir.mkdirs())
             {
                 Log.v(LOG_TAG, "failed to create directory" + getGlobalPhotoSavePath());
                 return null;
             }
         }
         // Create a media file name
-        String path = mediaStorageDir.getPath() + File.separator + filename +".jpg";
+        String path = mediaStorageDir.getPath() + File.separator + fileName +".jpg";
         return new File(path);
     }
 
     /**
-     * deletes photos from external storage public directory
+     * Deletes photos from external storage public directory
      */
     public static void clearThePhotosDirectory()
     {
@@ -246,16 +206,16 @@ public class CheatSheet
     }
 
     /**
-     * uses thumbnail to get original file and deletes both
-     * @param thumbnailUri - thumbnail location
+     * Uses thumbnail to get original file and deletes both
+     * @param thumbnailURI - thumbnail location
      */
-    public static void deleteOriginalAndThumbnailPhoto(Uri thumbnailUri)
+    public static void deleteOriginalAndThumbnailPhoto(Uri thumbnailURI)
     {
-        Uri originalImageUri = getOriginalImageUri(thumbnailUri);
-        File thumbnailFile = new File(thumbnailUri.getPath());
-        File originalFile = new File(originalImageUri.getPath());
-        Log.v(LOG_TAG, "Deleting original and thumbnail photo: "+ thumbnailUri.toString()
-                + ", " + originalImageUri.toString());
+        Uri originalImageURI = getOriginalImageURI(thumbnailURI);
+        File thumbnailFile = new File(thumbnailURI.getPath());
+        File originalFile = new File(originalImageURI.getPath());
+        Log.v(LOG_TAG, "Deleting original and thumbnail photo: "+ thumbnailURI.toString()
+                + ", " + originalImageURI.toString());
         thumbnailFile.delete();
         originalFile.delete();
     }

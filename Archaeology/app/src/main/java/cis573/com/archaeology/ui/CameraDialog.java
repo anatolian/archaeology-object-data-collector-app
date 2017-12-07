@@ -22,10 +22,11 @@ import cis573.com.archaeology.util.CheatSheet;
 import cis573.com.archaeology.models.ImageResponseWrapper;
 import cis573.com.archaeology.models.JSONObjectResponseWrapper;
 import cis573.com.archaeology.R;
-import cis573.com.archaeology.util.Utils;
 import cis573.com.archaeology.services.VolleyWrapper;
 import cis573.com.archaeology.models.AfterImageSavedMethodWrapper;
 import static cis573.com.archaeology.util.StateStatic.LOG_TAG_WIFI_DIRECT;
+import static cis573.com.archaeology.util.StateStatic.cameraIPAddress;
+
 public class CameraDialog
 {
     // interface that will be used by camera dialogs
@@ -117,7 +118,7 @@ public class CameraDialog
     public static void startLiveView(final Activity anActivity, final RequestQueue queue,
                                      final int id, final SimpleStreamSurfaceView liveViewSurface)
     {
-        final String url = buildAPIURLFromIP(Utils.getIPFromMac());
+        final String url = buildAPIURLFromIP(cameraIPAddress);
         try
         {
             VolleyWrapper.makeVolleySonyAPIStartLiveViewRequest(url, queue, id,
@@ -191,7 +192,7 @@ public class CameraDialog
     public static void stopLiveView(final Activity anActivity, RequestQueue queue, int id,
                                     final SimpleStreamSurfaceView liveViewSurface)
     {
-        final String url = buildAPIURLFromIP(Utils.getIPFromMac());
+        final String url = buildAPIURLFromIP(cameraIPAddress);
         try
         {
             VolleyWrapper.makeVolleySonyAPIStopLiveViewRequest(url, queue, id,
@@ -240,8 +241,8 @@ public class CameraDialog
                                  final SimpleStreamSurfaceView liveViewSurface)
     {
         // creating a fileURI so that image can be saved
-        final Uri saveFileUri = CheatSheet.getOutputMediaFileUri(filename);
-        final String url = buildAPIURLFromIP(Utils.getIPFromMac());
+        final Uri saveFileUri = CheatSheet.getOutputMediaFileURI(filename);
+        final String url = buildAPIURLFromIP(cameraIPAddress);
         try
         {
             VolleyWrapper.makeVolleySonyAPISetJPEGQualityToFine(url, queue, id + 3,
@@ -255,8 +256,8 @@ public class CameraDialog
                 {
                     try
                     {
-                        VolleyWrapper.makeVolleySonyAPISetImageSizeToOriginal(url, queue, id + 5,
-                                new JSONObjectResponseWrapper(anActivity) {
+                        VolleyWrapper.makeVolleySonyAPISetImageSizeToOriginal(url, queue,
+                                id + 5, new JSONObjectResponseWrapper(anActivity) {
                             /**
                              * Response received
                              * @param response - camera response
@@ -441,7 +442,7 @@ public class CameraDialog
      */
     public static void zoomIn(final Activity anActivity, RequestQueue queue, int id)
     {
-        final String url = buildAPIURLFromIP(Utils.getIPFromMac());
+        final String url = buildAPIURLFromIP(cameraIPAddress);
         try
         {
             VolleyWrapper.makeVolleySonyAPIActZoomRequest("in", queue, url, id,
@@ -481,7 +482,7 @@ public class CameraDialog
      */
     public static void zoomOut(final Activity anActivity, RequestQueue queue, int id)
     {
-        final String url = buildAPIURLFromIP(Utils.getIPFromMac());
+        final String url = buildAPIURLFromIP(cameraIPAddress);
         try
         {
             VolleyWrapper.makeVolleySonyAPIActZoomRequest("out", queue, url, id,

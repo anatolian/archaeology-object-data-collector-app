@@ -44,7 +44,7 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver
          * Connected message
          * @return Returns whether the message appeared
          */
-        boolean isConnectDialogAppeared();
+        boolean isConnectedDialogVisible();
 
         /**
          * Connection changed
@@ -171,7 +171,7 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver
         else if (WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action))
         {
             Log.v(LOG_TAG, "inside peers changed loop");
-            if (!mActivity.isConnectDialogAppeared())
+            if (!mActivity.isConnectedDialogVisible())
             {
                 Log.v(LOG_TAG, "connect dialog did not appear");
                 if (mManager != null)

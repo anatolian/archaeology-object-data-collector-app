@@ -38,8 +38,8 @@
     <string name="location">Reading Location</string>
     <string name="hello_round">Hello Round World!</string>
     <string name="hello_square">Hello Square World!</string>
-    <string name="baseURL">Web Service Base URL:</string>
-    <string name="cameraIP">Camera IP:</string>
+    <string name="camera_IP">Camera IP:</string>
+    <string name = "camera_MAC">Camera MAC Address:</string>
     <string name="camera_calibration">Camera Calibration Interval</string>
     <string name="select_camera">Select Camera</string>
     <string name="data_type">Data Structure Type: </string>
@@ -72,7 +72,6 @@
     <string name="P">P</string>
     <string name="nil">null</string>
     <string name="scale_reading">%d</string>
-    <string name="pick_camera">Pick A Remote Camera</string>
     <string name="wait">Please wait&#8230;</string>
     <string name="arp_ip">Fetching Ip From Arp File&#8230;</string>
     <string name="mac_connection">Connected To %s</string>

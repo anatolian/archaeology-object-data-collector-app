@@ -45,17 +45,17 @@ public class SimpleLiveViewSlicer
     private InputStream mInputStream;
     /**
      * Opens Liveview HTTP GET connection and prepares for reading Packet data.
-     * @param liveViewUrl - Liveview data url that is obtained by DD.xml or result of startLiveView
+     * @param liveViewURL - Liveview data url that is obtained by DD.xml or result of startLiveView
      *      API.
      * @throws IOException generic errors or exception.
      */
-    public void open(String liveViewUrl) throws IOException
+    public void open(String liveViewURL) throws IOException
     {
         if (mInputStream != null || mHttpConn != null)
         {
             throw new IllegalStateException("Slicer is already open.");
         }
-        final URL urlObj = new URL(liveViewUrl);
+        final URL urlObj = new URL(liveViewURL);
         mHttpConn = (HttpURLConnection) urlObj.openConnection();
         mHttpConn.setRequestMethod("GET");
         mHttpConn.setConnectTimeout(CONNECTION_TIMEOUT);

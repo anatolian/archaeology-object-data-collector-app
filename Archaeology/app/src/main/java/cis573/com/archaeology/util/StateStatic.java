@@ -20,7 +20,7 @@ public class StateStatic
     public static final int REQUEST_ENABLE_BT = 301;
     public static final String DEFAULT_WEB_SERVER_URL
             = "https://fa17archaeology-service.herokuapp.com";
-    public static final String DEFAULT_CAMERA_MAC = "fe:c2:de:31:0a:e1";
+    public static final String DEFAULT_CAMERA_IP = "fe:c2:de:31:0a:e1";
     // 30 minutes
     public static final long DEFAULT_CALIBRATION_INTERVAL = 1800000;
     // default url to connect to database to send photos back and forth
@@ -40,8 +40,8 @@ public class StateStatic
     // information. the global webserver is being set to a default value
     // need to make sure that app is able to find ip address on its own
     private static String globalWebServerURL = DEFAULT_WEB_SERVER_URL;
-    // DEFAULTWEBSERVERURL; connection to current mac camera address
-    private static String globalCameraMAC = DEFAULT_CAMERA_MAC;
+    // DEFAULTWEBSERVERURL; connection to current IP camera address
+    private static String globalCameraIP = DEFAULT_CAMERA_IP;
     // global current object most likely is used to track the current object from the database that
     // you are trying to view.
     private static long remoteCameraCalibrationInterval = DEFAULT_CALIBRATION_INTERVAL;
@@ -49,7 +49,7 @@ public class StateStatic
     // variable to track connections
     private static boolean isRemoteCameraSelect = true;
     public static boolean connectedToRemoteCamera = false;
-    public static String connectedMACAddress = "";
+    public static String cameraIPAddress = "";
     public static boolean isTakePhotoButtonClicked = false;
     /**
      * return webserver url that is used to connect to the main database
@@ -71,22 +71,22 @@ public class StateStatic
     }
 
     /**
-     * Get Camera MAC address
-     * @return Returns camera MAC address
+     * Get Camera IP address
+     * @return Returns camera IP address
      */
-    public static String getGlobalCameraMAC()
+    public static String getGlobalCameraIP()
     {
-        return globalCameraMAC;
+        return globalCameraIP;
     }
 
     /**
-     * Set MAC address
-     * @param globalCameraMAC - new MAC address
+     * Set IP address
+     * @param globalCameraIP - new IP address
      */
-    public static void setGlobalCameraMAC(String globalCameraMAC)
+    public static void setGlobalCameraIP(String globalCameraIP)
     {
-        Log.v(LOG_TAG, "globalCameraMAC changed into " + globalCameraMAC);
-        StateStatic.globalCameraMAC = globalCameraMAC;
+        Log.v(LOG_TAG, "globalCameraIP changed into " + globalCameraIP);
+        StateStatic.globalCameraIP = globalCameraIP;
     }
 
     /**

@@ -100,6 +100,7 @@
                         android:layout_width="1dp"
                         android:layout_height="wrap_content"
                         android:text="@string/surface"
+                        android:gravity="center"
                         android:textAppearance="?android:attr/textAppearanceMedium"
                         android:textColor="@android:color/black"
                         android:textStyle="bold"/>
@@ -140,6 +141,7 @@
                         android:layout_width="1dp"
                         android:layout_height="wrap_content"
                         android:text="@string/exterior_color"
+                        android:gravity="center"
                         android:textAppearance="?android:attr/textAppearanceMedium"
                         android:textColor="@android:color/black"
                         android:textStyle="italic" />
@@ -177,6 +179,7 @@
                         android:layout_width="1dp"
                         android:layout_height="wrap_content"
                         android:text="@string/interior_color"
+                        android:gravity="center"
                         android:textAppearance="?android:attr/textAppearanceMedium"
                         android:textColor="@android:color/black"
                         android:textStyle="italic" />
@@ -206,15 +209,15 @@
                         android:gravity="center"/>
                 </TableRow>
             </TableLayout>
-            <Button
-                android:id="@+id/connectToCameraButton"
+
+            <TextView
+                android:id="@+id/connectToCameraText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
                 android:layout_below="@id/tableLayout"
-                android:enabled="false"
-                android:onClick="connectToRemoteCamera"
-                android:text="@string/no_remote_camera" />
+                android:gravity="center"
+                android:text="@string/no_remote_camera"
+                android:textColor="@android:color/black" />
             <Button
                 android:id="@+id/button26"
                 android:layout_width="wrap_content"
@@ -227,7 +230,7 @@
                 android:id="@+id/photoScrollWrapper"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
-                android:layout_below="@+id/connectToCameraButton">
+                android:layout_below="@+id/connectToCameraText">
                 <fragment
                     android:id="@+id/fragment"
                     android:name="cis573.com.archaeology.ui.PhotoFragment"
@@ -243,7 +246,7 @@
                 android:scaleType = "fitCenter"
                 android:layout_height = "0dp"
                 android:contentDescription="@string/captured_picture"
-                android:layout_below="@+id/connectToCameraButton"/>
+                android:layout_below="@+id/connectToCameraText"/>
             <Button
                 android:id="@+id/correct_color"
                 android:layout_width="wrap_content"
@@ -254,14 +257,13 @@
                 android:layout_marginTop="187dp"
                 android:onClick="goToImageGallery"
                 android:text="@string/correct_color" />
-
             <Button
                 android:id="@+id/wifiActivity"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_toEndOf="@+id/correct_color"
-                android:onClick="goToWifiActivity"
+                android:onClick="goToWiFiActivity"
                 android:text="@string/configure_camera" />
         </RelativeLayout>
     </ScrollView>
