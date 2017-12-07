@@ -456,6 +456,8 @@ public class CeramicInputActivity extends AppCompatActivity
             {
                 try
                 {
+                    System.out.println("SAMPLES FOR: EASTING: " + getSelectedAreaEasting() + " NORTHING: " + getSelectedAreaNorthing()
+                    + " CONTEXT: " + getSelectedContextNumber());
                     // convert to regular array from json array
                     fillSampleNumberSpinner(CheatSheet.convertJSONArrayToList(response));
                 }
