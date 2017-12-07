@@ -146,21 +146,21 @@ public class BluetoothService
             catch (IOException connectException)
             {
                 // Unable to connect; close the socket and return.
-                Toast.makeText(context, "UNABLE TO CONNECT", Toast.LENGTH_SHORT).show();
-                Toast.makeText(context, connectException.toString(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(context,
+                        "Unable to connect. Check the scale is turned on and try again",
+                        Toast.LENGTH_SHORT).show();
                 try
                 {
                     mmSocket.close();
                 }
                 catch (IOException closeException)
                 {
-                    Toast.makeText(context, "COULD NOT CLOSE SOCKET",
+                    Toast.makeText(context, "Error communicating with scale",
                             Toast.LENGTH_SHORT).show();
                     Log.e(TAG, "Could not close the client socket", closeException);
                 }
                 return;
             }
-
             // The connection attempt succeeded. Perform work associated with the connection in a
             // separate thread.
             connectedThread = new ConnectedThread(mmSocket);
@@ -211,7 +211,8 @@ public class BluetoothService
                 {
                     numBytes = mmInStream.read(mmBuffer);
                     currWeight = BluetoothHelper.parseBytesNutriscale(mmBuffer, numBytes);
-                    Toast.makeText(context, "WEIGHT: " + currWeight, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Weight: " + currWeight,
+                            Toast.LENGTH_SHORT).show();
                 }
                 else
                 {

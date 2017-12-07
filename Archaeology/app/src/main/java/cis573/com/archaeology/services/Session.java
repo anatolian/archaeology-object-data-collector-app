@@ -23,7 +23,6 @@ public class Session
     private static Callback<Sample> tempCB;
     private static String currId;
     public static String deviceName = null;
-    public static String searchQuery;
     // Callback called on pull from database
     private static Callback addEntry = new Callback<Sample>() {
         /**
@@ -80,14 +79,6 @@ public class Session
     }
 
     /**
-     * Session instance methods
-     */
-    public static void newSession()
-    {
-        entries.clear();
-    }
-
-    /**
      * Get the entries in current session
      */
     public static void getCurrentSessionIDs()
@@ -109,21 +100,5 @@ public class Session
         {
             DBC.getSample(id, cb);
         }
-    }
-
-    /**
-     * Asynchronously fetch an item from the database
-     * @param id - item to fetch
-     * @param callback - function to call when finished
-     */
-    @SuppressWarnings("unchecked")
-    public static void asyncPullNewEntry(String id, Callback<Sample> callback)
-    {
-        Log.d("Session", "Id: " + id);
-        Log.d("Session", "Session size: " + entries.size());
-        // Temporary workaround until composite id is used to query
-        currId = id;
-        tempCB = callback;
-        DBC.getSample(id, addEntry);
     }
 }

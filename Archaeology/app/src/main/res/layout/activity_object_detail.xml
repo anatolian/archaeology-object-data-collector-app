@@ -220,10 +220,10 @@
                 android:textColor="@android:color/black" />
             <Button
                 android:id="@+id/button26"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:layout_below="@+id/tableLayout"
+                android:layout_below="@+id/photoScrollWrapper"
                 android:onClick="addPhotoAction"
                 android:text="@string/add_photo" />
             <HorizontalScrollView
@@ -238,22 +238,13 @@
                     android:layout_height="wrap_content"
                     tools:layout="@layout/photo_fragment" />
             </HorizontalScrollView>
-            <ImageView
-                android:layout_width = "match_parent"
-                android:visibility = "gone"
-                android:layout_marginTop = "10dp"
-                android:id = "@+id/imageView17"
-                android:scaleType = "fitCenter"
-                android:layout_height = "0dp"
-                android:contentDescription="@string/captured_picture"
-                android:layout_below="@+id/connectToCameraText"/>
             <Button
                 android:id="@+id/correct_color"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentStart="true"
-                android:layout_below="@+id/imageView17"
+                android:layout_below="@+id/button26"
                 android:layout_marginTop="187dp"
                 android:onClick="goToImageGallery"
                 android:text="@string/correct_color" />

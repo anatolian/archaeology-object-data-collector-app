@@ -10,7 +10,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Bitmap;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.net.wifi.p2p.WifiP2pConfig;
@@ -178,13 +177,6 @@ public class ObjectDetailActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_object_detail);
-        if (getIntent() != null)
-        {
-            Bitmap bmp = getIntent().getParcelableExtra("preview");
-            ImageView iv = (ImageView) findViewById(R.id.imageView17);
-            iv.setImageBitmap(bmp);
-            iv.setVisibility(View.VISIBLE);
-        }
         if (bluetoothService != null)
         {
             bluetoothService.closeThread();
@@ -323,21 +315,29 @@ public class ObjectDetailActivity extends AppCompatActivity
                 dialogVisible = false;
             }
         });
-        Set<BluetoothDevice> pairedDevices = BluetoothAdapter.getDefaultAdapter()
-                .getBondedDevices();
-        if (pairedDevices.size() > 0)
+        try
         {
-            // There are paired devices. Get the name and address of each paired device.
-            for (BluetoothDevice pairedDv: pairedDevices)
+            Set<BluetoothDevice> pairedDevices = BluetoothAdapter.getDefaultAdapter()
+                    .getBondedDevices();
+            if (pairedDevices.size() > 0)
             {
-                String deviceName = pairedDv.getName();
-                if (deviceName.equals(Session.deviceName))
+                // There are paired devices. Get the name and address of each paired device.
+                for (BluetoothDevice pairedDv: pairedDevices)
                 {
-                    device = pairedDv;
-                    bluetoothService = new BluetoothService(this);
-                    bluetoothService.reconnect(device);
+                    String deviceName = pairedDv.getName();
+                    if (deviceName.equals(Session.deviceName))
+                    {
+                        device = pairedDv;
+                        bluetoothService = new BluetoothService(this);
+                        bluetoothService.reconnect(device);
+                    }
                 }
             }
+        }
+        catch (Exception e)
+        {
+            Toast.makeText(getApplicationContext(), "Phone does not support Bluetooth",
+                    Toast.LENGTH_SHORT).show();
         }
         weightDialog = builder.create();
         // creating the camera dialog and setting up photo fragment to store the photos
@@ -840,8 +840,8 @@ public class ObjectDetailActivity extends AppCompatActivity
         try
         {
             ((TextView) findViewById(R.id.weightInput)).setText(weight);
-            asyncModifyWeightFieldInDB(Double.parseDouble(getWeightInputText().getText().toString()),
-                    areaEasting, areaNorthing, contextNumber, sampleNumber);
+            asyncModifyWeightFieldInDB(Double.parseDouble(getWeightInputText().getText()
+                            .toString()), areaEasting, areaNorthing, contextNumber, sampleNumber);
         }
         catch (NumberFormatException e)
         {
