@@ -46,7 +46,7 @@ public class DownloadActivity extends AppCompatActivity
         setContentView(R.layout.activity_download);
         showPermission();
         UpdateDatabase uD = new UpdateDatabaseMuseum();
-        if (!uD.updateNecessary())
+        if (uD.updateNecessary())
         {
             uD.doUpdate(this);
         }

@@ -147,7 +147,7 @@ public class ObjectDetailActivity extends AppCompatActivity
     private boolean activityPaused = false;
     private boolean isPickPeersDialogVisible = false;
     // correspond to columns in database associated with finds
-    int areaEasting, areaNorthing, contextNumber, sampleNumber;
+    int areaEasting, areaNorthing, contextNumber, sampleNumber, imageNumber;
     public BluetoothService bluetoothService;
     public BluetoothDevice device = null;
     /**
@@ -744,10 +744,11 @@ public class ObjectDetailActivity extends AppCompatActivity
                             response.indexOf("}") + 1));
                     // get images from response array
                     JSONArray photoList = obj.getJSONArray("images");
+                    imageNumber = photoList.length();
                     for (int i = 0; i < photoList.length(); i++)
                     {
-                        String photoUrl = photoList.getString(i);
-                        loadPhotoIntoPhotoFragment(Uri.parse(photoUrl), MARKED_AS_TO_DOWNLOAD);
+                        String photoURL = photoList.getString(i);
+                        loadPhotoIntoPhotoFragment(Uri.parse(photoURL), MARKED_AS_TO_DOWNLOAD);
                     }
                 }
                 catch (JSONException | StringIndexOutOfBoundsException e)
@@ -926,6 +927,7 @@ public class ObjectDetailActivity extends AppCompatActivity
     public void addPhotoAction(View view)
     {
         Log.v(LOG_TAG, "Add Photo Action Method Called");
+        imageNumber++;
         if (isRemoteCameraSelected())
         {
             showRemoteCameraDialog(view);
@@ -1455,12 +1457,17 @@ public class ObjectDetailActivity extends AppCompatActivity
     public void goToImageGallery(View v)
     {
         Intent photosActivity = new Intent(this, PhotosActivity.class);
+        photosActivity.putExtra("easting", "" + areaEasting);
+        photosActivity.putExtra("northing", "" + areaNorthing);
+        photosActivity.putExtra("context", "" + contextNumber);
+        photosActivity.putExtra("sample", "" + sampleNumber);
+        photosActivity.putExtra("number", "" + imageNumber);
         startActivity(photosActivity);
     }
 
     /**
-     * Open Wifi
-     * @param v - Wifi view
+     * Open WiFi
+     * @param v - WiFi view
      */
     public void goToWiFiActivity(View v)
     {
