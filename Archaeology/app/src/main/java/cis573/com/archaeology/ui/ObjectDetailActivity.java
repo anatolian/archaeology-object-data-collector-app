@@ -797,8 +797,9 @@ public class ObjectDetailActivity extends AppCompatActivity
                     imageNumber = photoList.length();
                     for (int i = 0; i < photoList.length(); i++)
                     {
-                        String photoURL = photoList.getString(i);
-                        loadPhotoIntoPhotoFragment(Uri.parse(photoURL), MARKED_AS_TO_DOWNLOAD);
+                        String photoUrl = photoList.getString(i);
+                        photoUrl = "https://fa17archaeology-service.herokuapp.com/" + photoUrl;
+                        loadPhotoIntoPhotoFragment(Uri.parse(photoUrl), MARKED_AS_TO_DOWNLOAD);
                     }
                 }
                 catch (JSONException | StringIndexOutOfBoundsException e)
