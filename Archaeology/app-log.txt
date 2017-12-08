@@ -1,0 +1,460 @@
+commit d6f617e7ac33056c918ca0d94bee16951e5fde70
+Merge: 21caf3f e7ffe06
+Author: LonguyenB <longnguyen1993@gmail.com>
+Date:   Thu Dec 7 22:42:49 2017 -0500
+
+    Merge pull request #6 from anatolian/kitharrington
+    
+    kitharrington updated
+
+commit e7ffe06f155ce8ba3d6b8faf2dffb81e8f5e58c1
+Merge: 9fa3f03 21caf3f
+Author: LonguyenB <longnguyen1993@gmail.com>
+Date:   Thu Dec 7 22:42:43 2017 -0500
+
+    Merge branch 'master' into kitharrington
+
+commit 21caf3f32016cc2beb6c8254d393f16b25534d4b
+Merge: 3cf73ec 3e291c0
+Author: LonguyenB <longnguyen1993@gmail.com>
+Date:   Thu Dec 7 22:30:34 2017 -0500
+
+    Merge pull request #5 from anatolian/savedPhoto
+    
+    added code to save Bitmap to external file storage
+
+commit 3cf73ecc30ee89df12401d40b245f94719053357
+Author: CBesser <cbesser@seas.upenn.edu>
+Date:   Thu Dec 7 22:29:21 2017 -0500
+
+    ton of changes
+
+commit 3e291c0b2646f2887eb415ba0195568eae67e2c7
+Author: Kevin Trinh <Kevin@levy-ve506-0760.apn.wlan.upenn.edu>
+Date:   Thu Dec 7 22:07:57 2017 -0500
+
+    added code to save Bitmap to external file storage
+
+commit 9fa3f03d427db3c337f8ae1479ca9d22a2a9827c
+Author: LonguyenB <longnguyen1993@gmail.com>
+Date:   Thu Dec 7 20:30:40 2017 -0500
+
+    kitharrington updated
+
+commit df38f79dc9dc1d4b54a3778383cc5759cb365563
+Merge: 4989368 499739d
+Author: Christopher Besser <CBesser@users.noreply.github.com>
+Date:   Thu Dec 7 18:49:28 2017 -0500
+
+    Merge pull request #4 from anatolian/KevinsPhotosApp
+    
+    Updated version of Kevin's standalone PhotosApp for color correction
+
+commit 499739d0f5134cab5285bdfd4dc166cb0c32d105
+Author: Kevin Trinh <Kevin@levy-ve506-0760.apn.wlan.upenn.edu>
+Date:   Thu Dec 7 18:41:05 2017 -0500
+
+    Updated version of Kevin's standalone PhotosApp for color correction
+
+commit 49893681ddeb046126342e2d0631eddc75c918ea
+Author: CBesser <cbesser@seas.upenn.edu>
+Date:   Thu Dec 7 17:12:29 2017 -0500
+
+    Scale connects to DB now
+
+commit 33756cf515a5679eb699c63795b360064cfb4ea1
+Merge: a650ec0 b52aa76
+Author: Christopher Besser <CBesser@users.noreply.github.com>
+Date:   Thu Dec 7 16:43:07 2017 -0500
+
+    Merge pull request #3 from anatolian/spinner_update
+    
+    fixed spinners to populate correctly (all samples)
+
+commit a650ec0af09ee039f1d994eff0cd27fd8ad0331d
+Author: CBesser <cbesser@seas.upenn.edu>
+Date:   Thu Dec 7 16:42:40 2017 -0500
+
+    fixed ObjectDetailActivity layout
+
+commit b52aa76b9525e744aba3f2f6426f51c04ee697e9
+Author: LonguyenB <longnguyen1993@gmail.com>
+Date:   Thu Dec 7 16:22:26 2017 -0500
+
+    fixed spinners to populate correctly (all samples)
+
+commit 08b6bcabfb26680efdbc133d7445f899356ce97d
+Author: CBesser <cbesser@seas.upenn.edu>
+Date:   Thu Dec 7 15:17:56 2017 -0500
+
+    fixed issue where non-bluetooth compatable phones crash
+
+commit 65620072877b74f3ba62a556c7547dcc5e561de0
+Author: CBesser <cbesser@seas.upenn.edu>
+Date:   Thu Dec 7 14:31:44 2017 -0500
+
+    updated image provider for Android Nougat
+
+commit ca0f19fc06018bc710cf969a5a723794ccc43045
+Author: CBesser <cbesser@seas.upenn.edu>
+Date:   Sun Dec 3 00:08:24 2017 -0500
+
+    Changed JSONObjectResponseWrappers to StringObjectResponseWrappers in ObjectDetailActivity
+
+commit 9fd099dea73d2d471ecc20040c0088fa6580f5f1
+Author: CBesser <cbesser@seas.upenn.edu>
+Date:   Sat Dec 2 20:58:34 2017 -0500
+
+    deleted lines I missed in merge + fixed weight display issue
+
+commit f9f369df889033a270f21c1306a5e2577c4f1d29
+Merge: b252944 4bc498a
+Author: Christopher Besser <CBesser@users.noreply.github.com>
+Date:   Sat Dec 2 19:56:30 2017 -0500
+
+    Merge pull request #2 from anatolian/stringobjectrequest
+    
+    updated objectdetail with stringrequest
+
+commit 4bc498af833f6fe821a79a17e7fbb68174e3189f
+Merge: 839a09f b252944
+Author: Christopher Besser <CBesser@users.noreply.github.com>
+Date:   Sat Dec 2 19:56:21 2017 -0500
+
+    Merge branch 'master' into stringobjectrequest
+
+commit b252944d0aa8b11e69b392c52e2c038cc1949e1b
+Author: CBesser <cbesser@seas.upenn.edu>
+Date:   Sat Dec 2 19:52:00 2017 -0500
+
+    Removed commented code skipping DB steps
+
+commit 839a09fe53fd3e8429e84cc972e0d01b3a81c960
+Author: LonguyenB <longnguyen1993@gmail.com>
+Date:   Sat Dec 2 17:10:14 2017 -0500
+
+    updated objectdetail with stringrequest
+
+commit 5fb02440eaa9e496c199d8a80f794a0045fb146a
+Author: CBesser <cbesser@seas.upenn.edu>
+Date:   Sat Dec 2 13:00:10 2017 -0500
+
+    test_service.php response received!
+
+commit 19ea4c7a91c9c5a23e595fb9b8700c5535a1a3fc
+Author: CBesser <cbesser@seas.upenn.edu>
+Date:   Thu Nov 30 21:37:40 2017 -0500
+
+    Removed stacktrace toasts and broken Object Photography scale code
+
+commit 9e6f8e7a573ecbd1ec75b03d9a12e86516055c59
+Author: CBesser <cbesser@seas.upenn.edu>
+Date:   Thu Nov 30 17:13:02 2017 -0500
+
+    Removed old scale button. Need to change camera connection logic because newer devices can't get MAC addresses
+
+commit cc133719ec251cde60245bb1f86a92eeb206e3d8
+Author: CBesser <cbesser@seas.upenn.edu>
+Date:   Wed Nov 29 01:16:56 2017 -0500
+
+    Slightly improved object lookup and added progressbar
+
+commit 7bc8aaac3b66321fbf128f44f6c55d20f5d3a6fc
+Author: CBesser <cbesser@seas.upenn.edu>
+Date:   Tue Nov 28 18:41:22 2017 -0500
+
+    fixed StringWrapper commit
+
+commit b6dcb84e5208edb13ca4c1fdf5cd7a81bbbea685
+Merge: 4285b33 4ef5cb5
+Author: Christopher Besser <CBesser@users.noreply.github.com>
+Date:   Tue Nov 28 18:18:02 2017 -0500
+
+    Merge pull request #1 from anatolian/chrisBranch
+    
+    Improved lookup because MySQL takes too long
+
+commit 4ef5cb5d8119b670a8993d3e03f1274d59391afa
+Author: CBesser <cbesser@seas.upenn.edu>
+Date:   Tue Nov 28 18:15:14 2017 -0500
+
+    Improved lookup because MySQL takes too long
+
+commit 4285b33a6d5c0ceaff119d447093c7c32ddc27fb
+Author: LonguyenB <longnguyen1993@gmail.com>
+Date:   Mon Nov 27 19:12:35 2017 -0500
+
+    updated with stringrequest
+
+commit 0c795df2b6e1a169f2976a84126e3cc9fd289adf
+Author: CBesser <cbesser@seas.upenn.edu>
+Date:   Thu Nov 16 00:00:44 2017 -0500
+
+    forgot to remove git module files
+
+commit c331f6ffc253c37d42633c08add6e880e595a61b
+Author: CBesser <cbesser@seas.upenn.edu>
+Date:   Wed Nov 15 22:21:32 2017 -0500
+
+    added Kevin's app
+
+commit 50d3c74c8d817f1b0bc3731ef692b03b9244b7a4
+Author: CBesser <cbesser@seas.upenn.edu>
+Date:   Wed Nov 15 21:08:31 2017 -0500
+
+    removed WiDaC
+
+commit e5ce6b74fd8bc089d868133441751d502605fca7
+Author: CBesser <cbesser@seas.upenn.edu>
+Date:   Wed Nov 15 17:44:58 2017 -0500
+
+    Integrated WiDaC with Archaeology. Not much tested since I do not have the scale or server.
+
+commit 2bd5b44a636be2ef55681c9c35ece151c9b79056
+Author: CBesser <cbesser@seas.upenn.edu>
+Date:   Wed Nov 15 14:24:31 2017 -0500
+
+    removed old projects and refactored Archaeology app
+
+commit 474e07fcf677d052a1bd3e55a7b24bb10cd44235
+Author: CBesser <cbesser@seas.upenn.edu>
+Date:   Thu Nov 9 19:47:43 2017 -0500
+
+    Pretty much all I can do until the database is working
+
+commit 86d85bc834d581d62c533a9514e8e189c1a53811
+Author: CBesser <cbesser@seas.upenn.edu>
+Date:   Thu Nov 9 19:10:53 2017 -0500
+
+    added previous button
+
+commit eea664534a1e96ca6899bcd6aac2ee9a01119ca3
+Author: CBesser <cbesser@seas.upenn.edu>
+Date:   Thu Nov 9 17:54:15 2017 -0500
+
+    replaced auto lookup manual search with object protography search
+
+commit 3fb0fda25f793ce988b2d9603941bccad9afe770
+Author: CBesser <cbesser@seas.upenn.edu>
+Date:   Thu Nov 9 01:24:27 2017 -0500
+
+    fixed camera buttons
+
+commit cca8d20d523a423575106b53909dd13e3e4c3c09
+Author: CBesser <cbesser@seas.upenn.edu>
+Date:   Wed Nov 8 22:44:11 2017 -0500
+
+    initial integration of Lookup and Photography. Waiting on Database to test.
+
+commit 23f9243ecf349a707affa01217723c41fcf27ac6
+Author: CBesser <cbesser@seas.upenn.edu>
+Date:   Thu Nov 2 14:09:24 2017 -0400
+
+    Removed PDF
+
+commit dfbf216813b71ba3a68b9af688e965aa3713a149
+Author: CBesser <cbesser@seas.upenn.edu>
+Date:   Thu Nov 2 14:05:28 2017 -0400
+
+    Added excavation README
+
+commit 7283695246d9756c7cbc6c1b08ea788d23a5b6f1
+Author: CBesser <cbesser@seas.upenn.edu>
+Date:   Wed Nov 1 00:00:45 2017 -0400
+
+    Overhauled excavator code to make it less bad
+
+commit 4364c5ff044806c3d7c2b3cce3297cd4b23faf5e
+Author: CBesser <cbesser@seas.upenn.edu>
+Date:   Fri Oct 27 04:16:29 2017 -0400
+
+    propogated spelling correction
+
+commit d617bcab1d71de97700ab929079ad15846dda070
+Author: CBesser <cbesser@seas.upenn.edu>
+Date:   Fri Oct 27 03:57:02 2017 -0400
+
+    fixed spelling mistake
+
+commit 70fcc4839c701c824321b1a3743ee349bcc3b49e
+Author: CBesser <cbesser@seas.upenn.edu>
+Date:   Fri Oct 27 03:53:16 2017 -0400
+
+    built excavation app to best of my abilities for now
+
+commit 3cb48e43757ef379472d999a3ad7109a848cbb59
+Author: CBesser <cbesser@seas.upenn.edu>
+Date:   Thu Oct 26 16:27:12 2017 -0400
+
+    moved excavation app to this directory
+
+commit 4839a2cd18b0b0528554e27051ef78e4fe96d74e
+Author: ktrinh93 <32582810+ktrinh93@users.noreply.github.com>
+Date:   Wed Oct 25 20:42:15 2017 -0400
+
+    Update objectphotography-app.txt
+    
+    Updated General Summary and User Interaction
+
+commit 57c90052fd5b78a15b6d6a037fcaf5c314171a57
+Author: ktrinh93 <32582810+ktrinh93@users.noreply.github.com>
+Date:   Wed Oct 25 20:33:30 2017 -0400
+
+    Update objectphotography-app.txt
+    
+    Added class description for AddChangeColorActivity
+
+commit 9ded63d6258ee4b8cfa0cd37a2a4c8c168b74226
+Author: ktrinh93 <32582810+ktrinh93@users.noreply.github.com>
+Date:   Wed Oct 25 20:28:50 2017 -0400
+
+    Update objectphotography-app.txt
+    
+    Added class descriptions for TaggedImageView, Utils, VolleyWrapper
+
+commit 7f1ecdeaad54cf1f5de429de491103008c0c4741
+Author: ktrinh93 <32582810+ktrinh93@users.noreply.github.com>
+Date:   Wed Oct 25 20:19:41 2017 -0400
+
+    Update objectphotography-app.txt
+    
+    Added class descriptions for StringResponseWrapper, Syncable, Taggable
+
+commit 0c6f7980773e598302392fe2bfdb8d23a0bbe84d
+Author: ktrinh93 <32582810+ktrinh93@users.noreply.github.com>
+Date:   Wed Oct 25 20:13:14 2017 -0400
+
+    Update objectphotography-app.txt
+    
+    Added class descriptions for SimpleLiveviewSlicer, SimpleStreamSurfaceView, StateStatic
+
+commit 01057d0556e278b40084ce32d2742caf2078084c
+Author: ktrinh93 <32582810+ktrinh93@users.noreply.github.com>
+Date:   Wed Oct 25 20:06:20 2017 -0400
+
+    Update objectphotography-app.txt
+    
+    Added class descriptions for NutriScaleBroadcastReceiver
+
+commit 94263975b1bb43b1ee5cc4cc097c45fff9992676
+Author: ktrinh93 <32582810+ktrinh93@users.noreply.github.com>
+Date:   Wed Oct 25 20:04:46 2017 -0400
+
+    Update objectphotography-app.txt
+    
+    Added class descriptions for MyWifiActivity, WifiDirectBroadcastReceiver
+
+commit f4fae12f0d3c39217a3394f608b88948aca373a2
+Author: ktrinh93 <32582810+ktrinh93@users.noreply.github.com>
+Date:   Wed Oct 25 19:55:42 2017 -0400
+
+    Update objectphotography-app.txt
+    
+    Added class descriptions for PhotoFragment, PicassoWrapper
+
+commit 098467d42091ff3f6a5182a42b0ebd64e960bd1b
+Author: ktrinh93 <32582810+ktrinh93@users.noreply.github.com>
+Date:   Wed Oct 25 16:43:30 2017 -0400
+
+    Update objectphotography-app.txt
+    
+    Added class descriptions for MainActivity, ObjectDetail2Activity, PhotosActivity
+
+commit f1ae9ce658c98491f07c5801b5e0bb2bce971201
+Merge: b86628f a09d7f6
+Author: CBesser <cbesser@seas.upenn.edu>
+Date:   Wed Oct 25 16:09:31 2017 -0400
+
+    merge
+
+commit b86628f1406920d8c63b14c3bd349dc85639b05d
+Author: CBesser <cbesser@seas.upenn.edu>
+Date:   Wed Oct 25 16:05:23 2017 -0400
+
+    added Field Photographs readme and check for mounted SD card
+
+commit a09d7f623c539d85de963b84285663552c8966d5
+Author: ktrinh93 <32582810+ktrinh93@users.noreply.github.com>
+Date:   Wed Oct 25 15:42:43 2017 -0400
+
+    Update objectphotography-app.txt
+    
+    Added class descriptions for JSONArrayResponseWrapper, JSONObjectResponseWrapper, JSONParser
+
+commit 4b0b73d1838f2d8fa033293b08a3307565ca41b4
+Author: CBesser <cbesser@seas.upenn.edu>
+Date:   Wed Oct 25 15:24:44 2017 -0400
+
+    fixed field photographs crashing with no SD card mounted
+
+commit ebf90296892fb43bf63ed6a7ac20387edeeb049d
+Author: ktrinh93 <32582810+ktrinh93@users.noreply.github.com>
+Date:   Wed Oct 25 14:51:05 2017 -0400
+
+    Update objectphotography-app
+    
+    Added class descriptions for InitialActivity, SettingsActivity
+
+commit 909b9b6c69b72a7b2af6f69bcddefba94bab6b09
+Author: CBesser <cbesser@seas.upenn.edu>
+Date:   Wed Oct 25 01:14:07 2017 -0400
+
+    several bug fixes in autolookup. See bug log
+
+commit ebde09aa6b9aebf7bfc44f779737664f27c655fe
+Author: ktrinh93 <32582810+ktrinh93@users.noreply.github.com>
+Date:   Wed Oct 25 00:19:22 2017 -0400
+
+    Update objectphotography-app
+    
+    Description of classes added for CeramicInputActivity, CheatSheet, ImageResponseWrapper
+
+commit 390610b6d0c38a615057c4b32a26429ecfde9cc9
+Author: ktrinh93 <32582810+ktrinh93@users.noreply.github.com>
+Date:   Tue Oct 24 23:56:07 2017 -0400
+
+    Update objectphotography-app
+    
+    Description of classes added for AfterImageSavedMethodWrapper, AsyncHttpCallbackWrapper, AsyncHttpWrapper, BlueToothStaticWrapper, CameraDialog, CeramicInput2Activity
+
+commit 4a908514f271ad9edca82cd06ad9a60ecb1f4854
+Author: ktrinh93 <32582810+ktrinh93@users.noreply.github.com>
+Date:   Tue Oct 24 22:40:43 2017 -0400
+
+    Create objectphotography-app
+
+commit 13e9788fbc42e79c27f8ba78750333dd1ad5e504
+Author: CBesser <cbesser@seas.upenn.edu>
+Date:   Tue Oct 24 21:56:22 2017 -0400
+
+    Fixed style in Lookup, fixed bugs in WiDaC, wrote 2 READMEs, fixed spelling errors.
+
+commit 72cf1ea39036078b01fab740f519de170532ca7f
+Author: Xin Guo <32554626+XXinGuo@users.noreply.github.com>
+Date:   Tue Oct 24 03:30:24 2017 -0400
+
+    Add files via upload
+
+commit 4b9dd86111655c5b4d4611579aa4617ccb84c641
+Author: CBesser <cbesser@seas.upenn.edu>
+Date:   Sun Oct 22 20:52:09 2017 -0400
+
+    replaced incorrect app
+
+commit 843c0f2f1fe3434f2228a222f8f11b2a068568e6
+Author: CBesser <cbesser@seas.upenn.edu>
+Date:   Sun Oct 22 20:42:35 2017 -0400
+
+    Apps ported to Gradle, deprecated code replaced, hardcoded text moved to strings.xmls. Bugs not yet fixed
+
+commit 424793f771ddfd439393e26495ac135079378298
+Author: Peter Cobb <anatolian@users.noreply.github.com>
+Date:   Fri Oct 13 20:11:49 2017 -0400
+
+    Update README.md
+
+commit 139f1f8eced29fd762cf3bea9edb33f767c9a903
+Author: Peter Cobb <anatolian@users.noreply.github.com>
+Date:   Fri Oct 13 20:11:12 2017 -0400
+
+    Initial commit

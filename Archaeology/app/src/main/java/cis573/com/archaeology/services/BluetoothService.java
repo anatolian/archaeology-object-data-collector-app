@@ -230,8 +230,6 @@ public class BluetoothService
                 {
                     numBytes = mmInStream.read(mmBuffer);
                     currWeight = parseBytesNutriScale(mmBuffer, numBytes);
-                    Toast.makeText(context, "Weight: " + currWeight,
-                            Toast.LENGTH_SHORT).show();
                 }
                 else
                 {
