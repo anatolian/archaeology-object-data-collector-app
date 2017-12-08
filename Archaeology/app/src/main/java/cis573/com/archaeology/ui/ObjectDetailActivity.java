@@ -747,6 +747,7 @@ public class ObjectDetailActivity extends AppCompatActivity
                     for (int i = 0; i < photoList.length(); i++)
                     {
                         String photoUrl = photoList.getString(i);
+                        photoUrl = "https://fa17archaeology-service.herokuapp.com/" + photoUrl;
                         loadPhotoIntoPhotoFragment(Uri.parse(photoUrl), MARKED_AS_TO_DOWNLOAD);
                     }
                 }
