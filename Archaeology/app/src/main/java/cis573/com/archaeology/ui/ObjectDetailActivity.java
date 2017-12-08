@@ -10,12 +10,16 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
@@ -40,6 +44,10 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -67,9 +75,11 @@ import static cis573.com.archaeology.util.StateStatic.MESSAGE_STATUS_CHANGE;
 import static cis573.com.archaeology.util.StateStatic.MESSAGE_WEIGHT;
 import static cis573.com.archaeology.util.StateStatic.REQUEST_ENABLE_BT;
 import static cis573.com.archaeology.util.StateStatic.REQUEST_IMAGE_CAPTURE;
+import static cis573.com.archaeology.util.StateStatic.THUMBNAIL_EXTENSION_STRING;
 import static cis573.com.archaeology.util.StateStatic.cameraIPAddress;
 import static cis573.com.archaeology.util.StateStatic.connectedToRemoteCamera;
 import static cis573.com.archaeology.util.StateStatic.convertDPToPixel;
+import static cis573.com.archaeology.util.StateStatic.getGlobalPhotoSavePath;
 import static cis573.com.archaeology.util.StateStatic.getGlobalWebServerURL;
 import static cis573.com.archaeology.util.StateStatic.getTimeStamp;
 import static cis573.com.archaeology.util.StateStatic.isBluetoothEnabled;
@@ -407,7 +417,7 @@ public class ObjectDetailActivity extends AppCompatActivity
                     Log.v(LOG_TAG, "data: " + data.getData());
                 }
                 // creating URI to save photo to once taken
-                String originalFileName = getTempFileName() + ".jpg";
+                final String originalFileName = getTempFileName() + ".jpg";
                 final Uri fileURI = CheatSheet.getThumbnail(originalFileName);
                 Log.v(LOG_TAG, fileURI.toString());
                 // ApproveDialogCallback is an interface. see CameraDialog class
@@ -421,6 +431,46 @@ public class ObjectDetailActivity extends AppCompatActivity
                     {
                         // store image data into photo fragments
                         loadPhotoIntoPhotoFragment(fileURI, MARKED_AS_ADDED);
+
+                        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
+                                Environment.DIRECTORY_PICTURES), getGlobalPhotoSavePath());
+                        String originalFilePath = mediaStorageDir.getPath() + File.separator + originalFileName;
+                        String thumbPath = mediaStorageDir.getPath() + File.separator + originalFileName
+                                + THUMBNAIL_EXTENSION_STRING;
+                        BitmapFactory.Options options = new BitmapFactory.Options();
+                        options.inJustDecodeBounds = true;
+                        // Returns null, sizes are in the options variable
+                        Bitmap savedBitmap = BitmapFactory.decodeFile(originalFilePath, options);
+
+                        File parent = new File(Environment.getExternalStorageDirectory()
+                                + "/Archaeology/");
+
+                        System.out.println("before if");
+                        if (!parent.exists())
+                        {
+                            System.out.println("before mkdirs");
+                            parent.mkdirs();
+                            System.out.println("after mkdirs");
+                        }
+
+                        try {
+                            File f = new File(parent, originalFilePath);
+                            f.createNewFile();
+                            FileOutputStream outStream = new FileOutputStream(f);
+                            //Bitmap bmp = ((BitmapDrawable) image.getDrawable()).getBitmap();
+                            savedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
+                            outStream.flush();
+                            outStream.close();
+                            Toast.makeText(getApplicationContext(), "Image stored at " +
+                                    f.getAbsolutePath(), Toast.LENGTH_LONG).show();
+                        }
+                        catch (IOException e) {
+                            // e.getMessage is returning a null value
+                            Log.d("Error", "Error Message: " + e.getMessage());
+                            e.printStackTrace();
+                        }
+
+
                     }
 
                     /**
