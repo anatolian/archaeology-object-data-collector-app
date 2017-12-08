@@ -106,23 +106,4 @@
             android:onClick = "goToObjectDetail"
             android:textStyle="bold"/>
     </LinearLayout>
-    <Button
-        android:id="@+id/visualization_button"
-        style="?android:textAppearanceSmall"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/linearLayout2"
-        android:layout_alignParentStart="true"
-        android:text="@string/visualization"
-        android:textColor="@android:color/black"
-        android:textStyle="bold" />
-    <Button
-        android:id="@+id/sessionReport_button"
-        style="?android:textAppearanceSmall"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/visualization_button"
-        android:text="@string/session_report"
-        android:textColor="@android:color/black"
-        android:textStyle="bold" />
 </RelativeLayout>

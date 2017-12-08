@@ -77,38 +77,6 @@ public class CeramicInputActivity extends AppCompatActivity
         northing = (Spinner) findViewById(R.id.northing_spinner);
         context = (Spinner) findViewById(R.id.context_spinner);
         sample = (Spinner) findViewById(R.id.sample_spinner);
-        initializeButtons();
-    }
-
-    /**
-     * Initialize the buttons
-     */
-    private void initializeButtons()
-    {
-        Button visualization = (Button) findViewById(R.id.visualization_button);
-        visualization.setOnClickListener(new View.OnClickListener() {
-            /**
-             * User clicked Visualization
-             * @param view - button view
-             */
-            @Override
-            public void onClick(View view)
-            {
-                onVisualizationButtonClick();
-            }
-        });
-        Button sessionsReport = (Button) findViewById(R.id.sessionReport_button);
-        sessionsReport.setOnClickListener(new View.OnClickListener() {
-            /**
-             * User clicked Sessions
-             * @param view - the button
-             */
-            @Override
-            public void onClick(View view)
-            {
-                onSessionReportButtonClick();
-            }
-        });
     }
 
     /**
@@ -118,8 +86,8 @@ public class CeramicInputActivity extends AppCompatActivity
     protected void onStart()
     {
         super.onStart();
-        // calls methods to populate spinners with data gathered from the database
-        // northing, easting, context number, etc.
+        // calls methods to populate spinners with data gathered from the database northing,
+        // easting, context number, etc.
         easting.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             /**
              * User selected an item
@@ -437,7 +405,7 @@ public class CeramicInputActivity extends AppCompatActivity
     }
 
     /**
-     * get sample number from db and populate spinner
+     * Get sample number from db and populate spinner
      */
     private void asyncGetSampleNumberFromDB()
     {
@@ -456,7 +424,8 @@ public class CeramicInputActivity extends AppCompatActivity
             {
                 try
                 {
-                    System.out.println("SAMPLES FOR: EASTING: " + getSelectedAreaEasting() + " NORTHING: " + getSelectedAreaNorthing()
+                    System.out.println("SAMPLES FOR: EASTING: " + getSelectedAreaEasting() +
+                            " NORTHING: " + getSelectedAreaNorthing()
                     + " CONTEXT: " + getSelectedContextNumber());
                     // convert to regular array from json array
                     fillSampleNumberSpinner(CheatSheet.convertJSONArrayToList(response));
@@ -484,7 +453,7 @@ public class CeramicInputActivity extends AppCompatActivity
     }
 
     /**
-     * getters for specific data fields
+     * Getters for specific data fields
      * @return Returns easting
      */
     public String getSelectedAreaEasting()
@@ -520,7 +489,7 @@ public class CeramicInputActivity extends AppCompatActivity
     }
 
     /**
-     * enables continue button if all data has been loaded correctly
+     * Enables continue button if all data has been loaded correctly
      */
     public void toggleContinueButton()
     {
@@ -556,7 +525,7 @@ public class CeramicInputActivity extends AppCompatActivity
     }
 
     /**
-     * once all the data has been received you can go to the ObjectDetailActivity, which can call
+     * Once all the data has been received you can go to the ObjectDetailActivity, which can call
      * the camera intent
      * @param view - object view
      */
@@ -573,23 +542,5 @@ public class CeramicInputActivity extends AppCompatActivity
                 availableSampleNumbers.toArray(new String[availableSampleNumbers.size()]));
         tmpIntent.putExtra("preview", bmp);
         startActivity(tmpIntent);
-    }
-
-    /**
-     * User pressed Visualization
-     */
-    public void onVisualizationButtonClick()
-    {
-        Intent i = new Intent(this, VisualizationActivity.class);
-        startActivityForResult(i, 1);
-    }
-
-    /**
-     * User pressed SessionReport
-     */
-    public void onSessionReportButtonClick()
-    {
-        Intent i = new Intent(this, SessionReportActivity.class);
-        startActivityForResult(i, 1);
     }
 }
