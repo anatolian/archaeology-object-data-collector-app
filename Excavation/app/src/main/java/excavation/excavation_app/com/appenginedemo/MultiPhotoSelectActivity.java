@@ -42,7 +42,7 @@ public class MultiPhotoSelectActivity extends ActivityBase
         rLayout = (RelativeLayout) inflater.inflate(R.layout.activity_album, null);
         wrapper.addView(rLayout);
         buttonCreate = (Button) findViewById(R.id.ButtonCreateAlbum);
-        TextView3d.setBackgroundColor(getResources().getColor(R.color.butterflyblue));
+        TextView3D.setBackgroundColor(getResources().getColor(R.color.butterflyblue));
         TextViewContext.setBackgroundColor(getResources().getColor(R.color.black));
         TextViewSample.setBackgroundColor(getResources().getColor(R.color.black));
         header.setVisibility(View.GONE);
@@ -112,7 +112,7 @@ public class MultiPhotoSelectActivity extends ActivityBase
                 if (selectedItems.size() > 0)
                 {
                     Intent i = new Intent(MultiPhotoSelectActivity.this,
-                            Activity3d.class);
+                            Activity3D.class);
                     i.putExtra("north", north);
                     i.putExtra("east", east);
                     startActivity(i);
@@ -120,7 +120,7 @@ public class MultiPhotoSelectActivity extends ActivityBase
                 else
                 {
                     Toast.makeText(MultiPhotoSelectActivity.this,
-                            "Please Select images..!", Toast.LENGTH_SHORT).show();
+                            "Please select images...", Toast.LENGTH_SHORT).show();
                 }
                 finish();
             }

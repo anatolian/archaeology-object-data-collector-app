@@ -99,13 +99,13 @@ public class CheatSheet
         Log.v(LOG_TAG, "originalFilePath: " + originalFilePath + " thumbPath: " + thumbPath);
         File thumbFile = new File(thumbPath);
         // creating a thumbnail image and setting the bounds of the thumbnail
-        Bitmap ThumbImage =
-                ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(originalFilePath),
-                Math.round(width / 4.1f), Math.round(height / 4.1f));
+        Bitmap thumbImage = ThumbnailUtils.extractThumbnail(BitmapFactory
+                        .decodeFile(originalFilePath), Math.round(width / 4.1f),
+                Math.round(height / 4.1f));
         try
         {
             FileOutputStream fos = new FileOutputStream(thumbFile);
-            ThumbImage.compress(Bitmap.CompressFormat.JPEG, 90, fos);
+            thumbImage.compress(Bitmap.CompressFormat.JPEG, 90, fos);
             fos.close();
         }
         catch (Exception ex)

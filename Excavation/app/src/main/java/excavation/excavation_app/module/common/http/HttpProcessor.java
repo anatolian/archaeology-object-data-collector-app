@@ -3,31 +3,31 @@ package excavation.excavation_app.module.common.http;
 import java.util.List;
 import java.util.Map;
 import excavation.excavation_app.module.common.bean.ResponseData;
-import excavation.excavation_app.module.common.http.bean.HttpObject;
+import excavation.excavation_app.module.common.http.bean.HTTPObject;
 import org.json.JSONException;
 import org.json.JSONObject;
-public interface HttpProcessor
+public interface HTTPProcessor
 {
     /**
      * Get HTTP response
      * @param mapParams - parameters
      * @return Returns response
      */
-    HttpObject getHttp(Map<Request, String> mapParams);
+    HTTPObject getHTTP(Map<Request, String> mapParams);
 
     /**
      * Parse response
      * @param object - response
      * @return Returns data
      */
-    <T extends ResponseData> T parseObject(HttpObject object);
+    <T extends ResponseData> T parseObject(HTTPObject object);
 
     /**
      * Parse list
      * @param object - list
      * @return Returns data
      */
-    <T extends ResponseData> List<T> parseList(HttpObject object);
+    <T extends ResponseData> List<T> parseList(HTTPObject object);
 
     /**
      * Parse JSON

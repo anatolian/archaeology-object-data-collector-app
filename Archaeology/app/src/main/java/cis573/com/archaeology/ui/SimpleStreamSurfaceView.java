@@ -23,11 +23,11 @@ public class SimpleStreamSurfaceView extends SurfaceView implements SurfaceHolde
 {
     private static final String TAG = SimpleStreamSurfaceView.class.getSimpleName();
     private boolean mWhileFetching;
-    private final BlockingQueue<byte[]> mJpegQueue = new ArrayBlockingQueue<>(2);
+    private final BlockingQueue<byte[]> M_JEPG_QUEUE = new ArrayBlockingQueue<>(2);
     private Thread mDrawerThread;
     private int mPreviousWidth = 0;
     private int mPreviousHeight = 0;
-    private final Paint mFramePaint;
+    private final Paint M_FRAME_PAINT;
     private StreamErrorListener mErrorListener;
     /**
      * Constructor
@@ -37,8 +37,8 @@ public class SimpleStreamSurfaceView extends SurfaceView implements SurfaceHolde
     {
         super(context);
         getHolder().addCallback(this);
-        mFramePaint = new Paint();
-        mFramePaint.setDither(true);
+        M_FRAME_PAINT = new Paint();
+        M_FRAME_PAINT.setDither(true);
     }
 
     /**
@@ -50,22 +50,22 @@ public class SimpleStreamSurfaceView extends SurfaceView implements SurfaceHolde
     {
         super(context, attrs);
         getHolder().addCallback(this);
-        mFramePaint = new Paint();
-        mFramePaint.setDither(true);
+        M_FRAME_PAINT = new Paint();
+        M_FRAME_PAINT.setDither(true);
     }
 
     /**
      * Constructor
      * @param context - app context
      * @param attrs - context attributes
-     * @param defStyle - definition stype
+     * @param defStyle - definition type
      */
     public SimpleStreamSurfaceView(Context context, AttributeSet attrs, int defStyle)
     {
         super(context, attrs, defStyle);
         getHolder().addCallback(this);
-        mFramePaint = new Paint();
-        mFramePaint.setDither(true);
+        M_FRAME_PAINT = new Paint();
+        M_FRAME_PAINT.setDither(true);
     }
 
     /**
@@ -103,14 +103,14 @@ public class SimpleStreamSurfaceView extends SurfaceView implements SurfaceHolde
 
     /**
      * Start retrieving and drawing liveView frame data by new threads.
-     * @param streamUrl - source of stream
+     * @param STREAM_URL - source of stream
      * @param listener - input error listener
      * @return true if the starting is completed successfully, false otherwise.
      */
-    public boolean start(final String streamUrl, StreamErrorListener listener)
+    public boolean start(final String STREAM_URL, StreamErrorListener listener)
     {
         mErrorListener = listener;
-        if (streamUrl == null)
+        if (STREAM_URL == null)
         {
             Log.e(TAG, "start() streamUrl is null.");
             mWhileFetching = false;
@@ -137,7 +137,7 @@ public class SimpleStreamSurfaceView extends SurfaceView implements SurfaceHolde
                 {
                     // Create Slicer to open the stream and parse it.
                     slicer = new SimpleLiveViewSlicer();
-                    slicer.open(streamUrl);
+                    slicer.open(STREAM_URL);
                     while (mWhileFetching)
                     {
                         final Payload payload = slicer.nextPayload();
@@ -147,11 +147,11 @@ public class SimpleStreamSurfaceView extends SurfaceView implements SurfaceHolde
                             Log.e(TAG, "LiveView Payload is null.");
                             continue;
                         }
-                        if (mJpegQueue.size() == 2)
+                        if (M_JEPG_QUEUE.size() == 2)
                         {
-                            mJpegQueue.remove();
+                            M_JEPG_QUEUE.remove();
                         }
-                        mJpegQueue.add(payload.jpegData);
+                        M_JEPG_QUEUE.add(payload.jpegData);
                     }
                 }
                 catch (IOException e)
@@ -169,7 +169,7 @@ public class SimpleStreamSurfaceView extends SurfaceView implements SurfaceHolde
                     {
                         mDrawerThread.interrupt();
                     }
-                    mJpegQueue.clear();
+                    M_JEPG_QUEUE.clear();
                     mWhileFetching = false;
                 }
             }
@@ -191,8 +191,9 @@ public class SimpleStreamSurfaceView extends SurfaceView implements SurfaceHolde
                 {
                     try
                     {
-                        byte[] jpegData = mJpegQueue.take();
-                        frameBitmap = BitmapFactory.decodeByteArray(jpegData, 0, jpegData.length, factoryOptions);
+                        byte[] jpegData = M_JEPG_QUEUE.take();
+                        frameBitmap = BitmapFactory.decodeByteArray(jpegData, 0,
+                                jpegData.length, factoryOptions);
                     }
                     catch (IllegalArgumentException e)
                     {
@@ -286,7 +287,7 @@ public class SimpleStreamSurfaceView extends SurfaceView implements SurfaceHolde
         int offsetY = (getHeight() - (int) (h * by)) / 2;
         Rect dst = new Rect(offsetX, offsetY, getWidth() - offsetX,
                 getHeight() - offsetY);
-        canvas.drawBitmap(frame, src, dst, mFramePaint);
+        canvas.drawBitmap(frame, src, dst, M_FRAME_PAINT);
         getHolder().unlockCanvasAndPost(canvas);
     }
 

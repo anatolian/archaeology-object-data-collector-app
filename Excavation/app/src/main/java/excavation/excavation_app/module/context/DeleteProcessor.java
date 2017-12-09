@@ -4,17 +4,16 @@ import java.util.List;
 import java.util.Map;
 import excavation.excavation_app.module.common.bean.ResponseData;
 import excavation.excavation_app.module.common.bean.SimpleData;
-import excavation.excavation_app.module.common.http.HttpOperation;
-import excavation.excavation_app.module.common.http.HttpProcessor;
-import excavation.excavation_app.module.common.http.HttpRequester;
+import excavation.excavation_app.module.common.http.HTTPOperation;
+import excavation.excavation_app.module.common.http.HTTPProcessor;
+import excavation.excavation_app.module.common.http.HTTPRequester;
 import excavation.excavation_app.module.common.http.Request;
-import excavation.excavation_app.module.common.http.Response;
-import excavation.excavation_app.module.common.http.Response.RESPONSE_RESULT;
-import excavation.excavation_app.module.common.http.Response.STANDARD;
-import excavation.excavation_app.module.common.http.bean.HttpObject;
+import excavation.excavation_app.module.common.http.Response.ResponseResult;
+import excavation.excavation_app.module.common.http.Response.Standard;
+import excavation.excavation_app.module.common.http.bean.HTTPObject;
 import org.json.JSONException;
 import org.json.JSONObject;
-public class DeleteProcessor extends HttpOperation implements HttpProcessor
+public class DeleteProcessor extends HTTPOperation implements HTTPProcessor
 {
     private String ipAddress;
     /**
@@ -32,14 +31,14 @@ public class DeleteProcessor extends HttpOperation implements HttpProcessor
      * @return Returns the object
      */
     @Override
-    public HttpObject getHttp(Map<Request, String> mapParams)
+    public HTTPObject getHTTP(Map<Request, String> mapParams)
     {
-        HttpObject object = new HttpObject();
-        object.setUrl(generateUrlWithParams(HttpRequester.DELETE_CTX, mapParams, ipAddress));
+        HTTPObject object = new HTTPObject();
+        object.setURL(generateURLWithParams(HTTPRequester.DeleteContext, mapParams, ipAddress));
         return object;
     }
 
-    public enum DELETE_PRODUCT_REQUEST implements Request
+    public enum DeleteProductRequest implements Request
     {
         mode, id, areaEast, areaNorth, contextNumber, photographNumber;
         /**
@@ -60,29 +59,29 @@ public class DeleteProcessor extends HttpOperation implements HttpProcessor
      */
     @SuppressWarnings("unchecked")
     @Override
-    public SimpleData parseObject(HttpObject object)
+    public SimpleData parseObject(HTTPObject object)
     {
         SimpleData data = new SimpleData();
         object = request(object);
-        checkHttpStatus(object, data);
-        if (data.result == RESPONSE_RESULT.failed)
+        checkHTTPStatus(object, data);
+        if (data.result == ResponseResult.failed)
         {
-            data.result = Response.RESPONSE_RESULT.failed;
+            data.result = ResponseResult.failed;
             return data;
         }
         try
         {
             JSONObject responseObj = new JSONObject(object.getResponseString());
-            JSONObject responseData1 = responseObj.getJSONObject(STANDARD.responseData.name());
-            String result = get(STANDARD.result.name(), responseData1);
+            JSONObject responseData1 = responseObj.getJSONObject(Standard.responseData.name());
+            String result = get(Standard.result.name(), responseData1);
             if (result.equalsIgnoreCase("success"))
             {
-                data.result = Response.RESPONSE_RESULT.success;
+                data.result = ResponseResult.success;
                 data.resultMsg = responseData1.getString("data");
             }
             else
             {
-                data.result = Response.RESPONSE_RESULT.failed;
+                data.result = ResponseResult.failed;
                 data.resultMsg = responseData1.getString("error");
             }
         }
@@ -103,7 +102,7 @@ public class DeleteProcessor extends HttpOperation implements HttpProcessor
      * @return Returns null
      */
     @Override
-    public <T extends ResponseData> List<T> parseList(HttpObject object)
+    public <T extends ResponseData> List<T> parseList(HTTPObject object)
     {
         return null;
     }

@@ -12,7 +12,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.net.wifi.p2p.WifiP2pConfig;
@@ -44,7 +43,6 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -57,7 +55,6 @@ import cis573.com.archaeology.models.AfterImageSavedMethodWrapper;
 import cis573.com.archaeology.models.StringObjectResponseWrapper;
 import cis573.com.archaeology.services.BluetoothService;
 import cis573.com.archaeology.services.NutriScaleBroadcastReceiver;
-import cis573.com.archaeology.services.Session;
 import cis573.com.archaeology.services.WiFiDirectBroadcastReceiver;
 import cis573.com.archaeology.util.CheatSheet;
 import cis573.com.archaeology.util.StateStatic;
@@ -154,7 +151,6 @@ public class ObjectDetailActivity extends AppCompatActivity
     AlertDialog remoteCameraDialog, weightDialog, pickPeersDialog;
     // broadcast receiver objects used to receive messages from other devices
     BroadcastReceiver nutriScaleBroadcastReceiver, wiFiDirectBroadcastReceiver;
-    private boolean activityPaused = false;
     private boolean isPickPeersDialogVisible = false;
     // correspond to columns in database associated with finds
     int areaEasting, areaNorthing, contextNumber, sampleNumber, imageNumber;
@@ -335,7 +331,7 @@ public class ObjectDetailActivity extends AppCompatActivity
                 for (BluetoothDevice pairedDv: pairedDevices)
                 {
                     String deviceName = pairedDv.getName();
-                    if (deviceName.equals(Session.deviceName))
+                    if (deviceName.equals(StateStatic.deviceName))
                     {
                         device = pairedDv;
                         bluetoothService = new BluetoothService(this);
@@ -432,45 +428,38 @@ public class ObjectDetailActivity extends AppCompatActivity
                         // store image data into photo fragments
                         loadPhotoIntoPhotoFragment(fileURI, MARKED_AS_ADDED);
 
-                        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
+                        File mediaStorageDir = new File(
+                                Environment.getExternalStoragePublicDirectory(
                                 Environment.DIRECTORY_PICTURES), getGlobalPhotoSavePath());
-                        String originalFilePath = mediaStorageDir.getPath() + File.separator + originalFileName;
-                        String thumbPath = mediaStorageDir.getPath() + File.separator + originalFileName
-                                + THUMBNAIL_EXTENSION_STRING;
+                        String originalFilePath = mediaStorageDir.getPath() + File.separator +
+                                originalFileName;
                         BitmapFactory.Options options = new BitmapFactory.Options();
                         options.inJustDecodeBounds = true;
                         // Returns null, sizes are in the options variable
                         Bitmap savedBitmap = BitmapFactory.decodeFile(originalFilePath, options);
-
                         File parent = new File(Environment.getExternalStorageDirectory()
                                 + "/Archaeology/");
-
-                        System.out.println("before if");
                         if (!parent.exists())
                         {
-                            System.out.println("before mkdirs");
                             parent.mkdirs();
-                            System.out.println("after mkdirs");
                         }
-
-                        try {
+                        try
+                        {
                             File f = new File(parent, originalFilePath);
                             f.createNewFile();
                             FileOutputStream outStream = new FileOutputStream(f);
-                            //Bitmap bmp = ((BitmapDrawable) image.getDrawable()).getBitmap();
                             savedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
                             outStream.flush();
                             outStream.close();
                             Toast.makeText(getApplicationContext(), "Image stored at " +
                                     f.getAbsolutePath(), Toast.LENGTH_LONG).show();
                         }
-                        catch (IOException e) {
+                        catch (IOException e)
+                        {
                             // e.getMessage is returning a null value
                             Log.d("Error", "Error Message: " + e.getMessage());
                             e.printStackTrace();
                         }
-
-
                     }
 
                     /**
@@ -502,7 +491,6 @@ public class ObjectDetailActivity extends AppCompatActivity
     {
         super.onDestroy();
         Log.v(LOG_TAG, "Destroying Activity");
-        activityPaused = true;
         isPickPeersDialogVisible = false;
         if (pickPeersDialog != null)
         {
@@ -527,7 +515,6 @@ public class ObjectDetailActivity extends AppCompatActivity
     {
         super.onResume();
         Log.v(LOG_TAG, "Resuming Activity");
-        activityPaused = false;
         registerReceiver(wiFiDirectBroadcastReceiver, mIntentFilter);
     }
 
@@ -539,7 +526,6 @@ public class ObjectDetailActivity extends AppCompatActivity
     {
         super.onStop();
         Log.v(LOG_TAG, "Stopping Activity");
-        activityPaused = true;
         isPickPeersDialogVisible = false;
         if (pickPeersDialog != null)
         {
@@ -777,10 +763,10 @@ public class ObjectDetailActivity extends AppCompatActivity
      */
     public void asyncPopulatePhotos()
     {
-        String url = getGlobalWebServerURL() + "/get_image_2.php?area_easting="
+        String URL = getGlobalWebServerURL() + "/get_image_2.php?area_easting="
                 + areaEasting + "&area_northing=" + areaNorthing + "&context_number="
                 + contextNumber + "&sample_number=" + sampleNumber;
-        makeVolleyStringObjectRequest(url, queue, new StringObjectResponseWrapper(this) {
+        makeVolleyStringObjectRequest(URL, queue, new StringObjectResponseWrapper(this) {
             /**
              * Database response
              * @param response - response received
@@ -797,9 +783,9 @@ public class ObjectDetailActivity extends AppCompatActivity
                     imageNumber = photoList.length();
                     for (int i = 0; i < photoList.length(); i++)
                     {
-                        String photoUrl = photoList.getString(i);
-                        photoUrl = "https://fa17archaeology-service.herokuapp.com/" + photoUrl;
-                        loadPhotoIntoPhotoFragment(Uri.parse(photoUrl), MARKED_AS_TO_DOWNLOAD);
+                        String photoURL = photoList.getString(i);
+                        photoURL = "https://fa17archaeology-service.herokuapp.com/" + photoURL;
+                        loadPhotoIntoPhotoFragment(Uri.parse(photoURL), MARKED_AS_TO_DOWNLOAD);
                     }
                 }
                 catch (JSONException | StringIndexOutOfBoundsException e)
@@ -1029,13 +1015,13 @@ public class ObjectDetailActivity extends AppCompatActivity
                             getTimeStamp(), new AfterImageSavedMethodWrapper() {
                         /**
                          * Process saved image
-                         * @param thumbnailImageUri - image URI
+                         * @param thumbnailImageURI - image URI
                          */
                         @Override
-                        public void doStuffWithSavedImage(final Uri thumbnailImageUri)
+                        public void doStuffWithSavedImage(final Uri thumbnailImageURI)
                         {
                             final Uri originalImageURI
-                                    = CheatSheet.getOriginalImageURI(thumbnailImageUri);
+                                    = CheatSheet.getOriginalImageURI(thumbnailImageURI);
                             // implementing interface from CameraDialog class
                             CameraDialog.ApproveDialogCallback approveDialogCallback
                                     = new CameraDialog.ApproveDialogCallback() {
@@ -1071,10 +1057,10 @@ public class ObjectDetailActivity extends AppCompatActivity
                             approveDialog.show();
                             ImageView approvePhotoImage =
                                     (ImageView) approveDialog.findViewById(R.id.approvePhotoImage);
-                            Log.v(LOG_TAG, "Loading image " + thumbnailImageUri
+                            Log.v(LOG_TAG, "Loading image " + thumbnailImageURI
                                     + " into approvePhoto Dialog");
-                            approvePhotoImage.setImageURI(thumbnailImageUri);
-                            Log.v(LOG_TAG, "Loading image " + thumbnailImageUri
+                            approvePhotoImage.setImageURI(thumbnailImageURI);
+                            Log.v(LOG_TAG, "Loading image " + thumbnailImageURI
                                     + " into approvePhoto Dialog done!");
                         }
                     }, getLiveViewSurface());
@@ -1206,9 +1192,9 @@ public class ObjectDetailActivity extends AppCompatActivity
             {
                 // The 'which' argument contains the index position of the selected item.
                 // setting up connection with mac device
-                final String ipAddress = listOfDeviceNames.get(which);
+                final String IP_ADDRESS = listOfDeviceNames.get(which);
                 WifiP2pDevice device = new WifiP2pDevice();
-                device.deviceAddress = ipAddress;
+                device.deviceAddress = IP_ADDRESS;
                 WifiP2pConfig config = new WifiP2pConfig();
                 config.deviceAddress = device.deviceAddress;
                 Log.v(LOG_TAG, "the device address is " + config.deviceAddress);
@@ -1219,8 +1205,8 @@ public class ObjectDetailActivity extends AppCompatActivity
                     @Override
                     public void onSuccess()
                     {
-                        cameraIPAddress = ipAddress;
-                        Log.v(LOG_TAG, "IP address is " + ipAddress);
+                        cameraIPAddress = IP_ADDRESS;
+                        Log.v(LOG_TAG, "IP address is " + IP_ADDRESS);
                         // so at this point the connection has been made
                         ((TextView) findViewById(R.id.connectToCameraText))
                                 .setText(getString(R.string.wait));
@@ -1330,7 +1316,7 @@ public class ObjectDetailActivity extends AppCompatActivity
                     else
                     {
                         ipNotFoundOnARPCallback();
-                        Log.v(LOG_TAG, "could not find the ip");
+                        Log.v(LOG_TAG, "could not find the IP");
                         break;
                     }
                 }

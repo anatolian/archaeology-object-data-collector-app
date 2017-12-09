@@ -8,17 +8,17 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import excavation.excavation_app.module.common.bean.ResponseData;
 import excavation.excavation_app.module.common.bean.SimpleData;
-import excavation.excavation_app.module.common.http.HttpOperation;
-import excavation.excavation_app.module.common.http.HttpProcessor;
-import excavation.excavation_app.module.common.http.HttpRequester;
+import excavation.excavation_app.module.common.http.HTTPOperation;
+import excavation.excavation_app.module.common.http.HTTPProcessor;
+import excavation.excavation_app.module.common.http.HTTPRequester;
 import excavation.excavation_app.module.common.http.Request;
 import excavation.excavation_app.module.common.http.Response;
-import excavation.excavation_app.module.common.http.Response.RESPONSE_RESULT;
-import excavation.excavation_app.module.common.http.Response.STANDARD;
-import excavation.excavation_app.module.common.http.bean.HttpObject;
+import excavation.excavation_app.module.common.http.Response.ResponseResult;
+import excavation.excavation_app.module.common.http.Response.Standard;
+import excavation.excavation_app.module.common.http.bean.HTTPObject;
 import org.json.JSONException;
 import org.json.JSONObject;
-public class SampleGetPhotoListProcessor extends HttpOperation implements HttpProcessor
+public class SampleGetPhotoListProcessor extends HTTPOperation implements HTTPProcessor
 {
     String ipAddress;
     /**
@@ -36,14 +36,14 @@ public class SampleGetPhotoListProcessor extends HttpOperation implements HttpPr
      * @return Returns the response
      */
     @Override
-    public HttpObject getHttp(Map<Request, String> mapParams)
+    public HTTPObject getHTTP(Map<Request, String> mapParams)
     {
-        HttpObject object = new HttpObject();
-        object.setUrl(generateUrlWithParams(HttpRequester.GET_IMAGE, mapParams, ipAddress));
+        HTTPObject object = new HTTPObject();
+        object.setURL(generateURLWithParams(HTTPRequester.GetImage, mapParams, ipAddress));
         return object;
     }
 
-    public enum LIST_SAMPLE_RESPONSE implements Response
+    public enum ListSampleResponse implements Response
     {
         fileType, imagePath, areaNorthing, areaEasting, contextNumber, sampleNumber,
         imageWidth, imageHeight, baseImagePath, sampleSubpath
@@ -56,7 +56,7 @@ public class SampleGetPhotoListProcessor extends HttpOperation implements HttpPr
      */
     @SuppressWarnings("unchecked")
     @Override
-    public ResponseData parseObject(HttpObject object)
+    public ResponseData parseObject(HTTPObject object)
     {
         return null;
     }
@@ -68,20 +68,20 @@ public class SampleGetPhotoListProcessor extends HttpOperation implements HttpPr
      */
     @SuppressWarnings("unchecked")
     @Override
-    public List<SimpleData> parseList(HttpObject object)
+    public List<SimpleData> parseList(HTTPObject object)
     {
         SortedMap<Integer, SimpleData> map = new TreeMap<>();
         SimpleData data = new SimpleData();
         object = request(object);
-        checkHttpStatus(object, data);
-        if (data.result == RESPONSE_RESULT.failed)
+        checkHTTPStatus(object, data);
+        if (data.result == ResponseResult.failed)
         {
             return new LinkedList<>(map.values());
         }
         try
         {
             JSONObject resObj = new JSONObject(object.getResponseString());
-            JSONObject resData = resObj.getJSONObject(STANDARD.responseData.name());
+            JSONObject resData = resObj.getJSONObject(Standard.responseData.name());
             Iterator<String> resIter = resData.keys();
             while (resIter.hasNext())
             {
@@ -113,13 +113,13 @@ public class SampleGetPhotoListProcessor extends HttpOperation implements HttpPr
     public SimpleData parseObject(JSONObject object) throws JSONException
     {
         SimpleData data = new SimpleData();
-        data.img = get(LIST_SAMPLE_RESPONSE.imagePath.name(), object);
-        data.east = get(LIST_SAMPLE_RESPONSE.areaEasting.name(), object);
-        data.north = get(LIST_SAMPLE_RESPONSE.areaNorthing.name(), object);
-        data.conNo = get(LIST_SAMPLE_RESPONSE.contextNumber.name(), object);
-        data.samNo = get(LIST_SAMPLE_RESPONSE.sampleNumber.name(), object);
-        data.photoWidth = get(LIST_SAMPLE_RESPONSE.imageWidth.name(), object);
-        data.photoHeight = get(LIST_SAMPLE_RESPONSE.imageHeight.name(), object);
+        data.img = get(ListSampleResponse.imagePath.name(), object);
+        data.east = get(ListSampleResponse.areaEasting.name(), object);
+        data.north = get(ListSampleResponse.areaNorthing.name(), object);
+        data.conNo = get(ListSampleResponse.contextNumber.name(), object);
+        data.samNo = get(ListSampleResponse.sampleNumber.name(), object);
+        data.photoWidth = get(ListSampleResponse.imageWidth.name(), object);
+        data.photoHeight = get(ListSampleResponse.imageHeight.name(), object);
         return data;
     }
 }

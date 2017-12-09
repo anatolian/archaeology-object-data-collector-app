@@ -101,8 +101,7 @@ public class InitialActivity extends AppCompatActivity
      */
     public String getWebServerFromLayout()
     {
-        EditText tmpET = (EditText) findViewById(R.id.urlText);
-        return tmpET.getText().toString().trim();
+        return ((EditText) findViewById(R.id.urlText)).getText().toString().trim();
     }
 
     /**
@@ -151,7 +150,8 @@ public class InitialActivity extends AppCompatActivity
                 try
                 {
                     Log.v(LOG_TAG, "here is the response " + response);
-                    response = response.substring(response.indexOf("{"), response.indexOf("}") + 1);
+                    response = response.substring(response.indexOf("{"), response.indexOf("}") +
+                            1);
                     response = response.replace("\\", "");
                     Log.v("READ_DATABASE", response);
                     Log.v(LOG_TAG, "response removed slash and double quotes " + response);

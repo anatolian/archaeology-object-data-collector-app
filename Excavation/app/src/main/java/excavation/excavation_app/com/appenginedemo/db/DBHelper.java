@@ -15,7 +15,8 @@ public class DBHelper extends SQLiteOpenHelper
     private final static int DB_VERSION = 3;
     private static final String TABLE_SERVER_DETAIL = "user_detail";
     private static final String IP_ADDRESS = "ip_address";
-    private static final String DATABASE_SERVER = "create table " + TABLE_SERVER_DETAIL + "(" + IP_ADDRESS + " text);";
+    private static final String DATABASE_SERVER = "create table " + TABLE_SERVER_DETAIL + "(" +
+            IP_ADDRESS + " text);";
     private static final String TABLE_IMAGE_PROPERTY = "image_property";
     // IMAGE_PROPERTY TABLE COLUMNS
     private static final String CONTEXT_SUBPATH_3D = "context_subpath_3d";
@@ -28,11 +29,12 @@ public class DBHelper extends SQLiteOpenHelper
     private static final String SAMPLE_LABEL_PLACEMENT = "sample_label_placement";
     private static final String SAMPLE_DIVIDER = "sample_label_sample_divider";
     private static final String SAMPLE_SUBPATH = "sample_subpath";
-    private static final String CREATE_TABLE_IMAGE_PROPERTY = "create table " + TABLE_IMAGE_PROPERTY
-            + "(" + CONTEXT_SUBPATH_3D + " text," + BASE_IMAGE_PATH + " text," + CONTEXT_SUBPATH +" text,"
-            + AREA_DIVIDER + " text," + CONTEXT_DIVIDER + " text," + SAMPLE_LABEL_FONT + " text,"
-            + SAMPLE_LABEL_FONT_SIZE + " text," + SAMPLE_LABEL_PLACEMENT + " text,"
-            + SAMPLE_DIVIDER + " text," + SAMPLE_SUBPATH + " text);";
+    private static final String CREATE_TABLE_IMAGE_PROPERTY = "create table " +
+            TABLE_IMAGE_PROPERTY + "(" + CONTEXT_SUBPATH_3D + " text," + BASE_IMAGE_PATH +
+            " text," + CONTEXT_SUBPATH +" text," + AREA_DIVIDER + " text," + CONTEXT_DIVIDER +
+            " text," + SAMPLE_LABEL_FONT + " text," + SAMPLE_LABEL_FONT_SIZE + " text," +
+            SAMPLE_LABEL_PLACEMENT + " text," + SAMPLE_DIVIDER + " text," + SAMPLE_SUBPATH +
+            " text);";
 
     /**
      * Constructor
@@ -94,11 +96,11 @@ public class DBHelper extends SQLiteOpenHelper
      * Get server IP address
      * @return Returns the server IP address
      */
-    public String getIpAddress()
+    public String getIPAddress()
     {
         String d = "";
-        Cursor cursor = database.query(TABLE_SERVER_DETAIL, new String[] {IP_ADDRESS}, null,
-                null, null, null, null);
+        Cursor cursor = database.query(TABLE_SERVER_DETAIL, new String[] {IP_ADDRESS},
+                null, null, null, null, null);
         cursor.moveToFirst();
         if (!cursor.isAfterLast())
         {
@@ -120,16 +122,16 @@ public class DBHelper extends SQLiteOpenHelper
         try
         {
             ContentValues values = new ContentValues();
-            values.put(CONTEXT_SUBPATH_3D, data.contextSubpath3d);
+            values.put(CONTEXT_SUBPATH_3D, data.contextSubPath3D);
             values.put(BASE_IMAGE_PATH, data.baseImagePath);
-            values.put(CONTEXT_SUBPATH, data.contextSubpath);
+            values.put(CONTEXT_SUBPATH, data.contextSubPath);
             values.put(AREA_DIVIDER, data.sampleLabelAreaDivider);
             values.put(CONTEXT_DIVIDER, data.sampleLabelContextDivider);
             values.put(SAMPLE_LABEL_FONT, data.sampleLabelFont);
             values.put(SAMPLE_LABEL_FONT_SIZE, data.sampleLabelFontSize);
             values.put(SAMPLE_LABEL_PLACEMENT, data.sampleLabelPlacement);
             values.put(SAMPLE_DIVIDER, data.sampleLabelSampleDivider);
-            values.put(SAMPLE_SUBPATH, data.sampleSubpath);
+            values.put(SAMPLE_SUBPATH, data.sampleSubPath);
             database.insert(TABLE_IMAGE_PROPERTY, null, values);
             return true;
         }
@@ -157,34 +159,34 @@ public class DBHelper extends SQLiteOpenHelper
 
     /**
      * Change image property
-     * @param threedSubpath - path to property
+     * @param threeDSubPath - path to property
      * @param baseImagePath - image location
-     * @param contextSubpath - context location
+     * @param contextSubPath - context location
      * @param areaDivider - area divider
      * @param contextDivider - context divider
      * @param fontSize - font size
      * @param item - item to change
      * @param sampleDivider - divider
-     * @param sampleSubpath - subpath
+     * @param sampleSubPath - subpath
      * @return Returns whether the update succeeded
      */
-    public boolean updateImageProperty(String threedSubpath, String baseImagePath,
-                                       String contextSubpath, String areaDivider,
+    public boolean updateImageProperty(String threeDSubPath, String baseImagePath,
+                                       String contextSubPath, String areaDivider,
                                        String contextDivider, String fontSize, String item,
-                                       String sampleDivider, String sampleSubpath)
+                                       String sampleDivider, String sampleSubPath)
     {
         try
         {
             ContentValues values = new ContentValues();
-            values.put(CONTEXT_SUBPATH_3D, threedSubpath);
+            values.put(CONTEXT_SUBPATH_3D, threeDSubPath);
             values.put(BASE_IMAGE_PATH, baseImagePath);
-            values.put(CONTEXT_SUBPATH, contextSubpath);
+            values.put(CONTEXT_SUBPATH, contextSubPath);
             values.put(AREA_DIVIDER, areaDivider);
             values.put(CONTEXT_DIVIDER, contextDivider);
             values.put(SAMPLE_LABEL_FONT_SIZE, fontSize);
             values.put(SAMPLE_LABEL_PLACEMENT, item);
             values.put(SAMPLE_DIVIDER, sampleDivider);
-            values.put(SAMPLE_SUBPATH,  sampleSubpath);
+            values.put(SAMPLE_SUBPATH,  sampleSubPath);
             database.update(TABLE_IMAGE_PROPERTY, values, null, null);
             return true;
         }
@@ -201,22 +203,22 @@ public class DBHelper extends SQLiteOpenHelper
      */
     public ImagePropertyBean getImageProperty()
     {
-        ImagePropertyBean data=new ImagePropertyBean();
+        ImagePropertyBean data = new ImagePropertyBean();
         String sql = " select * from " + TABLE_IMAGE_PROPERTY;
-        Cursor cur = database.rawQuery(sql,null);
+        Cursor cur = database.rawQuery(sql, null);
         cur.moveToFirst();
         if (!cur.isAfterLast())
         {
-            data.contextSubpath3d = cur.getString(0);
+            data.contextSubPath3D = cur.getString(0);
             data.baseImagePath = cur.getString(1);
-            data.contextSubpath = cur.getString(2);
+            data.contextSubPath = cur.getString(2);
             data.sampleLabelAreaDivider = cur.getString(3);
             data.sampleLabelContextDivider = cur.getString(4);
             data.sampleLabelFont = cur.getString(5);
             data.sampleLabelFontSize = cur.getString(6);
             data.sampleLabelPlacement = cur.getString(7);
             data.sampleLabelSampleDivider = cur.getString(8);
-            data.sampleSubpath = cur.getString(9);
+            data.sampleSubPath = cur.getString(9);
             cur.close();
             return data;
         }

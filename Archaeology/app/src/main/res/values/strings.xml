@@ -64,7 +64,7 @@
     <string name="next">Next</string>
     <string name="previous">Previous</string>
     <string name="sample"> Sample: </string>
-    <string name="new_weight">New Weight (Editable):</string>
+    <string name="new_weight">New Weight:</string>
     <string name="copy_weight">Copy Weight Below</string>
     <string name="save_weight">Save Weight</string>
     <string name="weight">Weight on Scale:</string>
@@ -154,4 +154,6 @@
     <string name="update_bluetooth">Record from Scale</string>
     <string name="weight_int_frmt">Weight" %dg</string>
     <string name="camera_live_view">Camera Live View</string>
+    <string name="lookup_preview">Camera Preview for Auto Lookup</string>
+    <string name = "artifact_image">Picture of the archived artifact</string>
 </resources>

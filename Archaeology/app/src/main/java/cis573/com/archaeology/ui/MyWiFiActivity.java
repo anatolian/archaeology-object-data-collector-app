@@ -69,7 +69,10 @@ public class MyWiFiActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_wi_fi);
-        Toast.makeText(this, "Application started", Toast.LENGTH_SHORT).show();
+        if (StateStatic.cameraIPAddress == null || StateStatic.cameraIPAddress.equals(""))
+        {
+            Toast.makeText(this, "Not Connected to Camera", Toast.LENGTH_SHORT).show();
+        }
         queue = Volley.newRequestQueue(this);
         requestID = 55;
         // setting up intent filter
@@ -260,53 +263,15 @@ public class MyWiFiActivity extends AppCompatActivity
     }
 
     /**
-     * use url for sony camera and get list of APIs for camera
-     * @param view - view for commands
-     */
-    public void getAPICommands(View view)
-    {
-        String url = buildAPIURLFromIP(cameraIPAddress);
-        try
-        {
-            VolleyWrapper.makeVolleySonyAPIGetAPICommands(url, queue, requestID++,
-                    new JSONObjectResponseWrapper(this) {
-                /**
-                 * Response received
-                 * @param response - camera response
-                 */
-                @Override
-                public void responseMethod(JSONObject response)
-                {
-                    Log.v(LOG_TAG_WIFI_DIRECT, "Available API Commands: \n" + response);
-                }
-
-                /**
-                 * Connection failed
-                 * @param error - failure
-                 */
-                @Override
-                public void errorMethod(VolleyError error)
-                {
-                    error.printStackTrace();
-                }
-            });
-        }
-        catch (JSONException e)
-        {
-            e.printStackTrace();
-        }
-    }
-
-    /**
      * Take a picture
      * @param view - camera view
      */
     public void takePhoto(View view)
     {
-        String url = buildAPIURLFromIP(cameraIPAddress);
+        String URL = buildAPIURLFromIP(cameraIPAddress);
         try
         {
-            VolleyWrapper.makeVolleySonyAPITakePhotoRequest(url, queue, requestID++,
+            VolleyWrapper.makeVolleySonyAPITakePhotoRequest(URL, queue, requestID++,
                     new JSONObjectResponseWrapper(this) {
                 /**
                  * Response received
@@ -319,11 +284,11 @@ public class MyWiFiActivity extends AppCompatActivity
                     Log.v(LOG_TAG_WIFI_DIRECT, response.toString());
                     try
                     {
-                        // creating image url from response
-                        String imageUrl = response.getJSONArray("result").getString(0);
-                        imageUrl = imageUrl.substring(2, imageUrl.length() - 2);
-                        imageUrl = imageUrl.replace("\\", "");
-                        Log.v(LOG_TAG_WIFI_DIRECT, "imageUrl: " + imageUrl);
+                        // creating image URL from response
+                        String imageURL = response.getJSONArray("result").getString(0);
+                        imageURL = imageURL.substring(2, imageURL.length() - 2);
+                        imageURL = imageURL.replace("\\", "");
+                        Log.v(LOG_TAG_WIFI_DIRECT, "imageURL: " + imageURL);
                         Callback onPhotoFetchedCallback = new Callback() {
                             /**
                              * Photo successfully fetched
@@ -350,7 +315,7 @@ public class MyWiFiActivity extends AppCompatActivity
                                         findViewById(R.id.sonyCameraPhoto));
                             }
                         };
-                        Picasso.with(currentContext).load(imageUrl)
+                        Picasso.with(currentContext).load(imageURL)
                                 .placeholder(android.R.drawable.ic_delete)
                                 .error(android.R.drawable.ic_dialog_alert)
                                 .into((ImageView) findViewById(R.id.sonyCameraPhoto),
@@ -370,6 +335,8 @@ public class MyWiFiActivity extends AppCompatActivity
                 public void errorMethod(VolleyError error)
                 {
                     error.printStackTrace();
+                    Toast.makeText(getApplicationContext(), "Not Connected to Camera",
+                            Toast.LENGTH_SHORT).show();
                     Log.v(LOG_TAG_WIFI_DIRECT, error.toString());
                 }
             });
@@ -395,10 +362,10 @@ public class MyWiFiActivity extends AppCompatActivity
      */
     public void startLiveView(final View view)
     {
-        final String url = buildAPIURLFromIP(cameraIPAddress);
+        final String URL = buildAPIURLFromIP(cameraIPAddress);
         try
         {
-            VolleyWrapper.makeVolleySonyAPIStartLiveViewRequest(url, queue, requestID++,
+            VolleyWrapper.makeVolleySonyAPIStartLiveViewRequest(URL, queue, requestID++,
                     new JSONObjectResponseWrapper(this) {
                 /**
                  * Response received
@@ -453,6 +420,7 @@ public class MyWiFiActivity extends AppCompatActivity
         catch (JSONException e)
         {
             e.printStackTrace();
+            Toast.makeText(this, "Not Connected to Camera", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -462,10 +430,10 @@ public class MyWiFiActivity extends AppCompatActivity
      */
     public void stopLiveView(View view)
     {
-        final String url = buildAPIURLFromIP(cameraIPAddress);
+        final String URL = buildAPIURLFromIP(cameraIPAddress);
         try
         {
-            VolleyWrapper.makeVolleySonyAPIStopLiveViewRequest(url, queue, requestID++,
+            VolleyWrapper.makeVolleySonyAPIStopLiveViewRequest(URL, queue, requestID++,
                     new JSONObjectResponseWrapper(this) {
                 /**
                  * Response received
@@ -491,6 +459,7 @@ public class MyWiFiActivity extends AppCompatActivity
         catch (JSONException e)
         {
             e.printStackTrace();
+            Toast.makeText(this, "Not Connected to Camera", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -500,10 +469,10 @@ public class MyWiFiActivity extends AppCompatActivity
      */
     public void zoomIn(View view)
     {
-        final String url = buildAPIURLFromIP(cameraIPAddress);
+        final String URL = buildAPIURLFromIP(cameraIPAddress);
         try
         {
-            VolleyWrapper.makeVolleySonyAPIActZoomRequest("in", queue, url, requestID++,
+            VolleyWrapper.makeVolleySonyAPIActZoomRequest("in", queue, URL, requestID++,
                     new JSONObjectResponseWrapper(this) {
                 /**
                  * Response received
@@ -529,56 +498,8 @@ public class MyWiFiActivity extends AppCompatActivity
         catch (JSONException e)
         {
             e.printStackTrace();
+            Toast.makeText(this, "Not Connected to Camera", Toast.LENGTH_SHORT).show();
         }
-    }
-
-    /**
-     * Allows you to call a specific API from the camera
-     * @param view - camera view
-     */
-    public void callSpecificAPIFunction(View view)
-    {
-        final String url = buildAPIURLFromIP(cameraIPAddress);
-        final String functionName = getCustomFunctionNameFromLayout();
-        try
-        {
-            VolleyWrapper.makeVolleySonyAPICustomFunctionCall(functionName, url, queue, requestID++,
-                    new JSONObjectResponseWrapper(this) {
-                /**
-                 * Camera response
-                 * @param response - response received
-                 */
-                @Override
-                public void responseMethod(JSONObject response)
-                {
-                    Log.v(LOG_TAG_WIFI_DIRECT, "Custom API Function Call Response: "
-                            + response);
-                }
-
-                /**
-                 * Connection failed
-                 * @param error - failure
-                 */
-                @Override
-                public void errorMethod(VolleyError error)
-                {
-                    error.printStackTrace();
-                }
-            });
-        }
-        catch (JSONException e)
-        {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Returns a custom api for the sony camera
-     * @return Returns function name
-     */
-    public String getCustomFunctionNameFromLayout()
-    {
-        return ((EditText) findViewById(R.id.apiFunctionName)).getText().toString().trim();
     }
 
     /**

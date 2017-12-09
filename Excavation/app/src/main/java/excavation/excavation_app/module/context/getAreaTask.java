@@ -68,7 +68,7 @@ public class GetAreaTask extends BaseTask
         progressBar2.setVisibility(View.VISIBLE);
         DBHelper db = DBHelper.getInstance(con);
         db.open();
-        ipAddress = db.getIpAddress();
+        ipAddress = db.getIPAddress();
         db.close();
     }
 
@@ -115,7 +115,7 @@ public class GetAreaTask extends BaseTask
             }
             else if (count == 3)
             {
-                spnNorth.setSelection(AppConstants.activity3dSpnNorth);
+                spnNorth.setSelection(AppConstants.activity3DSpnNorth);
             }
         }
         else
@@ -136,7 +136,7 @@ public class GetAreaTask extends BaseTask
             }
             else if (count == 3)
             {
-                spnEast.setSelection(AppConstants.activity3dSpnEast);
+                spnEast.setSelection(AppConstants.activity3DSpnEast);
             }
         }
         if (north != null && north.length() > 0)

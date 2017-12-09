@@ -36,10 +36,11 @@ public class StateStatic
     public static final String CONTEXT_NUMBER = "context_number";
     public static final String SAMPLE_NUMBER = "sample_number";
     public static final String ALL_SAMPLE_NUMBER = "all_available_sample_number";
+    public static String deviceName = null;
     // offset values that help you to locate the correct fields in the data tables to store
     // information. the global webserver is being set to a default value. need to make sure that
     // app is able to find ip address on its own
-    // DEFAULTWEBSERVERURL; connection to current IP camera address
+    // DEFAULT_WEB_SERVER_URL; connection to current IP camera address
     private static String globalWebServerURL = DEFAULT_WEB_SERVER_URL;
     private static String globalCameraIP = DEFAULT_CAMERA_IP;
     // global current object most likely is used to track the current object from the database that
@@ -66,7 +67,7 @@ public class StateStatic
      */
     public static void setGlobalWebServerURL(String globalWebServerURL)
     {
-        Log.v(LOG_TAG, "globalWebServerUrl changed into " + globalWebServerURL);
+        Log.v(LOG_TAG, "globalWebServerURL changed into " + globalWebServerURL);
         StateStatic.globalWebServerURL = globalWebServerURL;
     }
 

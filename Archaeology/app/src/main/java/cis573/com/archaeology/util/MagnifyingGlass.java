@@ -1,3 +1,5 @@
+// Custom image view for color corection
+// @author: Kevin Trinh
 package cis573.com.archaeology.util;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -13,16 +15,13 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.ImageView;
-import android.widget.Toast;
-
 public class MagnifyingGlass extends AppCompatImageView
 {
     private PointF zoomPos;
     private boolean zooming = false;
     private Matrix matrix;
     private Paint paint;
-    protected Bitmap newPhoto;
-    protected Bitmap correctedPhoto;
+    protected Bitmap newPhoto, correctedPhoto;
     /**
      * Constructor
      * @param context - calling context
@@ -89,13 +88,13 @@ public class MagnifyingGlass extends AppCompatImageView
             case MotionEvent.ACTION_UP:
                 zooming = false;
                 this.invalidate();
-                final Bitmap touchedPhoto = newPhoto;
+                final Bitmap TOUCHED_PHOTO = newPhoto;
                 int[] rgbValues = new int[] {Color.red(pixel), Color.green(pixel),
                         Color.blue(pixel)};
                 float[] correctionMatrix = calcColorCorrectionMatrix(rgbValues,
                         maxChannelIndex(rgbValues));
                 Log.v("CORRECTING", "Correcting image...");
-                Bitmap correctedPhoto = colorCorrect(touchedPhoto.copy(Bitmap.Config.ARGB_8888,
+                Bitmap correctedPhoto = colorCorrect(TOUCHED_PHOTO.copy(Bitmap.Config.ARGB_8888,
                         true), correctionMatrix);
                 Log.v("RGB VALUES",  rgbValues[0] + ", " + rgbValues[1] + ", " +
                         rgbValues[2]);
@@ -213,7 +212,7 @@ public class MagnifyingGlass extends AppCompatImageView
         int colorValue = -1;
         for (int i = 0; i < rgbValues.length; i++)
         {
-            if(rgbValues[i] > colorValue)
+            if (rgbValues[i] > colorValue)
             {
                 index = i;
                 colorValue = rgbValues[i];

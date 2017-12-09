@@ -5,7 +5,7 @@ import excavation.excavation_app.module.common.adapter.SimpleContextSelectedAdap
 import excavation.excavation_app.module.common.adapter.SimpleStringAdapter;
 import excavation.excavation_app.module.common.bean.SimpleData;
 import excavation.excavation_app.module.common.constants.AppConstants;
-import excavation.excavation_app.module.common.http.Response.RESPONSE_RESULT;
+import excavation.excavation_app.module.common.http.Response.ResponseResult;
 import excavation.excavation_app.module.common.http.factory.SimpleListFactory;
 import excavation.excavation_app.module.common.http.factory.SimpleObjectFactory;
 import excavation.excavation_app.module.common.task.BaseTask;
@@ -74,7 +74,7 @@ public class DeleteTask extends BaseTask
     {
         DBHelper db = DBHelper.getInstance(con);
         db.open();
-        ipAddress = db.getIpAddress();
+        ipAddress = db.getIPAddress();
         db.close();
     }
 
@@ -102,7 +102,7 @@ public class DeleteTask extends BaseTask
     {
         super.onPostExecute(result);
         bar.setVisibility(View.GONE);
-        if(list.result == RESPONSE_RESULT.success)
+        if(list.result == ResponseResult.success)
         {
             AppConstants.tempContextNo.remove(contextNum);
             if (AppConstants.tempContextNo != null && AppConstants.tempContextNo.size() > 0)

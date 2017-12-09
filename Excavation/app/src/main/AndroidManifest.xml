@@ -42,7 +42,7 @@
             android:configChanges="orientation|keyboard|keyboardHidden|screenLayout"
             android:label="ActivityCamera1" />
         <activity
-            android:name="excavation.excavation_app.com.appenginedemo.Activity3d"
+            android:name="excavation.excavation_app.com.appenginedemo.Activity3D"
             android:label="Activity_3d" />
         <activity
             android:name="excavation.excavation_app.com.appenginedemo.MultiPhotoSelectActivity"

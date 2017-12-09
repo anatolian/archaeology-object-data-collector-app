@@ -10,12 +10,13 @@
         android:orientation = "vertical"
         android:weightSum = "1">
         <ImageView
-            android:id = "@+id/cemera_image"
+            android:id = "@+id/camera_image"
             android:layout_width = "match_parent"
             android:layout_height = "0dp"
             android:layout_gravity = "center"
             android:layout_weight = "0.1"
             android:background = "@color/Black"
-            android:src = "@drawable/no_img_prv2"/>
+            android:src = "@drawable/no_img_prv2"
+            android:contentDescription="@string/camera"/>
     </LinearLayout>
 </RelativeLayout>

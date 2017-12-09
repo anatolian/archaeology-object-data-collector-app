@@ -20,13 +20,12 @@ public class SplashMainScreen extends Activity
         setContentView(R.layout.splas);
         DBHelper db = DBHelper.getInstance(SplashMainScreen.this);
         db.open();
-        ipAddress = db.getIpAddress();
+        ipAddress = db.getIPAddress();
         db.deleteImageProperty();
         db.close();
         if (ipAddress != null && ipAddress.length() > 0)
         {
-            Intent i = new Intent(SplashMainScreen.this, MainActivity.class);
-            startActivity(i);
+            startActivity(new Intent(SplashMainScreen.this, MainActivity.class));
         }
         else
         {

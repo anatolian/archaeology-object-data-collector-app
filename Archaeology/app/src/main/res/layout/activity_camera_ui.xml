@@ -41,7 +41,8 @@
             android:layout_height = "wrap_content"
             android:backgroundTint = "@android:color/transparent"
             android:id = "@+id/imageView12"
-            android:layout_weight = "1"/>
+            android:layout_weight = "1"
+            android:contentDescription="@string/lookup_preview"/>
         <android.support.design.widget.FloatingActionButton
             app:srcCompat = "@drawable/ocr"
             app:fabSize = "normal"
@@ -56,7 +57,8 @@
             android:layout_height = "wrap_content"
             android:backgroundTint = "@android:color/transparent"
             android:id = "@+id/imageView13"
-            android:layout_weight = "0.2"/>
+            android:layout_weight = "0.2"
+            android:contentDescription="@string/qr_code"/>
         <android.support.design.widget.FloatingActionButton
             app:srcCompat = "@drawable/pen"
             app:fabSize = "normal"
@@ -71,7 +73,8 @@
             android:layout_height = "wrap_content"
             android:backgroundTint = "@android:color/transparent"
             android:id = "@+id/imageView14"
-            android:layout_weight = "0.2"/>
+            android:layout_weight = "0.2"
+            android:contentDescription="@string/manual_input"/>
         <android.support.design.widget.FloatingActionButton
             android:layout_width = "wrap_content"
             android:layout_height = "wrap_content"
@@ -88,6 +91,7 @@
             android:layout_height = "wrap_content"
             android:src = "@android:color/transparent"
             android:id = "@+id/imageView15"
-            android:layout_weight = "1"/>
+            android:layout_weight = "1"
+            android:contentDescription="@string/manual_lookup"/>
     </LinearLayout>
 </FrameLayout>

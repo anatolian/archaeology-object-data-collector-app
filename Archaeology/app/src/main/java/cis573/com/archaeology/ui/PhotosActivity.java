@@ -1,3 +1,5 @@
+// Apply color correction
+// @author: Kevin Trinh
 package cis573.com.archaeology.ui;
 import android.content.Intent;
 import android.os.Bundle;
@@ -19,12 +21,18 @@ import siclo.com.ezphotopicker.api.EZPhotoPick;
 import siclo.com.ezphotopicker.api.EZPhotoPickStorage;
 import siclo.com.ezphotopicker.api.models.EZPhotoPickConfig;
 import siclo.com.ezphotopicker.api.models.PhotoSource;
-public class PhotosActivity extends AppCompatActivity {
+public class PhotosActivity extends AppCompatActivity
+{
     LinearLayout llPhotoContainer;
     static Bitmap correctedPhoto;
     int northing, easting, context, sample, number;
+    /**
+     * Launch activity
+     * @param savedInstanceState - state from memory
+     */
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photos);
         Bundle b = getIntent().getExtras();
@@ -35,8 +43,13 @@ public class PhotosActivity extends AppCompatActivity {
         number = Integer.parseInt(b.getString("number"));
         llPhotoContainer = (LinearLayout) findViewById(R.id.photo_container);
         findViewById(R.id.bt_gallery).setOnClickListener(new View.OnClickListener() {
+            /**
+             * User clicked gallery button
+             * @param v - button
+             */
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 EZPhotoPickConfig config = new EZPhotoPickConfig();
                 config.photoSource = PhotoSource.GALLERY;
                 config.isAllowMultipleSelect = false;
@@ -80,46 +93,68 @@ public class PhotosActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Image activity finished
+     * @param requestCode - result request code
+     * @param resultCode - result code
+     * @param data - result
+     */
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
         super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode != RESULT_OK) {
+        if (resultCode != RESULT_OK)
+        {
             return;
         }
-
-        if (requestCode == EZPhotoPick.PHOTO_PICK_GALLERY_REQUEST_CODE) {
-
+        if (requestCode == EZPhotoPick.PHOTO_PICK_GALLERY_REQUEST_CODE)
+        {
             Log.v("GOOD REQUEST CODE", "Good request code");
             Bitmap photo = null;
-            try {
+            try
+            {
                 photo = new EZPhotoPickStorage(this).loadLatestStoredPhotoBitmap();
                 Log.v("GRABBING PHOTO", "Grabbing photo...");
-            } catch (IOException e) {
+            }
+            catch (IOException e)
+            {
                 e.printStackTrace();
             }
-
-            if(photo != null) {
+            if (photo != null)
+            {
                 Log.v("FILTERING", "Filtering...");
                 filter(photo);
             }
-        } else {
+        }
+        else
+        {
             Log.v("BAD REQUEST CODE", "Bad request code");
         }
     }
 
-
+    /**
+     * Apply color correction
+     * @param newPhoto - corrected image
+     */
     public void filter(final Bitmap newPhoto)
     {
         Log.v("DRAWING", "Drawing...");
-        final MagnifyingGlass iv = new MagnifyingGlass(this);
-        iv.init(newPhoto);
-        iv.setImageBitmap(newPhoto);
-        iv.setScaleType(ImageView.ScaleType.FIT_CENTER);
-        llPhotoContainer.addView(iv);
-        iv.setOnTouchListener(new ImageView.OnTouchListener() {
+        final MagnifyingGlass IV = new MagnifyingGlass(this);
+        IV.init(newPhoto);
+        IV.setImageBitmap(newPhoto);
+        IV.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        llPhotoContainer.addView(IV);
+        IV.setOnTouchListener(new ImageView.OnTouchListener() {
+            /**
+             * User touched image
+             * @param v - image
+             * @param event - touch event
+             * @return Returns true
+             */
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                iv.onTouchEvent(event);
+            public boolean onTouch(View v, MotionEvent event)
+            {
+                IV.onTouchEvent(event);
                 correctedPhoto = newPhoto;
                 return true;
             }

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import excavation.excavation_app.com.appenginedemo.ActivitySample;
 import excavation.excavation_app.com.appenginedemo.db.DBHelper;
 import excavation.excavation_app.module.common.bean.SimpleData;
-import excavation.excavation_app.module.common.http.Response.RESPONSE_RESULT;
+import excavation.excavation_app.module.common.http.Response.ResponseResult;
 import excavation.excavation_app.module.common.http.factory.SimpleObjectFactory;
 import excavation.excavation_app.module.common.task.BaseTask;
 import excavation.excavation_app.module.image.property.ImagePropertyBean;
@@ -77,15 +77,15 @@ public class AddSamplePhotoTask extends BaseTask
         SimpleObjectFactory factory = SimpleObjectFactory.getInstance();
         DBHelper db = DBHelper.getInstance(context);
         db.open();
-        String ipAddress = db.getIpAddress();
+        String ipAddress = db.getIPAddress();
         ImagePropertyBean data1 = db.getImageProperty();
         db.close();
         int j = selectedItems.size() - 1;
         data = factory.AddSamplePhotosData(east, north, conNo, samNo, tp, selectedItems.get(j),
-                ipAddress, data1.contextSubpath3d, data1.baseImagePath, data1.contextSubpath,
+                ipAddress, data1.contextSubPath3D, data1.baseImagePath, data1.contextSubPath,
                 data1.sampleLabelAreaDivider, data1.sampleLabelContextDivider,
                 data1.sampleLabelFont, data1.sampleLabelFontSize, data1.sampleLabelPlacement,
-                data1.sampleLabelSampleDivider, data1.sampleSubpath);
+                data1.sampleLabelSampleDivider, data1.sampleSubPath);
         return null;
     }
 
@@ -101,7 +101,7 @@ public class AddSamplePhotoTask extends BaseTask
         {
             progressDialog.dismiss();
         }
-        if (data.result == RESPONSE_RESULT.success)
+        if (data.result == ResponseResult.success)
         {
             context.finish();
             Toast.makeText(context, "Uploaded Successfully", Toast.LENGTH_SHORT).show();

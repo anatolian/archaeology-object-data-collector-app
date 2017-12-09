@@ -24,7 +24,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.appenginedemo.R;
-public class Activity3d extends ActivityBase
+public class Activity3D extends ActivityBase
 {
     LayoutInflater inflaterMain;
     RelativeLayout screenMain;
@@ -48,8 +48,8 @@ public class Activity3d extends ActivityBase
         header.setText(getString(R.string.threed_photo_spaceless));
         header.setBackgroundColor(getResources().getColor(R.color.Azure));
         AppConstants.up = 1;
-        TextView3d.setBackgroundColor(getResources().getColor(R.color.butterflyblue));
-        TextView3d.setEnabled(false);
+        TextView3D.setBackgroundColor(getResources().getColor(R.color.butterflyblue));
+        TextView3D.setEnabled(false);
         TextViewContext.setBackgroundColor(getResources().getColor(R.color.black));
         progressBar2 = (ProgressBar) findViewById(R.id.progressBar2);
         TextViewSample.setBackgroundColor(getResources().getColor(R.color.black));
@@ -69,7 +69,8 @@ public class Activity3d extends ActivityBase
             north = getIntent().getExtras().getString("north");
             east = getIntent().getExtras().getString("east");
         }
-        if (!(spnNorth != null && spnNorth.length() > 0 || spnEast != null && spnEast.length() > 0))
+        if (!(spnNorth != null && spnNorth.length() > 0 || spnEast != null
+                && spnEast.length() > 0))
         {
             spnNorth = north;
             spnEast = east;
@@ -77,7 +78,8 @@ public class Activity3d extends ActivityBase
         if (AppConstants.selectedImg != null && AppConstants.selectedImg.size() > 0)
         {
             AppConstants.up = 0;
-            SimpleImageAdapter img = new SimpleImageAdapter(Activity3d.this, AppConstants.selectedImg);
+            SimpleImageAdapter img = new SimpleImageAdapter(Activity3D.this,
+                    AppConstants.selectedImg);
             GridViewList.setAdapter(img);
         }
         textViewTakePhoto.setOnClickListener(new OnClickListener() {
@@ -88,9 +90,10 @@ public class Activity3d extends ActivityBase
             @Override
             public void onClick(View v)
             {
-                final Dialog d = new Dialog(Activity3d.this);
+                final Dialog d = new Dialog(Activity3D.this);
                 d.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                d.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+                d.getWindow().setBackgroundDrawable(
+                        new ColorDrawable(android.graphics.Color.TRANSPARENT));
                 d.setContentView(R.layout.dialog_profile_picture);
                 final Button buttonFromLibrary = (Button) d.findViewById(R.id.buttonFromLibrary);
                 final Button buttonTakePhoto = (Button) d.findViewById(R.id.buttonTakePhoto);
@@ -103,7 +106,7 @@ public class Activity3d extends ActivityBase
                     @Override
                     public void onClick(View v)
                     {
-                        Intent i = new Intent(Activity3d.this, ActivityCamera1.class);
+                        Intent i = new Intent(Activity3D.this, ActivityCamera1.class);
                         i.putExtra("north", spnNorth);
                         i.putExtra("east", spnEast);
                         i.putExtra("imagePath", imagePath);
@@ -119,7 +122,7 @@ public class Activity3d extends ActivityBase
                     @Override
                     public void onClick(View v)
                     {
-                        Intent i = new Intent(Activity3d.this,
+                        Intent i = new Intent(Activity3D.this,
                                 MultiPhotoSelectActivity.class);
                         i.putExtra("north", spnNorth);
                         i.putExtra("east", spnEast);
@@ -150,15 +153,16 @@ public class Activity3d extends ActivityBase
              * @param arg3 - item id
              */
             @Override
-            public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+            public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3)
+            {
                 final SimpleData s = (SimpleData) arg0.getItemAtPosition(arg2);
-                AppConstants.activity3dSpnEast = arg2;
+                AppConstants.activity3DSpnEast = arg2;
                 if (arg2 > 0)
                 {
                     spnEast = s.id;
                     areaNorthing.setEnabled(true);
                 }
-                task = new GetAreaTask(Activity3d.this, 3, areaNorthing,
+                task = new GetAreaTask(Activity3D.this, 3, areaNorthing,
                         areaEasting,"n", spnNorth, spnEast, "", progressBar2);
                 task.execute();
             }
@@ -183,7 +187,7 @@ public class Activity3d extends ActivityBase
             @Override
             public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3)
             {
-                AppConstants.activity3dSpnNorth = arg2;
+                AppConstants.activity3DSpnNorth = arg2;
                 if (arg2 > 0)
                 {
                     SimpleData s = (SimpleData) arg0.getItemAtPosition(arg2);
@@ -200,7 +204,7 @@ public class Activity3d extends ActivityBase
             {
             }
         });
-        task = new GetAreaTask(Activity3d.this, 3, areaNorthing, areaEasting,
+        task = new GetAreaTask(Activity3D.this, 3, areaNorthing, areaEasting,
                 "e", "", spnEast, "", progressBar2);
         task.execute();
         textViewUploadPhoto.setOnClickListener(new OnClickListener() {
@@ -214,23 +218,23 @@ public class Activity3d extends ActivityBase
                 if (AppConstants.selectedImg != null && AppConstants.selectedImg.size() > 0)
                 {
                     if (spnEast != null && spnEast.length() > 0 && spnNorth != null
-                            && spnNorth.length() > 0 && AppConstants.activity3dSpnEast > 0
-                            && AppConstants.activity3dSpnNorth > 0)
+                            && spnNorth.length() > 0 && AppConstants.activity3DSpnEast > 0
+                            && AppConstants.activity3DSpnNorth > 0)
                     {
-                        task = new AddMultiPhotoTask(Activity3d.this, spnEast, spnNorth,
+                        task = new AddMultiPhotoTask(Activity3D.this, spnEast, spnNorth,
                                 AppConstants.selectedImg, pBar);
                         task.execute();
                     }
                     else
                     {
-                        Toast.makeText(Activity3d.this, "Please Select Area",
+                        Toast.makeText(Activity3D.this, "Please select area",
                                 Toast.LENGTH_SHORT).show();
                     }
                 }
                 else
                 {
                     AppConstants.up = 1;
-                    Toast.makeText(Activity3d.this, "Please Select Photos to upload",
+                    Toast.makeText(Activity3D.this, "Please select photos to upload",
                             Toast.LENGTH_SHORT).show();
                 }
             }

@@ -44,16 +44,16 @@ public class HistoryHelper extends SQLiteOpenHelper
     @Override
     public void onCreate(SQLiteDatabase db)
     {
-        db.execSQL("create table " + HISTORY_TABLE_NAME + " ( " + HISTORY_COLUMN_ID +
-                " integer primary key, " + HISTORY_COLUMN_SEARCH + " text, " + HISTORY_COLUMN_ITEM +
-                " text, " + HISTORY_COLUMN_URL + " text, " + HISTORY_COLUMN_DESCRIPTION +
+        db.execSQL("CREATE TABLE " + HISTORY_TABLE_NAME + " ( " + HISTORY_COLUMN_ID +
+                " integer primary key, " + HISTORY_COLUMN_SEARCH + " text, " + HISTORY_COLUMN_ITEM
+                + " text, " + HISTORY_COLUMN_URL + " text, " + HISTORY_COLUMN_DESCRIPTION +
                 " text, " + HISTORY_COLUMN_PROVENIENCE + " text, " + HISTORY_COLUMN_MATERIAL +
                 " text, " + HISTORY_COLUMN_CURATORIAL + " text )");
-        db.execSQL("create table " + FAVORITE_TABLE_NAME + " ( " + FAVORITE_COLUMN_ID +
-                " integer primary key, " + FAVORITE_COLUMN_SEARCH + " text, " +
-                FAVORITE_COLUMN_ITEM + " text, " + FAVORITE_COLUMN_URL + " text, " +
-                FAVORITE_COLUMN_DESCRIPTION + " text, " + FAVORITE_COLUMN_PROVENIENCE + " text, " +
-                FAVORITE_COLUMN_MATERIAL + " text, " + FAVORITE_COLUMN_CURATORIAL + " text )");
+        db.execSQL("CREATE TABLE " + FAVORITE_TABLE_NAME + " ( " + FAVORITE_COLUMN_ID +
+                " INTEGER PRIMARY KEY, " + FAVORITE_COLUMN_SEARCH + " TEXT, " +
+                FAVORITE_COLUMN_ITEM + " TEXT, " + FAVORITE_COLUMN_URL + " TEXT, " +
+                FAVORITE_COLUMN_DESCRIPTION + " TEXT, " + FAVORITE_COLUMN_PROVENIENCE + " TEXT, " +
+                FAVORITE_COLUMN_MATERIAL + " TEXT, " + FAVORITE_COLUMN_CURATORIAL + " TEXT )");
     }
 
     /**
@@ -73,13 +73,13 @@ public class HistoryHelper extends SQLiteOpenHelper
      * SQL INSERT
      * @param search - query
      * @param name - item name
-     * @param url - location
+     * @param URL - location
      * @param desc - description
      * @param prov - provenience
      * @param mat - material
      * @param cur - curatorial section
      */
-    public void insertSearch(String search, String name, String url, String desc, String prov,
+    public void insertSearch(String search, String name, String URL, String desc, String prov,
                              String mat, String cur)
     {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -87,7 +87,7 @@ public class HistoryHelper extends SQLiteOpenHelper
         ContentValues contentValues = new ContentValues();
         contentValues.put("search", search);
         contentValues.put("searchitem", name);
-        contentValues.put("searchurl", url);
+        contentValues.put("searchurl", URL);
         contentValues.put("searchdescription", desc);
         contentValues.put("searchprovenience", prov);
         contentValues.put("searchmaterial", mat);
@@ -97,16 +97,16 @@ public class HistoryHelper extends SQLiteOpenHelper
 
     /**
      * Add favorite
-     * @param url - location
+     * @param URL - location
      */
-    public void insertFav(String url)
+    public void insertFav(String URL)
     {
         SQLiteDatabase db = this.getWritableDatabase();
         System.out.print((int) DatabaseUtils.queryNumEntries(db, FAVORITE_TABLE_NAME));
         ContentValues contentValues = new ContentValues();
         contentValues.put("favorite", "");
         contentValues.put("favoriteitem", "");
-        contentValues.put("favoriteurl", url);
+        contentValues.put("favoriteurl", URL);
         contentValues.put("favoritedescription", "");
         contentValues.put("favoriteprovenience", "");
         contentValues.put("favoritematerial", "");
@@ -124,8 +124,8 @@ public class HistoryHelper extends SQLiteOpenHelper
         System.out.println("db");
         System.out.println((int) DatabaseUtils.queryNumEntries(db, HISTORY_TABLE_NAME));
         System.out.println("db");
-        return db.rawQuery("SELECT search,searchitem,searchurl,searchdescription" +
-                ",searchprovenience,searchmaterial,searchcuratorial_section FROM " +
+        return db.rawQuery("SELECT search, searchitem, searchurl, searchdescription," +
+                "searchprovenience, searchmaterial, searchcuratorial_section FROM " +
                 "searchhistory", null);
     }
 
@@ -139,8 +139,8 @@ public class HistoryHelper extends SQLiteOpenHelper
         System.out.println("db");
         System.out.println((int) DatabaseUtils.queryNumEntries(db, FAVORITE_TABLE_NAME));
         System.out.println("db");
-        return db.rawQuery("SELECT favorite,favoriteitem,favoriteurl,favoritedescription," +
-                "favoriteprovenience,favoritematerial,favoritecuratorial_section FROM " +
+        return db.rawQuery("SELECT favorite, favoriteitem, favoriteurl, favoritedescription," +
+                "favoriteprovenience, favoritematerial, favoritecuratorial_section FROM " +
                 "favoritehistory", null);
     }
 
@@ -160,6 +160,6 @@ public class HistoryHelper extends SQLiteOpenHelper
     public void removeBookmarkByItem(String item)
     {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.execSQL("DELETE FROM favoritehistory where favoriteurl='" + item + "'");
+        db.execSQL("DELETE FROM favoritehistory WHERE favoriteurl = '" + item + "'");
     }
 }

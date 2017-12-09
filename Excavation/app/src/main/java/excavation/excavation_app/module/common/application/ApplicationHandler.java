@@ -25,7 +25,8 @@ public class ApplicationHandler
             final int REQUIRED_SIZE = 70;
             // Find the correct scale value. It should be the power of 2.
             int scale = 1;
-            while (o.outWidth / scale / 2 >= REQUIRED_SIZE && o.outHeight / scale / 2 >= REQUIRED_SIZE)
+            while (o.outWidth / scale / 2 >= REQUIRED_SIZE &&
+                    o.outHeight / scale / 2 >= REQUIRED_SIZE)
             {
                 scale *= 2;
             }

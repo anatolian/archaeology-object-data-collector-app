@@ -1,7 +1,7 @@
 // Image property thread
 package excavation.excavation_app.module.image.property;
 import excavation.excavation_app.module.common.bean.ResponseData;
-import excavation.excavation_app.module.common.http.Response.RESPONSE_RESULT;
+import excavation.excavation_app.module.common.http.Response.ResponseResult;
 import excavation.excavation_app.module.common.http.factory.SimpleObjectFactory;
 import excavation.excavation_app.module.common.task.BaseTask;
 import android.app.ProgressDialog;
@@ -25,7 +25,7 @@ public class ImagePropertyTask extends BaseTask
         this.context = context;
         db = DBHelper.getInstance(context);
         db.open();
-        ipAddress = db.getIpAddress();
+        ipAddress = db.getIPAddress();
         data = db.getImageProperty();
         db.close();
     }
@@ -86,7 +86,7 @@ public class ImagePropertyTask extends BaseTask
         {
             pDialog.dismiss();
         }
-        if (data != null && data.result == RESPONSE_RESULT.success && !flag1)
+        if (data != null && data.result == ResponseResult.success && !flag1)
         {
             boolean flag;
             db = DBHelper.getInstance(context);

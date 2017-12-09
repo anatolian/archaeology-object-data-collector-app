@@ -12,14 +12,14 @@ import java.util.Map;
 import excavation.excavation_app.module.common.bean.ResponseData;
 import excavation.excavation_app.module.common.constants.AppConstants;
 import excavation.excavation_app.module.common.constants.MessageConstants;
-import excavation.excavation_app.module.common.http.Response.RESPONSE_RESULT;
-import excavation.excavation_app.module.common.http.bean.HttpObject;
+import excavation.excavation_app.module.common.http.Response.ResponseResult;
+import excavation.excavation_app.module.common.http.bean.HTTPObject;
 import org.apache.http.conn.ConnectTimeoutException;
 import org.json.JSONException;
 import org.json.JSONObject;
 import android.net.Uri;
 import android.util.Log;
-public abstract class HttpOperation
+public abstract class HTTPOperation
 {
     private static final String QUE = "?";
     private static final String AND = "&";
@@ -31,47 +31,47 @@ public abstract class HttpOperation
      * @param url - base URL
      * @return Returns appended URL
      */
-    protected String generateUrlWithParams(final HttpRequester info, Map<Request, String> mapValues,
-                                           String url)
+    protected String generateURLWithParams(final HTTPRequester info,
+                                           Map<Request, String> mapValues, String url)
     {
         String dhagsj = "http://" + url + "/bil/webservices/";
-        StringBuilder finalUrl = new StringBuilder(dhagsj).append(info.getFileName()).append(QUE);
+        StringBuilder finalURL = new StringBuilder(dhagsj).append(info.getFileName()).append(QUE);
         if (mapValues != null && mapValues.size() > 0)
         {
             for (Request paramName: mapValues.keySet())
             {
-                finalUrl.append(AND).append(paramName.getParameter()).append(EQ)
+                finalURL.append(AND).append(paramName.getParameter()).append(EQ)
                         .append(mapValues.get(paramName));
             }
         }
-        String newUrl = finalUrl.toString().replaceAll(" ", "%20");
-        newUrl = newUrl.replaceAll("\\r", "");
-        newUrl = newUrl.replaceAll("\\t", "");
-        newUrl = newUrl.replaceAll("\\n\\n", "%20");
-        newUrl = newUrl.replaceAll("\\n", "%20");
+        String newURL = finalURL.toString().replaceAll(" ", "%20");
+        newURL = newURL.replaceAll("\\r", "");
+        newURL = newURL.replaceAll("\\t", "");
+        newURL = newURL.replaceAll("\\n\\n", "%20");
+        newURL = newURL.replaceAll("\\n", "%20");
         final String ALLOWED_URI_CHARS = "@#&=*+-_.,:!?()/~'%";
-        String urlEncoded = Uri.encode(newUrl, ALLOWED_URI_CHARS);
+        String urlEncoded = Uri.encode(newURL, ALLOWED_URI_CHARS);
         Log.e("URL: ", urlEncoded);
         return urlEncoded;
     }
 
     /**
      * HTTP request
-     * @param httpObject - HTTP object
+     * @param HTTPObject - HTTP object
      * @return Returns the response
      */
-    protected HttpObject request(HttpObject httpObject)
+    protected HTTPObject request(HTTPObject HTTPObject)
     {
-        String newUrl = httpObject.getUrl().replaceAll(" ", "%20");
-        newUrl = newUrl.replaceAll("\\r", "");
-        newUrl = newUrl.replaceAll("\\t", "");
-        newUrl = newUrl.replaceAll("\\n\\n", "%20");
-        newUrl = newUrl.replaceAll("\\n", "%20");
+        String newURL = HTTPObject.getURL().replaceAll(" ", "%20");
+        newURL = newURL.replaceAll("\\r", "");
+        newURL = newURL.replaceAll("\\t", "");
+        newURL = newURL.replaceAll("\\n\\n", "%20");
+        newURL = newURL.replaceAll("\\n", "%20");
         URL url;
         HttpURLConnection client;
         try
         {
-            url = new URL(newUrl);
+            url = new URL(newURL);
             client = (HttpURLConnection) url.openConnection();
             client.setRequestMethod("POST");
             client.setRequestProperty("USER-AGENT", "Excavation/1.0");
@@ -83,7 +83,7 @@ public abstract class HttpOperation
             e.printStackTrace();
             return null;
         }
-        int STATUS;
+        int status;
         try
         {
             BufferedReader br = new BufferedReader(new InputStreamReader(client.getInputStream()));
@@ -98,59 +98,60 @@ public abstract class HttpOperation
             int statusCode = Integer.parseInt(tokens[0].split(" ")[1]);
             if (statusCode == 200)
             {
-                httpObject.setResponseString(resp.substring(resp.indexOf("\n") + 1));
-                STATUS = AppConstants.INT_STATUS_SUCCESS;
+                HTTPObject.setResponseString(resp.substring(resp.indexOf("\n") + 1));
+                status = AppConstants.INT_STATUS_SUCCESS;
             }
             else
             {
-                STATUS = AppConstants.INT_STATUS_FAILED_DOWNLOAD;
+                status = AppConstants.INT_STATUS_FAILED_DOWNLOAD;
             }
         }
         catch (ConnectTimeoutException e)
         {
-            STATUS = AppConstants.INT_STATUS_FAILED_TIMEOUT;
+            status = AppConstants.INT_STATUS_FAILED_TIMEOUT;
         }
         catch (IOException e)
         {
-            STATUS = AppConstants.INT_STATUS_FAILED_IO;
+            status = AppConstants.INT_STATUS_FAILED_IO;
         }
         catch (Exception e)
         {
-            STATUS = AppConstants.INT_STATUS_FAILED_IO;
+            status = AppConstants.INT_STATUS_FAILED_IO;
             e.printStackTrace();
         }
         finally
         {
             System.gc();
         }
-        httpObject.setStatus(STATUS);
-        return httpObject;
+        HTTPObject.setStatus(status);
+        return HTTPObject;
     }
 
     /**
      * HTTP request
-     * @param httpObject - HTTP object
+     * @param HTTPObject - HTTP object
      * @param b - parameter
      * @param a - value
      * @return Returns the response
      */
-    protected HttpObject request(HttpObject httpObject, String b, String a)
+    protected HTTPObject request(HTTPObject HTTPObject, String b, String a)
     {
-        String newUrl = httpObject.getUrl().replaceAll(" ", "%20");
-        newUrl = newUrl.replaceAll("\\r", "");
-        newUrl = newUrl.replaceAll("\\t", "");
-        newUrl = newUrl.replaceAll("\\n\\n", "%20");
-        newUrl = newUrl.replaceAll("\\n", "%20");
+        String newURL = HTTPObject.getURL().replaceAll(" ", "%20");
+        newURL = newURL.replaceAll("\\r", "");
+        newURL = newURL.replaceAll("\\t", "");
+        newURL = newURL.replaceAll("\\n\\n", "%20");
+        newURL = newURL.replaceAll("\\n", "%20");
         URL url;
         HttpURLConnection client;
         try
         {
-            url = new URL(newUrl);
+            url = new URL(newURL);
             client = (HttpURLConnection) url.openConnection();
             client.setRequestMethod("POST");
             client.setRequestProperty("USER-AGENT", "Excavation/1.0");
             client.setRequestProperty("ACCEPT-LANGUAGE", "en-US");
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(client.getOutputStream()));
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
+                    client.getOutputStream()));
             writer.append("GET ").append(b).append("\nGET ").append(a).append("\n");
             writer.close();
             client.setDoOutput(true);
@@ -160,7 +161,7 @@ public abstract class HttpOperation
             e.printStackTrace();
             return null;
         }
-        int STATUS;
+        int status;
         try
         {
             BufferedReader br = new BufferedReader(new InputStreamReader(client.getInputStream()));
@@ -175,58 +176,59 @@ public abstract class HttpOperation
             int statusCode = Integer.parseInt(tokens[0].split(" ")[1]);
             if (statusCode == 200)
             {
-                httpObject.setResponseString(resp.substring(resp.indexOf("\n") + 1));
-                STATUS = AppConstants.INT_STATUS_SUCCESS;
+                HTTPObject.setResponseString(resp.substring(resp.indexOf("\n") + 1));
+                status = AppConstants.INT_STATUS_SUCCESS;
             }
             else
             {
-                STATUS = AppConstants.INT_STATUS_FAILED_DOWNLOAD;
+                status = AppConstants.INT_STATUS_FAILED_DOWNLOAD;
             }
         }
         catch (ConnectTimeoutException e)
         {
-            STATUS = AppConstants.INT_STATUS_FAILED_TIMEOUT;
+            status = AppConstants.INT_STATUS_FAILED_TIMEOUT;
         }
         catch (IOException e)
         {
-            STATUS = AppConstants.INT_STATUS_FAILED_IO;
+            status = AppConstants.INT_STATUS_FAILED_IO;
         }
         catch (Exception e)
         {
-            STATUS = AppConstants.INT_STATUS_FAILED_IO;
+            status = AppConstants.INT_STATUS_FAILED_IO;
             e.printStackTrace();
         }
         finally
         {
             System.gc();
         }
-        httpObject.setStatus(STATUS);
-        return httpObject;
+        HTTPObject.setStatus(status);
+        return HTTPObject;
     }
 
     /**
      * HTTP request
-     * @param httpObject - HTTP object
+     * @param HTTPObject - HTTP object
      * @param imageFile - image
      * @return Returns the response
      */
-    protected HttpObject request(HttpObject httpObject, ArrayList<String> imageFile)
+    protected HTTPObject request(HTTPObject HTTPObject, ArrayList<String> imageFile)
     {
-        String newUrl = httpObject.getUrl().replaceAll(" ", "%20");
-        newUrl = newUrl.replaceAll("\\r", "");
-        newUrl = newUrl.replaceAll("\\t", "");
-        newUrl = newUrl.replaceAll("\\n\\n", "%20");
-        newUrl = newUrl.replaceAll("\\n", "%20");
+        String newURL = HTTPObject.getURL().replaceAll(" ", "%20");
+        newURL = newURL.replaceAll("\\r", "");
+        newURL = newURL.replaceAll("\\t", "");
+        newURL = newURL.replaceAll("\\n\\n", "%20");
+        newURL = newURL.replaceAll("\\n", "%20");
         URL url;
         HttpURLConnection client;
         try
         {
-            url = new URL(newUrl);
+            url = new URL(newURL);
             client = (HttpURLConnection) url.openConnection();
             client.setRequestMethod("POST");
             client.setRequestProperty("USER-AGENT", "Excavation/1.0");
             client.setRequestProperty("ACCEPT-LANGUAGE", "en-US");
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(client.getOutputStream()));
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
+                    client.getOutputStream()));
             for (String s: imageFile)
             {
                 writer.append("GET ").append(s).append("\n");
@@ -239,7 +241,7 @@ public abstract class HttpOperation
             e.printStackTrace();
             return null;
         }
-        int STATUS;
+        int status;
         try
         {
             BufferedReader br = new BufferedReader(new InputStreamReader(client.getInputStream()));
@@ -254,58 +256,59 @@ public abstract class HttpOperation
             int statusCode = Integer.parseInt(tokens[0].split(" ")[1]);
             if (statusCode == 200)
             {
-                httpObject.setResponseString(resp.substring(resp.indexOf("\n") + 1));
-                STATUS = AppConstants.INT_STATUS_SUCCESS;
+                HTTPObject.setResponseString(resp.substring(resp.indexOf("\n") + 1));
+                status = AppConstants.INT_STATUS_SUCCESS;
             }
             else
             {
-                STATUS = AppConstants.INT_STATUS_FAILED_DOWNLOAD;
+                status = AppConstants.INT_STATUS_FAILED_DOWNLOAD;
             }
         }
         catch (ConnectTimeoutException e)
         {
-            STATUS = AppConstants.INT_STATUS_FAILED_TIMEOUT;
+            status = AppConstants.INT_STATUS_FAILED_TIMEOUT;
         }
         catch (IOException e)
         {
-            STATUS = AppConstants.INT_STATUS_FAILED_IO;
+            status = AppConstants.INT_STATUS_FAILED_IO;
         }
         catch (Exception e)
         {
-            STATUS = AppConstants.INT_STATUS_FAILED_IO;
+            status = AppConstants.INT_STATUS_FAILED_IO;
             e.printStackTrace();
         }
         finally
         {
             System.gc();
         }
-        httpObject.setStatus(STATUS);
-        return httpObject;
+        HTTPObject.setStatus(status);
+        return HTTPObject;
     }
 
     /**
      * HTTP request
-     * @param httpObject - HTTP object
+     * @param HTTPObject - HTTP object
      * @param imageFile - image
      * @return Returns the response
      */
-    protected HttpObject request(HttpObject httpObject, String imageFile)
+    protected HTTPObject request(HTTPObject HTTPObject, String imageFile)
     {
-        String newUrl = httpObject.getUrl().replaceAll(" ", "%20");
-        newUrl = newUrl.replaceAll("\\r", "");
-        newUrl = newUrl.replaceAll("\\t", "");
-        newUrl = newUrl.replaceAll("\\n\\n", "%20");
-        newUrl = newUrl.replaceAll("\\n", "%20");
+        String newURL = HTTPObject.getURL().replaceAll(" ", "%20");
+        newURL = newURL.replaceAll("\\r", "");
+        newURL = newURL.replaceAll("\\t", "");
+        newURL = newURL.replaceAll("\\n\\n", "%20");
+        newURL = newURL.replaceAll("\\n", "%20");
         URL url;
         HttpURLConnection client;
         try
         {
-            url = new URL(newUrl);
+            url = new URL(newURL);
             client = (HttpURLConnection) url.openConnection();
             client.setRequestMethod("POST");
             client.setRequestProperty("USER-AGENT", "Excavation/1.0");
             client.setRequestProperty("ACCEPT-LANGUAGE", "en-US");
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(client.getOutputStream()));
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
+                    client.getOutputStream()));
             writer.append("GET ").append(imageFile).append("\n");
             writer.close();
             client.setDoOutput(true);
@@ -315,7 +318,7 @@ public abstract class HttpOperation
             e.printStackTrace();
             return null;
         }
-        int STATUS;
+        int status;
         try
         {
             BufferedReader br = new BufferedReader(new InputStreamReader(client.getInputStream()));
@@ -330,49 +333,49 @@ public abstract class HttpOperation
             int statusCode = Integer.parseInt(tokens[0].split(" ")[1]);
             if (statusCode == 200)
             {
-                httpObject.setResponseString(resp.substring(resp.indexOf("\n") + 1));
-                STATUS = AppConstants.INT_STATUS_SUCCESS;
+                HTTPObject.setResponseString(resp.substring(resp.indexOf("\n") + 1));
+                status = AppConstants.INT_STATUS_SUCCESS;
             }
             else
             {
-                STATUS = AppConstants.INT_STATUS_FAILED_DOWNLOAD;
+                status = AppConstants.INT_STATUS_FAILED_DOWNLOAD;
             }
         }
         catch (ConnectTimeoutException e)
         {
-            STATUS = AppConstants.INT_STATUS_FAILED_TIMEOUT;
+            status = AppConstants.INT_STATUS_FAILED_TIMEOUT;
         }
         catch (IOException e)
         {
-            STATUS = AppConstants.INT_STATUS_FAILED_IO;
+            status = AppConstants.INT_STATUS_FAILED_IO;
         }
         catch (Exception e)
         {
-            STATUS = AppConstants.INT_STATUS_FAILED_IO;
+            status = AppConstants.INT_STATUS_FAILED_IO;
             e.printStackTrace();
         }
         finally
         {
             System.gc();
         }
-        httpObject.setStatus(STATUS);
-        return httpObject;
+        HTTPObject.setStatus(status);
+        return HTTPObject;
     }
 
     /**
      * Check status
-     * @param httpObject - HTTP object
+     * @param HTTPObject - HTTP object
      * @param data - response
      */
-    protected void checkHttpStatus(HttpObject httpObject, ResponseData data)
+    protected void checkHTTPStatus(HTTPObject HTTPObject, ResponseData data)
     {
         if (data == null)
         {
             data = new ResponseData();
         }
-        data.result = RESPONSE_RESULT.failed;
+        data.result = ResponseResult.failed;
         data.resultMsg = MessageConstants.NO_DATA_FOUND;
-        switch (httpObject.getStatus())
+        switch (HTTPObject.getStatus())
         {
             case AppConstants.INT_STATUS_FAILED_DOWNLOAD:
                 data.resultMsg = MessageConstants.FAILED_TO_CONNECT;
@@ -385,7 +388,7 @@ public abstract class HttpOperation
                 break;
             case AppConstants.INT_STATUS_SUCCESS:
                 data.resultMsg = null;
-                data.result = RESPONSE_RESULT.success;
+                data.result = ResponseResult.success;
                 break;
         }
     }

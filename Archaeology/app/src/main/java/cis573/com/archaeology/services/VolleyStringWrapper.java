@@ -15,16 +15,16 @@ public class VolleyStringWrapper
 {
     /**
      * Request string response
-     * @param url - url to query
+     * @param URL - url to query
      * @param queue - request queue
      * @param lambdaWrapper - response wrapper
      */
-    public static void makeVolleyStringObjectRequest(final String url, RequestQueue queue,
+    public static void makeVolleyStringObjectRequest(final String URL, RequestQueue queue,
                                                      final StringObjectResponseWrapper lambdaWrapper)
     {
-        Log.v(LOG_TAG, "volley url:" + url);
+        Log.v(LOG_TAG, "volley URL:" + URL);
         // creating the listener to respond to object request
-        StringRequest myRequest = new StringRequest(Request.Method.GET, url,
+        StringRequest myRequest = new StringRequest(Request.Method.GET, URL,
                 new Response.Listener<String>() {
             /**
              * Response received

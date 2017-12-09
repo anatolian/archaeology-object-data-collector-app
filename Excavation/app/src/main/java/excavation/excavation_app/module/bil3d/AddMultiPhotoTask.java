@@ -1,10 +1,10 @@
 // Add multiple photos thread
 package excavation.excavation_app.module.bil3d;
 import java.util.ArrayList;
-import excavation.excavation_app.com.appenginedemo.Activity3d;
+import excavation.excavation_app.com.appenginedemo.Activity3D;
 import excavation.excavation_app.module.common.bean.SimpleData;
 import excavation.excavation_app.module.common.constants.AppConstants;
-import excavation.excavation_app.module.common.http.Response.RESPONSE_RESULT;
+import excavation.excavation_app.module.common.http.Response.ResponseResult;
 import excavation.excavation_app.module.common.http.factory.SimpleObjectFactory;
 import excavation.excavation_app.module.common.task.BaseTask;
 import excavation.excavation_app.module.image.property.ImagePropertyBean;
@@ -37,16 +37,16 @@ public class AddMultiPhotoTask extends BaseTask
      * @param spnEast - easting
      * @param spnNorth - northing
      * @param selectedImg - image
-     * @param pbar - progress
+     * @param pBar - progress
      */
     public AddMultiPhotoTask(Context con, String spnEast, String spnNorth,
-                             ArrayList<String> selectedImg, ProgressBar pbar)
+                             ArrayList<String> selectedImg, ProgressBar pBar)
     {
         this.context = con;
         east = spnEast;
         north = spnNorth;
         selectedItems = selectedImg;
-        bar = pbar;
+        bar = pBar;
     }
 
     /**
@@ -111,20 +111,20 @@ public class AddMultiPhotoTask extends BaseTask
         SimpleObjectFactory factory = SimpleObjectFactory.getInstance();
         DBHelper db = DBHelper.getInstance(context);
         db.open();
-        String ipAddress = db.getIpAddress();
+        String ipAddress = db.getIPAddress();
         ImagePropertyBean data1 = db.getImageProperty();
         db.close();
         data = factory.getAddAlbumsPhotosData(east, north, selectedItems.get(0),"", ipAddress,
-                data1.baseImagePath, data1.contextSubpath3d);
+                data1.baseImagePath, data1.contextSubPath3D);
         batchId = data.id;
         Log.e("batch_id",batchId + " " + data.resultMsg + " ");
         while ( j < selectedItems.size())
         {
-            if (data.result == RESPONSE_RESULT.success)
+            if (data.result == ResponseResult.success)
             {
                 Log.e("if part",j + "");
-                data = factory.getAddAlbumsPhotosData(east, north,selectedItems.get(j), batchId,
-                        ipAddress, data1.baseImagePath, data1.contextSubpath3d);
+                data = factory.getAddAlbumsPhotosData(east, north, selectedItems.get(j), batchId,
+                        ipAddress, data1.baseImagePath, data1.contextSubPath3D);
             }
             else
             {
@@ -138,8 +138,8 @@ public class AddMultiPhotoTask extends BaseTask
                     else
                     {
                         data = factory.getAddAlbumsPhotosData(east, north, selectedItems.get(j),
-                                batchId, ipAddress, data1.baseImagePath, data1.contextSubpath3d);
-                        if (data.result == RESPONSE_RESULT.success)
+                                batchId, ipAddress, data1.baseImagePath, data1.contextSubPath3D);
+                        if (data.result == ResponseResult.success)
                         {
                             break;
                         }
@@ -162,16 +162,16 @@ public class AddMultiPhotoTask extends BaseTask
         bar.setVisibility(View.GONE);
         if (AppConstants.internet == 0)
         {
-            if (data.result == RESPONSE_RESULT.success)
+            if (data.result == ResponseResult.success)
             {
                 AppConstants.up = 1;
-                AppConstants.activity3dSpnNorth = 0;
-                AppConstants.activity3dSpnEast = 0;
+                AppConstants.activity3DSpnNorth = 0;
+                AppConstants.activity3DSpnEast = 0;
                 AlertDialog alertDialog = new AlertDialog.Builder(context).create();
                 // Setting Dialog Title
                 alertDialog.setTitle("Uploaded Successfully");
                 // Setting Dialog Message
-                alertDialog.setMessage("your 3d photo batch was uploaded as " + batchId);
+                alertDialog.setMessage("Your 3d photo batch was uploaded as " + batchId);
                 // Setting alert dialog icon
                 alertDialog.setIcon( R.drawable.logo_small);
                 // Setting OK Button
@@ -186,8 +186,7 @@ public class AddMultiPhotoTask extends BaseTask
                     {
                         dialog.dismiss();
                         AppConstants.selectedImg = null;
-                        Intent i = new Intent(context, Activity3d.class);
-                        context.startActivity(i);
+                        context.startActivity(new Intent(context, Activity3D.class));
                     }
                 });
                 // Showing Alert Message

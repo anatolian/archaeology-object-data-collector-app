@@ -49,4 +49,7 @@
     <string name = "threed_photo_spaceless">3d Photo</string>
     <string name = "item_frmt">%s:%s:%s:%s</string>
     <string name = "frmt">%s</string>
+    <string name = "icon">App Icon</string>
+    <string name = "camera">Camera Placeholder icon</string>
+    <string name = "no_image_found">No Image Found</string>
 </resources>

@@ -97,7 +97,7 @@ public class DownloadActivity extends AppCompatActivity
                 Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
         {
             ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE},
                     MY_PERMISSIONS_WRITE_EXTERNAL);
         }
     }
@@ -138,11 +138,11 @@ public class DownloadActivity extends AppCompatActivity
                     throw new IOException("Unexpected code " + response);
                 }
                 String i = response.body().string();
-                String filename = "newjson.txt";
+                String fileName = "newjson.txt";
                 FileOutputStream outputStream;
                 try
                 {
-                    outputStream = openFileOutput(filename, mode);
+                    outputStream = openFileOutput(fileName, mode);
                     outputStream.write(i.getBytes());
                     outputStream.close();
                 }

@@ -41,7 +41,8 @@
             android:maxLines = "1"
             android:layout_alignStart = "@+id/fieldPhotoNumber2"
             android:layout_alignEnd = "@+id/fieldPhotoNumber2"
-            android:inputType = "numberDecimal"/>
+            android:inputType = "numberDecimal"
+            android:hint = "@string/surveyunit"/>
         <TextView
             android:layout_width = "wrap_content"
             android:layout_height = "wrap_content"
@@ -57,7 +58,8 @@
             android:ems = "10"
             android:id = "@+id/fieldPhotoNumber2"
             android:layout_below = "@+id/textView3"
-            android:layout_centerHorizontal = "true"/>
+            android:layout_centerHorizontal = "true"
+            android:hint = "@string/field_photo_number"/>
         <Button
             android:layout_width = "wrap_content"
             android:layout_height = "50dp"

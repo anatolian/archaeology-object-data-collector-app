@@ -28,7 +28,7 @@ public class ActivityCamera extends ActivityBase
     RelativeLayout rLayout;
     ImageView cameraImage;
     String imagePath, photoId;
-    String north, east, img, nxt, act3d, pic;
+    String north, east, img, nxt, act3D, pic;
     BaseTask task;
     ArrayList<String> ctxNo;
     private static int CAMERA_CAPTURE = 999;
@@ -43,7 +43,7 @@ public class ActivityCamera extends ActivityBase
         inflater = getLayoutInflater();
         rLayout = (RelativeLayout) inflater.inflate(R.layout.activity_camera,null);
         wrapper.addView(rLayout);
-        cameraImage = (ImageView) findViewById(R.id.cemera_image);
+        cameraImage = (ImageView) findViewById(R.id.camera_image);
         if (getIntent().hasExtra("north") || getIntent().hasExtra("east")
                 || getIntent().hasExtra("imagePath") || getIntent().hasExtra("ctx"))
         {
@@ -54,7 +54,7 @@ public class ActivityCamera extends ActivityBase
         }
         if (getIntent().hasExtra("3d"))
         {
-            act3d = getIntent().getExtras().getString("3d");
+            act3D = getIntent().getExtras().getString("3d");
         }
         if (getIntent().hasExtra("pic"))
         {
@@ -70,15 +70,15 @@ public class ActivityCamera extends ActivityBase
         }
         try
         {
-            Intent captureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             // we will handle the returned data in onActivityResult
-            startActivityForResult(captureIntent, CAMERA_CAPTURE);
+            startActivityForResult(new Intent(MediaStore.ACTION_IMAGE_CAPTURE), CAMERA_CAPTURE);
         }
         catch (ActivityNotFoundException anfe)
         {
             // display an error message
-            String errorMessage = "Whoops - your device doesn't support capturing images!";
-            Toast toast = Toast.makeText(ActivityCamera.this, errorMessage, Toast.LENGTH_SHORT);
+            Toast toast = Toast.makeText(ActivityCamera.this,
+                    "Whoops - your device doesn't support capturing images!",
+                    Toast.LENGTH_SHORT);
             toast.show();
             ActivityCamera.this.finish();
         }
@@ -110,8 +110,8 @@ public class ActivityCamera extends ActivityBase
             cursor.moveToFirst();
             int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
             imagePath = cursor.getString(columnIndex);
-            ApplicationHandler apphand = ApplicationHandler.getInstance();
-            cameraImage.setImageBitmap(apphand.decodeFile(new File(imagePath)));
+            ApplicationHandler appHand = ApplicationHandler.getInstance();
+            cameraImage.setImageBitmap(appHand.decodeFile(new File(imagePath)));
             cursor.close();
         }
         if (requestCode == CAMERA_CAPTURE && resultCode == RESULT_OK)

@@ -62,5 +62,6 @@
  	    android:layout_alignBottom = "@+id/textViewheader"
  	    android:layout_alignParentEnd = "true"
  	    android:layout_marginEnd = "19dp"
- 	    android:src = "@drawable/setimg12"/>
+ 	    android:src = "@drawable/setimg12"
+		android:contentDescription="@string/icon"/>
 </RelativeLayout>

@@ -17,7 +17,7 @@ import android.widget.Toast;
 import java.io.File;
 public class TakePhotographActivity extends Activity
 {
-    private Uri fileUri;
+    private Uri fileURI;
     private String photoSavePath = "";
     public static int PHOTO_CODE = 100;
     /**
@@ -77,9 +77,9 @@ public class TakePhotographActivity extends Activity
         StrictMode.setVmPolicy(builder.build());
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // create a file to save the video
-        fileUri = getOutputMediaFileUri(fieldOrBag);
+        fileURI = getOutputMediaFileURI(fieldOrBag);
         // set the image file name
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileURI);
         // start the image capture Intent
         startActivityForResult(intent, PHOTO_CODE);
     }
@@ -94,11 +94,10 @@ public class TakePhotographActivity extends Activity
     {
         if (item.getItemId() == android.R.id.home)
         {
-            // This ID represents the Home or Up button. In the case of this
-            // activity, the Up button is shown. Use NavUtils to allow users
-            // to navigate up one level in the application structure. For
-            // more details, see the Navigation pattern on Android Design:
-            // http://developer.android.com/design/patterns/navigation.html#up-vs-back
+            // This ID represents the Home or Up button. In the case of this activity, the Up
+            // button is shown. Use NavUtils to allow users to navigate up one level in the
+            // application structure. For more details, see the Navigation pattern on Android
+            // Design: http://developer.android.com/design/patterns/navigation.html#up-vs-back
             NavUtils.navigateUpFromSameTask(this);
             return true;
         }
@@ -118,7 +117,7 @@ public class TakePhotographActivity extends Activity
             if (resultCode == RESULT_OK)
             {
                 // Image captured and saved to fileUri specified in the Intent
-                Toast.makeText(this, "Image saved to:\n" + fileUri.getPath(),
+                Toast.makeText(this, "Image saved to:\n" + fileURI.getPath(),
                         Toast.LENGTH_LONG).show();
                 this.setResult(RESULT_OK);
             }
@@ -141,12 +140,13 @@ public class TakePhotographActivity extends Activity
      * @param fieldOrBag - name of file
      * @return Returns the URI
      */
-    private Uri getOutputMediaFileUri(String fieldOrBag)
+    private Uri getOutputMediaFileURI(String fieldOrBag)
     {
         File path = getOutputMediaFile(fieldOrBag);
         if (path == null)
         {
-            Toast.makeText(this, "Specified directory not writable. Using default directory.",
+            Toast.makeText(this, "Specified directory not writable. Using default " +
+                            "directory.",
                     Toast.LENGTH_LONG).show();
             photoSavePath = MainActivity.DEFAULT_SAVE_PATH;
             path = getOutputMediaFile(fieldOrBag);
@@ -164,10 +164,10 @@ public class TakePhotographActivity extends Activity
         String suYear = getIntent().getStringExtra(MainActivity.SU_YEAR);
         String suSeqNum = getIntent().getStringExtra(MainActivity.SU_SEQ_NUM);
         String fieldPhotoNumber = getIntent().getStringExtra(MainActivity.FIELD_PHOTO_NUMBER);
-        File mediaStorageDir = new File(Environment.getExternalStorageDirectory().getPath()
-                + photoSavePath + suYear + "/" + suSeqNum + "/fld");
-        File thumbMediaStorageDir = new File(Environment.getExternalStorageDirectory().getPath()
-                + photoSavePath + "tmb/" + suYear + "/" + suSeqNum + "/fld");
+        File mediaStorageDir = new File(Environment.getExternalStorageDirectory()
+                .getPath() + photoSavePath + suYear + "/" + suSeqNum + "/fld");
+        File thumbMediaStorageDir = new File(Environment.getExternalStorageDirectory()
+                .getPath() + photoSavePath + "tmb/" + suYear + "/" + suSeqNum + "/fld");
         // This location works best if you want the created images to be shared
         // between applications and persist after your app has been uninstalled.
         // Create the storage directory if it does not exist

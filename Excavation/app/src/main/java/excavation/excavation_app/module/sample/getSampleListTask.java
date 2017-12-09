@@ -93,7 +93,7 @@ public class GetSampleListTask extends BaseTask
         progressBar2.setVisibility(View.VISIBLE);
         DBHelper db = DBHelper.getInstance(con);
         db.open();
-        ipAddress = db.getIpAddress();
+        ipAddress = db.getIPAddress();
         db.close();
     }
 

@@ -52,7 +52,8 @@ public class HistoryActivity extends AppCompatActivity
                             // Left to Right swipe action
                             if (x2 < x1)
                             {
-                                Intent intent = new Intent(getApplicationContext(), CameraUIActivity.class);
+                                Intent intent = new Intent(getApplicationContext(),
+                                        CameraUIActivity.class);
                                 startActivity(intent);
                                 overridePendingTransition(R.anim.anim_slide_in_left,
                                         R.anim.anim_slide_out_left);
@@ -73,8 +74,8 @@ public class HistoryActivity extends AppCompatActivity
         Cursor resultSet = myDB.getDataSearch();
         // add items to the list
         ArrayList<String> itemList = new ArrayList<>();
-        ArrayAdapter<String> adapter =
-                new ArrayAdapter<>(this, R.layout.list_item, R.id.txtview, itemList);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.list_item,
+                R.id.txtview, itemList);
         lv.setAdapter(adapter);
         while (resultSet.moveToNext())
         {
@@ -109,7 +110,8 @@ public class HistoryActivity extends AppCompatActivity
                     {
                         Intent intent = new Intent(this, CameraUIActivity.class);
                         startActivity(intent);
-                        overridePendingTransition(R.anim.anim_slide_in_left, R.anim.anim_slide_out_left);
+                        overridePendingTransition(R.anim.anim_slide_in_left,
+                                R.anim.anim_slide_out_left);
                     }
                 }
                 break;

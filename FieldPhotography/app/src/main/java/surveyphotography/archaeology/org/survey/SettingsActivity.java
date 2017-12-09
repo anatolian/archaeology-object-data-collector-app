@@ -25,7 +25,8 @@ public class SettingsActivity extends Activity
         EditText savePathInput = (EditText) findViewById(R.id.savePathInput);
         savePathInput.setText(getIntent().getStringExtra(MainActivity.PHOTO_SAVE_PATH));
         CheckBox thumbnailCheckBox = (CheckBox) findViewById(R.id.checkBox);
-        thumbnailCheckBox.setChecked(getIntent().getBooleanExtra(MainActivity.THUMBNAIL, true));
+        thumbnailCheckBox.setChecked(getIntent().getBooleanExtra(MainActivity.THUMBNAIL,
+                true));
         thumbnailCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             /**
              * Thumbnail changed
@@ -82,9 +83,8 @@ public class SettingsActivity extends Activity
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+        // Handle action bar item clicks here. The action bar will automatically handle clicks on
+        // the Home/Up button, so long as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         // noinspection SimplifiableIfStatement
         if (id == R.id.action_settings)

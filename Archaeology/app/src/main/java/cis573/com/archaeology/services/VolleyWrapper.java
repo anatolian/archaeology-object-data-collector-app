@@ -26,13 +26,13 @@ public class VolleyWrapper
 {
     /**
      * get the available APIs to be used for camera
-     * @param url - camera URL
+     * @param URL - camera URL
      * @param queue - request queue
      * @param id - request id
      * @param lambdaWrapper - request wrapper
      * @throws JSONException if response is malformed
      */
-    public static void makeVolleySonyAPIGetAPICommands(final String url, RequestQueue queue,
+    public static void makeVolleySonyAPIGetAPICommands(final String URL, RequestQueue queue,
                                                        final int id,
                                                        final JSONObjectResponseWrapper lambdaWrapper)
             throws JSONException
@@ -42,7 +42,7 @@ public class VolleyWrapper
                 .put("version", "1.0").toString();
         JSONObject jsonPostBody = new JSONObject(postBody);
         Log.v(LOG_TAG_WIFI_DIRECT, "request body: " +  postBody);
-        JsonObjectRequest myRequest = new JsonObjectRequest(Method.POST, url, jsonPostBody,
+        JsonObjectRequest myRequest = new JsonObjectRequest(Method.POST, URL, jsonPostBody,
                 new Response.Listener<JSONObject>() {
             /**
              * Response received
@@ -72,13 +72,13 @@ public class VolleyWrapper
 
     /**
      * Send photo request
-     * @param url - camera URL
+     * @param URL - camera URL
      * @param queue - request queue
      * @param id - request id
      * @param lambdaWrapper - request wrapper
      * @throws JSONException if the JSON is malformed
      */
-    public static void makeVolleySonyAPITakePhotoRequest(final String url, RequestQueue queue,
+    public static void makeVolleySonyAPITakePhotoRequest(final String URL, RequestQueue queue,
                                                          final int id,
                                                          final JSONObjectResponseWrapper lambdaWrapper)
             throws JSONException
@@ -88,7 +88,7 @@ public class VolleyWrapper
                 .put("id", id).put("version", "1.0").toString();
         JSONObject jsonPostBody = new JSONObject(postBody);
         Log.v(LOG_TAG_WIFI_DIRECT, "request body: " +  postBody);
-        JsonObjectRequest myRequest = new JsonObjectRequest(Method.POST, url, jsonPostBody,
+        JsonObjectRequest myRequest = new JsonObjectRequest(Method.POST, URL, jsonPostBody,
                 new Response.Listener<JSONObject>() {
             /**
              * Response received
@@ -118,13 +118,13 @@ public class VolleyWrapper
 
     /**
      * Request camera feed
-     * @param url - camera URL
+     * @param URL - camera URL
      * @param queue - request queue
      * @param id - request id
      * @param lambdaWrapper - request wrapper
      * @throws JSONException if the JSON is malformed
      */
-    public static void makeVolleySonyAPIStartLiveViewRequest(final String url, RequestQueue queue,
+    public static void makeVolleySonyAPIStartLiveViewRequest(final String URL, RequestQueue queue,
                                                              final int id,
                                                              final JSONObjectResponseWrapper lambdaWrapper)
             throws JSONException
@@ -136,7 +136,7 @@ public class VolleyWrapper
         JSONObject jsonPostBody = new JSONObject(postBody);
         Log.v(LOG_TAG_WIFI_DIRECT, "request body: " +  postBody);
         // making request
-        JsonObjectRequest myRequest = new JsonObjectRequest(Method.POST, url, jsonPostBody,
+        JsonObjectRequest myRequest = new JsonObjectRequest(Method.POST, URL, jsonPostBody,
                 new Response.Listener<JSONObject>() {
             /**
              * Response received
@@ -167,12 +167,12 @@ public class VolleyWrapper
 
     /**
      * Stopping live view usually in case of error or when image has been captured
-     * @param url - camera URL
+     * @param URL - camera URL
      * @param queue - request queue
      * @param id - request id
      * @param lambdaWrapper - request wrapper
      */
-    public static void makeVolleySonyAPIStopLiveViewRequest(final String url, RequestQueue queue,
+    public static void makeVolleySonyAPIStopLiveViewRequest(final String URL, RequestQueue queue,
                                                             final int id,
                                                             final JSONObjectResponseWrapper lambdaWrapper)
             throws JSONException
@@ -184,7 +184,7 @@ public class VolleyWrapper
         JSONObject jsonPostBody = new JSONObject(postBody);
         Log.v(LOG_TAG_WIFI_DIRECT, "request body: " +  postBody);
         // making request
-        JsonObjectRequest myRequest = new JsonObjectRequest(Method.POST, url, jsonPostBody,
+        JsonObjectRequest myRequest = new JsonObjectRequest(Method.POST, URL, jsonPostBody,
                 new Response.Listener<JSONObject>() {
             /**
              * Response received
@@ -222,13 +222,13 @@ public class VolleyWrapper
      * }
      * @param direction - direction of zoom ("in" or "out")
      * @param queue - request queue
-     * @param url - camera URL
+     * @param URL - camera URL
      * @param id - request id
      * @param lambdaWrapper - request wrapper
      * @throws JSONException if the JSON is malformed
      */
     public static void makeVolleySonyAPIActZoomRequest(String direction, RequestQueue queue,
-                                                       final String url, final int id,
+                                                       final String URL, final int id,
                                                        final JSONObjectResponseWrapper lambdaWrapper)
             throws JSONException
     {
@@ -237,7 +237,7 @@ public class VolleyWrapper
                 .put("id", id).put("version", "1.0").toString();
         JSONObject jsonPostBody = new JSONObject(postBody);
         Log.v(LOG_TAG_WIFI_DIRECT, "request body: " +  postBody);
-        JsonObjectRequest myRequest = new JsonObjectRequest(Method.POST, url, jsonPostBody,
+        JsonObjectRequest myRequest = new JsonObjectRequest(Method.POST, URL, jsonPostBody,
                 new Response.Listener<JSONObject>() {
             /**
              * Response received
@@ -268,13 +268,13 @@ public class VolleyWrapper
     /**
      * Custom camera request
      * @param methodName - function name
-     * @param url - camera URL
+     * @param URL - camera URL
      * @param queue - request queue
      * @param id - request id
      * @param lambdaWrapper - request wrapper
      * @throws JSONException if the JSON is malformed
      */
-    public static void makeVolleySonyAPICustomFunctionCall(String methodName, final String url,
+    public static void makeVolleySonyAPICustomFunctionCall(String methodName, final String URL,
                                                            RequestQueue queue, final int id,
                                                            final JSONObjectResponseWrapper lambdaWrapper)
             throws JSONException
@@ -284,7 +284,7 @@ public class VolleyWrapper
                 .put("version", "1.0").toString();
         JSONObject jsonPostBody = new JSONObject(postBody);
         Log.v(LOG_TAG_WIFI_DIRECT, "request body: " +  postBody);
-        JsonObjectRequest myRequest = new JsonObjectRequest(Method.POST, url, jsonPostBody,
+        JsonObjectRequest myRequest = new JsonObjectRequest(Method.POST, URL, jsonPostBody,
                 new Response.Listener<JSONObject>() {
             /**
              * Response received
@@ -314,14 +314,15 @@ public class VolleyWrapper
 
     /**
      * setting the image to the original size
-     * @param url - camera URL
+     * @param URL - camera URL
      * @param queue - request queue
      * @param id - request id
      * @param lambdaWrapper - request wrapper
      * @throws JSONException if the JSON is malformed
      */
-    public static void makeVolleySonyAPISetImageSizeToOriginal(final String url, RequestQueue queue,
-                                                               final int id, final JSONObjectResponseWrapper lambdaWrapper)
+    public static void makeVolleySonyAPISetImageSizeToOriginal(final String URL,
+                                                               RequestQueue queue, final int id,
+                                                               final JSONObjectResponseWrapper lambdaWrapper)
             throws JSONException
     {
         final String postBody = new JSONObject().put("method", "setPostviewImageSize")
@@ -329,7 +330,7 @@ public class VolleyWrapper
                 .put("version", "1.0").toString();
         JSONObject jsonPostBody = new JSONObject(postBody);
         Log.v(LOG_TAG_WIFI_DIRECT, "request body: " +  postBody);
-        JsonObjectRequest myRequest = new JsonObjectRequest(Method.POST, url, jsonPostBody,
+        JsonObjectRequest myRequest = new JsonObjectRequest(Method.POST, URL, jsonPostBody,
                 new Response.Listener<JSONObject>() {
             /**
              * Response received
@@ -351,21 +352,22 @@ public class VolleyWrapper
                 lambdaWrapper.errorMethod(error);
             }
         });
-        myRequest.setRetryPolicy(new DefaultRetryPolicy(5000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        myRequest.setRetryPolicy(new DefaultRetryPolicy(5000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         queue.add(myRequest);
     }
 
     /**
      * Change picture quality to fine
-     * @param url - camera url
+     * @param URL - camera URL
      * @param queue - request queue
      * @param id - request id
      * @param lambdaWrapper - request wrapper
      * @throws JSONException if the JSON is malformed
      */
-    public static void makeVolleySonyAPISetJPEGQualityToFine(final String url, RequestQueue queue,
-                                                             final int id, final JSONObjectResponseWrapper lambdaWrapper)
+    public static void makeVolleySonyAPISetJPEGQualityToFine(final String URL, RequestQueue queue,
+                                                             final int id,
+                                                             final JSONObjectResponseWrapper lambdaWrapper)
             throws JSONException
     {
         final String postBody = new JSONObject().put("method", "setStillQuality")
@@ -373,7 +375,7 @@ public class VolleyWrapper
                 .put("version", "1.0").toString();
         JSONObject jsonPostBody = new JSONObject(postBody);
         Log.v(LOG_TAG_WIFI_DIRECT, "request body: " +  postBody);
-        JsonObjectRequest myRequest = new JsonObjectRequest(Method.POST, url, jsonPostBody,
+        JsonObjectRequest myRequest = new JsonObjectRequest(Method.POST, URL, jsonPostBody,
                 new Response.Listener<JSONObject>() {
             /**
              * Response received
@@ -410,7 +412,7 @@ public class VolleyWrapper
     public static void makeVolleyJSONArrayRequest(final String URL, RequestQueue queue,
                                                   final JSONArrayResponseWrapper lambdaWrapper)
     {
-        Log.v(LOG_TAG, "volley url:" + URL);
+        Log.v(LOG_TAG, "volley URL:" + URL);
         JsonArrayRequest myRequest = new JsonArrayRequest(URL, new Response.Listener<JSONArray>() {
             /**
              * Response received
@@ -454,15 +456,15 @@ public class VolleyWrapper
 
     /**
      * Request image
-     * @param url - camera URL
+     * @param URL - camera URL
      * @param queue - request queue
      * @param lambdaWrapper - request wrapper
      */
-    public static void makeVolleyImageRequest(final String url, RequestQueue queue,
+    public static void makeVolleyImageRequest(final String URL, RequestQueue queue,
                                               final ImageResponseWrapper lambdaWrapper)
     {
-        Log.v(LOG_TAG, "volley url:" + url);
-        ImageRequest request = new ImageRequest(url, new Response.Listener<Bitmap>() {
+        Log.v(LOG_TAG, "volley URL:" + URL);
+        ImageRequest request = new ImageRequest(URL, new Response.Listener<Bitmap>() {
             /**
              * Response received
              * @param bitmap - image
@@ -483,7 +485,6 @@ public class VolleyWrapper
                 lambdaWrapper.errorMethod(error);
             }
         });
-        // TODO: does this need to be mentioned twice?
         request.setRetryPolicy(new DefaultRetryPolicy(8000,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));

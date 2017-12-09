@@ -5,7 +5,7 @@ import java.util.List;
 import excavation.excavation_app.module.common.bean.SimpleData;
 import excavation.excavation_app.module.common.constants.AppConstants;
 import excavation.excavation_app.module.common.constants.MessageConstants;
-import excavation.excavation_app.module.common.http.Response.RESPONSE_RESULT;
+import excavation.excavation_app.module.common.http.Response.ResponseResult;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -85,7 +85,7 @@ public class SimpleTextAdapter extends BaseAdapter
         final ImageView imageViewDown = (ImageView) row.findViewById(R.id.imageView1);
         textView.setTextColor(mContext.getResources().getColor(R.color.coffee));
         final SimpleData data = list.get(position);
-        if (data.result == RESPONSE_RESULT.failed)
+        if (data.result == ResponseResult.failed)
         {
             textView.setText(MessageConstants.NO_DATA_FOUND);
             return row;

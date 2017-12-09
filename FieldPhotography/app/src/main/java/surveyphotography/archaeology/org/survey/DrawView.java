@@ -32,16 +32,16 @@ class DrawView extends AppCompatImageView
         paint.setColor(ContextCompat.getColor(getContext(), R.color.material_deep_teal_500));
         paint.setStyle(Paint.Style.FILL_AND_STROKE);
         paint.setStrokeWidth(10);
-        float leftx = canvas.getWidth() - 50;
-        float rightx = canvas.getWidth();
-        float bottomy = canvas.getHeight();
-        float  topy = canvas.getHeight() - 50;
-        canvas.drawRect(leftx, topy, rightx, bottomy, paint);
+        float leftX = canvas.getWidth() - 50;
+        float rightX = canvas.getWidth();
+        float bottomY = canvas.getHeight();
+        float topY = canvas.getHeight() - 50;
+        canvas.drawRect(leftX, topY, rightX, bottomY, paint);
         textPaint.setColor(Color.DKGRAY);
         textPaint.setTextSize(24);
         textPaint.setAntiAlias(true);
         textPaint.setTypeface(Typeface.DEFAULT_BOLD);
         textPaint.setTypeface(Typeface.MONOSPACE);
-        canvas.drawText("BAG", leftx, bottomy - 21, textPaint);
+        canvas.drawText("BAG", leftX, bottomY - 21, textPaint);
     }
 }

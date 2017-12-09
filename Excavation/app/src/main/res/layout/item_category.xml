@@ -8,5 +8,6 @@
         android:layout_height = "100dp"
         android:scaleType = "fitXY"
         android:layout_alignParentTop = "true"
-        android:src = "@drawable/no_img_prv"/>
+        android:src = "@drawable/no_img_prv"
+        android:contentDescription="@string/no_image_found"/>
 </RelativeLayout>

@@ -168,8 +168,8 @@ public class CameraUIActivity extends AppCompatActivity
         }
         parent.removeAllViews();
         cam = new CameraLiveView(this);
-        cam.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
-                RelativeLayout.LayoutParams.MATCH_PARENT));
+        cam.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams
+                .MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT));
         cam.setBackgroundColor(0x233069);
         parent.addView(cam);
         cam.startCamera();
@@ -188,7 +188,8 @@ public class CameraUIActivity extends AppCompatActivity
         parent.removeAllViews();
         scan = new ScannerLiveView(this);
         scan.setLayoutParams(new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT));
+                RelativeLayout.LayoutParams.MATCH_PARENT,
+                RelativeLayout.LayoutParams.MATCH_PARENT));
         scan.setBackgroundColor(0x233069);
         parent.addView(scan);
         scan.setScannerViewEventListener(new ScannerLiveView.ScannerViewEventListener()
@@ -229,16 +230,16 @@ public class CameraUIActivity extends AppCompatActivity
             {
                 Log.v("QRCode Scanned", data);
                 // from manual search
-                JSONObject json = null;
-                String jsonString = loadJSONFromAsset();
-                String searchUrl = null;
+                JSONObject JSON = null;
+                String JSONString = loadJSONFromAsset();
+                String searchURL = null;
                 try
                 {
-                    json = new JSONObject(jsonString);
+                    JSON = new JSONObject(JSONString);
                 }
                 catch (Exception e)
                 {
-                    searchUrl = data;
+                    searchURL = data;
                 }
                 JSONObject translatedSearch;
                 String searchItem = "";
@@ -248,27 +249,28 @@ public class CameraUIActivity extends AppCompatActivity
                 String searchCuratorialSection = "";
                 try
                 {
-                    translatedSearch = json.getJSONObject(data);
-                    searchUrl = translatedSearch.getString("url");
+                    translatedSearch = JSON.getJSONObject(data);
+                    searchURL = translatedSearch.getString("url");
                     searchItem = translatedSearch.getString("object_name");
                     searchDescription = translatedSearch.getString("description");
                     searchProvenience = translatedSearch.getString("provenience");
                     searchMaterial = translatedSearch.getString("material");
-                    searchCuratorialSection = translatedSearch.getString("curatorial_section");
+                    searchCuratorialSection =
+                            translatedSearch.getString("curatorial_section");
                 }
                 catch (Exception e)
                 {
                     e.printStackTrace();
                 }
                 Intent intent = new Intent(getApplicationContext(), SearchActivity.class);
-                intent.putExtra("search", searchUrl);
+                intent.putExtra("search", searchURL);
                 intent.putExtra("searchnumber", data);
                 intent.putExtra("searchname", searchItem);
                 intent.putExtra("searchdescription", searchDescription);
                 intent.putExtra("searchprovenience", searchProvenience);
                 intent.putExtra("searchmaterial", searchMaterial);
                 intent.putExtra("searchcuratorial_section", searchCuratorialSection);
-                myDatabase.insertSearch(data, searchItem, searchUrl, searchDescription,
+                myDatabase.insertSearch(data, searchItem, searchURL, searchDescription,
                         searchProvenience, searchMaterial, searchCuratorialSection);
                 startActivity(intent);
             }
@@ -295,7 +297,8 @@ public class CameraUIActivity extends AppCompatActivity
             @Override
             public Object onProcessCameraFrame(byte[] data, int width, int height)
             {
-                YuvImage yuvimage = new YuvImage(data, ImageFormat.NV21, width, height, null);
+                YuvImage yuvimage = new YuvImage(data, ImageFormat.NV21, width, height,
+                        null);
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 yuvimage.compressToJpeg(new Rect(0, 0, width, height), 80, baos);
                 // have to write camera frame to file to see if it is rotated
@@ -362,15 +365,15 @@ public class CameraUIActivity extends AppCompatActivity
      */
     private void handleImage(Bitmap bitmap)
     {
-        Log.v(TAG, "Before baseApi");
+        Log.v(TAG, "Before baseAPI");
         Bitmap toSend = Bitmap.createScaledBitmap(bitmap, bitmap.getWidth() / 10,
                 bitmap.getHeight() / 10, false);
-        TessBaseAPI baseApi = new TessBaseAPI();
-        baseApi.setDebug(true);
-        baseApi.init(DATA_PATH, lang);
-        baseApi.setImage(toSend);
-        String recognizedText = baseApi.getUTF8Text();
-        baseApi.end();
+        TessBaseAPI baseAPI = new TessBaseAPI();
+        baseAPI.setDebug(true);
+        baseAPI.init(DATA_PATH, lang);
+        baseAPI.setImage(toSend);
+        String recognizedText = baseAPI.getUTF8Text();
+        baseAPI.end();
         // You now have the text in recognizedText var, you can do anything with it.
         // We will display a stripped out trimmed alpha-numeric version of it (if lang is eng)
         // so that garbage doesn't make it to the display.
@@ -439,7 +442,7 @@ public class CameraUIActivity extends AppCompatActivity
     @TargetApi(Build.VERSION_CODES.KITKAT)
     public String loadJSONFromAsset()
     {
-        String json;
+        String JSON;
         try
         {
             InputStream is = openFileInput("newjson.txt");
@@ -447,34 +450,34 @@ public class CameraUIActivity extends AppCompatActivity
             byte[] buffer = new byte[size];
             is.read(buffer);
             is.close();
-            json = new String(buffer, "UTF-8");
+            JSON = new String(buffer, "UTF-8");
         }
         catch (IOException ex)
         {
             ex.printStackTrace();
             return null;
         }
-        StringBuilder jsonFixed = new StringBuilder("{ ");
-        String[] jsonArr = json.split("(?=\\{)");
-        for (int i = 0; i < jsonArr.length; i++)
+        StringBuilder JSONFixed = new StringBuilder("{ ");
+        String[] JSONArr = JSON.split("(?=\\{)");
+        for (int i = 0; i < JSONArr.length; i++)
         {
             Pattern pattern = Pattern.compile("\"object_number\": (.+)");
-            Matcher matcher = pattern.matcher(jsonArr[i]);
-            String id_number = "";
+            Matcher matcher = pattern.matcher(JSONArr[i]);
+            String idNumber = "";
             if (matcher.find())
             {
-                id_number = matcher.group(1);
-                System.out.format("'%s'\n", id_number);
+                idNumber = matcher.group(1);
+                System.out.format("'%s'\n", idNumber);
             }
-            String fixed = id_number + " : {";
-            jsonArr[i] = jsonArr[i].replaceAll(Pattern.quote("{"), fixed);
-            jsonFixed.append(jsonArr[i]);
+            String fixed = idNumber + " : {";
+            JSONArr[i] = JSONArr[i].replaceAll(Pattern.quote("{"), fixed);
+            JSONFixed.append(JSONArr[i]);
         }
-        String jsonFixedContents = jsonFixed.toString();
-        jsonFixedContents = jsonFixedContents.replaceAll(Pattern.quote("}"), "\\},");
-        jsonFixedContents = jsonFixedContents.substring(0, jsonFixed.length() - 1);
-        jsonFixedContents += "}";
-        return jsonFixedContents;
+        String JSONFixedContents = JSONFixed.toString();
+        JSONFixedContents = JSONFixedContents.replaceAll(Pattern.quote("}"), "\\},");
+        JSONFixedContents = JSONFixedContents.substring(0, JSONFixed.length() - 1);
+        JSONFixedContents += "}";
+        return JSONFixedContents;
     }
 
     /**

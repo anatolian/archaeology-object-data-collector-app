@@ -8,17 +8,17 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import excavation.excavation_app.module.common.bean.ResponseData;
 import excavation.excavation_app.module.common.bean.SimpleData;
-import excavation.excavation_app.module.common.http.HttpOperation;
-import excavation.excavation_app.module.common.http.HttpProcessor;
-import excavation.excavation_app.module.common.http.HttpRequester;
+import excavation.excavation_app.module.common.http.HTTPOperation;
+import excavation.excavation_app.module.common.http.HTTPProcessor;
+import excavation.excavation_app.module.common.http.HTTPRequester;
 import excavation.excavation_app.module.common.http.Request;
-import excavation.excavation_app.module.common.http.Response.RESPONSE_RESULT;
-import excavation.excavation_app.module.common.http.Response.STANDARD;
-import excavation.excavation_app.module.common.http.bean.HttpObject;
+import excavation.excavation_app.module.common.http.Response.ResponseResult;
+import excavation.excavation_app.module.common.http.Response.Standard;
+import excavation.excavation_app.module.common.http.bean.HTTPObject;
 import org.json.JSONException;
 import org.json.JSONObject;
 import android.util.Log;
-public class MaterialContextListProcessor extends HttpOperation implements HttpProcessor
+public class MaterialContextListProcessor extends HTTPOperation implements HTTPProcessor
 {
     private String ipAddress;
     /**
@@ -36,10 +36,10 @@ public class MaterialContextListProcessor extends HttpOperation implements HttpP
      * @return Returns the data
      */
     @Override
-    public HttpObject getHttp(Map<Request, String> mapParams)
+    public HTTPObject getHTTP(Map<Request, String> mapParams)
     {
-        HttpObject object = new HttpObject();
-        object.setUrl(generateUrlWithParams(HttpRequester.GET_LISTING, mapParams, ipAddress));
+        HTTPObject object = new HTTPObject();
+        object.setURL(generateURLWithParams(HTTPRequester.GetListings, mapParams, ipAddress));
         return object;
     }
 
@@ -50,7 +50,7 @@ public class MaterialContextListProcessor extends HttpOperation implements HttpP
      */
     @SuppressWarnings("unchecked")
     @Override
-    public ResponseData parseObject(HttpObject object)
+    public ResponseData parseObject(HTTPObject object)
     {
         return null;
     }
@@ -62,22 +62,22 @@ public class MaterialContextListProcessor extends HttpOperation implements HttpP
      */
     @SuppressWarnings("unchecked")
     @Override
-    public List<SimpleData> parseList(HttpObject object)
+    public List<SimpleData> parseList(HTTPObject object)
     {
         SortedMap<Integer, SimpleData> map = new TreeMap<>();
         SimpleData data = new SimpleData();
         data.id = "Select Context number";
         map.put(0,data);
         object = request(object);
-        checkHttpStatus(object, data);
-        if (data.result == RESPONSE_RESULT.failed)
+        checkHTTPStatus(object, data);
+        if (data.result == ResponseResult.failed)
         {
             return new LinkedList<>(map.values());
         }
         try
         {
             JSONObject resObj = new JSONObject(object.getResponseString());
-            JSONObject resData = resObj.getJSONObject(STANDARD.responseData.name());
+            JSONObject resData = resObj.getJSONObject(Standard.responseData.name());
             Iterator<String> resIter = resData.keys();
             while (resIter.hasNext())
             {

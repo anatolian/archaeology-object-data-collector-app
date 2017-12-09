@@ -26,7 +26,6 @@ import cis573.com.archaeology.services.VolleyWrapper;
 import cis573.com.archaeology.models.AfterImageSavedMethodWrapper;
 import static cis573.com.archaeology.util.StateStatic.LOG_TAG_WIFI_DIRECT;
 import static cis573.com.archaeology.util.StateStatic.cameraIPAddress;
-
 public class CameraDialog
 {
     // interface that will be used by camera dialogs
@@ -60,7 +59,7 @@ public class CameraDialog
     }
 
     /**
-     * creating approval dialog to view and approve photos
+     * Creating approval dialog to view and approve photos
      * @param anActivity - calling activity
      * @param callback - function needing photo permissions
      */
@@ -97,19 +96,18 @@ public class CameraDialog
     }
 
     /**
-     * building url to connect phone with sony camera
-     * @param ip - camera IP address
+     * Building URL to connect phone with Sony camera
+     * @param IP - camera IP address
      * @return Returns the URL of local connection
      */
-    private static String buildAPIURLFromIP(String ip)
+    private static String buildAPIURLFromIP(String IP)
     {
-        return "http://" + ip + ":8080/sony/camera";
+        return "http://" + IP + ":8080/sony/camera";
     }
 
     /**
-     * This is going to be called from ObjectDetailActivity or ObjectDetailActivity2 class
-     * should allow you to see what the camera is seeing. requests are stored in a RequestQueue
-     * that is passed in as an argument
+     * This is going to be called from ObjectDetailActivity. It should allow you to see what the
+     * camera is seeing. requests are stored in a RequestQueue that is passed in as an argument
      * @param anActivity - calling activity
      * @param queue - waiting processes
      * @param id - camera id
@@ -118,10 +116,10 @@ public class CameraDialog
     public static void startLiveView(final Activity anActivity, final RequestQueue queue,
                                      final int id, final SimpleStreamSurfaceView liveViewSurface)
     {
-        final String url = buildAPIURLFromIP(cameraIPAddress);
+        final String URL = buildAPIURLFromIP(cameraIPAddress);
         try
         {
-            VolleyWrapper.makeVolleySonyAPIStartLiveViewRequest(url, queue, id,
+            VolleyWrapper.makeVolleySonyAPIStartLiveViewRequest(URL, queue, id,
                     new JSONObjectResponseWrapper(anActivity) {
                 /**
                  * Response received
@@ -132,7 +130,7 @@ public class CameraDialog
                 {
                     try
                     {
-                        final String liveViewUrl
+                        final String liveViewURL
                                 = response.getJSONArray("result").getString(0);
                         anActivity.runOnUiThread(new Runnable() {
                             /**
@@ -143,7 +141,7 @@ public class CameraDialog
                             {
                                 // SimpleStreamSurfaceLiveView used to allow for live view from
                                 // camera
-                                liveViewSurface.start(liveViewUrl,
+                                liveViewSurface.start(liveViewURL,
                                         new SimpleStreamSurfaceView.StreamErrorListener() {
                                     /**
                                      * Camera did not launch
@@ -183,7 +181,7 @@ public class CameraDialog
     }
 
     /**
-     * stops live view of camera upon request
+     * Stops live view of camera upon request
      * @param anActivity - calling activity
      * @param queue - process queue
      * @param id - request id
@@ -227,7 +225,7 @@ public class CameraDialog
     }
 
     /**
-     * TODO: long ugly method, should be refactored
+     * Take a photo
      * @param anActivity - calling activity
      * @param queue - process queue
      * @param id - process id
@@ -241,11 +239,11 @@ public class CameraDialog
                                  final SimpleStreamSurfaceView liveViewSurface)
     {
         // creating a fileURI so that image can be saved
-        final Uri saveFileUri = CheatSheet.getOutputMediaFileURI(filename);
-        final String url = buildAPIURLFromIP(cameraIPAddress);
+        final Uri saveFileURI = CheatSheet.getOutputMediaFileURI(filename);
+        final String URL = buildAPIURLFromIP(cameraIPAddress);
         try
         {
-            VolleyWrapper.makeVolleySonyAPISetJPEGQualityToFine(url, queue, id + 3,
+            VolleyWrapper.makeVolleySonyAPISetJPEGQualityToFine(URL, queue, id + 3,
                     new JSONObjectResponseWrapper(anActivity) {
                 /**
                  * Response received
@@ -256,7 +254,7 @@ public class CameraDialog
                 {
                     try
                     {
-                        VolleyWrapper.makeVolleySonyAPISetImageSizeToOriginal(url, queue,
+                        VolleyWrapper.makeVolleySonyAPISetImageSizeToOriginal(URL, queue,
                                 id + 5, new JSONObjectResponseWrapper(anActivity) {
                             /**
                              * Response received
@@ -269,7 +267,7 @@ public class CameraDialog
                                 try
                                 {
                                     // make request to take photo
-                                    VolleyWrapper.makeVolleySonyAPITakePhotoRequest(url, queue, id,
+                                    VolleyWrapper.makeVolleySonyAPITakePhotoRequest(URL, queue, id,
                                             new JSONObjectResponseWrapper(anActivity) {
                                         /**
                                          * Response received
@@ -281,31 +279,31 @@ public class CameraDialog
                                             Log.v(LOG_TAG_WIFI_DIRECT, response.toString());
                                             try
                                             {
-                                                // building image url to save photo
-                                                String imageUrl =
+                                                // building image URL to save photo
+                                                String imageURL =
                                                         response.getJSONArray("result")
                                                                 .getString(0);
-                                                imageUrl = imageUrl.substring(2,
-                                                        imageUrl.length() - 2);
-                                                imageUrl = imageUrl.replace("\\",
+                                                imageURL = imageURL.substring(2,
+                                                        imageURL.length() - 2);
+                                                imageURL = imageURL.replace("\\",
                                                         "");
                                                 Log.v(LOG_TAG_WIFI_DIRECT,
-                                                        "imageUrl: " + imageUrl);
+                                                        "imageURL: " + imageURL);
                                                 // once you have stored the image data into a url
                                                 // you can stop the live view
-                                                stopLiveView(anActivity, queue,id + 23,
+                                                stopLiveView(anActivity, queue, id + 23,
                                                         liveViewSurface);
                                                 final ProgressDialog loadingDialog =
                                                         new ProgressDialog(anActivity);
-                                                loadingDialog
-                                                        .setMessage("Downloading Photo From Camera");
+                                                loadingDialog.setMessage("Downloading Photo From" +
+                                                        " Camera");
                                                 loadingDialog.setProgressStyle(
                                                         ProgressDialog.STYLE_SPINNER);
                                                 loadingDialog.setIndeterminate(true);
                                                 loadingDialog.show();
                                                 // getting image to store as thumbnail
-                                                VolleyWrapper.makeVolleyImageRequest(imageUrl, queue,
-                                                        new ImageResponseWrapper() {
+                                                VolleyWrapper.makeVolleyImageRequest(imageURL,
+                                                        queue, new ImageResponseWrapper() {
                                                     /**
                                                      * Response received
                                                      * @param bitmap - image taken
@@ -319,22 +317,23 @@ public class CameraDialog
                                                         try
                                                         {
                                                             File tmpFile =
-                                                                    new File(saveFileUri.getPath());
+                                                                    new File(saveFileURI
+                                                                            .getPath());
                                                             // writing data from file to output
                                                             // stream to be stored into a bitmap
-                                                            tmpStream =
-                                                                    new FileOutputStream(tmpFile);
-                                                            bitmap.compress(Bitmap.CompressFormat
-                                                                            .JPEG,
+                                                            tmpStream = new FileOutputStream(
+                                                                    tmpFile);
+                                                            bitmap.compress(
+                                                                    Bitmap.CompressFormat.JPEG,
                                                                     100, tmpStream);
-                                                            Uri thumbnailUri = CheatSheet
-                                                                    .getThumbnail(
+                                                            Uri thumbnailURI =
+                                                                    CheatSheet.getThumbnail(
                                                                             filename
                                                                                     + ".jpg");
                                                             loadingDialog.dismiss();
                                                             // has not been defined yet
                                                             lambdaWrapper.doStuffWithSavedImage(
-                                                                    thumbnailUri);
+                                                                    thumbnailURI);
                                                         }
                                                         catch (FileNotFoundException e)
                                                         {
@@ -358,8 +357,8 @@ public class CameraDialog
                                                         }
                                                         // after thumbnail has been loaded you can
                                                         // start the live view
-                                                        startLiveView(anActivity, queue, id + 22,
-                                                                liveViewSurface);
+                                                        startLiveView(anActivity, queue,
+                                                                id + 22, liveViewSurface);
                                                     }
 
                                                     /**
@@ -371,8 +370,8 @@ public class CameraDialog
                                                     {
                                                         error.printStackTrace();
                                                         loadingDialog.dismiss();
-                                                        startLiveView(anActivity, queue, id + 27,
-                                                                liveViewSurface);
+                                                        startLiveView(anActivity, queue,
+                                                                id + 27, liveViewSurface);
                                                     }
                                                 });
                                             }
@@ -442,10 +441,10 @@ public class CameraDialog
      */
     public static void zoomIn(final Activity anActivity, RequestQueue queue, int id)
     {
-        final String url = buildAPIURLFromIP(cameraIPAddress);
+        final String URL = buildAPIURLFromIP(cameraIPAddress);
         try
         {
-            VolleyWrapper.makeVolleySonyAPIActZoomRequest("in", queue, url, id,
+            VolleyWrapper.makeVolleySonyAPIActZoomRequest("in", queue, URL, id,
                     new JSONObjectResponseWrapper(anActivity) {
                 /**
                  * Response received
@@ -482,10 +481,10 @@ public class CameraDialog
      */
     public static void zoomOut(final Activity anActivity, RequestQueue queue, int id)
     {
-        final String url = buildAPIURLFromIP(cameraIPAddress);
+        final String URL = buildAPIURLFromIP(cameraIPAddress);
         try
         {
-            VolleyWrapper.makeVolleySonyAPIActZoomRequest("out", queue, url, id,
+            VolleyWrapper.makeVolleySonyAPIActZoomRequest("out", queue, URL, id,
                     new JSONObjectResponseWrapper(anActivity) {
                 /**
                  * Response received

@@ -44,8 +44,6 @@ public class ManualActivity extends AppCompatActivity
             Bitmap bmp = getIntent().getParcelableExtra("preview");
             ImageView iv = (ImageView) findViewById(R.id.prev);
             EditText et = (EditText) findViewById(R.id.editText);
-            // TODO: Fix terrible handwriting recognition and uncomment
-//            et.setText(getIntent().getStringExtra("search"));
             iv.setImageBitmap(bmp);
             iv.setVisibility(View.VISIBLE);
             et.requestFocus();

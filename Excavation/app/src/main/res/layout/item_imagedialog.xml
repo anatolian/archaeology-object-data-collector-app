@@ -10,7 +10,8 @@
         android:layout_height = "match_parent"
         android:layout_centerHorizontal = "true"
         android:layout_centerVertical = "true"
-        android:src = "@drawable/fail1"/>
+        android:src = "@drawable/fail1"
+        android:contentDescription="@string/no_image_found"/>
     <ImageView
         android:id = "@+id/imageView1"
         android:layout_width = "wrap_content"
@@ -18,5 +19,6 @@
         android:layout_alignBottom = "@+id/imageViewDialog"
         android:layout_centerHorizontal = "true"
         android:layout_marginBottom = "20dp"
-        android:src = "@drawable/btn9"/>
+        android:src = "@drawable/btn9"
+        android:contentDescription="@string/photo_library"/>
 </RelativeLayout>

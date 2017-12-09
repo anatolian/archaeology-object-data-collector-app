@@ -56,7 +56,8 @@
                     android:layout_weight = "1"
                     android:ems = "10"
                     android:singleLine = "true"
-                    android:textSize = "15sp">
+                    android:textSize = "15sp"
+                    android:hint = "@string/context_subpath_3d">
                 </EditText>
             </LinearLayout>
             <LinearLayout
@@ -81,7 +82,8 @@
                     android:layout_weight = "1"
                     android:ems = "10"
                     android:singleLine = "true"
-                    android:textSize = "18sp">
+                    android:textSize = "18sp"
+                    android:hint = "@string/base_image_path">
                 </EditText>
             </LinearLayout>
             <LinearLayout
@@ -106,7 +108,8 @@
                     android:layout_weight = "1"
                     android:ems = "10"
                     android:singleLine = "true"
-                    android:textSize = "18sp">
+                    android:textSize = "18sp"
+                    android:hint = "@string/context_subpath">
                 </EditText>
             </LinearLayout>
             <LinearLayout
@@ -131,7 +134,8 @@
                     android:layout_weight = "1"
                     android:ems = "10"
                     android:singleLine = "true"
-                    android:textSize = "18sp">
+                    android:textSize = "18sp"
+                    android:hint = "@string/sample_label_area_divider">
                 </EditText>
             </LinearLayout>
             <LinearLayout
@@ -150,13 +154,14 @@
                     android:text = "@string/sample_label_context_divider"
                     android:textSize = "15sp"/>
                 <EditText
-                    android:id = "@+id/txtContexdivider"
+                    android:id = "@+id/txtContextdivider"
                     android:layout_width = "fill_parent"
                     android:layout_height = "wrap_content"
                     android:layout_weight = "1"
                     android:ems = "10"
                     android:singleLine = "true"
-                    android:textSize = "18sp">
+                    android:textSize = "18sp"
+                    android:hint = "@string/sample_label_context_divider">
                 </EditText>
             </LinearLayout>
             <LinearLayout
@@ -181,7 +186,8 @@
                     android:layout_weight = "1"
                     android:ems = "10"
                     android:singleLine = "true"
-                    android:textSize = "15sp">
+                    android:textSize = "15sp"
+                    android:hint = "@string/sample_label_font">
                 </EditText>
             </LinearLayout>
             <LinearLayout
@@ -207,7 +213,8 @@
                     android:ems = "10"
                     android:inputType = "number"
                     android:singleLine = "true"
-                    android:textSize = "18sp">
+                    android:textSize = "18sp"
+                    android:hint = "@string/sample_label_font_size">
                 </EditText>
             </LinearLayout>
             <LinearLayout
@@ -253,7 +260,8 @@
                     android:layout_weight = "1"
                     android:ems = "10"
                     android:singleLine = "true"
-                    android:textSize = "18sp">
+                    android:textSize = "18sp"
+                    android:hint = "@string/sample_label_sample_divider">
                 </EditText>
             </LinearLayout>
             <LinearLayout
@@ -278,7 +286,8 @@
                     android:layout_weight = "1"
                     android:ems = "10"
                     android:singleLine = "true"
-                    android:textSize = "15sp">
+                    android:textSize = "15sp"
+                    android:hint = "@string/sample_subpath">
                 </EditText>
             </LinearLayout>
                <LinearLayout
@@ -304,7 +313,8 @@
                     android:layout_weight = "1"
                     android:ems = "10"
                     android:singleLine = "true"
-                    android:textSize = "15sp">
+                    android:textSize = "15sp"
+                    android:hint = "@string/context_subpath_3d">
                 </EditText>
             </LinearLayout>
             <RelativeLayout

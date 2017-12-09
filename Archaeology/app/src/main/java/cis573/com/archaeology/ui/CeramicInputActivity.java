@@ -275,13 +275,13 @@ public class CeramicInputActivity extends AppCompatActivity
     }
 
     /**
-     * get area easting data and fill spinner
+     * Get area easting data and fill spinner
      */
     public void asyncGetAreaEastingFromDB()
     {
         allDataLoadInfo.put(LoadState.areaEasting, false);
-        String url = getGlobalWebServerURL() + "/get_area_easting.php";
-        makeVolleyJSONArrayRequest(url, queue, new JSONArrayResponseWrapper() {
+        String URL = getGlobalWebServerURL() + "/get_area_easting.php";
+        makeVolleyJSONArrayRequest(URL, queue, new JSONArrayResponseWrapper() {
             /**
              * Response received
              * @param response - volley response
@@ -318,14 +318,14 @@ public class CeramicInputActivity extends AppCompatActivity
     }
 
     /**
-     * get northing data from database and populate spinner
+     * Get northing data from database and populate spinner
      */
     private void asyncGetAreaNorthingFromDB()
     {
         allDataLoadInfo.put(LoadState.areaNorthing, false);
-        String url = getGlobalWebServerURL() + "/get_area_northing.php?area_easting="
+        String URL = getGlobalWebServerURL() + "/get_area_northing.php?area_easting="
                 + getSelectedAreaEasting();
-        makeVolleyJSONArrayRequest(url, queue, new JSONArrayResponseWrapper() {
+        makeVolleyJSONArrayRequest(URL, queue, new JSONArrayResponseWrapper() {
             /**
              * Response received
              * @param response - database response
@@ -361,15 +361,15 @@ public class CeramicInputActivity extends AppCompatActivity
     }
 
     /**
-     * get context numbers from database and fill spinner
+     * Get context numbers from database and fill spinner
      */
     private void asyncGetContextNumberFromDB()
     {
         allDataLoadInfo.put(LoadState.contextNumber, false);
-        String url = getGlobalWebServerURL() + "/get_context_number.php?area_easting="
+        String URL = getGlobalWebServerURL() + "/get_context_number.php?area_easting="
                 + getSelectedAreaEasting() + "&area_northing=" + getSelectedAreaNorthing();
-        Log.v(LOG_TAG, "the url is " + url);
-        makeVolleyJSONArrayRequest(url, queue, new JSONArrayResponseWrapper() {
+        Log.v(LOG_TAG, "the URL is " + URL);
+        makeVolleyJSONArrayRequest(URL, queue, new JSONArrayResponseWrapper() {
             /**
              * Response received
              * @param response - database response
@@ -411,10 +411,10 @@ public class CeramicInputActivity extends AppCompatActivity
     {
         allDataLoadInfo.put(LoadState.sampleNumber, false);
         toggleContinueButton();
-        String url = getGlobalWebServerURL() + "/get_sample_number.php?area_easting="
+        String URL = getGlobalWebServerURL() + "/get_sample_number.php?area_easting="
                 + getSelectedAreaEasting() + "&area_northing=" + getSelectedAreaNorthing()
                 + "&context_number=" + getSelectedContextNumber();
-        makeVolleyJSONArrayRequest(url, queue, new JSONArrayResponseWrapper() {
+        makeVolleyJSONArrayRequest(URL, queue, new JSONArrayResponseWrapper() {
             /**
              * Database response
              * @param response - response received

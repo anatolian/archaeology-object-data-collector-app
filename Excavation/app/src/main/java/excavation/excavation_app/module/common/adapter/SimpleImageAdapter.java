@@ -73,7 +73,8 @@ public class SimpleImageAdapter extends BaseAdapter
     @Override
     public View getView(int position, View convertView, ViewGroup parent)
     {
-        LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(
+                Context.LAYOUT_INFLATER_SERVICE);
         View row = inflater.inflate(R.layout.item_image, parent, false);
         final String img = imgs.get(position);
         ImageView imageViewImageAlbum = (ImageView) row.findViewById(R.id.imageViewImageAlbum);
@@ -81,7 +82,8 @@ public class SimpleImageAdapter extends BaseAdapter
         final ProgressBar progressBar = (ProgressBar) row.findViewById(R.id.progressBar1);
         System.out.println("image path adapter" + img);
         Uri path = Uri.parse("file://" + img);
-        Picasso.with(mContext).load(path).memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
+        Picasso.with(mContext).load(path).memoryPolicy(MemoryPolicy.NO_CACHE,
+                MemoryPolicy.NO_STORE)
                 .into(imageViewImageAlbum, new com.squareup.picasso.Callback() {
             /**
              * Loading success

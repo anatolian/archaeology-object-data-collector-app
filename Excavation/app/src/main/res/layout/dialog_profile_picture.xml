@@ -25,7 +25,8 @@
             android:layout_below = "@+id/buttonFromLibrary"
             android:layout_centerHorizontal = "true"
             android:layout_marginLeft = "5dp"
-            android:layout_marginRight = "5dp"/>
+            android:layout_marginRight = "5dp"
+            android:contentDescription="@string/photo_library"/>
         <Button
             android:id = "@+id/buttonTakePhoto"
             android:layout_width = "match_parent"

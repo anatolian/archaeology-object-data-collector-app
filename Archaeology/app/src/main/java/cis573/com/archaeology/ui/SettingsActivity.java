@@ -15,7 +15,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 import java.util.Set;
 import cis573.com.archaeology.R;
-import cis573.com.archaeology.services.Session;
+import cis573.com.archaeology.util.StateStatic;
 import static cis573.com.archaeology.util.StateStatic.DEFAULT_CALIBRATION_INTERVAL;
 import static cis573.com.archaeology.util.StateStatic.DEFAULT_WEB_SERVER_URL;
 import static cis573.com.archaeology.util.StateStatic.DEFAULT_CAMERA_IP;
@@ -70,7 +70,7 @@ public class SettingsActivity extends AppCompatActivity
                             String deviceName = device.getName();
                             if (deviceName.equals(devices[position]))
                             {
-                                Session.deviceName = deviceName;
+                                StateStatic.deviceName = deviceName;
                                 Toast.makeText(getApplicationContext(),"Connected to: " +
                                         deviceName, Toast.LENGTH_SHORT).show();
                             }

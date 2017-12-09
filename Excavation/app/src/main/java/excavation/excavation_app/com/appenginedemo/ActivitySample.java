@@ -35,9 +35,9 @@ public class ActivitySample extends ActivityBase
     Spinner areaEasting, areaNorthing, spnType, spnContextNo, spnSampleNo;
     TextView textViewTakePhoto, samplePhoto, textViewUploadPhoto;
     BaseTask task;
-    String spnEast = "", spnNorth = "", imagePath = "", north = "", east = "";
-    String spnMaterial = "", spnCon = "", spnSam = "", type = "", sno = "", ctxNo = "", gtype = "";
-    String material = "", val = "";
+    String spnEast = "", spnNorth = "", imagePath = "", north = "", east = "", spnMaterial = "";
+    String spnCon = "", spnSam = "", type = "", sno = "", ctxNo = "", gtype = "", material = "";
+    String val = "";
     ProgressBar pBar, progressBar2;
     GridView gridViewList;
     boolean flag;
@@ -56,7 +56,7 @@ public class ActivitySample extends ActivityBase
         header.setBackgroundColor(getResources().getColor(R.color.Lavender));
         AppConstants.up = 1;
         TextViewSample.setBackgroundColor(getResources().getColor(R.color.butterflyblue));
-        TextView3d.setBackgroundColor(getResources().getColor(R.color.black));
+        TextView3D.setBackgroundColor(getResources().getColor(R.color.black));
         TextViewContext.setBackgroundColor(getResources().getColor(R.color.black));
         samplePhoto = (TextView) findViewById(R.id.samplephoto);
         areaEasting = (Spinner) findViewById(R.id.areaEasting);
@@ -362,8 +362,8 @@ public class ActivitySample extends ActivityBase
                 }
                 else
                 {
-                    Toast.makeText(ActivitySample.this,"Please Fill All Required Fields",
-                            Toast.LENGTH_LONG).show();
+                    Toast.makeText(ActivitySample.this,
+                            "Please fill all required fields", Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -405,7 +405,6 @@ public class ActivitySample extends ActivityBase
         }
         catch (Exception e)
         {
-            // TODO: handle exception
             e.printStackTrace();
         }
     }

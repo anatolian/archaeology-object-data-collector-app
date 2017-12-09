@@ -4,21 +4,21 @@ import java.util.HashMap;
 import java.util.Map;
 import excavation.excavation_app.module.common.bean.ResponseData;
 import excavation.excavation_app.module.common.bean.SimpleData;
-import excavation.excavation_app.module.common.http.HttpProcessor;
+import excavation.excavation_app.module.common.http.HTTPProcessor;
 import excavation.excavation_app.module.common.http.Request;
-import excavation.excavation_app.module.common.http.bean.HttpObject;
-import excavation.excavation_app.module.context.AddAContextNumberProcessor.ADD_CONTEXT_REQUEST;
+import excavation.excavation_app.module.common.http.bean.HTTPObject;
+import excavation.excavation_app.module.context.AddAContextNumberProcessor.AddContextRequest;
 import excavation.excavation_app.module.context.AddASinglePhotoProcessor;
-import excavation.excavation_app.module.context.AddASinglePhotoProcessor.ADD_ALBUM_REQUEST;
+import excavation.excavation_app.module.context.AddASinglePhotoProcessor.AddAlbumRequest;
 import excavation.excavation_app.module.context.DeleteProcessor;
-import excavation.excavation_app.module.context.DeleteProcessor.DELETE_PRODUCT_REQUEST;
+import excavation.excavation_app.module.context.DeleteProcessor.DeleteProductRequest;
 import excavation.excavation_app.module.gallery.AddAlbumInternalPhotoProcessor;
-import excavation.excavation_app.module.gallery.AddAlbumInternalPhotoProcessor.ADD_REMOVE_ALBUM_REQUEST;
+import excavation.excavation_app.module.gallery.AddAlbumInternalPhotoProcessor.AddRemoveAlbumRequest;
 import excavation.excavation_app.module.image.property.ImagePropertyBean;
 import excavation.excavation_app.module.image.property.ImagePropertyProcessor;
 import excavation.excavation_app.module.sample.AddSamplePhotoProcessor;
-import excavation.excavation_app.module.sample.AddSamplePhotoProcessor.ADD_SAMPLE_ALBUM_REQUEST;
-public class SimpleObjectFactory implements BaseFactory
+import excavation.excavation_app.module.sample.AddSamplePhotoProcessor.AddSampleAlbumRequest;
+public class SimpleObjectFactory
 {
     private static SimpleObjectFactory factory;
     /**
@@ -47,9 +47,10 @@ public class SimpleObjectFactory implements BaseFactory
      * @param params - parameters
      * @return Returns the data
      */
-    private <T extends ResponseData> T getResponseObject(HttpProcessor processor, Map<Request, String> params)
+    private <T extends ResponseData> T getResponseObject(HTTPProcessor processor,
+                                                         Map<Request, String> params)
     {
-        HttpObject object = processor.getHttp(params);
+        HTTPObject object = processor.getHTTP(params);
         T resData = processor.parseObject(object);
         releaseProcessor();
         return resData;
@@ -80,26 +81,26 @@ public class SimpleObjectFactory implements BaseFactory
      * @param ipAddress - server IP
      * @param phid - photo id
      * @param baseImagePath - image location
-     * @param contextSubpath - context location
+     * @param contextSubPath - context location
      * @return Returns the data
      */
     public SimpleData addSingleImg(String north1, String east1, String img, String ctx,
                                    String ipAddress, String phid, String baseImagePath,
-                                   String contextSubpath)
+                                   String contextSubPath)
     {
         Map<Request, String> mapParams = new HashMap<>();
-        mapParams.put(ADD_ALBUM_REQUEST.areaNorthing, north1);
-        mapParams.put(ADD_ALBUM_REQUEST.areaEasting, east1);
+        mapParams.put(AddAlbumRequest.areaNorthing, north1);
+        mapParams.put(AddAlbumRequest.areaEasting, east1);
         if (ctx != null && ctx.length() > 0)
         {
-            mapParams.put(ADD_ALBUM_REQUEST.contextNumber, ctx);
+            mapParams.put(AddAlbumRequest.contextNumber, ctx);
         }
         if (phid != null && phid.length() > 0)
         {
-            mapParams.put(ADD_CONTEXT_REQUEST.photographNumber, phid);
+            mapParams.put(AddContextRequest.photographNumber, phid);
         }
-        mapParams.put(ADD_ALBUM_REQUEST.baseImagePath, baseImagePath);
-        mapParams.put(ADD_ALBUM_REQUEST.contextSubpath, contextSubpath);
+        mapParams.put(AddAlbumRequest.baseImagePath, baseImagePath);
+        mapParams.put(AddAlbumRequest.contextSubPath, contextSubPath);
         return getResponseObject(new AddASinglePhotoProcessor(img, ipAddress), mapParams);
     }
 
@@ -111,20 +112,21 @@ public class SimpleObjectFactory implements BaseFactory
      * @param id - item id
      * @param ipAddress - server IP
      * @param baseImagePath - image location
-     * @param contextSubpath3d - context path
+     * @param contextSubPath3D - context path
      * @return Returns the data
      */
-    public SimpleData getAddAlbumsPhotosData(String east, String north, String imagePath, String id,
-                                             String ipAddress, String baseImagePath,
-                                             String contextSubpath3d)
+    public SimpleData getAddAlbumsPhotosData(String east, String north, String imagePath,
+                                             String id, String ipAddress, String baseImagePath,
+                                             String contextSubPath3D)
     {
         Map<Request, String> mapParams = new HashMap<>();
-        mapParams.put(ADD_REMOVE_ALBUM_REQUEST.areaEasting, east);
-        mapParams.put(ADD_REMOVE_ALBUM_REQUEST.areaNorthing, north);
-        mapParams.put(ADD_REMOVE_ALBUM_REQUEST.dateName, id);
-        mapParams.put(ADD_REMOVE_ALBUM_REQUEST.baseImagePath, baseImagePath);
-        mapParams.put(ADD_REMOVE_ALBUM_REQUEST.contextSubpath3d, contextSubpath3d);
-        return getResponseObject(new AddAlbumInternalPhotoProcessor(imagePath, ipAddress), mapParams);
+        mapParams.put(AddRemoveAlbumRequest.areaEasting, east);
+        mapParams.put(AddRemoveAlbumRequest.areaNorthing, north);
+        mapParams.put(AddRemoveAlbumRequest.dateName, id);
+        mapParams.put(AddRemoveAlbumRequest.baseImagePath, baseImagePath);
+        mapParams.put(AddRemoveAlbumRequest.contextSubPath3D, contextSubPath3D);
+        return getResponseObject(new AddAlbumInternalPhotoProcessor(imagePath, ipAddress),
+                mapParams);
     }
 
     /**
@@ -136,42 +138,42 @@ public class SimpleObjectFactory implements BaseFactory
      * @param tp - tp
      * @param imagePath - image location
      * @param ipAddress - server IP
-     * @param contextSubpath3d - context location
+     * @param contextSubPath3D - context location
      * @param baseImagePath - image location
-     * @param contextSubpath - context location
+     * @param contextSubPath - context location
      * @param sampleLabelAreaDivider - sample divider
      * @param sampleLabelContextDivider - sample context divider
      * @param sampleLabelFont - label font
      * @param sampleLabelFontSize - label size
      * @param sampleLabelPlacement - label location
      * @param sampleLabelSampleDivider - label divider
-     * @param sampleSubpath - sample location
+     * @param sampleSubPath - sample location
      * @return Returns the data
      */
     public SimpleData AddSamplePhotosData(String east, String north, String conNo, String samNo,
                                           String tp, String imagePath, String ipAddress,
-                                          String contextSubpath3d, String baseImagePath,
-                                          String contextSubpath, String sampleLabelAreaDivider,
+                                          String contextSubPath3D, String baseImagePath,
+                                          String contextSubPath, String sampleLabelAreaDivider,
                                           String sampleLabelContextDivider, String sampleLabelFont,
                                           String sampleLabelFontSize, String sampleLabelPlacement,
-                                          String sampleLabelSampleDivider, String sampleSubpath)
+                                          String sampleLabelSampleDivider, String sampleSubPath)
     {
         Map<Request, String> mapParams = new HashMap<>();
-        mapParams.put(ADD_REMOVE_ALBUM_REQUEST.areaEasting, east);
-        mapParams.put(ADD_REMOVE_ALBUM_REQUEST.areaNorthing, north);
-        mapParams.put(ADD_SAMPLE_ALBUM_REQUEST.contextNumber, conNo);
-        mapParams.put(ADD_SAMPLE_ALBUM_REQUEST.sampleNumber, samNo);
-        mapParams.put(ADD_SAMPLE_ALBUM_REQUEST.samplePhotoType, tp);
-        mapParams.put(ADD_SAMPLE_ALBUM_REQUEST.contextSubpath3d, contextSubpath3d);
-        mapParams.put(ADD_SAMPLE_ALBUM_REQUEST.baseImagePath, baseImagePath);
-        mapParams.put(ADD_SAMPLE_ALBUM_REQUEST.contextSubpath, contextSubpath);
-        mapParams.put(ADD_SAMPLE_ALBUM_REQUEST.sampleLabelAreaDivider, sampleLabelAreaDivider);
-        mapParams.put(ADD_SAMPLE_ALBUM_REQUEST.sampleLabelContextDivider, sampleLabelContextDivider);
-        mapParams.put(ADD_SAMPLE_ALBUM_REQUEST.sampleLabelFont, sampleLabelFont);
-        mapParams.put(ADD_SAMPLE_ALBUM_REQUEST.sampleLabelFontSize, sampleLabelFontSize);
-        mapParams.put(ADD_SAMPLE_ALBUM_REQUEST.sampleLabelPlacement, sampleLabelPlacement);
-        mapParams.put(ADD_SAMPLE_ALBUM_REQUEST.sampleLabelSampleDivider, sampleLabelSampleDivider);
-        mapParams.put(ADD_SAMPLE_ALBUM_REQUEST.sampleSubpath, sampleSubpath);
+        mapParams.put(AddRemoveAlbumRequest.areaEasting, east);
+        mapParams.put(AddRemoveAlbumRequest.areaNorthing, north);
+        mapParams.put(AddSampleAlbumRequest.contextNumber, conNo);
+        mapParams.put(AddSampleAlbumRequest.sampleNumber, samNo);
+        mapParams.put(AddSampleAlbumRequest.samplePhotoType, tp);
+        mapParams.put(AddSampleAlbumRequest.contextSubPath3D, contextSubPath3D);
+        mapParams.put(AddSampleAlbumRequest.baseImagePath, baseImagePath);
+        mapParams.put(AddSampleAlbumRequest.contextSubPath, contextSubPath);
+        mapParams.put(AddSampleAlbumRequest.sampleLabelAreaDivider, sampleLabelAreaDivider);
+        mapParams.put(AddSampleAlbumRequest.sampleLabelContextDivider, sampleLabelContextDivider);
+        mapParams.put(AddSampleAlbumRequest.sampleLabelFont, sampleLabelFont);
+        mapParams.put(AddSampleAlbumRequest.sampleLabelFontSize, sampleLabelFontSize);
+        mapParams.put(AddSampleAlbumRequest.sampleLabelPlacement, sampleLabelPlacement);
+        mapParams.put(AddSampleAlbumRequest.sampleLabelSampleDivider, sampleLabelSampleDivider);
+        mapParams.put(AddSampleAlbumRequest.sampleSubPath, sampleSubPath);
         return getResponseObject(new AddSamplePhotoProcessor(imagePath, ipAddress), mapParams);
     }
 
@@ -189,11 +191,11 @@ public class SimpleObjectFactory implements BaseFactory
                                     String contextNo, String photoNo)
     {
         Map<Request, String> mapParams = new HashMap<>();
-        mapParams.put(DELETE_PRODUCT_REQUEST.areaEast, east);
-        mapParams.put(DELETE_PRODUCT_REQUEST.areaNorth, north);
-        mapParams.put(DELETE_PRODUCT_REQUEST.contextNumber, contextNo);
-        mapParams.put(DELETE_PRODUCT_REQUEST.photographNumber, photoNo);
-        mapParams.put(DELETE_PRODUCT_REQUEST.mode, mode);
+        mapParams.put(DeleteProductRequest.areaEast, east);
+        mapParams.put(DeleteProductRequest.areaNorth, north);
+        mapParams.put(DeleteProductRequest.contextNumber, contextNo);
+        mapParams.put(DeleteProductRequest.photographNumber, photoNo);
+        mapParams.put(DeleteProductRequest.mode, mode);
         return getResponseObject(new DeleteProcessor(ip), mapParams);
     }
 

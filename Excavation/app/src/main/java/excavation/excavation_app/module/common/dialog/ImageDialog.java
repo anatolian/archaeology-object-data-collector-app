@@ -42,8 +42,8 @@ public class ImageDialog extends Dialog
         System.out.println("Image Path in image dialog==>" + imageURL);
         if (imageURL != null && imageURL.length() > 0)
         {
-            Picasso.with(context).load(imageURL).memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
-                    .into(imageView1, new com.squareup.picasso.Callback() {
+            Picasso.with(context).load(imageURL).memoryPolicy(MemoryPolicy.NO_CACHE,
+                    MemoryPolicy.NO_STORE).into(imageView1, new com.squareup.picasso.Callback() {
                 /**
                  * Load failed
                  */

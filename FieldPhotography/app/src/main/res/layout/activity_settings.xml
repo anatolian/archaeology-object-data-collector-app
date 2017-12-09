@@ -29,7 +29,8 @@
         android:layout_alignStart = "@+id/checkBox"
         android:layout_alignEnd = "@+id/checkBox"
         android:paddingStart = "5dp"
-        android:paddingEnd = "5dp"/>
+        android:paddingEnd = "5dp"
+        android:hint="@string/save_path"/>
     <TextView
         android:layout_width = "wrap_content"
         android:layout_height = "wrap_content"

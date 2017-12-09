@@ -5,16 +5,16 @@ import java.util.Map;
 import excavation.excavation_app.module.common.bean.SimpleData;
 import excavation.excavation_app.module.common.constants.AppConstants;
 import excavation.excavation_app.module.common.constants.MessageConstants;
-import excavation.excavation_app.module.common.http.HttpOperation;
-import excavation.excavation_app.module.common.http.HttpProcessor;
-import excavation.excavation_app.module.common.http.HttpRequester;
+import excavation.excavation_app.module.common.http.HTTPOperation;
+import excavation.excavation_app.module.common.http.HTTPProcessor;
+import excavation.excavation_app.module.common.http.HTTPRequester;
 import excavation.excavation_app.module.common.http.Request;
-import excavation.excavation_app.module.common.http.Response.RESPONSE_RESULT;
-import excavation.excavation_app.module.common.http.Response.STANDARD;
-import excavation.excavation_app.module.common.http.bean.HttpObject;
+import excavation.excavation_app.module.common.http.Response.ResponseResult;
+import excavation.excavation_app.module.common.http.Response.Standard;
+import excavation.excavation_app.module.common.http.bean.HTTPObject;
 import org.json.JSONException;
 import org.json.JSONObject;
-public class AddAlbumInternalPhotoProcessor extends HttpOperation implements HttpProcessor
+public class AddAlbumInternalPhotoProcessor extends HTTPOperation implements HTTPProcessor
 {
     private String coverImage;
     private String ipAddress;
@@ -35,18 +35,19 @@ public class AddAlbumInternalPhotoProcessor extends HttpOperation implements Htt
      * @return Returns the response
      */
     @Override
-    public HttpObject getHttp(Map<Request, String> mapParams)
+    public HTTPObject getHTTP(Map<Request, String> mapParams)
     {
-        HttpObject object = new HttpObject();
+        HTTPObject object = new HTTPObject();
         object.setParams(mapParams);
-        object.setUrl(generateUrlWithParams(HttpRequester.ADD_MULTIPLE_PHOTO, mapParams, ipAddress));
+        object.setURL(generateURLWithParams(HTTPRequester.AddMultiplePhotos, mapParams,
+                ipAddress));
         return object;
     }
 
-    public enum ADD_REMOVE_ALBUM_REQUEST implements Request
+    public enum AddRemoveAlbumRequest implements Request
     {
         galleryName, imagePath, areaEasting, areaNorthing, batchName, dateName, baseImagePath,
-        contextSubpath3d;
+        contextSubPath3D;
         /**
          * Get a parameter
          * @return Returns a parameter
@@ -65,7 +66,7 @@ public class AddAlbumInternalPhotoProcessor extends HttpOperation implements Htt
      */
     @SuppressWarnings("unchecked")
     @Override
-    public SimpleData parseObject(HttpObject object)
+    public SimpleData parseObject(HTTPObject object)
     {
         SimpleData data = new SimpleData();
         AppConstants.internet = 0;
@@ -77,27 +78,27 @@ public class AddAlbumInternalPhotoProcessor extends HttpOperation implements Htt
         {
             object = request(object);
         }
-        checkHttpStatus(object, data);
-        if (data.result == RESPONSE_RESULT.failed)
+        checkHTTPStatus(object, data);
+        if (data.result == ResponseResult.failed)
         {
-            data.result = RESPONSE_RESULT.failed;
+            data.result = ResponseResult.failed;
             data.resultMsg = MessageConstants.FAILED_TO_CONNECT;
             return data;
         }
         try
         {
             JSONObject responseObj = new JSONObject(object.getResponseString());
-            JSONObject responseData = responseObj.getJSONObject(STANDARD.responseData.name());
+            JSONObject responseData = responseObj.getJSONObject(Standard.responseData.name());
             String result = responseData.getString("result");
             if (result.equalsIgnoreCase("success"))
             {
-                data.result = RESPONSE_RESULT.success;
+                data.result = ResponseResult.success;
                 data.resultMsg = responseData.getString("result");
                 data.id = responseData.getString("batch_name");
             }
             else
             {
-                data.result = RESPONSE_RESULT.failed;
+                data.result = ResponseResult.failed;
                 data.resultMsg = responseData.getString("failed");
                 data.name = responseData.getString("message");
             }
@@ -106,7 +107,7 @@ public class AddAlbumInternalPhotoProcessor extends HttpOperation implements Htt
         {
             AppConstants.internet = 1;
             e.printStackTrace();
-            data.result = RESPONSE_RESULT.failed;
+            data.result = ResponseResult.failed;
             data.resultMsg = MessageConstants.FAILED_TO_PARSE;
         }
         finally
@@ -123,7 +124,7 @@ public class AddAlbumInternalPhotoProcessor extends HttpOperation implements Htt
      */
     @Override
     @SuppressWarnings("unchecked")
-    public List<SimpleData> parseList(HttpObject object)
+    public List<SimpleData> parseList(HTTPObject object)
     {
         return null;
     }

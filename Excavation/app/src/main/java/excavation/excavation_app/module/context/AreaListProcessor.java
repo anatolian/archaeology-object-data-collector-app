@@ -8,17 +8,17 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import excavation.excavation_app.module.common.bean.ResponseData;
 import excavation.excavation_app.module.common.bean.SimpleData;
-import excavation.excavation_app.module.common.http.HttpOperation;
-import excavation.excavation_app.module.common.http.HttpProcessor;
-import excavation.excavation_app.module.common.http.HttpRequester;
+import excavation.excavation_app.module.common.http.HTTPOperation;
+import excavation.excavation_app.module.common.http.HTTPProcessor;
+import excavation.excavation_app.module.common.http.HTTPRequester;
 import excavation.excavation_app.module.common.http.Request;
 import excavation.excavation_app.module.common.http.Response;
-import excavation.excavation_app.module.common.http.Response.RESPONSE_RESULT;
-import excavation.excavation_app.module.common.http.Response.STANDARD;
-import excavation.excavation_app.module.common.http.bean.HttpObject;
+import excavation.excavation_app.module.common.http.Response.ResponseResult;
+import excavation.excavation_app.module.common.http.Response.Standard;
+import excavation.excavation_app.module.common.http.bean.HTTPObject;
 import org.json.JSONException;
 import org.json.JSONObject;
-public class AreaListProcessor extends HttpOperation implements HttpProcessor
+public class AreaListProcessor extends HTTPOperation implements HTTPProcessor
 {
     private String ipAddress;
     /**
@@ -36,14 +36,14 @@ public class AreaListProcessor extends HttpOperation implements HttpProcessor
      * @return Returns the response
      */
     @Override
-    public HttpObject getHttp(Map<Request, String> mapParams)
+    public HTTPObject getHTTP(Map<Request, String> mapParams)
     {
-        HttpObject object = new HttpObject();
-        object.setUrl(generateUrlWithParams(HttpRequester.GET_AREA, mapParams, ipAddress));
+        HTTPObject object = new HTTPObject();
+        object.setURL(generateURLWithParams(HTTPRequester.GetArea, mapParams, ipAddress));
         return object;
     }
 
-    public enum LIST_AREA_RESPONSE implements Response
+    public enum ListAreaResponse implements Response
     {
         areaNorthing
     }
@@ -55,12 +55,12 @@ public class AreaListProcessor extends HttpOperation implements HttpProcessor
      */
     @SuppressWarnings("unchecked")
     @Override
-    public ResponseData parseObject(HttpObject object)
+    public ResponseData parseObject(HTTPObject object)
     {
         return null;
     }
 
-    public enum LIST_AREA_REQUESTER implements Request
+    public enum ListAreaRequester implements Request
     {
         mode, areaEastingId, areaEastingName;
         /**
@@ -81,20 +81,20 @@ public class AreaListProcessor extends HttpOperation implements HttpProcessor
      */
     @SuppressWarnings("unchecked")
     @Override
-    public List<SimpleData> parseList(HttpObject object)
+    public List<SimpleData> parseList(HTTPObject object)
     {
         SortedMap<Integer, SimpleData> map = new TreeMap<>();
         SimpleData data = new SimpleData();
         object = request(object);
-        checkHttpStatus(object, data);
-        if (data.result == RESPONSE_RESULT.failed)
+        checkHTTPStatus(object, data);
+        if (data.result == ResponseResult.failed)
         {
             return new LinkedList<>(map.values());
         }
         try
         {
             JSONObject resObj = new JSONObject(object.getResponseString());
-            JSONObject resData = resObj.getJSONObject(STANDARD.responseData.name());
+            JSONObject resData = resObj.getJSONObject(Standard.responseData.name());
             Iterator<String> resIter = resData.keys();
             while (resIter.hasNext())
             {
@@ -126,7 +126,7 @@ public class AreaListProcessor extends HttpOperation implements HttpProcessor
     public SimpleData parseObject(JSONObject object) throws JSONException
     {
         SimpleData data = new SimpleData();
-        data.id = get(LIST_AREA_RESPONSE.areaNorthing.name(), object);
+        data.id = get(ListAreaResponse.areaNorthing.name(), object);
         return data;
     }
 }

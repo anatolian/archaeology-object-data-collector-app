@@ -64,7 +64,7 @@ public class GetSamplePhotoTask extends BaseTask
     {
         DBHelper db = DBHelper.getInstance(null);
         db.open();
-        ipAddress = db.getIpAddress();
+        ipAddress = db.getIPAddress();
         data1 = db.getImageProperty();
         db.close();
     }
@@ -81,7 +81,7 @@ public class GetSamplePhotoTask extends BaseTask
         if (count == 5 || count == 3 && AppConstants.spnConNoPos > 1 && AppConstants.spnSamNoPos > 0)
         {
             list = factory.getPhotoSampleList(north, east, contNo, sno, type1, ipAddress,
-                    data1.baseImagePath, data1.sampleSubpath);
+                    data1.baseImagePath, data1.sampleSubPath);
         }
         return null;
     }

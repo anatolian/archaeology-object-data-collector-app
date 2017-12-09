@@ -3,16 +3,16 @@ package excavation.excavation_app.module.image.property;
 import java.util.List;
 import java.util.Map;
 import excavation.excavation_app.module.common.constants.MessageConstants;
-import excavation.excavation_app.module.common.http.HttpOperation;
-import excavation.excavation_app.module.common.http.HttpProcessor;
-import excavation.excavation_app.module.common.http.HttpRequester;
+import excavation.excavation_app.module.common.http.HTTPOperation;
+import excavation.excavation_app.module.common.http.HTTPProcessor;
+import excavation.excavation_app.module.common.http.HTTPRequester;
 import excavation.excavation_app.module.common.http.Request;
-import excavation.excavation_app.module.common.http.Response.RESPONSE_RESULT;
-import excavation.excavation_app.module.common.http.Response.STANDARD;
-import excavation.excavation_app.module.common.http.bean.HttpObject;
+import excavation.excavation_app.module.common.http.Response.ResponseResult;
+import excavation.excavation_app.module.common.http.Response.Standard;
+import excavation.excavation_app.module.common.http.bean.HTTPObject;
 import org.json.JSONException;
 import org.json.JSONObject;
-public class ImagePropertyProcessor extends HttpOperation implements HttpProcessor
+public class ImagePropertyProcessor extends HTTPOperation implements HTTPProcessor
 {
     private String ipAddress;
     /**
@@ -30,10 +30,10 @@ public class ImagePropertyProcessor extends HttpOperation implements HttpProcess
      * @return Returns the response
      */
     @Override
-    public HttpObject getHttp(Map<Request, String> mapParams)
+    public HTTPObject getHTTP(Map<Request, String> mapParams)
     {
-        HttpObject object = new HttpObject();
-        object.setUrl(generateUrlWithParams(HttpRequester.GET_PROPERTY, mapParams, ipAddress));
+        HTTPObject object = new HTTPObject();
+        object.setURL(generateURLWithParams(HTTPRequester.GetProperty, mapParams, ipAddress));
         return object;
     }
 
@@ -44,22 +44,22 @@ public class ImagePropertyProcessor extends HttpOperation implements HttpProcess
      */
     @SuppressWarnings("unchecked")
     @Override
-    public ImagePropertyBean parseObject(HttpObject object)
+    public ImagePropertyBean parseObject(HTTPObject object)
     {
         ImagePropertyBean data = new ImagePropertyBean();
         object = request(object);
-        checkHttpStatus(object, data);
-        if(data.result == RESPONSE_RESULT.failed)
+        checkHTTPStatus(object, data);
+        if (data.result == ResponseResult.failed)
         {
-            data.result = RESPONSE_RESULT.failed;
+            data.result = ResponseResult.failed;
             data.resultMsg = MessageConstants.NO_DATA_FOUND;
             return data;
         }
         try
         {
-            data.result = RESPONSE_RESULT.success;
+            data.result = ResponseResult.success;
             JSONObject responseObj = new JSONObject(object.getResponseString());
-            JSONObject responseData = responseObj.getJSONObject(STANDARD.responseData.name());
+            JSONObject responseData = responseObj.getJSONObject(Standard.responseData.name());
             int k = responseData.length();
             for (int i = 1; i <= k; i++)
             {
@@ -67,7 +67,7 @@ public class ImagePropertyProcessor extends HttpOperation implements HttpProcess
                 JSONObject resItem=responseData.getJSONObject(item);
                 if (resItem.has("3d_subpath"))
                 {
-                    data.contextSubpath3d = resItem.getString("3d_subpath");
+                    data.contextSubPath3D = resItem.getString("3d_subpath");
                 }
                 if (resItem.has("base_image_path"))
                 {
@@ -75,7 +75,7 @@ public class ImagePropertyProcessor extends HttpOperation implements HttpProcess
                 }
                 if (resItem.has("context_subpath"))
                 {
-                    data.contextSubpath = resItem.getString("context_subpath");
+                    data.contextSubPath = resItem.getString("context_subpath");
                 }
                 if (resItem.has("sample_label_area_divider"))
                 {
@@ -103,11 +103,11 @@ public class ImagePropertyProcessor extends HttpOperation implements HttpProcess
                 }
                 if (resItem.has("sample_subpath"))
                 {
-                    data.sampleSubpath = resItem.getString("sample_subpath");
+                    data.sampleSubPath = resItem.getString("sample_subpath");
                 }
                 if (resItem.has("context_subpath_3d"))
                 {
-                    data.contextSubpath3d1 = resItem.getString("context_subpath_3d");
+                    data.contextSubPath3D1 = resItem.getString("context_subpath_3d");
                 }
             }
         }
@@ -125,7 +125,7 @@ public class ImagePropertyProcessor extends HttpOperation implements HttpProcess
      */
     @Override
     @SuppressWarnings("unchecked")
-    public List<ImagePropertyBean> parseList(HttpObject object)
+    public List<ImagePropertyBean> parseList(HTTPObject object)
     {
         return null;
     }

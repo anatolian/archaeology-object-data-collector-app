@@ -40,7 +40,8 @@
         android:id = "@+id/dialogCurrentWeightInDBText"
         android:maxLines = "1"
         android:lines = "1"
-        style = "@style/EditTextNumber"/>
+        style = "@style/EditTextNumber"
+        android:hint="@string/new_weight"/>
     <Button
         android:id="@+id/update_bluetooth"
         style="?android:textAppearanceSmall"

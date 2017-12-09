@@ -3,29 +3,29 @@ package excavation.excavation_app.module.common.http.bean;
 import java.io.Serializable;
 import java.util.Map;
 import excavation.excavation_app.module.common.http.Request;
-public class HttpObject implements Serializable
+public class HTTPObject implements Serializable
 {
     private static final long serialVersionUID = 1L;
-    private String url;
+    private String URL;
     private int status;
     private Map<Request, String> params;
     private String responseString;
     /**
      * Set URL
-     * @param url - new URL
+     * @param URL - new URL
      */
-    public void setUrl(String url)
+    public void setURL(String URL)
     {
-        this.url = url;
+        this.URL = URL;
     }
 
     /**
      * Get URL
      * @return Returns URL
      */
-    public String getUrl()
+    public String getURL()
     {
-        return url;
+        return URL;
     }
 
     /**
@@ -71,7 +71,7 @@ public class HttpObject implements Serializable
     @Override
     public String toString()
     {
-        return "[URL : " + url + "]";
+        return "[URL : " + URL + "]";
     }
 
     /**
@@ -80,7 +80,7 @@ public class HttpObject implements Serializable
     public void release()
     {
         responseString = null;
-        url = null;
+        URL = null;
         if (params != null)
         {
             params.clear();

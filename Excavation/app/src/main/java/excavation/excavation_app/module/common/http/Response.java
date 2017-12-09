@@ -2,11 +2,11 @@
 package excavation.excavation_app.module.common.http;
 public interface Response
 {
-    enum RESPONSE_RESULT
+    enum ResponseResult
     {
         success, failed
     }
-    enum STANDARD
+    enum Standard
     {
         responseData, result, error, data
     }

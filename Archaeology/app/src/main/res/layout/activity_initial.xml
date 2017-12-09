@@ -26,7 +26,9 @@
         android:lines="1"
         android:maxLines="1"
         android:minWidth="400dp"
-        android:text="@string/localhost" />
+        android:text="@string/localhost"
+        android:hint="@string/base_url"
+        android:inputType="textUri"/>
     <LinearLayout
         android:orientation = "horizontal"
         android:layout_width = "match_parent"

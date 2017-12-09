@@ -13,8 +13,8 @@ public class AppConstants
     public static int spnConNoPos = 0;
     public static int spnSamNoPos = 0;
     public static int spnPlacement = 0;
-    public static int activity3dSpnNorth = 0;
-    public static int activity3dSpnEast = 0;
+    public static int activity3DSpnNorth = 0;
+    public static int activity3DSpnEast = 0;
     public static int activityMainSpnNorth = 0;
     public static int activityMainSpnEast = 0;
     public static final String DEFAULT_ID = "-100";

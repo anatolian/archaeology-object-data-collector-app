@@ -12,7 +12,7 @@ import excavation.excavation_app.module.common.adapter.SimpleStringAdapter;
 import excavation.excavation_app.module.common.application.ApplicationHandler;
 import excavation.excavation_app.module.common.bean.SimpleData;
 import excavation.excavation_app.module.common.constants.AppConstants;
-import excavation.excavation_app.module.common.http.Response.RESPONSE_RESULT;
+import excavation.excavation_app.module.common.http.Response.ResponseResult;
 import excavation.excavation_app.module.common.http.factory.SimpleListFactory;
 import excavation.excavation_app.module.common.http.factory.SimpleObjectFactory;
 import excavation.excavation_app.module.common.task.BaseTask;
@@ -65,14 +65,14 @@ public class MainActivity extends ActivityBase
     ProgressBar progressBar2;
     int a = 0;
     boolean replace = false, photoStart = false;
-    private static int CAMERA_CAPTURE = 999;
+    private static int cameraCapture = 999;
     ProgressBar progressBar1;
     // Activity request codes
     public static final int MEDIA_TYPE_IMAGE = 1;
     // directory name to store captured images and videos
     private static final String IMAGE_DIRECTORY_NAME = "Hello Camera";
     // file url to store image/video
-    private Uri fileUri;
+    private Uri fileURI;
     ImagePropertyTask task1;
     static ImagePropertyBean data1;
     /**
@@ -143,7 +143,7 @@ public class MainActivity extends ActivityBase
         {
             imgPhoto.setImageBitmap(appHand.decodeFile(new File(imagePath)));
         }
-        TextView3d.setOnClickListener(new OnClickListener() {
+        TextView3D.setOnClickListener(new OnClickListener() {
             /**
              * User clicked text view
              * @param v - text view
@@ -155,13 +155,17 @@ public class MainActivity extends ActivityBase
                 {
                     if (imagePath != null && imagePath.length() > 0)
                     {
-                        if (AppConstants.tempContextNo != null && AppConstants.tempContextNo.size() > 0)
+                        if (AppConstants.tempContextNo != null &&
+                                AppConstants.tempContextNo.size() > 0)
                         {
-                            TextView3d.setBackgroundColor(getResources().getColor(R.color.butterflyblue));
-                            TextViewContext.setBackgroundColor(getResources().getColor(R.color.black));
-                            TextViewSample.setBackgroundColor(getResources().getColor(R.color.black));
-                            Intent i = new Intent(MainActivity.this, Activity3d.class);
-                            startActivity(i);
+                            TextView3D.setBackgroundColor(getResources()
+                                    .getColor(R.color.butterflyblue));
+                            TextViewContext.setBackgroundColor(getResources()
+                                    .getColor(R.color.black));
+                            TextViewSample.setBackgroundColor(getResources()
+                                    .getColor(R.color.black));
+                            startActivity(new Intent(MainActivity.this,
+                                    Activity3D.class));
                         }
                         else
                         {
@@ -173,11 +177,10 @@ public class MainActivity extends ActivityBase
                 }
                 else
                 {
-                    TextView3d.setBackgroundColor(getResources().getColor(R.color.butterflyblue));
+                    TextView3D.setBackgroundColor(getResources().getColor(R.color.butterflyblue));
                     TextViewContext.setBackgroundColor(getResources().getColor(R.color.black));
                     TextViewSample.setBackgroundColor(getResources().getColor(R.color.black));
-                    Intent i = new Intent(MainActivity.this, Activity3d.class);
-                    startActivity(i);
+                    startActivity(new Intent(MainActivity.this, Activity3D.class));
                 }
             }
         });
@@ -196,11 +199,13 @@ public class MainActivity extends ActivityBase
                         if (AppConstants.tempContextNo != null
                                 && AppConstants.tempContextNo.size() > 0)
                         {
-                            TextViewSample.setBackgroundColor(getResources().getColor(R.color.butterflyblue));
-                            TextView3d.setBackgroundColor(getResources().getColor(R.color.black));
-                            TextViewContext.setBackgroundColor(getResources().getColor(R.color.black));
-                            Intent i = new Intent(MainActivity.this, ActivitySample.class);
-                            startActivity(i);
+                            TextViewSample.setBackgroundColor(getResources()
+                                    .getColor(R.color.butterflyblue));
+                            TextView3D.setBackgroundColor(getResources().getColor(R.color.black));
+                            TextViewContext.setBackgroundColor(getResources()
+                                    .getColor(R.color.black));
+                            startActivity(new Intent(MainActivity.this,
+                                    ActivitySample.class));
                         }
                         else
                         {
@@ -212,8 +217,9 @@ public class MainActivity extends ActivityBase
                 }
                 else
                 {
-                    TextViewSample.setBackgroundColor(getResources().getColor(R.color.butterflyblue));
-                    TextView3d.setBackgroundColor(getResources().getColor(R.color.black));
+                    TextViewSample.setBackgroundColor(getResources()
+                            .getColor(R.color.butterflyblue));
+                    TextView3D.setBackgroundColor(getResources().getColor(R.color.black));
                     TextViewContext.setBackgroundColor(getResources().getColor(R.color.black));
                     Intent i = new Intent(MainActivity.this, ActivitySample.class);
                     startActivity(i);
@@ -256,7 +262,7 @@ public class MainActivity extends ActivityBase
                 }
                 else
                 {
-                    Toast.makeText(MainActivity.this, "No Photo to Replace",
+                    Toast.makeText(MainActivity.this, "No photo to replace",
                             Toast.LENGTH_SHORT).show();
                 }
             }
@@ -494,7 +500,7 @@ public class MainActivity extends ActivityBase
                 else
                 {
                     Toast.makeText(MainActivity.this,
-                            "Please Select at least one Context number...",
+                            "Please select at least one context number...",
                             Toast.LENGTH_LONG).show();
                 }
             }
@@ -507,10 +513,10 @@ public class MainActivity extends ActivityBase
     public void captureImage()
     {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        fileUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
+        fileURI = getOutputMediaFileURI(MEDIA_TYPE_IMAGE);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileURI);
         // start the image capture Intent
-        startActivityForResult(intent, CAMERA_CAPTURE);
+        startActivityForResult(intent, cameraCapture);
     }
 
     /**
@@ -522,7 +528,7 @@ public class MainActivity extends ActivityBase
     {
         super.onSaveInstanceState(outState);
         // save file url in bundle as it will be null on screen orientation changes
-        outState.putParcelable("file_uri", fileUri);
+        outState.putParcelable("file_uri", fileURI);
     }
 
     /**
@@ -534,7 +540,7 @@ public class MainActivity extends ActivityBase
     {
         super.onRestoreInstanceState(savedInstanceState);
         // get the file url
-        fileUri = savedInstanceState.getParcelable("file_uri");
+        fileURI = savedInstanceState.getParcelable("file_uri");
     }
 
     /**
@@ -547,11 +553,11 @@ public class MainActivity extends ActivityBase
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
     {
         // if the result is capturing Image
-        if (requestCode == CAMERA_CAPTURE && resultCode == RESULT_OK)
+        if (requestCode == cameraCapture && resultCode == RESULT_OK)
         {
             try
             {
-                Bitmap thumbnail = decodeUri(fileUri);
+                Bitmap thumbnail = decodeURI(fileURI);
                 imgPhoto.setImageBitmap(thumbnail);
             }
             catch (FileNotFoundException e)
@@ -577,7 +583,7 @@ public class MainActivity extends ActivityBase
      * @return Returns image
      * @throws FileNotFoundException if the file cannot be found
 	 */
-    private Bitmap decodeUri(Uri selectedImage) throws FileNotFoundException
+    private Bitmap decodeURI(Uri selectedImage) throws FileNotFoundException
     {
         BitmapFactory.Options o = new BitmapFactory.Options();
         o.inJustDecodeBounds = true;
@@ -603,22 +609,21 @@ public class MainActivity extends ActivityBase
      * @param type - file type
      * @return Returns file URI
      */
-    public Uri getOutputMediaFileUri(int type)
+    public Uri getOutputMediaFileURI(int type)
     {
         return Uri.fromFile(getOutputMediaFile(type));
     }
 
     /**
-     * returning image / video
+     * Returning image / video
      * @param type - file type
      * @return Returns the file
      */
     private static File getOutputMediaFile(int type)
     {
         // External sdcard location
-        File mediaStorageDir =
-                new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
-                IMAGE_DIRECTORY_NAME);
+        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES), IMAGE_DIRECTORY_NAME);
         // Create the storage directory if it does not exist
         if (!mediaStorageDir.exists())
         {
@@ -679,7 +684,7 @@ public class MainActivity extends ActivityBase
         {
             DBHelper db = DBHelper.getInstance(null);
             db.open();
-            ipAddress = db.getIpAddress();
+            ipAddress = db.getIPAddress();
             data1 = db.getImageProperty();
             db.close();
         }
@@ -696,7 +701,7 @@ public class MainActivity extends ActivityBase
             if (imagePath != null && imagePath.length() > 0)
             {
                 list = factory.addSingleImg(spnNorth, spnEast, imagePath, null, ipAddress,
-                        "", data1.baseImagePath, data1.contextSubpath);
+                        "", data1.baseImagePath, data1.contextSubPath);
             }
             return null;
         }
@@ -713,7 +718,7 @@ public class MainActivity extends ActivityBase
             {
                 progressDialog.dismiss();
             }
-            if (list.result == RESPONSE_RESULT.success)
+            if (list.result == ResponseResult.success)
             {
                 if (list.imagePath != null && list.imagePath.length() > 0)
                 {
@@ -785,7 +790,7 @@ public class MainActivity extends ActivityBase
             progressDialog.show();
             DBHelper db = DBHelper.getInstance(MainActivity.this);
             db.open();
-            ipAddress = db.getIpAddress();
+            ipAddress = db.getIPAddress();
             db.close();
         }
 
@@ -828,7 +833,7 @@ public class MainActivity extends ActivityBase
             else
             {
                 Toast.makeText(MainActivity.this,
-                        "There is no Context numbers for these areas",
+                        "There is no context numbers for these areas",
                         Toast.LENGTH_SHORT).show();
             }
 

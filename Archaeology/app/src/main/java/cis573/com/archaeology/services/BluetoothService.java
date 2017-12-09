@@ -13,7 +13,7 @@ import java.lang.reflect.Method;
 import java.util.UUID;
 public class BluetoothService
 {
-    private static final String TAG = "WiDaC DEBUG";
+    private static final String TAG = "Archaeology DEBUG";
     // handler that gets info from Bluetooth service
     private Context context;
     private ConnectedThread connectedThread = null;
@@ -200,7 +200,8 @@ public class BluetoothService
         {
             mmSocket = socket;
             InputStream tmpIn = null;
-            // Get the input and output streams; using temp objects because member streams are final.
+            // Get the input and output streams; using temp objects because member streams are
+            // final.
             try
             {
                 tmpIn = socket.getInputStream();

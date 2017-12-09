@@ -71,7 +71,8 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver
             Log.v(LOG_TAG_WIFI_DIRECT, "onConnectionInfoAvailable: WifiP2pInfo: "
                     + info.toString());
             // InetAddress from WifiP2pInfo struct.
-            NetworkInfo networkInfo = myIntent.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
+            NetworkInfo networkInfo =
+                    myIntent.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
             if (networkInfo != null)
             {
                 Log.v(LOG_TAG_WIFI_DIRECT, "networkInfo: " + networkInfo.toString());
@@ -88,8 +89,8 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver
             }
             else if (info.groupFormed)
             {
-                // The other device acts as the client. In this case, you'll want to create a client
-                // thread that connects to the group owner.
+                // The other device acts as the client. In this case, you'll want to create a
+                // client thread that connects to the group owner.
                 Log.v(LOG_TAG, "the group has been formed but you cannot find the owner");
                 connectedToDevice = true;
                 mActivity.enableGetIPButton();
@@ -164,9 +165,9 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver
             {
                 mActivity.disableDiscoverPeersButton();
                 Log.v(LOG_TAG, "wifi state is not enabled");
-                // Wi-Fi P2P is not enabled
+                // WiFi P2P is not enabled
             }
-            // Check to see if Wi-Fi is enabled and notify appropriate activity
+            // Check to see if WiFi is enabled and notify appropriate activity
         }
         else if (WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action))
         {

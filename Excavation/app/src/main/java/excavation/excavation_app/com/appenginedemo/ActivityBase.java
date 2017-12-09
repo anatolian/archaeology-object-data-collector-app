@@ -20,7 +20,7 @@ import com.appenginedemo.R;
 public class ActivityBase extends Activity
 {
     RelativeLayout wrapper;
-    TextView TextViewContext, TextView3d, TextViewSample, header;
+    TextView TextViewContext, TextView3D, TextViewSample, header;
     ImageView imageView1;
     public LinearLayout linearLayout2;
     /**
@@ -34,7 +34,7 @@ public class ActivityBase extends Activity
         setContentView(R.layout.activity_base);
         wrapper = (RelativeLayout) findViewById(R.id.wrapper);
         TextViewContext = (TextView) findViewById(R.id.TextViewContext);
-        TextView3d = (TextView) findViewById(R.id.TextView3d);
+        TextView3D = (TextView) findViewById(R.id.TextView3d);
         TextViewSample = (TextView) findViewById(R.id.TextViewSample);
         header = (TextView) findViewById(R.id.textViewheader);
         imageView1 = (ImageView) findViewById(R.id.imageView1);
@@ -51,28 +51,30 @@ public class ActivityBase extends Activity
             {
                 TextViewContext.setTextColor(getResources().getColor(R.color.white));
                 TextViewContext.setBackgroundColor(getResources().getColor(R.color.butterflyblue));
-                TextView3d.setBackgroundColor(getResources().getColor(R.color.black));
+                TextView3D.setBackgroundColor(getResources().getColor(R.color.black));
                 TextViewSample.setBackgroundColor(getResources().getColor(R.color.black));
                 if (AppConstants.up == 1)
                 {
-                    Intent i = new Intent(ActivityBase.this, MainActivity.class);
-                    startActivity(i);
+                    startActivity(new Intent(ActivityBase.this, MainActivity.class));
                 }
                 else
                 {
-                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(ActivityBase.this);
+                    AlertDialog.Builder alertDialogBuilder =
+                            new AlertDialog.Builder(ActivityBase.this);
                     LinearLayout myLayout = new LinearLayout(ActivityBase.this);
                     myLayout.setOrientation(LinearLayout.VERTICAL);
                     final TextView t1 = new TextView(ActivityBase.this);
                     t1.setTextSize(15.0f);
                     t1.setTextColor(Color.WHITE);
                     t1.setPadding(10, 5, 10, 5);
-                    t1.setText("Photograph have not yet been Uploaded.\nAre you Sure You want to switch over the screen?");
+                    String text = "Photograph has not yet been uploaded.\n" +
+                            "Are you sure you want to switch over the screen?";
+                    t1.setText(text);
                     myLayout.addView(t1);
                     alertDialogBuilder.setTitle("Alert");
                     // set dialog message
-                    alertDialogBuilder.setView(myLayout).setCancelable(false).setPositiveButton("Ok",
-                            new DialogInterface.OnClickListener() {
+                    alertDialogBuilder.setView(myLayout).setCancelable(false)
+                            .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                         /**
                          * User clicked ok
                          * @param dialog - dialog window
@@ -80,8 +82,8 @@ public class ActivityBase extends Activity
                          */
                         public void onClick(DialogInterface dialog, int id)
                         {
-                            Intent i = new Intent(ActivityBase.this, MainActivity.class);
-                            startActivity(i);
+                            startActivity(new Intent(ActivityBase.this,
+                                    MainActivity.class));
                         }
                     }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                         /**
@@ -92,9 +94,12 @@ public class ActivityBase extends Activity
                         public void onClick(DialogInterface dialog, int id)
                         {
                             // if this button is clicked, just close the dialog box and do nothing
-                            TextView3d.setBackgroundColor(getResources().getColor(R.color.butterflyblue));
-                            TextViewContext.setBackgroundColor(getResources().getColor(R.color.black));
-                            TextViewSample.setBackgroundColor(getResources().getColor(R.color.black));
+                            TextView3D.setBackgroundColor(getResources()
+                                    .getColor(R.color.butterflyblue));
+                            TextViewContext.setBackgroundColor(getResources()
+                                    .getColor(R.color.black));
+                            TextViewSample.setBackgroundColor(getResources()
+                                    .getColor(R.color.black));
                             dialog.cancel();
                         }
                     });
@@ -104,19 +109,18 @@ public class ActivityBase extends Activity
                 }
             }
         });
-        TextView3d.setOnClickListener(new OnClickListener() {
+        TextView3D.setOnClickListener(new OnClickListener() {
             /**
              * User clicked text view
-             * @param v - textview
+             * @param v - text view
              */
             @Override
             public void onClick(View v)
             {
-                TextView3d.setBackgroundColor(getResources().getColor(R.color.butterflyblue));
+                TextView3D.setBackgroundColor(getResources().getColor(R.color.butterflyblue));
                 TextViewContext.setBackgroundColor(getResources().getColor(R.color.black));
                 TextViewSample.setBackgroundColor(getResources().getColor(R.color.black));
-                Intent i = new Intent(ActivityBase.this, Activity3d.class);
-                startActivity(i);
+                startActivity(new Intent(ActivityBase.this, Activity3D.class));
             }
         });
         TextViewSample.setOnClickListener(new OnClickListener() {
@@ -128,36 +132,39 @@ public class ActivityBase extends Activity
             public void onClick(View v)
             {
                 TextViewSample.setBackgroundColor(getResources().getColor(R.color.butterflyblue));
-                TextView3d.setBackgroundColor(getResources().getColor(R.color.black));
+                TextView3D.setBackgroundColor(getResources().getColor(R.color.black));
                 TextViewContext.setBackgroundColor(getResources().getColor(R.color.black));
                 if (AppConstants.up == 1)
                 {
-                    Intent i = new Intent(ActivityBase.this, ActivitySample.class);
-                    startActivity(i);
+                    startActivity(new Intent(ActivityBase.this, ActivitySample.class));
                 }
                 else
                 {
-                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(ActivityBase.this);
+                    AlertDialog.Builder alertDialogBuilder =
+                            new AlertDialog.Builder(ActivityBase.this);
                     LinearLayout myLayout = new LinearLayout(ActivityBase.this);
                     myLayout.setOrientation(LinearLayout.VERTICAL);
                     final TextView t1 = new TextView(ActivityBase.this);
                     t1.setTextSize(15.0f);
                     t1.setTextColor(Color.WHITE);
                     t1.setPadding(10, 5, 10, 5);
-                    t1.setText("Photograph have not yet been Uploaded.\nAre you Sure You want to switch over the screen?");
+                    String text = "Photograph has not yet been uploaded.\n" +
+                            "Are you sure you want to switch over the screen?";
+                    t1.setText(text);
                     myLayout.addView(t1);
                     alertDialogBuilder.setTitle("Alert");
                     // set dialog message
-                    alertDialogBuilder.setView(myLayout).setCancelable(false).setPositiveButton("Ok",
-                            new DialogInterface.OnClickListener() {
+                    alertDialogBuilder.setView(myLayout).setCancelable(false)
+                            .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                         /**
                          * User clicked ok
                          * @param dialog - alert window
                          * @param id - selection
                          */
-                        public void onClick(DialogInterface dialog, int id) {
-                            Intent i = new Intent(ActivityBase.this, ActivitySample.class);
-                            startActivity(i);
+                        public void onClick(DialogInterface dialog, int id)
+                        {
+                            startActivity(new Intent(ActivityBase.this,
+                                    ActivitySample.class));
                         }
                     }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                         /**
@@ -168,9 +175,12 @@ public class ActivityBase extends Activity
                         public void onClick(DialogInterface dialog, int id)
                         {
                             // if this button is clicked, just close the dialog box and do nothing
-                            TextView3d.setBackgroundColor(getResources().getColor(R.color.butterflyblue));
-                            TextViewContext.setBackgroundColor(getResources().getColor(R.color.black));
-                            TextViewSample.setBackgroundColor(getResources().getColor(R.color.black));
+                            TextView3D.setBackgroundColor(getResources()
+                                    .getColor(R.color.butterflyblue));
+                            TextViewContext.setBackgroundColor(getResources()
+                                    .getColor(R.color.black));
+                            TextViewSample.setBackgroundColor(getResources()
+                                    .getColor(R.color.black));
                             dialog.cancel();
                         }
                     });
@@ -217,12 +227,11 @@ public class ActivityBase extends Activity
         switch (item.getItemId())
         {
             case R.id.menu_bookmark:
-                IPAddressDialog d = new IPAddressDialog(ActivityBase.this);
-                d.show();
+                new IPAddressDialog(ActivityBase.this).show();
                 return true;
             case R.id.image_property:
-                Intent i = new Intent(ActivityBase.this, ActivityImageProperty.class);
-                startActivity(i);
+                startActivity(new Intent(ActivityBase.this,
+                        ActivityImageProperty.class));
             default:
                 return super.onOptionsItemSelected(item);
         }

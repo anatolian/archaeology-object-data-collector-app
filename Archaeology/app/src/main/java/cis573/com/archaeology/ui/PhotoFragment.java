@@ -56,8 +56,8 @@ public class PhotoFragment extends Fragment
     View inflatedView;
     LinkedHashMap<Uri, String> dictOfPhotoSyncStatus;
     ArrayList<TaggedImageView> loadedPhotos;
-    final PicassoWrapper picassoSingleton = new PicassoWrapper();
-    final CustomPicassoCallback picassoCallback = new CustomPicassoCallback() {
+    final PicassoWrapper PICASSO_SINGLETON = new PicassoWrapper();
+    final CustomPicassoCallback PICASSO_CALLBACK = new CustomPicassoCallback() {
         /**
          * Connection succeeded
          */
@@ -150,7 +150,8 @@ public class PhotoFragment extends Fragment
      */
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState)
     {
         this.dictOfPhotoSyncStatus = new LinkedHashMap<>();
         this.loadedPhotos = new ArrayList<>();
@@ -209,12 +210,12 @@ public class PhotoFragment extends Fragment
 
     /**
      * Add photo
-     * @param fileUri - photo location
+     * @param fileURI - photo location
      * @param syncStatus - status of sync
      */
-    public void addPhoto(Uri fileUri, final String syncStatus)
+    public void addPhoto(Uri fileURI, final String syncStatus)
     {
-        dictOfPhotoSyncStatus.put(fileUri, syncStatus);
+        dictOfPhotoSyncStatus.put(fileURI, syncStatus);
         clearPhotosFromLayout();
         syncPhotos();
     }
@@ -242,27 +243,30 @@ public class PhotoFragment extends Fragment
             if (dictEntry.getValue().equals(MARKED_AS_TO_DOWNLOAD))
             {
                 Log.v(LOG_TAG, "Downloading remote image: " + dictEntry.getKey());
-                picassoSingleton.fetchAndInsertImage((LinearLayout) inflatedView, dictEntry.getKey(),
-                        getActivity(), dictEntry.getValue(), new PhotoOnClickListener(),
-                        picassoCallback);
+                PICASSO_SINGLETON.fetchAndInsertImage((LinearLayout) inflatedView,
+                        dictEntry.getKey(), getActivity(), dictEntry.getValue(),
+                        new PhotoOnClickListener(), PICASSO_CALLBACK);
             }
-            else if(dictEntry.getValue().equals(MARKED_AS_ADDED))
+            else if (dictEntry.getValue().equals(MARKED_AS_ADDED))
             {
-                picassoSingleton.fetchAndInsertImage((LinearLayout) inflatedView, dictEntry.getKey(),
-                        getActivity(), dictEntry.getValue(), new PhotoOnClickListener(),
-                        picassoCallback);
-                final Activity parentActivity = getActivity();
-                if (parentActivity instanceof ObjectDetailActivity)
+                PICASSO_SINGLETON.fetchAndInsertImage((LinearLayout) inflatedView,
+                        dictEntry.getKey(), getActivity(), dictEntry.getValue(),
+                        new PhotoOnClickListener(), PICASSO_CALLBACK);
+                final Activity PARENT_ACTIVITY = getActivity();
+                if (PARENT_ACTIVITY instanceof ObjectDetailActivity)
                 {
-                    final int areaEasting = ((ObjectDetailActivity) parentActivity).areaEasting;
-                    final int areaNorthing = ((ObjectDetailActivity) parentActivity).areaNorthing;
-                    final int contextNumber = ((ObjectDetailActivity) parentActivity).contextNumber;
-                    final int sampleNumber = ((ObjectDetailActivity) parentActivity).sampleNumber;
-                    String url = getGlobalWebServerURL() + "/upload_image_2.php?area_easting="
-                            + areaEasting + "&area_northing=" + areaNorthing + "&context_number="
-                            + contextNumber + "&sample_number=" + sampleNumber;
+                    final int AREA_EASTING = ((ObjectDetailActivity) PARENT_ACTIVITY).areaEasting;
+                    final int AREA_NORTHING = ((ObjectDetailActivity) PARENT_ACTIVITY)
+                            .areaNorthing;
+                    final int CONTEXT_NUMBER = ((ObjectDetailActivity) PARENT_ACTIVITY)
+                            .contextNumber;
+                    final int SAMPLE_NUMBER = ((ObjectDetailActivity) PARENT_ACTIVITY)
+                            .sampleNumber;
+                    String URL = getGlobalWebServerURL() + "/upload_image_2.php?area_easting="
+                            + AREA_EASTING + "&area_northing=" + AREA_NORTHING + "&context_number="
+                            + CONTEXT_NUMBER + "&sample_number=" + SAMPLE_NUMBER;
                     Log.v(LOG_TAG, "Image to be uploaded" + dictEntry.getKey());
-                    AsyncHttpWrapper.makeImageUpload(url, dictEntry.getKey(),
+                    AsyncHttpWrapper.makeImageUpload(URL, dictEntry.getKey(),
                             new AsyncHttpCallbackWrapper() {
                         /**
                          * Connection succeeded
@@ -273,10 +277,10 @@ public class PhotoFragment extends Fragment
                         {
                             super.onSuccessCallback(response);
                             dictOfPhotoSyncStatus.put(dictEntry.getKey(), SYNCED);
-                            Log.v(LOG_TAG, "Image New Url After Upload" + response);
-                            Toast.makeText(parentActivity, "Image Uploaded To Server",
+                            Log.v(LOG_TAG, "Image New URL After Upload" + response);
+                            Toast.makeText(PARENT_ACTIVITY, "Image Uploaded To Server",
                                     Toast.LENGTH_SHORT).show();
-                            ((ObjectDetailActivity) parentActivity)
+                            ((ObjectDetailActivity) PARENT_ACTIVITY)
                                     .clearCurrentPhotosOnLayoutAndFetchPhotosAsync();
                         }
                     });

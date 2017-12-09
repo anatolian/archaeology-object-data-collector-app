@@ -87,7 +87,8 @@ public class SimpleContextSelectedAdapter extends BaseAdapter
     @Override
     public View getView(final int position, View convertView, ViewGroup parent)
     {
-        LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(
+                Context.LAYOUT_INFLATER_SERVICE);
         View row = inflater.inflate(R.layout.item_simple_text, parent, false);
         final TextView textView = (TextView) row.findViewById(R.id.textViewItem);
         TextView imageViewCross = (TextView) row.findViewById(R.id.imageView2);
@@ -105,7 +106,8 @@ public class SimpleContextSelectedAdapter extends BaseAdapter
             {
                 if (AppConstants.tempContextNo.size() <= 1)
                 {
-                    Toast.makeText(mContext, "Sorry we can not delete it..because its necessary to have at least one context number for each photo..",
+                    Toast.makeText(mContext, "Sorry we can not delete it... You must have" +
+                                    " at least one context number for each photo...",
                             Toast.LENGTH_SHORT).show();
                 }
                 else

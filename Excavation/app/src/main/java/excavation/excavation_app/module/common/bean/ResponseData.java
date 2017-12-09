@@ -1,10 +1,11 @@
 // DB response
 package excavation.excavation_app.module.common.bean;
-import excavation.excavation_app.module.common.http.Response.RESPONSE_RESULT;
-public class ResponseData implements DataInterface
+import java.io.Serializable;
+import excavation.excavation_app.module.common.http.Response.ResponseResult;
+public class ResponseData implements Serializable
 {
     private static final long serialVersionUID = 1L;
-    public RESPONSE_RESULT result;
+    public ResponseResult result;
     public String resultMsg;
     /**
      * Object Release Code

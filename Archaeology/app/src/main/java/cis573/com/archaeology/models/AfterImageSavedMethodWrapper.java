@@ -6,7 +6,7 @@ abstract public class AfterImageSavedMethodWrapper
 {
     /**
      * Process saved image
-     * @param thumbnailImageUri - image location
+     * @param thumbnailImageURI - image location
      */
-    abstract public void doStuffWithSavedImage(Uri thumbnailImageUri);
+    abstract public void doStuffWithSavedImage(Uri thumbnailImageURI);
 }

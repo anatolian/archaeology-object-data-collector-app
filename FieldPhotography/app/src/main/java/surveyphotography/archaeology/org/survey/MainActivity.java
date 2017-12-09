@@ -28,8 +28,10 @@ public class MainActivity extends Activity
 {
     public final static String SU_YEAR = "surveyphotography.archaeology.org.survey.SU_YEAR";
     public final static String SU_SEQ_NUM = "surveyphotography.archaeology.org.survey.SU_SEQNUM";
-    public final static String FIELD_PHOTO_NUMBER = "surveyphotography.archaeology.org.survey.FIELDPHOTONUMBER";
-    public final static String FIELD_OR_BAG = "surveyphotography.archaeology.org.survey.FIELDORBAG";
+    public final static String FIELD_PHOTO_NUMBER = "surveyphotography.archaeology.org.survey" +
+            ".FIELDPHOTONUMBER";
+    public final static String FIELD_OR_BAG = "surveyphotography.archaeology.org.survey" +
+            ".FIELDORBAG";
     public final static String FIELD = "field";
     public final static String BAG = "bag";
     public final static String THUMBNAIL = "thumbnail";
@@ -39,7 +41,7 @@ public class MainActivity extends Activity
     public final static String DEFAULT_SAVE_PATH = "/SUPhotos/";
     public final static int PHOTO_COUNTER_DEFAULT = 300;
     public final static int BAG_PHOTO_ID = 299;
-    private String save_path = DEFAULT_SAVE_PATH;
+    private String savePath = DEFAULT_SAVE_PATH;
     DrawView bagPhoto = null;
     public ArrayList<ImageView> photoList =  new ArrayList<>();
     RelativeLayout mainLayout;
@@ -67,19 +69,19 @@ public class MainActivity extends Activity
      * Get file location
      * @return Returns file location
      */
-    public String getSave_path()
+    public String getSavePath()
     {
-        return this.save_path;
+        return this.savePath;
     }
 
     /**
      * Set the save path
-     * @param save_path - new save path
+     * @param savePath - new save path
      */
-    public void setSave_path(String save_path)
+    public void setSavePath(String savePath)
     {
-        this.save_path = save_path;
-        Log.v("Survey App", "set save path: " + this.save_path);
+        this.savePath = savePath;
+        Log.v("Survey App", "set save path: " + this.savePath);
     }
 
     /**
@@ -124,12 +126,13 @@ public class MainActivity extends Activity
         setThumbnailCreation(getIntent().getBooleanExtra("thumbnailState", true));
         if (getIntent().hasExtra(PHOTO_SAVE_PATH))
         {
-            Log.v("Survey App", "has extra" + getIntent().getStringExtra(PHOTO_SAVE_PATH));
-            setSave_path(getIntent().getStringExtra(PHOTO_SAVE_PATH));
+            Log.v("Survey App", "has extra" + getIntent()
+                    .getStringExtra(PHOTO_SAVE_PATH));
+            setSavePath(getIntent().getStringExtra(PHOTO_SAVE_PATH));
         }
         else
         {
-            setSave_path(DEFAULT_SAVE_PATH);
+            setSavePath(DEFAULT_SAVE_PATH);
         }
         final EditText et = (EditText) findViewById(R.id.suSeqNum2);
         et.addTextChangedListener(new TextWatcher() {
@@ -269,7 +272,7 @@ public class MainActivity extends Activity
     {
         Intent myIntent = new Intent(this, SettingsActivity.class);
         myIntent.putExtra(THUMBNAIL, isThumbnailCreation());
-        myIntent.putExtra(PHOTO_SAVE_PATH, getSave_path());
+        myIntent.putExtra(PHOTO_SAVE_PATH, getSavePath());
         startActivity(myIntent);
         Log.v("Survey App", "Settings button clicked");
     }
@@ -282,7 +285,7 @@ public class MainActivity extends Activity
     {
         // Do something in response to button
         Log.v("Survey App", "takeFieldPhoto clicked");
-        Spinner mySpinner=(Spinner) findViewById(R.id.spinner2);
+        Spinner mySpinner = (Spinner) findViewById(R.id.spinner2);
         String suYearTxt = mySpinner.getSelectedItem().toString();
         EditText suSeqNumTxt = (EditText) findViewById(R.id.suSeqNum2);
         EditText fieldPhotoNumberTxt = (EditText) findViewById(R.id.fieldPhotoNumber2);
@@ -291,7 +294,7 @@ public class MainActivity extends Activity
         intent.putExtra(SU_SEQ_NUM, suSeqNumTxt.getText().toString());
         intent.putExtra(FIELD_PHOTO_NUMBER, fieldPhotoNumberTxt.getText().toString());
         intent.putExtra(FIELD_OR_BAG, FIELD);
-        intent.putExtra(PHOTO_SAVE_PATH, getSave_path());
+        intent.putExtra(PHOTO_SAVE_PATH, getSavePath());
         startActivityForResult(intent, FIELD_CODE);
     }
 
@@ -312,19 +315,19 @@ public class MainActivity extends Activity
         intent.putExtra(SU_SEQ_NUM, suSeqNumTxt.getText().toString());
         intent.putExtra(FIELD_PHOTO_NUMBER, fieldPhotoNumberTxt.getText().toString());
         intent.putExtra(FIELD_OR_BAG, BAG);
-        intent.putExtra(PHOTO_SAVE_PATH, getSave_path());
+        intent.putExtra(PHOTO_SAVE_PATH, getSavePath());
         startActivityForResult(intent, BAG_CODE);
     }
 
     /**
      * Change bag photo
-     * @param anUri - photo URI
+     * @param aURI - photo URI
      */
-    private void createOrReplaceBagPhoto(Uri anUri)
+    private void createOrReplaceBagPhoto(Uri aURI)
     {
         clearBagPhoto(mainLayout);
         bagPhoto = new DrawView(this);
-        bagPhoto.setImageURI(anUri);
+        bagPhoto.setImageURI(aURI);
         bagPhoto.setId(BAG_PHOTO_ID);
     }
 
@@ -361,19 +364,19 @@ public class MainActivity extends Activity
             // field photo
             if (requestCode == FIELD_CODE)
             {
-                Log.v("ActivityResult", getSave_path());
+                Log.v("ActivityResult", getSavePath());
                 int fieldPhotoNumber = increaseFieldPhotoNumberAndReturnOldNumber(fieldPhotoNumberTxt);
                 String path = Environment.getExternalStorageDirectory().getPath()
-                        + getSave_path() + suYearTxt + "/" +  suSeqNumTxt.getText().toString()
+                        + getSavePath() + suYearTxt + "/" + suSeqNumTxt.getText().toString()
                         + "/fld/" + "1_pic_" + fieldPhotoNumber + ".jpg";
                 String thumbPath = Environment.getExternalStorageDirectory().getPath()
-                        + getSave_path() + "tmb/" + suYearTxt + "/"
+                        + getSavePath() + "tmb/" + suYearTxt + "/"
                         + suSeqNumTxt.getText().toString() + "/fld";
                 File thumbFile = new File(thumbPath, "1_pic_" + fieldPhotoNumber + ".jpg");
                 if (isThumbnailCreation())
                 {
-                    Bitmap ThumbImage = ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(path),
-                            300, 225);
+                    Bitmap ThumbImage = ThumbnailUtils.extractThumbnail(
+                            BitmapFactory.decodeFile(path), 300, 225);
                     try
                     {
                         FileOutputStream fos = new FileOutputStream(thumbFile);
@@ -402,17 +405,18 @@ public class MainActivity extends Activity
             // bag photo
             else if (requestCode == BAG_CODE)
             {
-                Log.v("ActivityResulty", getSave_path());
+                Log.v("ActivityResult", getSavePath());
                 String path = Environment.getExternalStorageDirectory().getPath()
-                        + getSave_path() + suYearTxt + "/" +  suSeqNumTxt.getText().toString()
+                        + getSavePath() + suYearTxt + "/" +  suSeqNumTxt.getText().toString()
                         + "/fnd/" + "1_bag_1.jpg";
                 String thumbPath = Environment.getExternalStorageDirectory().getPath()
-                        + getSave_path() + "tmb/" + suYearTxt + "/"
+                        + getSavePath() + "tmb/" + suYearTxt + "/"
                         + suSeqNumTxt.getText().toString() + "/fnd";
                 File thumbFile = new File(thumbPath, "1_bag_1.jpg");
                 if (isThumbnailCreation())
                 {
-                    Bitmap ThumbImage = ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(path), 300, 225);
+                    Bitmap ThumbImage = ThumbnailUtils.extractThumbnail(
+                            BitmapFactory.decodeFile(path), 300, 225);
                     try
                     {
                         FileOutputStream fos = new FileOutputStream(thumbFile);

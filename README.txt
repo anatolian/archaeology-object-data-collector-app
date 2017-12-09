@@ -1,0 +1,64 @@
+Archaeology README
+Authors: Chris Besser, Xin Guo, Long Nguyen, Kevin Trinh
+
+GENERAL SUMMARY
+---------------
+asdf
+
+USER INTERACTION
+----------------
+asdf
+
+TECHNICAL DETAILS (BY CLASS/ACTIVITY(xx))
+-----------------------------------------
+asdf
+
+
+Excavation README
+Author: Christopher Besser
+
+The excavation app takes regular and 3d photos, and writes them to a database.
+
+Main screen: SplashMainScreen.java
+	SplashMainScreen connects to the database, then launches BaseActivity and MainActivity simultaneously.
+
+Other activities: BaseActivity.java
+	Several activities extend BaseActivity to add an overflow and menu. In the top right corner, the user can change the server's IP address.
+The settings overflow also contains an option "Image Property", which when selected launches ActivityImageProperty. Several activities extend
+BaseActivity, which adds a menu to the bottom of the screen and action overflow at the top. At the bottom of the screen, the user can tap 
+"Context" to launch MainActivity, "3d" to launch Activity3d, or tap Sample to launch ActivitySample.
+
+ActivityImageProperty.java
+	ActivityImageProperty allows the user to change various properties of captured images. The user can change the 3d image subpath, regular
+image subpath, context subpath, sample label area divider, sample label context divider, sample label font, sample label font size, sample label
+sample divider, and sample subpath through corresponding textboxes. The user can change the sample label location through a spinner. Finally, the
+user can press Update Property to confirm their changes and launch SampleActivity.
+
+MainActivity.java
+	MainActivity allows the user to update the image of objects in the database. Once the database connects and loads easting and northing data,
+the user can select the object through the easting and northing spinners. Once selected, the latest picture of the object is displayed in the
+middle of the screen. At the top of the screen, the user can press "Replace Photo" to launch ActivityCamera. Upon pressing "Next Photo" another
+instance of MainActivity is launched, this one corresponding to the next photo.
+
+Activity3d.java
+	3dActivity allows the user to take photos of an object to use as placeholder photos for all objects in that area. The user can select a
+northing and easting through spinners at the top of the screen. All matching artifacts are displayed in a grid in the middle of the screen. The
+user can press "Take Next Photo" to launch ActivityCamera1 and take a picture of the object. Pressing "Upload All" launches
+MultiPhotoSelectActivity.
+
+ActivitySample.java
+	SampleActivity allows the user search for a sample in the database. The spinners at the top correspond to object easting, northing, material,
+context number, and sample number. As each is entered, the matching objects in the database are displayed in a grid in the middle of the screen.
+The user can select an object and tap "Take Photo" to launch ActivityCamera1.
+
+ActivityCamera.java
+	CameraActivity allows the user to take a picture of an artifact.
+
+ActivityCamera1.java
+	Camera1Activity allows the user to take a picture for all artifacts with a specified easting and northing. It launches Activity3d upon finishing.
+
+MultiPhotoSelectActivity.java
+	MultiPhotoSelectActivity allows the user to select the artifacts whose picture should be updated with that taken from ActivityCamera1.
+
+Used APIs/External Libraries:
+	Picasso image library

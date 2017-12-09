@@ -76,29 +76,13 @@
                 android:layout_below = "@+id/button22"
                 android:layout_centerHorizontal = "true"
                 android:onClick = "zoomIn"/>
-            <Button
-                android:layout_width = "match_parent"
-                android:layout_height = "wrap_content"
-                android:text = "@string/get_api"
-                android:id = "@+id/button24"
-                android:layout_below = "@+id/button23"
-                android:layout_centerHorizontal = "true"
-                android:onClick = "getApiCommands"/>
             <EditText
                 android:layout_width = "match_parent"
                 android:layout_height = "wrap_content"
                 android:id = "@+id/apiFunctionName"
-                android:layout_below = "@+id/button24"
+                android:layout_below = "@+id/button22"
                 android:layout_centerHorizontal = "true"
                 android:hint="@string/api_call"/>
-            <Button
-                android:layout_width = "match_parent"
-                android:layout_height = "wrap_content"
-                android:text = "@string/call_api"
-                android:id = "@+id/button25"
-                android:layout_below = "@+id/apiFunctionName"
-                android:layout_centerHorizontal = "true"
-                android:onClick = "callSpecificApiFunction"/>
         </RelativeLayout>
     </ScrollView>
 </RelativeLayout>

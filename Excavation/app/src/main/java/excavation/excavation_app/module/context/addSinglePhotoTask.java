@@ -3,7 +3,7 @@ package excavation.excavation_app.module.context;
 import java.util.ArrayList;
 import excavation.excavation_app.module.common.bean.SimpleData;
 import excavation.excavation_app.module.common.constants.AppConstants;
-import excavation.excavation_app.module.common.http.Response.RESPONSE_RESULT;
+import excavation.excavation_app.module.common.http.Response.ResponseResult;
 import excavation.excavation_app.module.common.http.factory.SimpleObjectFactory;
 import excavation.excavation_app.module.common.task.BaseTask;
 import excavation.excavation_app.module.image.property.ImagePropertyBean;
@@ -65,7 +65,7 @@ public class AddSinglePhotoTask extends BaseTask
         progressDialog.show();
         DBHelper db = DBHelper.getInstance(con);
         db.open();
-        ipAddress = db.getIpAddress();
+        ipAddress = db.getIPAddress();
         data1 = db.getImageProperty();
         db.close();
     }
@@ -82,18 +82,18 @@ public class AddSinglePhotoTask extends BaseTask
         if (photoId != null && photoId.length() > 0)
         {
             list = factory.addSingleImg(north1, east1, img, ctxNo.get(0), ipAddress, photoId,
-                    data1.baseImagePath, data1.contextSubpath);
+                    data1.baseImagePath, data1.contextSubPath);
         }
         else if (ctxNo != null && ctxNo.size() > 0)
         {
 
             list = factory.addSingleImg(north1, east1, img, ctxNo.get(0), ipAddress,"",
-                    data1.baseImagePath, data1.contextSubpath);
+                    data1.baseImagePath, data1.contextSubPath);
         }
         else
         {
             list = factory.addSingleImg(north1, east1, img,"", ipAddress,"",
-                    data1.baseImagePath, data1.contextSubpath);
+                    data1.baseImagePath, data1.contextSubPath);
         }
         return null;
     }
@@ -110,10 +110,10 @@ public class AddSinglePhotoTask extends BaseTask
         {
             progressDialog.dismiss();
         }
-        if (list.result == RESPONSE_RESULT.success)
+        if (list.result == ResponseResult.success)
         {
             AppConstants.tempContextNo = null;
-            Toast.makeText(con,"Uploaded Successfully", Toast.LENGTH_LONG).show();
+            Toast.makeText(con, "Uploaded Successfully", Toast.LENGTH_LONG).show();
             Intent i = new Intent(con, MainActivity.class);
             i.putExtra("pic", "camval");
             i.putExtra("north", north1);

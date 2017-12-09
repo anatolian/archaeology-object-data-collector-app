@@ -5,22 +5,22 @@ import java.util.List;
 import java.util.Map;
 import excavation.excavation_app.module.common.bean.ResponseData;
 import excavation.excavation_app.module.common.bean.SimpleData;
-import excavation.excavation_app.module.common.http.HttpProcessor;
+import excavation.excavation_app.module.common.http.HTTPProcessor;
 import excavation.excavation_app.module.common.http.Request;
-import excavation.excavation_app.module.common.http.bean.HttpObject;
+import excavation.excavation_app.module.common.http.bean.HTTPObject;
 import excavation.excavation_app.module.context.AreaListProcessor;
-import excavation.excavation_app.module.context.AddAContextNumberProcessor.ADD_CONTEXT_REQUEST;
-import excavation.excavation_app.module.context.AreaListProcessor.LIST_AREA_REQUESTER;
+import excavation.excavation_app.module.context.AreaListProcessor.ListAreaRequester;
+import excavation.excavation_app.module.context.AddAContextNumberProcessor.AddContextRequest;
 import excavation.excavation_app.module.context.EastAreaListProcessor;
 import excavation.excavation_app.module.sample.MaterialContextListProcessor;
 import excavation.excavation_app.module.sample.SampleContextListProcessor;
 import excavation.excavation_app.module.sample.SampleGetPhotoListProcessor;
-import excavation.excavation_app.module.sample.SampleImgListProcessor;
+import excavation.excavation_app.module.sample.SampleImageListProcessor;
+import excavation.excavation_app.module.sample.SampleImageListProcessor.ImageSampleRequester;
 import excavation.excavation_app.module.sample.SampleListProcessor;
-import excavation.excavation_app.module.sample.SampleListProcessor.LIST_SAMPLE_REQUESTER;
-import excavation.excavation_app.module.sample.SampleImgListProcessor.IMG_SAMPLE_REQUESTER;
+import excavation.excavation_app.module.sample.SampleListProcessor.ListSampleRequester;
 import excavation.excavation_app.module.sample.SampleMaterialListProcessor;
-public class SimpleListFactory implements BaseFactory
+public class SimpleListFactory
 {
     private static SimpleListFactory factory;
     /**
@@ -49,9 +49,10 @@ public class SimpleListFactory implements BaseFactory
      * @param params - HTTP parameters
      * @return Returns the list
      */
-    private <T extends ResponseData> List<T> getList(HttpProcessor processor, Map<Request, String> params)
+    private <T extends ResponseData> List<T> getList(HTTPProcessor processor,
+                                                     Map<Request, String> params)
     {
-        HttpObject object = processor.getHttp(params);
+        HTTPObject object = processor.getHTTP(params);
         List<T> resData = processor.parseList(object);
         releaseProcessor();
         return resData;
@@ -82,8 +83,8 @@ public class SimpleListFactory implements BaseFactory
     public List<SimpleData> getNorthArea(String id, String ipAddress)
     {
         Map<Request, String> mapParams = new HashMap<>();
-        mapParams.put(LIST_AREA_REQUESTER.mode, "area_northing");
-        mapParams.put(LIST_AREA_REQUESTER.areaEastingName, id);
+        mapParams.put(ListAreaRequester.mode, "area_northing");
+        mapParams.put(ListAreaRequester.areaEastingName, id);
         return getList(new AreaListProcessor(ipAddress), mapParams);
     }
 
@@ -95,7 +96,7 @@ public class SimpleListFactory implements BaseFactory
     public List<SimpleData> getEastArea(String ipAddress)
     {
         Map<Request, String> mapParams = new HashMap<>();
-        mapParams.put(LIST_AREA_REQUESTER.mode, "area_easting");
+        mapParams.put(ListAreaRequester.mode, "area_easting");
         return getList(new EastAreaListProcessor(ipAddress), mapParams);
     }
 
@@ -109,18 +110,18 @@ public class SimpleListFactory implements BaseFactory
     public List<SimpleData> getSampleList(String type, String var, String ipAddress)
     {
         Map<Request, String> mapParams = new HashMap<>();
-        mapParams.put(LIST_SAMPLE_REQUESTER.mode, "list");
-        mapParams.put(LIST_SAMPLE_REQUESTER.listingType, type);
-        mapParams.put(LIST_SAMPLE_REQUESTER.areaEast, "");
-        mapParams.put(LIST_SAMPLE_REQUESTER.areaNorth, "");
-        mapParams.put(LIST_SAMPLE_REQUESTER.contextNumber, "");
+        mapParams.put(ListSampleRequester.mode, "list");
+        mapParams.put(ListSampleRequester.listingType, type);
+        mapParams.put(ListSampleRequester.areaEast, "");
+        mapParams.put(ListSampleRequester.areaNorth, "");
+        mapParams.put(ListSampleRequester.contextNumber, "");
         if (var.equalsIgnoreCase("m"))
         {
-            return getList(new SampleMaterialListProcessor(ipAddress),mapParams);
+            return getList(new SampleMaterialListProcessor(ipAddress), mapParams);
         }
         else if (var.equalsIgnoreCase("cn"))
         {
-            return getList(new SampleContextListProcessor(ipAddress),mapParams);
+            return getList(new SampleContextListProcessor(ipAddress), mapParams);
         }
         else if (var.equalsIgnoreCase("s"))
         {
@@ -128,7 +129,7 @@ public class SimpleListFactory implements BaseFactory
         }
         else
         {
-            return getList(new SampleImgListProcessor(ipAddress), mapParams);
+            return getList(new SampleImageListProcessor(ipAddress), mapParams);
         }
     }
 
@@ -140,16 +141,17 @@ public class SimpleListFactory implements BaseFactory
      * @param phid - photo ID
      * @return Returns the data
      */
-    public List<SimpleData> getContextList(String ipAddress, String east, String north, String phid)
+    public List<SimpleData> getContextList(String ipAddress, String east, String north,
+                                           String phid)
     {
         Map<Request, String> mapParams = new HashMap<>();
-        mapParams.put(LIST_SAMPLE_REQUESTER.mode, "list");
-        mapParams.put(LIST_SAMPLE_REQUESTER.listingType, "context");
-        mapParams.put(LIST_SAMPLE_REQUESTER.areaEast, east);
-        mapParams.put(LIST_SAMPLE_REQUESTER.areaNorth, north);
+        mapParams.put(ListSampleRequester.mode, "list");
+        mapParams.put(ListSampleRequester.listingType, "context");
+        mapParams.put(ListSampleRequester.areaEast, east);
+        mapParams.put(ListSampleRequester.areaNorth, north);
         if (phid != null && phid.length() > 0)
         {
-            mapParams.put(ADD_CONTEXT_REQUEST.photographNumber, phid);
+            mapParams.put(AddContextRequest.photographNumber, phid);
         }
         return getList(new SampleContextListProcessor(ipAddress), mapParams);
     }
@@ -163,21 +165,21 @@ public class SimpleListFactory implements BaseFactory
      * @param typ - type
      * @param ipAddress - server IP
      * @param baseImagePath - image location
-     * @param sampleSubpath - sample location
+     * @param sampleSubPath - sample location
      * @return Returns the photos
      */
-    public List<SimpleData> getPhotoSampleList(String north, String east, String contNo, String sno,
-                                               String typ, String ipAddress, String baseImagePath,
-                                               String sampleSubpath)
+    public List<SimpleData> getPhotoSampleList(String north, String east, String contNo,
+                                               String sno, String typ, String ipAddress,
+                                               String baseImagePath, String sampleSubPath)
     {
         Map<Request, String> mapParams = new HashMap<>();
-        mapParams.put(IMG_SAMPLE_REQUESTER.areaEasting, east);
-        mapParams.put(IMG_SAMPLE_REQUESTER.areaNorthing, north);
-        mapParams.put(IMG_SAMPLE_REQUESTER.contextNumber, contNo);
-        mapParams.put(IMG_SAMPLE_REQUESTER.sampleNumber, sno);
-        mapParams.put(IMG_SAMPLE_REQUESTER.samplePhotoType, typ);
-        mapParams.put(IMG_SAMPLE_REQUESTER.baseImagePath, baseImagePath);
-        mapParams.put(IMG_SAMPLE_REQUESTER.sampleSubpath, sampleSubpath);
+        mapParams.put(ImageSampleRequester.areaEasting, east);
+        mapParams.put(ImageSampleRequester.areaNorthing, north);
+        mapParams.put(ImageSampleRequester.contextNumber, contNo);
+        mapParams.put(ImageSampleRequester.sampleNumber, sno);
+        mapParams.put(ImageSampleRequester.samplePhotoType, typ);
+        mapParams.put(ImageSampleRequester.baseImagePath, baseImagePath);
+        mapParams.put(ImageSampleRequester.sampleSubpath, sampleSubPath);
         return getList(new SampleGetPhotoListProcessor(ipAddress), mapParams);
     }
 
@@ -192,16 +194,17 @@ public class SimpleListFactory implements BaseFactory
      * @param ipAddress - server IP
      * @return Returns the material
      */
-    public List<SimpleData> getMaterial(String spNorth, String conn, String spEast, String listingType,
-                                        String mode, String sampleNo, String ipAddress)
+    public List<SimpleData> getMaterial(String spNorth, String conn, String spEast,
+                                        String listingType, String mode, String sampleNo,
+                                        String ipAddress)
     {
         Map<Request, String> mapParams = new HashMap<>();
-        mapParams.put(LIST_SAMPLE_REQUESTER.areaNorth, spNorth);
-        mapParams.put(LIST_SAMPLE_REQUESTER.contextNumber, conn);
-        mapParams.put(LIST_SAMPLE_REQUESTER.areaEast, spEast);
-        mapParams.put(LIST_SAMPLE_REQUESTER.listingType, listingType);
-        mapParams.put(LIST_SAMPLE_REQUESTER.mode, mode);
-        mapParams.put(LIST_SAMPLE_REQUESTER.sampleNumber, sampleNo);
+        mapParams.put(ListSampleRequester.areaNorth, spNorth);
+        mapParams.put(ListSampleRequester.contextNumber, conn);
+        mapParams.put(ListSampleRequester.areaEast, spEast);
+        mapParams.put(ListSampleRequester.listingType, listingType);
+        mapParams.put(ListSampleRequester.mode, mode);
+        mapParams.put(ListSampleRequester.sampleNumber, sampleNo);
         return getList(new MaterialContextListProcessor(ipAddress), mapParams);
     }
 }
