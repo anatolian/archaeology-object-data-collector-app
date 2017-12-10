@@ -9,6 +9,60 @@ USER INTERACTION
 ----------------
 asdf
 
-TECHNICAL DETAILS (BY CLASS/ACTIVITY(xx))
------------------------------------------
-asdf
+TECHNICAL DETAILS
+-----------------
+UI (16)
+-------
+Camera Dialog - 
+
+CameraUIActivity - 
+
+CeramicInputActivity - 
+
+DownloadActivity - 
+
+FavoriteActivity - 
+
+HistoryActivity - 
+
+InitialActivity - 
+
+ManualActivity - 
+
+MyWifiActivity - 
+
+ObjectDetailActivity - 
+
+PhotoFragment - 
+
+PhotosActivity - 
+
+SearchActivity - 
+
+SettingsActivity - 
+
+SimpleStreamSurfaceView - 
+
+TaggedImageView - 
+
+
+UTIL (8)
+--------
+CheatSheet - 
+
+HistoryHelper - 
+
+ImageFileProvider - 
+
+LocalRetriever - 
+
+MagnifyingGlass - 
+
+StateStatic - 
+
+Syncable - 
+
+Taggable - 
+
+
+
