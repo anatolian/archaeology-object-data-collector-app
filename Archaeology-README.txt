@@ -33,9 +33,9 @@ InitialActivity - first screen, verifies connection to web service base URL, set
 
 ManualActivity - handles manual entry of sample number to search for sample
 
-MyWifiActivity - 
+MyWifiActivity - used to establish/handle connections with the WifiDirect camera
 
-ObjectDetailActivity - 
+ObjectDetailActivity - allows user to record weight of object (manually or with bluetooth scale), shows color information, and photo manipulation (taking photos / color correction)
 
 PhotoFragment - 
 
