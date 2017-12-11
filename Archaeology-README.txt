@@ -45,30 +45,7 @@ SearchActivity - activity that displays the results based on the inputs to find 
 
 SettingsActivity - change the database URL, select the active camera (either remote or local), and the camera calibration interval if using a remote professional camera
 
-SimpleStreamSurfaceView - 
+SimpleStreamSurfaceView - handles live streaming functionality
 
-TaggedImageView - 
-
-
-UTIL (8)
---------
-CheatSheet - 
-
-HistoryHelper - creates and interacts with the history sql database and favorite sql database.
-The HistoryHelper has an insert function to insert new searches, a delete function to remove items, and
-a search function to retrieve information from the databases.
-
-ImageFileProvider - 
-
-LocalRetriever - 
-
-MagnifyingGlass - 
-
-StateStatic - 
-
-Syncable - 
-
-Taggable - 
-
-
+TaggedImageView - allows users to tag images for search purposes
 
