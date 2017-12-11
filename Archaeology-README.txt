@@ -13,7 +13,7 @@ TECHNICAL DETAILS
 -----------------
 UI (16)
 -------
-CameraDialog -  handles connection to Sony QX1 camera, mini camera app that allows you to use camera functions (take photo, start liveview, stop liveview, zoom in, zoom out)
+CameraDialog - handles connection to Sony QX1 camera, mini camera app that allows you to use camera functions (take photo, start liveview, stop liveview, zoom in, zoom out)
 
 CameraUIActivity - displays the OCR view and serves as the main view of the app. This class
 can call the HistoryActivity and FavoriteActivity by swiping left or right and can call
@@ -58,3 +58,13 @@ VOLLEY
 VolleyWrapper and VolleyStringWrapper - Two wrapper classes that utilize the Volley library, an HTTP library that makes networking tasks in Android applications easier.
 These wrappers perform HTTP requests via Volley and use the returned data throughout the application for various uses. 
 
+REQUIRED EXTERNAL LIBRARIES
+---------------------------
+	postgresql-42.0.0 - JAR file for handling postgres SQL queries
+	eu.livotov.labs.android:CAMView:2.0.1@aar - live view from camera
+	com.squareup.okhttp3:okhttp:3.7.0 - HTTP/HTTPS client for Android
+	com.github.nisrulz:qreader:2.0.1 - QR code reader
+	com.squareup.picasso:picasso:2.5.2 - library for easy loading and rendering of image resources into Android views
+	com.squareup.retrofit2:retrofit:2.2.0 - library for handling BlueTooth connection to the scale
+	com.squareup.retrofit2:converter-gson:2.2.0 - library for parsing JSON responses from the scale into usable data
+	com.siclo.ezphotopick:library:1.0.7 - library for picking an image from the local file system
