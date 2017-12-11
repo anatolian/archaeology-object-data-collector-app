@@ -37,13 +37,13 @@ MyWifiActivity - used to establish/handle connections with the WifiDirect camera
 
 ObjectDetailActivity - allows user to record weight of object (manually or with bluetooth scale), shows color information, and photo manipulation (taking photos / color correction)
 
-PhotoFragment - 
+PhotoFragment - aids with image selection, manipulation, syncing, etc...
 
-PhotosActivity - 
+PhotosActivity - allows users to select images from a gallery to color correct or to view
 
-SearchActivity - 
+SearchActivity - activity that displays the results based on the inputs to find a museum object
 
-SettingsActivity - 
+SettingsActivity - change the database URL, select the active camera (either remote or local), and the camera calibration interval if using a remote professional camera
 
 SimpleStreamSurfaceView - 
 
