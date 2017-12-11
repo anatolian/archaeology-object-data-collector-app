@@ -3,11 +3,11 @@ Authors: Chris Besser, Xin Guo, Long Nguyen, Kevin Trinh
 
 GENERAL SUMMARY
 ---------------
-asdf
+Archaeological items and relevant information (internal/external color, weight, photo) are stored in a database. This app is able to look up an item using different fields (easting, northing, context number, and sample number), view/edit current information, and/or add missing information. The app is simulantenously connected to a bluetooth scale and a wifi direct camera device to aid in documenting the item in the event these fields are missing. The user can manually input the internal/external color.
 
 USER INTERACTION
 ----------------
-Archaeological items and relevant information (internal/external color, weight, photo) are stored in a database. This app is able to look up an item using different fields (easting, northing, context number, and sample number), view/edit current information, and/or add missing information. The app is simulantenously connected to a bluetooth scale and a wifi direct camera device to aid in documenting the item in the event these fields are missing. The user can manually input the internal/external color.
+Once connected to the database using a hosting service (heroku), the app should allow for item lookup using OCR on the museum's sample number, manually entering this number, or manually look up. UI features will allow them to view and/or edit an item's entry to either change current fields or add missing ones (using the connected accessories if necessary).
 
 TECHNICAL DETAILS
 -----------------
@@ -17,7 +17,7 @@ CameraDialog -  handles connection to Sony QX1 camera, mini camera app that allo
 
 CameraUIActivity - displays the OCR view and serves as the main view of the app. This class
 can call the HistoryActivity and FavoriteActivity by swiping left or right and can call
-ManualSearch or use QR to search the database and view the result.
+ManualActivity or use QR to search the database and view the result.
 
 CeramicInputActivity - pulls item information from the database using spinners to select easting, northing, context number, and sample number
 
@@ -29,9 +29,9 @@ from the history database and display them.
 HistoryActivity - displays the history activity. This class uses HistoryHelper to retrieve items
 from the history database and display them.
 
-InitialActivity - 
+InitialActivity - first screen, verifies connection to web service base URL, settings button (see SettingsActivity)
 
-ManualActivity - 
+ManualActivity - handles manual entry of sample number to search for sample
 
 MyWifiActivity - 
 
