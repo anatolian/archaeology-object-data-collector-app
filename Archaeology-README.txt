@@ -49,3 +49,12 @@ SimpleStreamSurfaceView - handles live streaming functionality
 
 TaggedImageView - allows users to tag images for search purposes
 
+
+EXTERNAL LIBRARIES
+------------------
+
+VOLLEY
+------
+VolleyWrapper and VolleyStringWrapper - Two wrapper classes that utilize the Volley library, an HTTP library that makes networking tasks in Android applications easier.
+These wrappers perform HTTP requests via Volley and use the returned data throughout the application for various uses. 
+
