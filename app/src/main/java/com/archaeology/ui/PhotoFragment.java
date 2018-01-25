@@ -21,8 +21,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import com.archaeology.services.PicassoWrapper;
 import com.archaeology.R;
-import com.archaeology.models.AsyncHttpCallbackWrapper;
-import com.archaeology.models.AsyncHttpWrapper;
+import com.archaeology.models.AsyncHTTPCallbackWrapper;
+import com.archaeology.models.AsyncHTTPWrapper;
 import com.archaeology.util.CheatSheet;
 import static com.archaeology.util.StateStatic.LOG_TAG;
 import static com.archaeology.util.StateStatic.MARKED_AS_ADDED;
@@ -266,8 +266,8 @@ public class PhotoFragment extends Fragment
                             + AREA_EASTING + "&area_northing=" + AREA_NORTHING + "&context_number="
                             + CONTEXT_NUMBER + "&sample_number=" + SAMPLE_NUMBER;
                     Log.v(LOG_TAG, "Image to be uploaded" + dictEntry.getKey());
-                    AsyncHttpWrapper.makeImageUpload(URL, dictEntry.getKey(),
-                            new AsyncHttpCallbackWrapper() {
+                    AsyncHTTPWrapper.makeImageUpload(URL, dictEntry.getKey(),
+                            new AsyncHTTPCallbackWrapper() {
                         /**
                          * Connection succeeded
                          * @param response - HTTP response

@@ -1,7 +1,7 @@
 // to be implemented when communicating with server
 // @author: msenol
 package com.archaeology.models;
-abstract public class AsyncHttpCallbackWrapper
+abstract public class AsyncHTTPCallbackWrapper
 {
     /**
      * HTTP request starts

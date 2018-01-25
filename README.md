@@ -6,8 +6,8 @@ the weight. Users can also take pictures with their hardware camera or WiFi Dire
 white-balancing.
 
 For artifacts stored on public webpages (e.g. The University of Pennsylvania Digital Archives https://www.penn.museum/collections/), users can fetch and display these pages in app by
-scanning a QR Code or entering an artifact key. Users outside of the Penn network will currently need to change the root URL (endResult[2] in https://github.com/anatolian/archaeology-object-data-collector-app/blob/master/app/src/main/java/com/archaeology/util/LocalRetriever.java) to that of their own pages. Hopefully, this step will be refactored so
-users can enter this URL upon initial launch rather than modifying the code.
+scanning a QR Code or entering an artifact key. Users outside of the Penn network will currently need to change the root URL (endResult[2] in https://github.com/anatolian/archaeology-object-data-collector-app/blob/master/app/src/main/java/com/archaeology/util/LocalRetriever.java) to that of their own pages, as well as modify the logic found in
+https://github.com/anatolian/archaeology-object-data-collector-app/tree/master/app/src/main/java/com/archaeology/services (see DatabaseUpdater.java's filename variable and UpdateDatabaseMuseum.java's FILE variable). Hopefully, this step will be refactored sousers can enter this URL upon initial launch rather than modifying the code.
 
 The corresponding PHP web services code can be found in the [archaeology-object-data-collector-service] repository. This code is designed to work with Heroku, but might be extended
 to other data hosting platforms in the future.

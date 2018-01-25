@@ -9,7 +9,7 @@ import com.loopj.android.http.TextHttpResponseHandler;
 import java.io.File;
 import java.io.FileNotFoundException;
 import static com.archaeology.util.StateStatic.LOG_TAG;
-public class AsyncHttpWrapper
+public class AsyncHTTPWrapper
 {
     /**
      * Upload image
@@ -18,7 +18,7 @@ public class AsyncHttpWrapper
      * @param callbackWrapper - callback function
      */
     public static void makeImageUpload(String URL, Uri imageURI,
-                                       final AsyncHttpCallbackWrapper callbackWrapper)
+                                       final AsyncHTTPCallbackWrapper callbackWrapper)
     {
         // setting up variables to establish connection with server
         AsyncHttpClient client = new AsyncHttpClient();
@@ -36,7 +36,7 @@ public class AsyncHttpWrapper
         // send to database
         client.post(URL, params, new TextHttpResponseHandler() {
             /**
-             * methods implemented from AsyncHttpWrapper.java
+             * methods implemented from AsyncHTTPWrapper.java
              * @param statusCode - HTTP status
              * @param headers - HTTP headers
              * @param responseString - HTTP response
