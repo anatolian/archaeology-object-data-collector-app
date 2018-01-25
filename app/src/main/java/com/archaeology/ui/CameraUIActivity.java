@@ -192,8 +192,7 @@ public class CameraUIActivity extends AppCompatActivity
                 RelativeLayout.LayoutParams.MATCH_PARENT));
         scan.setBackgroundColor(0x233069);
         parent.addView(scan);
-        scan.setScannerViewEventListener(new ScannerLiveView.ScannerViewEventListener()
-        {
+        scan.setScannerViewEventListener(new ScannerLiveView.ScannerViewEventListener() {
             /**
              * Scanner opened
              * @param scanner - file scanner
