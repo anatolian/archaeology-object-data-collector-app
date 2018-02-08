@@ -23,8 +23,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.BasicNetwork;
 import com.android.volley.toolbox.DiskBasedCache;
 import com.android.volley.toolbox.HurlStack;
-import org.json.JSONException;
-import org.json.JSONObject;
 import com.archaeology.R;
 import com.archaeology.models.StringObjectResponseWrapper;
 import static com.archaeology.services.VolleyStringWrapper.makeVolleyStringObjectRequest;
@@ -138,7 +136,7 @@ public class InitialActivity extends AppCompatActivity
         barProgressDialog.show();
         Log.v(LOG_TAG, "Test Connection Button Clicked");
         cancelAllVolleyRequests(queue);
-        makeVolleyStringObjectRequest(getWebServerFromLayout() + "/test_service.php", queue,
+        makeVolleyStringObjectRequest(getWebServerFromLayout() + "/relations/", queue,
                 new StringObjectResponseWrapper(this) {
             /**
              * Response received
@@ -147,31 +145,17 @@ public class InitialActivity extends AppCompatActivity
             @Override
             public void responseMethod(String response)
             {
-                try
+                Log.v(LOG_TAG, "here is the response\n " + response);
+                // If the connection failed then an error message returns instead
+                if (response.contains("relname"))
                 {
-                    Log.v(LOG_TAG, "here is the response " + response);
-                    response = response.substring(response.indexOf("{"), response.indexOf("}") +
-                            1);
-                    response = response.replace("\\", "");
-                    Log.v("READ_DATABASE", response);
-                    Log.v(LOG_TAG, "response removed slash and double quotes " + response);
-                    JSONObject responseJSON = new JSONObject(response);
-                    boolean connStatus = responseJSON.getBoolean("status");
-                    if (connStatus)
-                    {
-                        barProgressDialog.dismiss();
-                        connectionTestSucceedCallback();
-                    }
-                    else
-                    {
-                        barProgressDialog.dismiss();
-                        connectionTestFailedCallback();
-                    }
+                    barProgressDialog.dismiss();
+                    connectionTestSucceedCallback();
                 }
-                catch (JSONException e)
+                else
                 {
-                    Log.v(LOG_TAG, "thrown json exception");
-                    e.printStackTrace();
+                    barProgressDialog.dismiss();
+                    connectionTestFailedCallback();
                 }
             }
 

@@ -10,7 +10,7 @@ import java.util.Date;
 import java.util.Locale;
 public class StateStatic
 {
-    // This class holds global state variables. This class should be only used in static way
+    // This class holds global state variables. This class should be only used in a static way
     public static final String LOG_TAG = "Ceramic App";
     public static final String LOG_TAG_WIFI_DIRECT = "WIFIDIRECT";
     public static final String LOG_TAG_BLUETOOTH = "BLUETOOTH";
@@ -18,8 +18,7 @@ public class StateStatic
     public static final int MESSAGE_WEIGHT = 501;
     public static final int MESSAGE_STATUS_CHANGE = 502;
     public static final int REQUEST_ENABLE_BT = 301;
-    public static final String DEFAULT_WEB_SERVER_URL
-            = "https://fa17archaeology-service.herokuapp.com";
+    public static final String DEFAULT_WEB_SERVER_URL = "https://pacific-brook-36642.herokuapp.com";
     public static final String DEFAULT_CAMERA_IP = "fe:c2:de:31:0a:e1";
     // 30 minutes
     public static final long DEFAULT_CALIBRATION_INTERVAL = 1800000;

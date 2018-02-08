@@ -17,14 +17,13 @@ import android.widget.Spinner;
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
-import org.json.JSONArray;
-import org.json.JSONException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import com.archaeology.models.StringObjectResponseWrapper;
 import com.archaeology.util.CheatSheet;
 import com.archaeology.R;
-import com.archaeology.models.JSONArrayResponseWrapper;
+import static com.archaeology.services.VolleyStringWrapper.makeVolleyStringObjectRequest;
 import static com.archaeology.util.CheatSheet.goToSettings;
 import static com.archaeology.util.StateStatic.ALL_SAMPLE_NUMBER;
 import static com.archaeology.util.StateStatic.AREA_EASTING;
@@ -34,7 +33,6 @@ import static com.archaeology.util.StateStatic.LOG_TAG;
 import static com.archaeology.util.StateStatic.SAMPLE_NUMBER;
 import static com.archaeology.util.StateStatic.getGlobalWebServerURL;
 import static com.archaeology.services.VolleyWrapper.cancelAllVolleyRequests;
-import static com.archaeology.services.VolleyWrapper.makeVolleyJSONArrayRequest;
 public class CeramicInputActivity extends AppCompatActivity
 {
     RequestQueue queue;
@@ -99,8 +97,8 @@ public class CeramicInputActivity extends AppCompatActivity
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
             {
-                clearNorthingSpinner();
-                asyncGetAreaNorthingFromDB();
+                clearNorthingsSpinner();
+                asyncGetAreaNorthingsFromDB();
             }
 
             /**
@@ -123,8 +121,8 @@ public class CeramicInputActivity extends AppCompatActivity
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
             {
-                clearContextNumberSpinner();
-                asyncGetContextNumberFromDB();
+                clearContextNumbersSpinner();
+                asyncGetContextNumbersFromDB();
             }
 
             /**
@@ -147,8 +145,8 @@ public class CeramicInputActivity extends AppCompatActivity
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
             {
-                clearSampleNumberSpinner();
-                asyncGetSampleNumberFromDB();
+                clearSampleNumbersSpinner();
+                asyncGetSampleNumbersFromDB();
             }
 
             /**
@@ -174,12 +172,12 @@ public class CeramicInputActivity extends AppCompatActivity
                 && allDataLoadInfo.get(LoadState.areaNorthing)
                 && allDataLoadInfo.get(LoadState.contextNumber))
         {
-            clearSampleNumberSpinner();
-            asyncGetSampleNumberFromDB();
+            clearSampleNumbersSpinner();
+            asyncGetSampleNumbersFromDB();
         }
         else
         {
-            asyncGetAreaEastingFromDB();
+            asyncGetAreaEastingsFromDB();
         }
     }
 
@@ -253,7 +251,7 @@ public class CeramicInputActivity extends AppCompatActivity
     /**
      * Clear northings
      */
-    public void clearNorthingSpinner()
+    public void clearNorthingsSpinner()
     {
         CheatSheet.setSpinnerItems(this, northing, new ArrayList<String>());
     }
@@ -261,7 +259,7 @@ public class CeramicInputActivity extends AppCompatActivity
     /**
      * Clear context numbers
      */
-    public void clearContextNumberSpinner()
+    public void clearContextNumbersSpinner()
     {
         CheatSheet.setSpinnerItems(this, context, new ArrayList<String>());
     }
@@ -269,7 +267,7 @@ public class CeramicInputActivity extends AppCompatActivity
     /**
      * Clear sample numbers
      */
-    public void clearSampleNumberSpinner()
+    public void clearSampleNumbersSpinner()
     {
         CheatSheet.setSpinnerItems(this, sample, new ArrayList<String>());
     }
@@ -277,28 +275,21 @@ public class CeramicInputActivity extends AppCompatActivity
     /**
      * Get area easting data and fill spinner
      */
-    public void asyncGetAreaEastingFromDB()
+    public void asyncGetAreaEastingsFromDB()
     {
         allDataLoadInfo.put(LoadState.areaEasting, false);
-        String URL = getGlobalWebServerURL() + "/get_area_easting.php";
-        makeVolleyJSONArrayRequest(URL, queue, new JSONArrayResponseWrapper() {
+        String URL = getGlobalWebServerURL() + "/get_area_eastings/";
+        makeVolleyStringObjectRequest(URL, queue, new StringObjectResponseWrapper(this) {
             /**
              * Response received
              * @param response - volley response
              */
             @Override
-            public void responseMethod(JSONArray response)
+            public void responseMethod(String response)
             {
-                try
-                {
-                    // converting json array to regular array so you can populate the spinner
-                    fillEastingSpinner(CheatSheet.convertJSONArrayToList(response));
-                    Log.v(LOG_TAG, "got area easting");
-                }
-                catch (JSONException e)
-                {
-                    e.printStackTrace();
-                }
+                // converting HTML list of links to regular array to populate the spinner
+                fillEastingSpinner(CheatSheet.convertLinkListToArray(response));
+                Log.v(LOG_TAG, "got area easting");
                 allDataLoadInfo.put(LoadState.areaEasting, true);
                 toggleContinueButton();
             }
@@ -311,7 +302,6 @@ public class CeramicInputActivity extends AppCompatActivity
             public void errorMethod(VolleyError error)
             {
                 error.printStackTrace();
-                error.printStackTrace();
                 Log.v(LOG_TAG, "there was an error in getting area easting");
             }
         });
@@ -320,28 +310,21 @@ public class CeramicInputActivity extends AppCompatActivity
     /**
      * Get northing data from database and populate spinner
      */
-    private void asyncGetAreaNorthingFromDB()
+    private void asyncGetAreaNorthingsFromDB()
     {
         allDataLoadInfo.put(LoadState.areaNorthing, false);
-        String URL = getGlobalWebServerURL() + "/get_area_northing.php?area_easting="
+        String URL = getGlobalWebServerURL() + "/get_area_northings/?easting="
                 + getSelectedAreaEasting();
-        makeVolleyJSONArrayRequest(URL, queue, new JSONArrayResponseWrapper() {
+        makeVolleyStringObjectRequest(URL, queue, new StringObjectResponseWrapper(this) {
             /**
              * Response received
              * @param response - database response
              */
             @Override
-            public void responseMethod(JSONArray response)
+            public void responseMethod(String response)
             {
-                try
-                {
-                    //convert json array to regular array to populate spinner
-                    fillNorthingSpinner(CheatSheet.convertJSONArrayToList(response));
-                }
-                catch (JSONException e)
-                {
-                    e.printStackTrace();
-                }
+                // convert HTML link list to regular array to populate spinner
+                fillNorthingSpinner(CheatSheet.convertLinkListToArray(response));
                 // if data was received successfully you can put sample number as true and enable
                 // buttons
                 allDataLoadInfo.put(LoadState.areaNorthing, true);
@@ -363,29 +346,22 @@ public class CeramicInputActivity extends AppCompatActivity
     /**
      * Get context numbers from database and fill spinner
      */
-    private void asyncGetContextNumberFromDB()
+    private void asyncGetContextNumbersFromDB()
     {
         allDataLoadInfo.put(LoadState.contextNumber, false);
-        String URL = getGlobalWebServerURL() + "/get_context_number.php?area_easting="
-                + getSelectedAreaEasting() + "&area_northing=" + getSelectedAreaNorthing();
+        String URL = getGlobalWebServerURL() + "/get_context_numbers/?easting="
+                + getSelectedAreaEasting() + "&northing=" + getSelectedAreaNorthing();
         Log.v(LOG_TAG, "the URL is " + URL);
-        makeVolleyJSONArrayRequest(URL, queue, new JSONArrayResponseWrapper() {
+        makeVolleyStringObjectRequest(URL, queue, new StringObjectResponseWrapper(this) {
             /**
              * Response received
              * @param response - database response
              */
             @Override
-            public void responseMethod(JSONArray response)
+            public void responseMethod(String response)
             {
-                try
-                {
-                    // convert to regular array
-                    fillContextNumberSpinner(CheatSheet.convertJSONArrayToList(response));
-                }
-                catch (JSONException e)
-                {
-                    e.printStackTrace();
-                }
+                // convert HTML link list to regular array
+                fillContextNumberSpinner(CheatSheet.convertLinkListToArray(response));
                 // if data was received successfully you can put sample number as true and enable
                 // buttons
                 allDataLoadInfo.put(LoadState.contextNumber, true);
@@ -407,33 +383,26 @@ public class CeramicInputActivity extends AppCompatActivity
     /**
      * Get sample number from db and populate spinner
      */
-    private void asyncGetSampleNumberFromDB()
+    private void asyncGetSampleNumbersFromDB()
     {
         allDataLoadInfo.put(LoadState.sampleNumber, false);
         toggleContinueButton();
-        String URL = getGlobalWebServerURL() + "/get_sample_number.php?area_easting="
-                + getSelectedAreaEasting() + "&area_northing=" + getSelectedAreaNorthing()
-                + "&context_number=" + getSelectedContextNumber();
-        makeVolleyJSONArrayRequest(URL, queue, new JSONArrayResponseWrapper() {
+        String URL = getGlobalWebServerURL() + "/get_sample_numbers/?easting="
+                + getSelectedAreaEasting() + "&northing=" + getSelectedAreaNorthing()
+                + "&context=" + getSelectedContextNumber();
+        makeVolleyStringObjectRequest(URL, queue, new StringObjectResponseWrapper(this) {
             /**
              * Database response
              * @param response - response received
              */
             @Override
-            public void responseMethod(JSONArray response)
+            public void responseMethod(String response)
             {
-                try
-                {
-                    System.out.println("SAMPLES FOR: EASTING: " + getSelectedAreaEasting() +
-                            " NORTHING: " + getSelectedAreaNorthing()
-                    + " CONTEXT: " + getSelectedContextNumber());
-                    // convert to regular array from json array
-                    fillSampleNumberSpinner(CheatSheet.convertJSONArrayToList(response));
-                }
-                catch (JSONException e)
-                {
-                    e.printStackTrace();
-                }
+                System.out.println("SAMPLES FOR: EASTING: " + getSelectedAreaEasting() +
+                        " NORTHING: " + getSelectedAreaNorthing() + " CONTEXT: "
+                        + getSelectedContextNumber());
+                // convert to regular array from json array
+                fillSampleNumberSpinner(CheatSheet.convertLinkListToArray(response));
                 // if data was received successfully you can put sample number as true and enable
                 // buttons
                 allDataLoadInfo.put(LoadState.sampleNumber, true);

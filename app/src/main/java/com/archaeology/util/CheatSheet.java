@@ -132,18 +132,35 @@ public class CheatSheet
     }
 
     /**
-     * Takes incoming JSON array and converts to a regular array
-     * @param aJsonArray - JSON array to convert
-     * @return Returns an array of the JSON array
-     * @throws JSONException if the JSON is malformed
+     * Count number of appearances of a substring in a string
+     * @param body - string to search
+     * @return Returns the number of instances of substring in body
      */
-    public static ArrayList<String> convertJSONArrayToList(JSONArray aJsonArray)
-            throws JSONException
+    public static int countLinks(String body)
     {
-        ArrayList<String> tmpArray = new ArrayList<>(aJsonArray.length());
-        for (int i = 0; i < aJsonArray.length(); i++)
+        int count = 0;
+        while (body.indexOf("?") > 0)
         {
-            tmpArray.add(aJsonArray.getString(i));
+            body = body.substring(body.indexOf("?") + 1);
+            count++;
+        }
+        return count;
+    }
+
+    /**
+     * Takes incoming link list and converts to a regular array
+     * @param response - response HTML to convert
+     * @return Returns an array of the JSON array
+     */
+    public static ArrayList<String> convertLinkListToArray(String response)
+    {
+        int links = countLinks(response);
+        ArrayList<String> tmpArray = new ArrayList<>(links);
+        for (int i = 0; i < links; i++)
+        {
+            response = response.substring(response.indexOf("?") + 1);
+            String URL = response.substring(0, response.indexOf("\'"));
+            tmpArray.add(URL.substring(URL.lastIndexOf("=") + 1));
         }
         Log.v(LOG_TAG, "the array contains " + tmpArray.toString());
         return tmpArray;

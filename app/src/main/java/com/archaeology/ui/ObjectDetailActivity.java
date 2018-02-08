@@ -246,12 +246,8 @@ public class ObjectDetailActivity extends AppCompatActivity
                             return true;
                         }
                     });
-                    asyncPopulateWeightFieldFromDB(areaEasting, areaNorthing, contextNumber,
+                    asyncPopulateFieldsFromDB(areaEasting, areaNorthing, contextNumber,
                             sampleNumber);
-                    asyncPopulateExteriorColorFieldsFromDB(areaEasting, areaNorthing,
-                            contextNumber, sampleNumber);
-                    asyncPopulateInteriorColorFieldsFromDB(areaEasting, areaNorthing,
-                            contextNumber, sampleNumber);
                     fillSampleNumberSpinner();
                 }
             }
@@ -266,11 +262,7 @@ public class ObjectDetailActivity extends AppCompatActivity
             }
         });
         // populate fields with information about object
-        asyncPopulateWeightFieldFromDB(areaEasting, areaNorthing, contextNumber, sampleNumber);
-        asyncPopulateExteriorColorFieldsFromDB(areaEasting, areaNorthing, contextNumber,
-                sampleNumber);
-        asyncPopulateInteriorColorFieldsFromDB(areaEasting, areaNorthing, contextNumber,
-                sampleNumber);
+        asyncPopulateFieldsFromDB(areaEasting, areaNorthing, contextNumber, sampleNumber);
         asyncPopulatePhotos();
         toggleAddPhotoButton();
         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -542,65 +534,6 @@ public class ObjectDetailActivity extends AppCompatActivity
     }
 
     /**
-     * Making php request to get weight data
-     * @param areaEasting - easting
-     * @param areaNorthing - northing
-     * @param contextNumber - context
-     * @param sampleNumber - sample
-     */
-    public void asyncPopulateWeightFieldFromDB(int areaEasting, int areaNorthing,
-                                               int contextNumber, int sampleNumber)
-    {
-        makeVolleyStringObjectRequest(getGlobalWebServerURL()
-                + "/get_item_weight_2.php?area_easting=" + areaEasting + "&area_northing="
-                + areaNorthing + "&context_number=" + contextNumber + "&sample_number="
-                + sampleNumber, queue, new StringObjectResponseWrapper(this) {
-            /**
-             * Response received
-             * @param response - database response
-             */
-            @Override
-            public void responseMethod(String response)
-            {
-                try
-                {
-                    response = response.substring(response.indexOf("{"),
-                            response.indexOf("}") + 1);
-                    response = response.replace("\\", "");
-                    JSONObject responseJSON = new JSONObject(response);
-                    if (responseJSON.getString("weight_kilograms").equals("null"))
-                    {
-                        getWeightInputText().setText(getString(R.string.nil));
-                    }
-                    else
-                    {
-                        System.out.println(responseJSON.get("weight_kilograms"));
-                        BluetoothService.currWeight = (int) (1000 *
-                                Double.parseDouble(responseJSON.getString(
-                                "weight_kilograms")));
-                        getWeightInputText().setText(String.valueOf(BluetoothService.currWeight));
-                    }
-                    // indicates weight field has been populated
-                }
-                catch (JSONException | StringIndexOutOfBoundsException e)
-                {
-                    e.printStackTrace();
-                }
-            }
-
-            /**
-             * Connection failed
-             * @param error - failure
-             */
-            @Override
-            public void errorMethod(VolleyError error)
-            {
-                error.printStackTrace();
-            }
-        });
-    }
-
-    /**
      * Updates database with changes in weight data for object
      * @param weightInGrams - weight from scale
      * @param areaEasting - easting
@@ -612,11 +545,10 @@ public class ObjectDetailActivity extends AppCompatActivity
                                            int contextNumber, int sampleNumber)
     {
         double weightInKg = weightInGrams / 1000.0;
-        // making php request to call the update method with updated params
-        makeVolleyStringObjectRequest(getGlobalWebServerURL()
-                        + "/set_item_weight_2.php?area_easting=" + areaEasting + "&area_northing="
-                        + areaNorthing + "&context_number=" + contextNumber + "&sample_number="
-                        + sampleNumber + "&weight_in_kg=" + weightInKg, queue,
+        // making Python request to call the update method with updated params
+        makeVolleyStringObjectRequest(getGlobalWebServerURL() + "/set_weight?easting="
+                        + areaEasting + "&northing=" + areaNorthing + "&context=" + contextNumber
+                        + "&sample=" + sampleNumber + "&weight=" + weightInKg, queue,
                 new StringObjectResponseWrapper(this) {
             /**
              * Response received
@@ -625,24 +557,15 @@ public class ObjectDetailActivity extends AppCompatActivity
             @Override
             public void responseMethod(String response)
             {
-                try
+                if (response.contains("Error"))
                 {
-                    JSONObject obj = new JSONObject(response.substring(response.indexOf("{"),
-                            response.indexOf("}") + 1));
-                    if (obj.getString("status").equals("ok"))
-                    {
-                        Toast.makeText(currentContext, "New Weight Value Stored into DB",
-                                Toast.LENGTH_LONG).show();
-                    }
-                    else
-                    {
-                        Toast.makeText(currentContext, "Cannot update weight in DB",
-                                Toast.LENGTH_LONG).show();
-                    }
+                    Toast.makeText(currentContext, "Cannot update weight in DB",
+                            Toast.LENGTH_LONG).show();
                 }
-                catch (JSONException | StringIndexOutOfBoundsException e)
+                else
                 {
-                    e.printStackTrace();
+                    Toast.makeText(currentContext, "New Weight Value Stored into DB",
+                            Toast.LENGTH_LONG).show();
                 }
             }
 
@@ -665,13 +588,12 @@ public class ObjectDetailActivity extends AppCompatActivity
      * @param contextNumber - context
      * @param sampleNumber - sample
      */
-    public void asyncPopulateExteriorColorFieldsFromDB(int areaEasting, int areaNorthing,
-                                                       int contextNumber, int sampleNumber)
+    public void asyncPopulateFieldsFromDB(int areaEasting, int areaNorthing, int contextNumber,
+                                          int sampleNumber)
     {
         makeVolleyStringObjectRequest(getGlobalWebServerURL()
-                + "/get_exterior_color_2.php?area_easting=" + areaEasting + "&area_northing=" +
-                        areaNorthing + "&context_number=" + contextNumber + "&sample_number=" +
-                        sampleNumber, queue,
+                + "/get_sample/?easting=" + areaEasting + "&northing=" + areaNorthing + "&context="
+                        + contextNumber + "&sample=" + sampleNumber, queue,
                 new StringObjectResponseWrapper(this) {
             /**
              * Response received
@@ -682,64 +604,23 @@ public class ObjectDetailActivity extends AppCompatActivity
             {
                 try
                 {
-                    JSONObject obj = new JSONObject(response.substring(response.indexOf("{"),
-                            response.indexOf("}") + 1));
-                    // displays color fields in textfields in view
-                    populateExteriorColorFields(obj.getString("exterior_color_hue"),
-                            obj.getString("exterior_color_lightness_value"),
-                            obj.getString("exterior_color_chroma"));
+                    // Response Schema: material, exterior_color_hue,
+                    //    exterior_color_lightness_value, exterior_color_chroma, interior_color_hue,
+                    //    interior_color_lightness_value, interior_color_chroma, weight_kilograms,
+                    String[] obj = response.split("\n")[1].split(" \\| ");
+                    populateColorFields(obj[1], obj[2], obj[3], obj[4], obj[5], obj[6]);
+                    if (obj[7].equals("null") || obj[7].equals(""))
+                    {
+                        getWeightInputText().setText(getString(R.string.nil));
+                    }
+                    else
+                    {
+                        System.out.println(obj[7]);
+                        BluetoothService.currWeight = (int) (1000 * Double.parseDouble(obj[7]));
+                        getWeightInputText().setText(String.valueOf(BluetoothService.currWeight));
+                    }
                 }
-                catch (JSONException | StringIndexOutOfBoundsException e)
-                {
-                    e.printStackTrace();
-                }
-            }
-
-            /**
-             * Connection failed
-             * @param error - failure
-             */
-            @Override
-            public void errorMethod(VolleyError error)
-            {
-                error.printStackTrace();
-            }
-        });
-    }
-
-    /**
-     * http://localhost/get_image_2.php?area_easting=1&area_northing=1&context_number=2&sample_number=3
-     * query database for munsell color data for interior fields
-     * @param areaEasting - easting
-     * @param areaNorthing - northing
-     * @param contextNumber - context
-     * @param sampleNumber - sample
-     */
-    public void asyncPopulateInteriorColorFieldsFromDB(int areaEasting, int areaNorthing,
-                                                       int contextNumber, int sampleNumber)
-    {
-        makeVolleyStringObjectRequest(getGlobalWebServerURL()
-                + "/get_interior_color_2.php?area_easting=" + areaEasting + "&area_northing=" +
-                        areaNorthing + "&context_number=" + contextNumber +
-                        "&sample_number=" + sampleNumber, queue,
-                new StringObjectResponseWrapper(this) {
-            /**
-             * Response received
-             * @param response - database response
-             */
-            @Override
-            public void responseMethod(String response)
-            {
-                try
-                {
-                    JSONObject obj = new JSONObject(response.substring(response.indexOf("{"),
-                            response.indexOf("}") + 1));
-                    // add color data to text fields
-                    populateInteriorColorFields(obj.getString("interior_color_hue"),
-                            obj.getString("interior_color_lightness_value"),
-                            obj.getString("interior_color_chroma"));
-                }
-                catch (JSONException | StringIndexOutOfBoundsException e)
+                catch (ArrayIndexOutOfBoundsException e)
                 {
                     e.printStackTrace();
                 }
@@ -807,28 +688,23 @@ public class ObjectDetailActivity extends AppCompatActivity
 
     /**
      * Populate text fields with interior and exterior color
-     * @param hue - image hue
-     * @param lightness - image lightness
-     * @param chroma - image colors
+     * @param exterior_hue - exterior image hue
+     * @param exterior_lightness - exterior image lightness
+     * @param exterior_chroma - exterior image colors
+     * @param interior_hue - interior image hue
+     * @param interior_lightness - interior image lightness
+     * @param interior_chroma - interior_image colors
      */
-    public void populateExteriorColorFields(String hue, String lightness, String chroma)
+    public void populateColorFields(String exterior_hue, String exterior_lightness,
+                                    String exterior_chroma, String interior_hue,
+                                    String interior_lightness, String interior_chroma)
     {
-        ((TextView) findViewById(R.id.exterior_color_hue)).setText(hue.trim());
-        ((TextView) findViewById(R.id.exterior_color_lightness)).setText(lightness.trim());
-        ((TextView) findViewById(R.id.exterior_color_chroma)).setText(chroma.trim());
-    }
-
-    /**
-     * Fill exterior color
-     * @param hue - exterior hue
-     * @param lightness - exterior lightness
-     * @param chroma - exterior color
-     */
-    public void populateInteriorColorFields(String hue, String lightness, String chroma)
-    {
-        ((TextView) findViewById(R.id.interior_color_hue)).setText(hue.trim());
-        ((TextView) findViewById(R.id.interior_color_lightness)).setText(lightness.trim());
-        ((TextView) findViewById(R.id.interior_color_chroma)).setText(chroma.trim());
+        ((TextView) findViewById(R.id.exterior_color_hue)).setText(exterior_hue.trim());
+        ((TextView) findViewById(R.id.exterior_color_lightness)).setText(exterior_lightness.trim());
+        ((TextView) findViewById(R.id.exterior_color_chroma)).setText(exterior_chroma.trim());
+        ((TextView) findViewById(R.id.interior_color_hue)).setText(interior_hue.trim());
+        ((TextView) findViewById(R.id.interior_color_lightness)).setText(interior_lightness.trim());
+        ((TextView) findViewById(R.id.interior_color_chroma)).setText(interior_chroma.trim());
     }
 
     /**
