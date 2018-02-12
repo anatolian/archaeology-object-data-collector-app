@@ -19,6 +19,7 @@ public class StateStatic
     public static final int MESSAGE_STATUS_CHANGE = 502;
     public static final int REQUEST_ENABLE_BT = 301;
     public static final String DEFAULT_WEB_SERVER_URL = "https://pacific-brook-36642.herokuapp.com";
+    public static final String DEFAULT_BUCKET_URL = "XXX";
     public static final String DEFAULT_CAMERA_IP = "fe:c2:de:31:0a:e1";
     // 30 minutes
     public static final long DEFAULT_CALIBRATION_INTERVAL = 1800000;
@@ -41,6 +42,7 @@ public class StateStatic
     // app is able to find ip address on its own
     // DEFAULT_WEB_SERVER_URL; connection to current IP camera address
     private static String globalWebServerURL = DEFAULT_WEB_SERVER_URL;
+    private static String globalBucketURL = DEFAULT_BUCKET_URL;
     private static String globalCameraIP = DEFAULT_CAMERA_IP;
     // global current object most likely is used to track the current object from the database that
     // you are trying to view.
@@ -61,6 +63,15 @@ public class StateStatic
     }
 
     /**
+     * Return Bucket URL for storing images
+     * @return Returns the bucket URL
+     */
+    public static String getGlobalBucketURL()
+    {
+        return globalBucketURL;
+    }
+
+    /**
      * Change server URL
      * @param globalWebServerURL - new server URL
      */
@@ -68,6 +79,16 @@ public class StateStatic
     {
         Log.v(LOG_TAG, "globalWebServerURL changed into " + globalWebServerURL);
         StateStatic.globalWebServerURL = globalWebServerURL;
+    }
+
+    /**
+     * Change bucket URL
+     * @param globalBucketURL - new bucket URL
+     */
+    public static void setGlobalBucketURL(String globalBucketURL)
+    {
+        Log.v(LOG_TAG, "globalBucketURL changed into " + globalBucketURL);
+        StateStatic.globalBucketURL = globalBucketURL;
     }
 
     /**

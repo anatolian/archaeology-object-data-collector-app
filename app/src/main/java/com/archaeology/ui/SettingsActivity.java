@@ -16,16 +16,19 @@ import android.widget.Toast;
 import java.util.Set;
 import com.archaeology.R;
 import com.archaeology.util.StateStatic;
+import static com.archaeology.util.StateStatic.DEFAULT_BUCKET_URL;
 import static com.archaeology.util.StateStatic.DEFAULT_CALIBRATION_INTERVAL;
 import static com.archaeology.util.StateStatic.DEFAULT_WEB_SERVER_URL;
 import static com.archaeology.util.StateStatic.DEFAULT_CAMERA_IP;
 import static com.archaeology.util.StateStatic.getGlobalCameraIP;
 import static com.archaeology.util.StateStatic.getGlobalWebServerURL;
+import static com.archaeology.util.StateStatic.getGlobalBucketURL;
 import static com.archaeology.util.StateStatic.getRemoteCameraCalibrationInterval;
 import static com.archaeology.util.StateStatic.getTabletCameraCalibrationInterval;
 import static com.archaeology.util.StateStatic.isRemoteCameraSelected;
 import static com.archaeology.util.StateStatic.setGlobalCameraIP;
 import static com.archaeology.util.StateStatic.setGlobalWebServerURL;
+import static com.archaeology.util.StateStatic.setGlobalBucketURL;
 import static com.archaeology.util.StateStatic.setIsRemoteCameraSelected;
 import static com.archaeology.util.StateStatic.setRemoteCameraCalibrationInterval;
 import static com.archaeology.util.StateStatic.setTabletCameraCalibrationInterval;
@@ -150,7 +153,8 @@ public class SettingsActivity extends AppCompatActivity
      */
     public void saveSettings(View view)
     {
-        setGlobalWebServerURL(getWebServerFromLayout());
+        setGlobalWebServerURL(getWebServerURLFromLayout());
+        setGlobalBucketURL(getBucketURLFromLayout());
         if (isTabletCameraSelectedOnLayout())
         {
             setTabletCameraCalibrationInterval(getCalibrationIntervalFromLayout());
@@ -170,15 +174,18 @@ public class SettingsActivity extends AppCompatActivity
     public void setDefaultSettings(View view)
     {
         setGlobalWebServerURL(DEFAULT_WEB_SERVER_URL);
+        setGlobalBucketURL(DEFAULT_BUCKET_URL);
         setGlobalCameraIP(DEFAULT_CAMERA_IP);
         setRemoteCameraCalibrationInterval(DEFAULT_CALIBRATION_INTERVAL);
         setTabletCameraCalibrationInterval(DEFAULT_CALIBRATION_INTERVAL);
         setIsRemoteCameraSelected(false);
         EditText webServerEditText = (EditText) findViewById(R.id.settingsWebServiceUrl);
+        EditText bucketEditText = (EditText) findViewById(R.id.settingsBucketUrl);
         Spinner cameraSelectBox = (Spinner) findViewById(R.id.cameraSelectBox);
         EditText cameraIP = (EditText) findViewById(R.id.settingsCameraIP);
         EditText calibrationInterval = (EditText) findViewById(R.id.calibrationInterval);
         webServerEditText.setText(getGlobalWebServerURL());
+        bucketEditText.setText(getGlobalBucketURL());
         cameraSelectBox.setSelection(0);
         cameraIP.setText(getGlobalCameraIP());
         calibrationInterval.setText(getString(R.string.long_frmt,
@@ -212,12 +219,21 @@ public class SettingsActivity extends AppCompatActivity
     }
 
     /**
-     * Get the server location
+     * Get the server URL
      * @return @return Returns the server location
      */
-    public String getWebServerFromLayout()
+    public String getWebServerURLFromLayout()
     {
         return ((EditText) findViewById(R.id.settingsWebServiceUrl)).getText().toString().trim();
+    }
+
+    /**
+     * Get the bucket URL
+     * @return @return Returns the server location
+     */
+    public String getBucketURLFromLayout()
+    {
+        return ((EditText) findViewById(R.id.settingsBucketUrl)).getText().toString().trim();
     }
 
     /**

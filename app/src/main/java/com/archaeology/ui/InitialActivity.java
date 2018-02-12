@@ -29,6 +29,8 @@ import static com.archaeology.services.VolleyStringWrapper.makeVolleyStringObjec
 import static com.archaeology.util.StateStatic.LOG_TAG;
 import static com.archaeology.util.StateStatic.getGlobalWebServerURL;
 import static com.archaeology.util.StateStatic.setGlobalWebServerURL;
+import static com.archaeology.util.StateStatic.setGlobalBucketURL;
+import static com.archaeology.util.StateStatic.getGlobalBucketURL;
 import static com.archaeology.services.VolleyWrapper.cancelAllVolleyRequests;
 public class InitialActivity extends AppCompatActivity
 {
@@ -48,6 +50,8 @@ public class InitialActivity extends AppCompatActivity
         queue.start();
         EditText webServer = (EditText) findViewById(R.id.urlText);
         webServer.setText(getGlobalWebServerURL());
+        EditText bucket = (EditText) findViewById(R.id.bucketURL);
+        bucket.setText(getGlobalBucketURL());
     }
 
     /**
@@ -94,12 +98,21 @@ public class InitialActivity extends AppCompatActivity
     }
 
     /**
-     * how is this getting your ip address?
-     * @return Returns the IP address
+     * Get the base server URL
+     * @return Returns the server URL
      */
-    public String getWebServerFromLayout()
+    public String getWebServerURLFromLayout()
     {
         return ((EditText) findViewById(R.id.urlText)).getText().toString().trim();
+    }
+
+    /**
+     * Get the base bucket URL
+     * @return Returns the bucket URL
+     */
+    public String getBucketURLFromLayout()
+    {
+        return ((EditText) findViewById(R.id.bucketURL)).getText().toString().trim();
     }
 
     /**
@@ -109,7 +122,8 @@ public class InitialActivity extends AppCompatActivity
     public void goToSettings(View view)
     {
         Log.v(LOG_TAG, "Settings button clicked");
-        setGlobalWebServerURL(getWebServerFromLayout());
+        setGlobalWebServerURL(getWebServerURLFromLayout());
+        setGlobalBucketURL(getBucketURLFromLayout());
         Intent myIntent = new Intent(this, SettingsActivity.class);
         startActivity(myIntent);
     }
@@ -120,23 +134,15 @@ public class InitialActivity extends AppCompatActivity
     public void goToLookup()
     {
         Intent tmpIntent = new Intent(this, CameraUIActivity.class);
-        setGlobalWebServerURL(getWebServerFromLayout());
-        startActivity(tmpIntent);
-    }
-
-    /**
-     * Makes a call to php file to test the connection
-     * @param aView - container view
-     */
-    public void testConnection(View aView)
-    {
+        setGlobalBucketURL(getBucketURLFromLayout());
+        setGlobalWebServerURL(getWebServerURLFromLayout());
         final ProgressDialog barProgressDialog = new ProgressDialog(this);
         barProgressDialog.setTitle("Connecting to Server ...");
         barProgressDialog.setIndeterminate(true);
         barProgressDialog.show();
-        Log.v(LOG_TAG, "Test Connection Button Clicked");
         cancelAllVolleyRequests(queue);
-        makeVolleyStringObjectRequest(getWebServerFromLayout() + "/relations/", queue,
+        makeVolleyStringObjectRequest(getWebServerURLFromLayout() +
+                        "/add_property/?key=bucket_url&value=" + getBucketURLFromLayout(), queue,
                 new StringObjectResponseWrapper(this) {
             /**
              * Response received
@@ -147,14 +153,13 @@ public class InitialActivity extends AppCompatActivity
             {
                 Log.v(LOG_TAG, "here is the response\n " + response);
                 // If the connection failed then an error message returns instead
-                if (response.contains("relname"))
+                barProgressDialog.dismiss();
+                if (!response.contains("Error"))
                 {
-                    barProgressDialog.dismiss();
                     connectionTestSucceedCallback();
                 }
                 else
                 {
-                    barProgressDialog.dismiss();
                     connectionTestFailedCallback();
                 }
             }
@@ -198,6 +203,83 @@ public class InitialActivity extends AppCompatActivity
                 connectionTestFailedCallback();
             }
         });
+        startActivity(tmpIntent);
+    }
+
+    /**
+     * Makes a call to Python file to test the connection
+     * @param aView - container view
+     */
+    public void testConnection(View aView)
+    {
+        final ProgressDialog barProgressDialog = new ProgressDialog(this);
+        barProgressDialog.setTitle("Connecting to Server ...");
+        barProgressDialog.setIndeterminate(true);
+        barProgressDialog.show();
+        Log.v(LOG_TAG, "Test Connection Button Clicked");
+        cancelAllVolleyRequests(queue);
+        makeVolleyStringObjectRequest(getWebServerURLFromLayout() + "/relations/", queue,
+                new StringObjectResponseWrapper(this) {
+            /**
+             * Response received
+             * @param response - database response
+             */
+            @Override
+            public void responseMethod(String response)
+            {
+                Log.v(LOG_TAG, "here is the response\n " + response);
+                // If the connection failed then an error message returns instead
+                barProgressDialog.dismiss();
+                if (response.contains("relname"))
+                {
+                    connectionTestSucceedCallback();
+                }
+                else
+                {
+                    connectionTestFailedCallback();
+                }
+            }
+
+            /**
+             * Connection failed
+             * @param error - failure
+             */
+            @Override
+            public void errorMethod(VolleyError error)
+            {
+                Log.v(LOG_TAG, "did not connect");
+                Log.v(LOG_TAG, error.toString());
+                // this just put in place to step through the app
+                if (error instanceof ServerError)
+                {
+                    Toast.makeText(getApplicationContext(), "server error",
+                            Toast.LENGTH_SHORT).show();
+                }
+                else if (error instanceof AuthFailureError)
+                {
+                    Toast.makeText(getApplicationContext(), "authentication failure",
+                            Toast.LENGTH_SHORT).show();
+                }
+                else if (error instanceof ParseError)
+                {
+                    Toast.makeText(getApplicationContext(), "parse error",
+                            Toast.LENGTH_SHORT).show();
+                }
+                else if (error instanceof NoConnectionError)
+                {
+                    Toast.makeText(getApplicationContext(), "no connection error",
+                            Toast.LENGTH_SHORT).show();
+                }
+                else if (error instanceof TimeoutError)
+                {
+                    Toast.makeText(getApplicationContext(), "time out error",
+                            Toast.LENGTH_SHORT).show();
+                }
+                barProgressDialog.dismiss();
+                connectionTestFailedCallback();
+            }
+        });
+        // TODO: Test connection to bucket
     }
 
     /**

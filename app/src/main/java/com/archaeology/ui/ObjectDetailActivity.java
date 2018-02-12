@@ -156,24 +156,6 @@ public class ObjectDetailActivity extends AppCompatActivity
     public BluetoothService bluetoothService;
     public BluetoothDevice device = null;
     /**
-     * Get temporary file name
-     * @return Returns temp file name
-     */
-    public String getTempFileName()
-    {
-        return tempFileName;
-    }
-
-    /**
-     * Set temporary file name
-     * @param tempFileName - new file name
-     */
-    public void setTempFileName(String tempFileName)
-    {
-        this.tempFileName = tempFileName;
-    }
-
-    /**
      * Launch the activity
      * @param savedInstanceState - activity from memory
      */
@@ -404,7 +386,7 @@ public class ObjectDetailActivity extends AppCompatActivity
                     Log.v(LOG_TAG, "data: " + data.getData());
                 }
                 // creating URI to save photo to once taken
-                final String originalFileName = getTempFileName() + ".jpg";
+                final String originalFileName = tempFileName + ".jpg";
                 final Uri fileURI = CheatSheet.getThumbnail(originalFileName);
                 Log.v(LOG_TAG, fileURI.toString());
                 // ApproveDialogCallback is an interface. see CameraDialog class
@@ -415,7 +397,7 @@ public class ObjectDetailActivity extends AppCompatActivity
                      */
                     @Override
                     public void onSaveButtonClicked()
-                    {
+                   {
                         // store image data into photo fragments
                         loadPhotoIntoPhotoFragment(fileURI, MARKED_AS_ADDED);
 
@@ -981,11 +963,10 @@ public class ObjectDetailActivity extends AppCompatActivity
         Log.v(LOG_TAG, "Stamp: " + stamp);
         Uri fileURI = FileProvider.getUriForFile(context,
                 context.getApplicationContext().getPackageName()
-                        + ".my.package.name.provider", getOutputMediaFile(stamp));
+                        + ".com.archaeology.provider", getOutputMediaFile(stamp));
         Log.v(LOG_TAG, "fileURI: " + fileURI.toString());
         photoIntent.putExtra(MediaStore.EXTRA_OUTPUT, fileURI);
         photoIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        setTempFileName(stamp);
         startActivityForResult(photoIntent, REQUEST_IMAGE_CAPTURE);
     }
 
