@@ -625,9 +625,8 @@ public class ObjectDetailActivity extends AppCompatActivity
      */
     public void asyncPopulatePhotos()
     {
-        String URL = getGlobalWebServerURL() + "/get_image_2.php?area_easting="
-                + areaEasting + "&area_northing=" + areaNorthing + "&context_number="
-                + contextNumber + "&sample_number=" + sampleNumber;
+        String URL = getGlobalWebServerURL() + "/get_images/?easting=" + areaEasting + "&northing="
+                + areaNorthing + "&context=" + contextNumber + "&sample=" + sampleNumber;
         makeVolleyStringObjectRequest(URL, queue, new StringObjectResponseWrapper(this) {
             /**
              * Database response
@@ -636,23 +635,12 @@ public class ObjectDetailActivity extends AppCompatActivity
             @Override
             public void responseMethod(String response)
             {
-                try
+                // get images from response array
+                String[] photoList = response.split("\n");
+                for (String photo: photoList)
                 {
-                    JSONObject obj = new JSONObject(response.substring(response.indexOf("{"),
-                            response.indexOf("}") + 1));
-                    // get images from response array
-                    JSONArray photoList = obj.getJSONArray("images");
-                    imageNumber = photoList.length();
-                    for (int i = 0; i < photoList.length(); i++)
-                    {
-                        String photoURL = photoList.getString(i);
-                        photoURL = "https://fa17archaeology-service.herokuapp.com/" + photoURL;
-                        loadPhotoIntoPhotoFragment(Uri.parse(photoURL), MARKED_AS_TO_DOWNLOAD);
-                    }
-                }
-                catch (JSONException | StringIndexOutOfBoundsException e)
-                {
-                    e.printStackTrace();
+                    String photoURL = getGlobalWebServerURL() + photo;
+                    loadPhotoIntoPhotoFragment(Uri.parse(photoURL), MARKED_AS_TO_DOWNLOAD);
                 }
             }
 

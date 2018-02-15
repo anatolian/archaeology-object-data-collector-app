@@ -1,11 +1,13 @@
 // Settings Screen
 // @author: msenol86, ygowda, JPT2, matthewliang, ashutosh56
 package com.archaeology.ui;
+import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -14,12 +16,27 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 import java.util.Set;
+import com.android.volley.AuthFailureError;
+import com.android.volley.Cache;
+import com.android.volley.Network;
+import com.android.volley.NoConnectionError;
+import com.android.volley.ParseError;
+import com.android.volley.RequestQueue;
+import com.android.volley.ServerError;
+import com.android.volley.TimeoutError;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.BasicNetwork;
+import com.android.volley.toolbox.DiskBasedCache;
+import com.android.volley.toolbox.HurlStack;
 import com.archaeology.R;
+import com.archaeology.models.StringObjectResponseWrapper;
 import com.archaeology.util.StateStatic;
+import static com.archaeology.services.VolleyStringWrapper.makeVolleyStringObjectRequest;
 import static com.archaeology.util.StateStatic.DEFAULT_BUCKET_URL;
 import static com.archaeology.util.StateStatic.DEFAULT_CALIBRATION_INTERVAL;
 import static com.archaeology.util.StateStatic.DEFAULT_WEB_SERVER_URL;
 import static com.archaeology.util.StateStatic.DEFAULT_CAMERA_IP;
+import static com.archaeology.util.StateStatic.LOG_TAG;
 import static com.archaeology.util.StateStatic.getGlobalCameraIP;
 import static com.archaeology.util.StateStatic.getGlobalWebServerURL;
 import static com.archaeology.util.StateStatic.getGlobalBucketURL;
@@ -164,6 +181,63 @@ public class SettingsActivity extends AppCompatActivity
             setRemoteCameraCalibrationInterval(getCalibrationIntervalFromLayout());
             setGlobalCameraIP(getCameraIPFromLayout());
         }
+        Cache cache = new DiskBasedCache(getCacheDir(), 1024 * 1024);
+        Network network = new BasicNetwork(new HurlStack());
+        RequestQueue queue = new RequestQueue(cache, network);
+        queue.start();
+        final ProgressDialog barProgressDialog = new ProgressDialog(this);
+        makeVolleyStringObjectRequest(getWebServerURLFromLayout() +
+                "/add_property/?key=bucket_url&value=" + getBucketURLFromLayout(), queue,
+                new StringObjectResponseWrapper(this) {
+            /**
+             * Response received
+             * @param response - database response
+             */
+            @Override
+            public void responseMethod(String response)
+            {
+                Log.v(LOG_TAG, "here is the response\n " + response);
+                barProgressDialog.dismiss();
+            }
+
+            /**
+             * Connection failed
+             * @param error - failure
+             */
+            @Override
+            public void errorMethod(VolleyError error)
+            {
+                Log.v(LOG_TAG, "did not connect");
+                Log.v(LOG_TAG, error.toString());
+                // this just put in place to step through the app
+                if (error instanceof ServerError)
+                {
+                    Toast.makeText(getApplicationContext(), "server error",
+                            Toast.LENGTH_SHORT).show();
+                }
+                else if (error instanceof AuthFailureError)
+                {
+                    Toast.makeText(getApplicationContext(), "authentication failure",
+                            Toast.LENGTH_SHORT).show();
+                }
+                else if (error instanceof ParseError)
+                {
+                    Toast.makeText(getApplicationContext(), "parse error",
+                            Toast.LENGTH_SHORT).show();
+                }
+                else if (error instanceof NoConnectionError)
+                {
+                    Toast.makeText(getApplicationContext(), "no connection error",
+                            Toast.LENGTH_SHORT).show();
+                }
+                else if (error instanceof TimeoutError)
+                {
+                    Toast.makeText(getApplicationContext(), "time out error",
+                            Toast.LENGTH_SHORT).show();
+                }
+                barProgressDialog.dismiss();
+            }
+        });
         finish();
     }
 

@@ -152,16 +152,7 @@ public class InitialActivity extends AppCompatActivity
             public void responseMethod(String response)
             {
                 Log.v(LOG_TAG, "here is the response\n " + response);
-                // If the connection failed then an error message returns instead
                 barProgressDialog.dismiss();
-                if (!response.contains("Error"))
-                {
-                    connectionTestSucceedCallback();
-                }
-                else
-                {
-                    connectionTestFailedCallback();
-                }
             }
 
             /**

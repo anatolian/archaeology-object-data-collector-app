@@ -68,7 +68,7 @@
             <Spinner
                 android:layout_width = "1dp"
                 android:layout_height = "wrap_content"
-                android:id = "@+id/sample_spinner"/>
+                android:id = "@+id/context_spinner"/>
         </TableRow>
         <TableRow
             android:layout_width = "match_parent"
@@ -85,7 +85,7 @@
             <Spinner
                 android:layout_width = "1dp"
                 android:layout_height = "wrap_content"
-                android:id = "@+id/context_spinner"/>
+                android:id = "@+id/sample_spinner"/>
         </TableRow>
     </TableLayout>
     <LinearLayout

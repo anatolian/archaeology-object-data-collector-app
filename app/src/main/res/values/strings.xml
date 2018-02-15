@@ -157,5 +157,5 @@
     <string name="lookup_preview">Camera Preview for Auto Lookup</string>
     <string name = "artifact_image">Picture of the archived artifact</string>
     <string name = "bucket_url">S3 Bucket URL</string>
-    <string name = "default_bucket_url">XXXX</string>
+    <string name = "default_bucket_url">s3.console.aws.amazon.com/s3/buckets/pennmuseum/</string>
 </resources>

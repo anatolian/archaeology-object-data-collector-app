@@ -39,17 +39,16 @@
         android:ems = "10"
         android:id = "@+id/dialogCurrentWeightInDBText"
         android:maxLines = "1"
+        android:gravity = "start"
         android:lines = "1"
         style = "@style/EditTextNumber"
         android:hint="@string/new_weight"/>
     <Button
         android:id="@+id/update_bluetooth"
-        style="?android:textAppearanceSmall"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/update_bluetooth"
-        android:textColor="@android:color/black"
-        android:textStyle="bold" />
+        android:textColor="@android:color/black"/>
     <Button
         android:layout_width = "match_parent"
         android:layout_height = "0dp"
