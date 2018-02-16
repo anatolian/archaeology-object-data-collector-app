@@ -400,7 +400,6 @@ public class ObjectDetailActivity extends AppCompatActivity
                    {
                         // store image data into photo fragments
                         loadPhotoIntoPhotoFragment(fileURI, MARKED_AS_ADDED);
-
                         File mediaStorageDir = new File(
                                 Environment.getExternalStoragePublicDirectory(
                                 Environment.DIRECTORY_PICTURES), getGlobalPhotoSavePath());
@@ -951,10 +950,11 @@ public class ObjectDetailActivity extends AppCompatActivity
         Log.v(LOG_TAG, "Stamp: " + stamp);
         Uri fileURI = FileProvider.getUriForFile(context,
                 context.getApplicationContext().getPackageName()
-                        + ".com.archaeology.provider", getOutputMediaFile(stamp));
+                        + ".my.package.name.provider", getOutputMediaFile(stamp));
         Log.v(LOG_TAG, "fileURI: " + fileURI.toString());
         photoIntent.putExtra(MediaStore.EXTRA_OUTPUT, fileURI);
         photoIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        tempFileName = stamp;
         startActivityForResult(photoIntent, REQUEST_IMAGE_CAPTURE);
     }
 
