@@ -131,25 +131,26 @@ public class CheatSheet
     }
 
     /**
-     * Count number of appearances of a substring in a string
+     * Count number of links in the string
      * @param body - string to search
-     * @return Returns the number of instances of substring in body
+     * @return Returns the number of links in the string
      */
     private static int countLinks(String body)
     {
         int count = 0;
-        while (body.indexOf("?") > 0)
+        while (body.indexOf("a href") > 0)
         {
-            body = body.substring(body.indexOf("?") + 1);
+            // Skipping past "a href = '"
+            body = body.substring(body.indexOf("a href") + 10);
             count++;
         }
         return count;
     }
 
     /**
-     * Takes incoming link list and converts to a regular array
+     * Takes incoming link list and converts to an ArrayList
      * @param response - response HTML to convert
-     * @return Returns an array of the JSON array
+     * @return Returns an ArrayList of the link list
      */
     public static ArrayList<String> convertLinkListToArray(String response)
     {
@@ -158,6 +159,25 @@ public class CheatSheet
         for (int i = 0; i < links; i++)
         {
             response = response.substring(response.indexOf("?") + 1);
+            String URL = response.substring(0, response.indexOf("\'"));
+            tmpArray.add(URL.substring(URL.lastIndexOf("=") + 1));
+        }
+        Log.v(LOG_TAG, "the array contains " + tmpArray.toString());
+        return tmpArray;
+    }
+
+    /**
+     * Takes incoming image link list and converts to an ArrayList
+     * @param response - response HTML to convert
+     * @return Returns an ArrayList of the link list
+     */
+    public static ArrayList<String> convertImageLinkListToArray(String response)
+    {
+        int links = countLinks(response);
+        ArrayList<String> tmpArray = new ArrayList<>(links);
+        for (int i = 0; i < links; i++)
+        {
+            response = response.substring(response.indexOf("a href") + 10);
             String URL = response.substring(0, response.indexOf("\'"));
             tmpArray.add(URL.substring(URL.lastIndexOf("=") + 1));
         }

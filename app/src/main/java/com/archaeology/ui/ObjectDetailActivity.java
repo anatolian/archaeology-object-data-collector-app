@@ -625,9 +625,9 @@ public class ObjectDetailActivity extends AppCompatActivity
      */
     public void asyncPopulatePhotos()
     {
-        // TODO: Get this working!
-        String URL = getGlobalWebServerURL() + "/get_images/?easting=" + areaEasting + "&northing="
-                + areaNorthing + "&context=" + contextNumber + "&sample=" + sampleNumber;
+        String URL = getGlobalWebServerURL() + "/get_image_urls/?easting=" + areaEasting +
+                "&northing=" + areaNorthing + "&context=" + contextNumber + "&sample=" +
+                sampleNumber;
         makeVolleyStringObjectRequest(URL, queue, new StringObjectResponseWrapper(this) {
             /**
              * Database response
@@ -637,10 +637,9 @@ public class ObjectDetailActivity extends AppCompatActivity
             public void responseMethod(String response)
             {
                 // get images from response array
-                String[] photoList = response.split("\n");
-                for (String photo: photoList)
+                ArrayList<String> photoList = CheatSheet.convertImageLinkListToArray(response);
+                for (String photoURL: photoList)
                 {
-                    String photoURL = getGlobalBucketURL() + photo;
                     loadPhotoIntoPhotoFragment(Uri.parse(photoURL), MARKED_AS_TO_DOWNLOAD);
                 }
             }
