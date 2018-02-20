@@ -88,8 +88,7 @@ public class CheatSheet
         File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_PICTURES), getGlobalPhotoSavePath());
         String originalFilePath = mediaStorageDir.getPath() + File.separator + inputFileName;
-        String thumbPath = mediaStorageDir.getPath() + File.separator + inputFileName
-                + THUMBNAIL_EXTENSION_STRING;
+        String thumbPath = mediaStorageDir.getPath() + File.separator + THUMBNAIL_EXTENSION_STRING;
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
         // Returns null, sizes are in the options variable
@@ -136,7 +135,7 @@ public class CheatSheet
      * @param body - string to search
      * @return Returns the number of instances of substring in body
      */
-    public static int countLinks(String body)
+    private static int countLinks(String body)
     {
         int count = 0;
         while (body.indexOf("?") > 0)

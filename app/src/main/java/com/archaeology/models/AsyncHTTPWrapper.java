@@ -17,17 +17,24 @@ public class AsyncHTTPWrapper
      * @param imageURI - image location
      * @param callbackWrapper - callback function
      */
-    public static void makeImageUpload(String URL, Uri imageURI,
+    public static void makeImageUpload(String URL, Uri imageURI, String easting, String northing,
+                                       String context, String sample,
                                        final AsyncHTTPCallbackWrapper callbackWrapper)
     {
         // setting up variables to establish connection with server
         AsyncHttpClient client = new AsyncHttpClient();
+        client.addHeader("Referer", "Archaeology");
         File myFile = new File(imageURI.getPath());
         RequestParams params = new RequestParams();
         try
         {
             Log.v(LOG_TAG,"upload_picture = " + myFile.getPath());
-            params.put("upload_picture", myFile);
+            params.put("myFile", myFile);
+            params.put("file_name", myFile.getPath());
+            params.put("easting", easting);
+            params.put("northing", northing);
+            params.put("context", context);
+            params.put("sample", sample);
         }
         catch (FileNotFoundException e)
         {
@@ -36,7 +43,7 @@ public class AsyncHTTPWrapper
         // send to database
         client.post(URL, params, new TextHttpResponseHandler() {
             /**
-             * methods implemented from AsyncHTTPWrapper.java
+             * Methods implemented from AsyncHTTPWrapper.java
              * @param statusCode - HTTP status
              * @param headers - HTTP headers
              * @param responseString - HTTP response
@@ -46,9 +53,10 @@ public class AsyncHTTPWrapper
             public void onFailure(int statusCode, cz.msebera.android.httpclient.Header[] headers,
                                   String responseString, Throwable throwable)
             {
-                Log.v(LOG_TAG, "File upload failed");
+                Log.v(LOG_TAG, "File upload failed - Status " + statusCode);
+                Log.v(LOG_TAG, throwable.getLocalizedMessage());
                 callbackWrapper.onFailureCallback();
-                Log.v(LOG_TAG, "responseString from file upload request: " + responseString);
+                Log.v(LOG_TAG, "responseString from file upload request: \n" + responseString);
             }
 
             /**
@@ -61,7 +69,7 @@ public class AsyncHTTPWrapper
             public void onSuccess(int statusCode, cz.msebera.android.httpclient.Header[] headers,
                                   String responseString)
             {
-                Log.v(LOG_TAG, "File upload succeed");
+                Log.v(LOG_TAG, "File upload succeeded");
                 Log.v(LOG_TAG, "responseString from file upload request: " + responseString);
                 callbackWrapper.onSuccessCallback(responseString);
             }

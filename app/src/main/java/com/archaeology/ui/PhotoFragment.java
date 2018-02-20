@@ -100,12 +100,6 @@ public class PhotoFragment extends Fragment
          * All photos loaded
          */
         void setAllPhotosLoaded();
-
-        /**
-         * Whether to delete photo
-         * @param deletePhotoStatus - status of photo
-         */
-        void toggleDeletePhotoStatus(boolean deletePhotoStatus);
     }
     public class PhotoOnClickListener implements View.OnClickListener
     {
@@ -128,9 +122,6 @@ public class PhotoFragment extends Fragment
                 selectedPhotoCount++;
                 tempImageView.setSelected(true);
             }
-            // changed from getActivity()
-            PhotoLoadDeleteInterface containerActivity = (PhotoLoadDeleteInterface) getActivity();
-            containerActivity.toggleDeletePhotoStatus(selectedPhotoCount > 0);
         }
     }
 
@@ -238,35 +229,32 @@ public class PhotoFragment extends Fragment
      */
     private void syncPhotos()
     {
-        for (final Map.Entry<Uri, String> dictEntry : dictOfPhotoSyncStatus.entrySet())
+        for (final Map.Entry<Uri, String> DICT_ENTRY: dictOfPhotoSyncStatus.entrySet())
         {
-            if (dictEntry.getValue().equals(MARKED_AS_TO_DOWNLOAD))
+            if (DICT_ENTRY.getValue().equals(MARKED_AS_TO_DOWNLOAD))
             {
-                Log.v(LOG_TAG, "Downloading remote image: " + dictEntry.getKey());
+                Log.v(LOG_TAG, "Downloading remote image: " + DICT_ENTRY.getKey());
                 PICASSO_SINGLETON.fetchAndInsertImage((LinearLayout) inflatedView,
-                        dictEntry.getKey(), getActivity(), dictEntry.getValue(),
+                        DICT_ENTRY.getKey(), getActivity(), DICT_ENTRY.getValue(),
                         new PhotoOnClickListener(), PICASSO_CALLBACK);
             }
-            else if (dictEntry.getValue().equals(MARKED_AS_ADDED))
+            else if (DICT_ENTRY.getValue().equals(MARKED_AS_ADDED))
             {
                 PICASSO_SINGLETON.fetchAndInsertImage((LinearLayout) inflatedView,
-                        dictEntry.getKey(), getActivity(), dictEntry.getValue(),
+                        DICT_ENTRY.getKey(), getActivity(), DICT_ENTRY.getValue(),
                         new PhotoOnClickListener(), PICASSO_CALLBACK);
                 final Activity PARENT_ACTIVITY = getActivity();
                 if (PARENT_ACTIVITY instanceof ObjectDetailActivity)
                 {
                     final int AREA_EASTING = ((ObjectDetailActivity) PARENT_ACTIVITY).areaEasting;
-                    final int AREA_NORTHING = ((ObjectDetailActivity) PARENT_ACTIVITY)
-                            .areaNorthing;
-                    final int CONTEXT_NUMBER = ((ObjectDetailActivity) PARENT_ACTIVITY)
-                            .contextNumber;
-                    final int SAMPLE_NUMBER = ((ObjectDetailActivity) PARENT_ACTIVITY)
-                            .sampleNumber;
-                    String URL = getGlobalWebServerURL() + "/upload_image_2.php?area_easting="
-                            + AREA_EASTING + "&area_northing=" + AREA_NORTHING + "&context_number="
-                            + CONTEXT_NUMBER + "&sample_number=" + SAMPLE_NUMBER;
-                    Log.v(LOG_TAG, "Image to be uploaded" + dictEntry.getKey());
-                    AsyncHTTPWrapper.makeImageUpload(URL, dictEntry.getKey(),
+                    final int AREA_NORTHING = ((ObjectDetailActivity) PARENT_ACTIVITY).areaNorthing;
+                    final int CONTEXT_NUMBER = ((ObjectDetailActivity) PARENT_ACTIVITY).contextNumber;
+                    final int SAMPLE_NUMBER = ((ObjectDetailActivity) PARENT_ACTIVITY).sampleNumber;
+                    String URL = getGlobalWebServerURL() + "/upload_file";
+                    Log.v(LOG_TAG, "Image to be uploaded" + DICT_ENTRY.getKey());
+                    AsyncHTTPWrapper.makeImageUpload(URL, DICT_ENTRY.getKey(),
+                            "" + AREA_EASTING, "" + AREA_NORTHING,
+                            "" + CONTEXT_NUMBER, "" + SAMPLE_NUMBER,
                             new AsyncHTTPCallbackWrapper() {
                         /**
                          * Connection succeeded
@@ -276,7 +264,7 @@ public class PhotoFragment extends Fragment
                         public void onSuccessCallback(String response)
                         {
                             super.onSuccessCallback(response);
-                            dictOfPhotoSyncStatus.put(dictEntry.getKey(), SYNCED);
+                            dictOfPhotoSyncStatus.put(DICT_ENTRY.getKey(), SYNCED);
                             Log.v(LOG_TAG, "Image New URL After Upload" + response);
                             Toast.makeText(PARENT_ACTIVITY, "Image Uploaded To Server",
                                     Toast.LENGTH_SHORT).show();

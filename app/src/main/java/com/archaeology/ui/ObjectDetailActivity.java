@@ -75,6 +75,7 @@ import static com.archaeology.util.StateStatic.REQUEST_IMAGE_CAPTURE;
 import static com.archaeology.util.StateStatic.cameraIPAddress;
 import static com.archaeology.util.StateStatic.connectedToRemoteCamera;
 import static com.archaeology.util.StateStatic.convertDPToPixel;
+import static com.archaeology.util.StateStatic.getGlobalBucketURL;
 import static com.archaeology.util.StateStatic.getGlobalPhotoSavePath;
 import static com.archaeology.util.StateStatic.getGlobalWebServerURL;
 import static com.archaeology.util.StateStatic.getTimeStamp;
@@ -624,6 +625,7 @@ public class ObjectDetailActivity extends AppCompatActivity
      */
     public void asyncPopulatePhotos()
     {
+        // TODO: Get this working!
         String URL = getGlobalWebServerURL() + "/get_images/?easting=" + areaEasting + "&northing="
                 + areaNorthing + "&context=" + contextNumber + "&sample=" + sampleNumber;
         makeVolleyStringObjectRequest(URL, queue, new StringObjectResponseWrapper(this) {
@@ -638,7 +640,7 @@ public class ObjectDetailActivity extends AppCompatActivity
                 String[] photoList = response.split("\n");
                 for (String photo: photoList)
                 {
-                    String photoURL = getGlobalWebServerURL() + photo;
+                    String photoURL = getGlobalBucketURL() + photo;
                     loadPhotoIntoPhotoFragment(Uri.parse(photoURL), MARKED_AS_TO_DOWNLOAD);
                 }
             }
@@ -841,8 +843,7 @@ public class ObjectDetailActivity extends AppCompatActivity
                         getLiveViewSurface());
             }
         });
-        remoteCameraDialog.findViewById(R.id.take_photo)
-                .setOnClickListener(new View.OnClickListener() {
+        remoteCameraDialog.findViewById(R.id.take_photo).setOnClickListener(new View.OnClickListener() {
             /**
              * User clicked take photo
              * @param v - camera view
@@ -859,13 +860,12 @@ public class ObjectDetailActivity extends AppCompatActivity
                             getTimeStamp(), new AfterImageSavedMethodWrapper() {
                         /**
                          * Process saved image
-                         * @param thumbnailImageURI - image URI
+                         * @param THUMBNAIL_IMAGE_URL - image URI
                          */
                         @Override
-                        public void doStuffWithSavedImage(final Uri thumbnailImageURI)
+                        public void doStuffWithSavedImage(final Uri THUMBNAIL_IMAGE_URL)
                         {
-                            final Uri originalImageURI
-                                    = CheatSheet.getOriginalImageURI(thumbnailImageURI);
+                            final Uri ORIGINAL_IMAGE_URI = CheatSheet.getOriginalImageURI(THUMBNAIL_IMAGE_URL);
                             // implementing interface from CameraDialog class
                             CameraDialog.ApproveDialogCallback approveDialogCallback
                                     = new CameraDialog.ApproveDialogCallback() {
@@ -876,10 +876,9 @@ public class ObjectDetailActivity extends AppCompatActivity
                                 public void onSaveButtonClicked()
                                 {
                                     // take picture and add as photo fragment
-                                    loadPhotoIntoPhotoFragment(originalImageURI, MARKED_AS_ADDED);
+                                    loadPhotoIntoPhotoFragment(ORIGINAL_IMAGE_URI, MARKED_AS_ADDED);
                                     isTakePhotoButtonClicked = false;
-                                    remoteCameraDialog.findViewById(R.id.take_photo)
-                                            .setEnabled(true);
+                                    remoteCameraDialog.findViewById(R.id.take_photo).setEnabled(true);
                                 }
 
                                 /**
@@ -888,10 +887,9 @@ public class ObjectDetailActivity extends AppCompatActivity
                                 @Override
                                 public void onCancelButtonClicked()
                                 {
-                                    deleteOriginalAndThumbnailPhoto(originalImageURI);
+                                    deleteOriginalAndThumbnailPhoto(ORIGINAL_IMAGE_URI);
                                     isTakePhotoButtonClicked = false;
-                                    remoteCameraDialog.findViewById(R.id.take_photo)
-                                            .setEnabled(true);
+                                    remoteCameraDialog.findViewById(R.id.take_photo).setEnabled(true);
                                 }
                             };
                             // create dialog to view and approve photo
@@ -901,10 +899,10 @@ public class ObjectDetailActivity extends AppCompatActivity
                             approveDialog.show();
                             ImageView approvePhotoImage =
                                     (ImageView) approveDialog.findViewById(R.id.approvePhotoImage);
-                            Log.v(LOG_TAG, "Loading image " + thumbnailImageURI
+                            Log.v(LOG_TAG, "Loading image " + THUMBNAIL_IMAGE_URL
                                     + " into approvePhoto Dialog");
-                            approvePhotoImage.setImageURI(thumbnailImageURI);
-                            Log.v(LOG_TAG, "Loading image " + thumbnailImageURI
+                            approvePhotoImage.setImageURI(THUMBNAIL_IMAGE_URL);
+                            Log.v(LOG_TAG, "Loading image " + THUMBNAIL_IMAGE_URL
                                     + " into approvePhoto Dialog done!");
                         }
                     }, getLiveViewSurface());
