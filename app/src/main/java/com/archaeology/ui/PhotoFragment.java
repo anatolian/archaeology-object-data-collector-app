@@ -265,9 +265,12 @@ public class PhotoFragment extends Fragment
                         {
                             super.onSuccessCallback(response);
                             dictOfPhotoSyncStatus.put(DICT_ENTRY.getKey(), SYNCED);
-                            Log.v(LOG_TAG, "Image New URL After Upload" + response);
-                            Toast.makeText(PARENT_ACTIVITY, "Image Uploaded To Server",
-                                    Toast.LENGTH_SHORT).show();
+                            if (!response.contains("Error"))
+                            {
+                                Log.v(LOG_TAG, "Image New URL After Upload" + response);
+                                Toast.makeText(PARENT_ACTIVITY, "Image Uploaded To Server",
+                                        Toast.LENGTH_SHORT).show();
+                            }
                             ((ObjectDetailActivity) PARENT_ACTIVITY)
                                     .clearCurrentPhotosOnLayoutAndFetchPhotosAsync();
                         }

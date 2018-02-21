@@ -23,7 +23,7 @@ public class AsyncHTTPWrapper
     {
         // setting up variables to establish connection with server
         AsyncHttpClient client = new AsyncHttpClient();
-        client.addHeader("Referer", "Archaeology");
+//        client.addHeader("Referer", "Archaeology");
         File myFile = new File(imageURI.getPath());
         RequestParams params = new RequestParams();
         try
@@ -43,7 +43,7 @@ public class AsyncHTTPWrapper
         // send to database
         client.post(URL, params, new TextHttpResponseHandler() {
             /**
-             * Methods implemented from AsyncHTTPWrapper.java
+             * Post request failed
              * @param statusCode - HTTP status
              * @param headers - HTTP headers
              * @param responseString - HTTP response
@@ -69,8 +69,8 @@ public class AsyncHTTPWrapper
             public void onSuccess(int statusCode, cz.msebera.android.httpclient.Header[] headers,
                                   String responseString)
             {
-                Log.v(LOG_TAG, "File upload succeeded");
-                Log.v(LOG_TAG, "responseString from file upload request: " + responseString);
+                Log.v(LOG_TAG, "File upload - Status " + statusCode);
+                Log.v(LOG_TAG, "responseString from file upload request: \n" + responseString);
                 callbackWrapper.onSuccessCallback(responseString);
             }
 
