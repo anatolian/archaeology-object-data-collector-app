@@ -202,11 +202,11 @@ public class PhotoFragment extends Fragment
     /**
      * Add photo
      * @param fileURI - photo location
-     * @param syncStatus - status of sync
+     * @param SYNC_STATUS - status of sync
      */
-    public void addPhoto(Uri fileURI, final String syncStatus)
+    public void addPhoto(Uri fileURI, final String SYNC_STATUS)
     {
-        dictOfPhotoSyncStatus.put(fileURI, syncStatus);
+        dictOfPhotoSyncStatus.put(fileURI, SYNC_STATUS);
         clearPhotosFromLayout();
         syncPhotos();
     }

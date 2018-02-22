@@ -29,29 +29,6 @@
         android:text="@string/default_base_url"
         android:hint="@string/base_url"
         android:inputType="textUri"/>
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/urlText"
-        android:labelFor="@+id/bucketURL"
-        android:text="@string/bucket_url"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="@android:color/black" />
-    <EditText
-        android:id="@+id/bucketURL"
-        style="@style/EditText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_below="@+id/textView3"
-        android:enabled="false"
-        android:lines="1"
-        android:maxLines="1"
-        android:minWidth="400dp"
-        android:text="@string/default_bucket_url"
-        android:hint="@string/base_url"
-        android:inputType="textUri"/>
     <LinearLayout
         android:orientation = "horizontal"
         android:layout_width = "match_parent"

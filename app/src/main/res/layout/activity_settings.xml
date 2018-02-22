@@ -46,18 +46,20 @@
                 android:text="@string/bucket_url"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="@android:color/black" />
+
             <EditText
-                android:layout_width = "wrap_content"
-                android:layout_height = "wrap_content"
-                android:id = "@+id/settingsBucketUrl"
+                android:id="@+id/settingsBucketUrl"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/textView7"
+                android:layout_centerHorizontal="true"
+                android:hint="@string/default_bucket_url"
                 android:inputType="textUri"
-                android:layout_below = "@+id/textView7"
-                android:layout_centerHorizontal = "true"
-                android:minWidth = "400dp"
-                android:maxLines = "3"
-                android:lines = "1"
-                android:hint = "@string/default_bucket_url"
-                android:textAppearance = "?android:attr/textAppearanceMedium"/>
+                android:lines="1"
+                android:maxLines="3"
+                android:minWidth="400dp"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@android:color/black" />
             <TextView
                 android:id="@+id/textView6"
                 android:layout_width="wrap_content"

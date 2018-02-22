@@ -40,9 +40,6 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -75,7 +72,6 @@ import static com.archaeology.util.StateStatic.REQUEST_IMAGE_CAPTURE;
 import static com.archaeology.util.StateStatic.cameraIPAddress;
 import static com.archaeology.util.StateStatic.connectedToRemoteCamera;
 import static com.archaeology.util.StateStatic.convertDPToPixel;
-import static com.archaeology.util.StateStatic.getGlobalBucketURL;
 import static com.archaeology.util.StateStatic.getGlobalPhotoSavePath;
 import static com.archaeology.util.StateStatic.getGlobalWebServerURL;
 import static com.archaeology.util.StateStatic.getTimeStamp;
@@ -1138,7 +1134,7 @@ public class ObjectDetailActivity extends AppCompatActivity
                         if (cameraIPAddress != null)
                         {
                             Log.v(LOG_TAG, "so you were able to get the IP address");
-                            ipInsertedIntoARPCallback();
+                            IPInsertedIntoARPCallback();
                             break;
                         }
                         else
@@ -1156,7 +1152,7 @@ public class ObjectDetailActivity extends AppCompatActivity
                     }
                     else
                     {
-                        ipNotFoundOnARPCallback();
+                        IPNotFoundOnARPCallback();
                         Log.v(LOG_TAG, "could not find the IP");
                         break;
                     }
@@ -1178,7 +1174,7 @@ public class ObjectDetailActivity extends AppCompatActivity
     /**
      * Called after IP inserted into ARP file
      */
-    public void ipInsertedIntoARPCallback()
+    public void IPInsertedIntoARPCallback()
     {
         runOnUiThread(new Runnable() {
             /**
@@ -1201,7 +1197,7 @@ public class ObjectDetailActivity extends AppCompatActivity
     /**
      * Called after IP not found
      */
-    public void ipNotFoundOnARPCallback()
+    public void IPNotFoundOnARPCallback()
     {
         Log.v(LOG_TAG_WIFI_DIRECT, "IP not Found On ARP Callback called");
         connectedToRemoteCamera = false;

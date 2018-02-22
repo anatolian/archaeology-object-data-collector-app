@@ -29,8 +29,6 @@ import static com.archaeology.services.VolleyStringWrapper.makeVolleyStringObjec
 import static com.archaeology.util.StateStatic.LOG_TAG;
 import static com.archaeology.util.StateStatic.getGlobalWebServerURL;
 import static com.archaeology.util.StateStatic.setGlobalWebServerURL;
-import static com.archaeology.util.StateStatic.setGlobalBucketURL;
-import static com.archaeology.util.StateStatic.getGlobalBucketURL;
 import static com.archaeology.services.VolleyWrapper.cancelAllVolleyRequests;
 public class InitialActivity extends AppCompatActivity
 {
@@ -50,8 +48,6 @@ public class InitialActivity extends AppCompatActivity
         queue.start();
         EditText webServer = (EditText) findViewById(R.id.urlText);
         webServer.setText(getGlobalWebServerURL());
-        EditText bucket = (EditText) findViewById(R.id.bucketURL);
-        bucket.setText(getGlobalBucketURL());
     }
 
     /**
@@ -107,15 +103,6 @@ public class InitialActivity extends AppCompatActivity
     }
 
     /**
-     * Get the base bucket URL
-     * @return Returns the bucket URL
-     */
-    public String getBucketURLFromLayout()
-    {
-        return ((EditText) findViewById(R.id.bucketURL)).getText().toString().trim();
-    }
-
-    /**
      * SettingsActivity launch
      * @param view - overflow view
      */
@@ -123,7 +110,6 @@ public class InitialActivity extends AppCompatActivity
     {
         Log.v(LOG_TAG, "Settings button clicked");
         setGlobalWebServerURL(getWebServerURLFromLayout());
-        setGlobalBucketURL(getBucketURLFromLayout());
         Intent myIntent = new Intent(this, SettingsActivity.class);
         startActivity(myIntent);
     }
@@ -134,66 +120,12 @@ public class InitialActivity extends AppCompatActivity
     public void goToLookup()
     {
         Intent tmpIntent = new Intent(this, CameraUIActivity.class);
-        setGlobalBucketURL(getBucketURLFromLayout());
         setGlobalWebServerURL(getWebServerURLFromLayout());
         final ProgressDialog barProgressDialog = new ProgressDialog(this);
         barProgressDialog.setTitle("Connecting to Server ...");
         barProgressDialog.setIndeterminate(true);
         barProgressDialog.show();
         cancelAllVolleyRequests(queue);
-        makeVolleyStringObjectRequest(getWebServerURLFromLayout() +
-                        "/add_property/?key=bucket_url&value=" + getBucketURLFromLayout(), queue,
-                new StringObjectResponseWrapper(this) {
-            /**
-             * Response received
-             * @param response - database response
-             */
-            @Override
-            public void responseMethod(String response)
-            {
-                Log.v(LOG_TAG, "here is the response\n " + response);
-                barProgressDialog.dismiss();
-            }
-
-            /**
-             * Connection failed
-             * @param error - failure
-             */
-            @Override
-            public void errorMethod(VolleyError error)
-            {
-                Log.v(LOG_TAG, "did not connect");
-                Log.v(LOG_TAG, error.toString());
-                // this just put in place to step through the app
-                if (error instanceof ServerError)
-                {
-                    Toast.makeText(getApplicationContext(), "server error",
-                            Toast.LENGTH_SHORT).show();
-                }
-                else if (error instanceof AuthFailureError)
-                {
-                    Toast.makeText(getApplicationContext(), "authentication failure",
-                            Toast.LENGTH_SHORT).show();
-                }
-                else if (error instanceof ParseError)
-                {
-                    Toast.makeText(getApplicationContext(), "parse error",
-                            Toast.LENGTH_SHORT).show();
-                }
-                else if (error instanceof NoConnectionError)
-                {
-                    Toast.makeText(getApplicationContext(), "no connection error",
-                            Toast.LENGTH_SHORT).show();
-                }
-                else if (error instanceof TimeoutError)
-                {
-                    Toast.makeText(getApplicationContext(), "time out error",
-                            Toast.LENGTH_SHORT).show();
-                }
-                barProgressDialog.dismiss();
-                connectionTestFailedCallback();
-            }
-        });
         startActivity(tmpIntent);
     }
 
@@ -209,7 +141,7 @@ public class InitialActivity extends AppCompatActivity
         barProgressDialog.show();
         Log.v(LOG_TAG, "Test Connection Button Clicked");
         cancelAllVolleyRequests(queue);
-        makeVolleyStringObjectRequest(getWebServerURLFromLayout() + "/relations/", queue,
+        makeVolleyStringObjectRequest(getWebServerURLFromLayout() + "/test_connection/", queue,
                 new StringObjectResponseWrapper(this) {
             /**
              * Response received
@@ -221,13 +153,13 @@ public class InitialActivity extends AppCompatActivity
                 Log.v(LOG_TAG, "here is the response\n " + response);
                 // If the connection failed then an error message returns instead
                 barProgressDialog.dismiss();
-                if (response.contains("relname"))
+                if (response.contains("Error"))
                 {
-                    connectionTestSucceedCallback();
+                    connectionTestFailedCallback();
                 }
                 else
                 {
-                    connectionTestFailedCallback();
+                    connectionTestSucceedCallback();
                 }
             }
 

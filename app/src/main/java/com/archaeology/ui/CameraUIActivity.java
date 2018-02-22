@@ -21,6 +21,10 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
+import com.android.volley.RequestQueue;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.Volley;
+import com.archaeology.models.StringObjectResponseWrapper;
 import com.googlecode.tesseract.android.TessBaseAPI;
 import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
@@ -38,6 +42,9 @@ import com.archaeology.services.UpdateDatabaseMuseum;
 import eu.livotov.labs.android.camview.CameraLiveView;
 import eu.livotov.labs.android.camview.ScannerLiveView;
 import eu.livotov.labs.android.camview.camera.LiveDataProcessingCallback;
+import static com.archaeology.services.VolleyStringWrapper.makeVolleyStringObjectRequest;
+import static com.archaeology.util.StateStatic.getGlobalWebServerURL;
+import static com.archaeology.util.StateStatic.setGlobalBucketURL;
 public class CameraUIActivity extends AppCompatActivity
 {
     HistoryHelper myDatabase;
@@ -48,12 +55,13 @@ public class CameraUIActivity extends AppCompatActivity
     // camera view and scanner view stuff:
     private float x1;
     int flag = -1;
-    private static final String TAG = "QRCode.java";
+    private static final String TAG = "CameraUIActivity.java";
     private FloatingActionButton shutter;
     private CameraLiveView cam = null;
     private RelativeLayout parent;
     private ScannerLiveView scan = null;
     private FloatingActionButton fab;
+    RequestQueue queue;
     /**
      * Activity is launched
      * @param savedInstanceState - state from memory
@@ -63,6 +71,31 @@ public class CameraUIActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera_ui);
+        String URL = getGlobalWebServerURL() + "/get_property/?key=bucket_url";
+        queue = Volley.newRequestQueue(this);
+        makeVolleyStringObjectRequest(URL, queue, new StringObjectResponseWrapper(this) {
+            /**
+             * Response received
+             * @param response - database response
+             */
+            @Override
+            public void responseMethod(String response)
+            {
+                setGlobalBucketURL(response);
+            }
+
+            /**
+             * Connection failed
+             * @param error - failure
+             */
+            @Override
+            public void errorMethod(VolleyError error)
+            {
+                Toast.makeText(getApplicationContext(),
+                        "Bucket URL could not be found. Go to Settings to change it.",
+                        Toast.LENGTH_LONG).show();
+            }
+        });
         myDatabase = new HistoryHelper(this);
         // OCR-only stuff
         String[] paths = new String[]{DATA_PATH, DATA_PATH + "tessdata/"};
@@ -301,22 +334,21 @@ public class CameraUIActivity extends AppCompatActivity
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 yuvimage.compressToJpeg(new Rect(0, 0, width, height), 80, baos);
                 // have to write camera frame to file to see if it is rotated
-                File f = new File(Environment.getExternalStorageDirectory()
-                        + "/archaeology/");
+                File f = new File(Environment.getExternalStorageDirectory() + "/ARCPHOTOS/");
                 ExifInterface ei = null;
                 if (!f.exists())
                 {
                     f.mkdirs();
                 }
                 File file = new File(Environment.getExternalStorageDirectory()
-                        + "/archaeology/temp.jpeg");
+                        + "/ARCPHOTOS/temp.jpeg");
                 try
                 {
                     OutputStream out = new FileOutputStream(file);
                     baos.writeTo(out);
                     out.close();
                     ei = new ExifInterface(Environment.getExternalStorageDirectory()
-                            + "/archaeology/temp.jpeg");
+                            + "/ARCPHOTOS/temp.jpeg");
                     file.delete();
                     f.delete();
                 }
