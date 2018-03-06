@@ -12,14 +12,14 @@ import static com.archaeology.util.StateStatic.LOG_TAG_BLUETOOTH;
 import static com.archaeology.util.StateStatic.MESSAGE_STATUS_CHANGE;
 public class NutriScaleBroadcastReceiver extends BroadcastReceiver
 {
-    final Handler mHandler;
+    final Handler M_HANDLER;
     /**
      * Constructor
      * @param aHandler - event handler
      */
     public NutriScaleBroadcastReceiver(Handler aHandler)
     {
-        mHandler = aHandler;
+        M_HANDLER = aHandler;
     }
 
     /**
@@ -36,29 +36,26 @@ public class NutriScaleBroadcastReceiver extends BroadcastReceiver
         {
             // Get the BluetoothDevice object from the Intent
             BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-            Log.v(LOG_TAG_BLUETOOTH, "Device found: " + device.getName() + " : "
-                    + device.getAddress());
+            Log.v(LOG_TAG_BLUETOOTH, "Device found: " + device.getName() + " : " + device.getAddress());
         }
         else if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action))
         {
-            mHandler.obtainMessage(MESSAGE_STATUS_CHANGE, "Device Connected").sendToTarget();
+            M_HANDLER.obtainMessage(MESSAGE_STATUS_CHANGE, "Device Connected").sendToTarget();
             Log.v(LOG_TAG_BLUETOOTH, "Device Connected");
         }
         else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action))
         {
-            mHandler.obtainMessage(MESSAGE_STATUS_CHANGE, "Discovery Finished").sendToTarget();
+            M_HANDLER.obtainMessage(MESSAGE_STATUS_CHANGE, "Discovery Finished").sendToTarget();
             Log.v(LOG_TAG_BLUETOOTH, "Discovery Finished");
         }
         else if (BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED.equals(action))
         {
-            mHandler.obtainMessage(MESSAGE_STATUS_CHANGE,
-                    "Device About To Disconnect").sendToTarget();
+            M_HANDLER.obtainMessage(MESSAGE_STATUS_CHANGE,"Device About To Disconnect").sendToTarget();
             Log.v(LOG_TAG_BLUETOOTH, "Device About To Disconnect");
         }
         else if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action))
         {
-            mHandler.obtainMessage(MESSAGE_STATUS_CHANGE, "Device Disconnected")
-                    .sendToTarget();
+            M_HANDLER.obtainMessage(MESSAGE_STATUS_CHANGE, "Device Disconnected").sendToTarget();
             Log.v(LOG_TAG_BLUETOOTH, "Device Disconnected");
         }
     }

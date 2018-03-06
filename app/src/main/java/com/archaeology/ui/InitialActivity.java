@@ -121,10 +121,10 @@ public class InitialActivity extends AppCompatActivity
     {
         Intent tmpIntent = new Intent(this, CameraUIActivity.class);
         setGlobalWebServerURL(getWebServerURLFromLayout());
-        final ProgressDialog barProgressDialog = new ProgressDialog(this);
-        barProgressDialog.setTitle("Connecting to Server ...");
-        barProgressDialog.setIndeterminate(true);
-        barProgressDialog.show();
+        final ProgressDialog BAR_PROGRESS_DIALOG = new ProgressDialog(this);
+        BAR_PROGRESS_DIALOG.setTitle("Connecting to Server ...");
+        BAR_PROGRESS_DIALOG.setIndeterminate(true);
+        BAR_PROGRESS_DIALOG.show();
         cancelAllVolleyRequests(queue);
         startActivity(tmpIntent);
     }
@@ -135,10 +135,10 @@ public class InitialActivity extends AppCompatActivity
      */
     public void testConnection(View aView)
     {
-        final ProgressDialog barProgressDialog = new ProgressDialog(this);
-        barProgressDialog.setTitle("Connecting to Server ...");
-        barProgressDialog.setIndeterminate(true);
-        barProgressDialog.show();
+        final ProgressDialog BAR_PROGRESS_DIALOG = new ProgressDialog(this);
+        BAR_PROGRESS_DIALOG.setTitle("Connecting to Server ...");
+        BAR_PROGRESS_DIALOG.setIndeterminate(true);
+        BAR_PROGRESS_DIALOG.show();
         Log.v(LOG_TAG, "Test Connection Button Clicked");
         cancelAllVolleyRequests(queue);
         makeVolleyStringObjectRequest(getWebServerURLFromLayout() + "/test_connection/", queue,
@@ -152,7 +152,7 @@ public class InitialActivity extends AppCompatActivity
             {
                 Log.v(LOG_TAG, "here is the response\n " + response);
                 // If the connection failed then an error message returns instead
-                barProgressDialog.dismiss();
+                BAR_PROGRESS_DIALOG.dismiss();
                 if (response.contains("Error"))
                 {
                     connectionTestFailedCallback();
@@ -175,8 +175,7 @@ public class InitialActivity extends AppCompatActivity
                 // this just put in place to step through the app
                 if (error instanceof ServerError)
                 {
-                    Toast.makeText(getApplicationContext(), "server error",
-                            Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "server error", Toast.LENGTH_SHORT).show();
                 }
                 else if (error instanceof AuthFailureError)
                 {
@@ -185,24 +184,20 @@ public class InitialActivity extends AppCompatActivity
                 }
                 else if (error instanceof ParseError)
                 {
-                    Toast.makeText(getApplicationContext(), "parse error",
-                            Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "parse error", Toast.LENGTH_SHORT).show();
                 }
                 else if (error instanceof NoConnectionError)
                 {
-                    Toast.makeText(getApplicationContext(), "no connection error",
-                            Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "no connection error", Toast.LENGTH_SHORT).show();
                 }
                 else if (error instanceof TimeoutError)
                 {
-                    Toast.makeText(getApplicationContext(), "time out error",
-                            Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "time out error", Toast.LENGTH_SHORT).show();
                 }
-                barProgressDialog.dismiss();
+                BAR_PROGRESS_DIALOG.dismiss();
                 connectionTestFailedCallback();
             }
         });
-        // TODO: Test connection to bucket
     }
 
     /**

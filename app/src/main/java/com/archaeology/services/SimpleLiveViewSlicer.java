@@ -3,7 +3,6 @@
  * Copyright 2014 Sony Corporation
  */
 package com.archaeology.services;
-import android.util.Log;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,27 +15,27 @@ public class SimpleLiveViewSlicer
      * Payload data class. See also Camera Remote API specification document to
      * know the data structure.
      */
-    public static final class Payload
+    public static final class PAYLOAD
     {
         /**
          * jpeg data container
          */
-        public final byte[] jpegData;
+        public final byte[] JPEG_DATA;
 
         /**
          * padding data container
          */
-        public final byte[] paddingData;
+        public final byte[] PADDING_DATA;
 
         /**
          * Constructor
-         * @param jpeg - image
+         * @param JPEG - image
          * @param padding - padding of image
          */
-        private Payload(byte[] jpeg, byte[] padding)
+        private PAYLOAD(byte[] JPEG, byte[] padding)
         {
-            this.jpegData = jpeg;
-            this.paddingData = padding;
+            this.JPEG_DATA = JPEG;
+            this.PADDING_DATA = padding;
         }
     }
     // [msec]
@@ -44,9 +43,8 @@ public class SimpleLiveViewSlicer
     private HttpURLConnection mHttpConn;
     private InputStream mInputStream;
     /**
-     * Opens Liveview HTTP GET connection and prepares for reading Packet data.
-     * @param liveViewURL - Liveview data url that is obtained by DD.xml or result of startLiveView
-     *      API.
+     * Opens Live view HTTP GET connection and prepares for reading Packet data.
+     * @param liveViewURL - Liveview data url that is obtained by DD.xml or result of startLiveView API.
      * @throws IOException generic errors or exception.
      */
     public void open(String liveViewURL) throws IOException
@@ -55,8 +53,8 @@ public class SimpleLiveViewSlicer
         {
             throw new IllegalStateException("Slicer is already open.");
         }
-        final URL urlObj = new URL(liveViewURL);
-        mHttpConn = (HttpURLConnection) urlObj.openConnection();
+        final URL URL_OBJ = new URL(liveViewURL);
+        mHttpConn = (HttpURLConnection) URL_OBJ.openConnection();
         mHttpConn.setRequestMethod("GET");
         mHttpConn.setConnectTimeout(CONNECTION_TIMEOUT);
         mHttpConn.connect();
@@ -81,7 +79,7 @@ public class SimpleLiveViewSlicer
         }
         catch (IOException e)
         {
-            Log.w(TAG, "Close() IOException.");
+            e.printStackTrace();
         }
         if (mHttpConn != null)
         {
@@ -95,9 +93,9 @@ public class SimpleLiveViewSlicer
      * @return Returns the next payload
      * @throws IOException if payload cannot be read
      */
-    public Payload nextPayload() throws IOException
+    public PAYLOAD nextPayload() throws IOException
     {
-        Payload payload = null;
+        PAYLOAD payload = null;
         while (mInputStream != null && payload == null)
         {
             // Common Header
@@ -130,12 +128,12 @@ public class SimpleLiveViewSlicer
     }
 
     /**
-     * Reads liveview stream and slice one Packet. If server is not ready for
+     * Reads live view stream and slice one Packet. If server is not ready for
      * liveview data, this API calling will be blocked until server returns next data.
      * @return Payload data of sliced Packet
      * @throws IOException generic errors or exception.
      */
-    private Payload readPayload() throws IOException
+    private PAYLOAD readPayload() throws IOException
     {
         if (mInputStream != null)
         {
@@ -156,7 +154,7 @@ public class SimpleLiveViewSlicer
             // Payload Data
             byte[] jpegData = readBytes(mInputStream, jpegSize);
             byte[] paddingData = readBytes(mInputStream, paddingSize);
-            return new Payload(jpegData, paddingData);
+            return new PAYLOAD(jpegData, paddingData);
         }
         return null;
     }

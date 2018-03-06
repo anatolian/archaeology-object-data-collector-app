@@ -51,7 +51,7 @@ public class CameraUIActivity extends AppCompatActivity
     // anton's stuff for OCR
     public static final String DATA_PATH =
             Environment.getExternalStorageDirectory().toString() + "/SimpleAndroidOCR/";
-    public static final String lang = "eng";
+    public static final String LANG = "eng";
     // camera view and scanner view stuff:
     private float x1;
     int flag = -1;
@@ -115,14 +115,14 @@ public class CameraUIActivity extends AppCompatActivity
                 }
             }
         }
-        if (!(new File(DATA_PATH + "tessdata/" + lang + ".traineddata")).exists())
+        if (!(new File(DATA_PATH + "tessdata/" + LANG + ".traineddata")).exists())
         {
             try
             {
                 AssetManager assetManager = getAssets();
-                InputStream in = assetManager.open("tessdata/" + lang + ".traineddata");
+                InputStream in = assetManager.open("tessdata/" + LANG + ".traineddata");
                 OutputStream out =
-                        new FileOutputStream(DATA_PATH + "tessdata/" + lang + ".traineddata");
+                        new FileOutputStream(DATA_PATH + "tessdata/" + LANG + ".traineddata");
                 // Transfer bytes from in to out
                 byte[] buf = new byte[1024];
                 int len;
@@ -132,11 +132,11 @@ public class CameraUIActivity extends AppCompatActivity
                 }
                 in.close();
                 out.close();
-                Log.v(TAG, "Copied " + lang + " traineddata");
+                Log.v(TAG, "Copied " + LANG + " traineddata");
             }
             catch (IOException e)
             {
-                Log.e(TAG, "Was unable to copy " + lang + " traineddata " + e.toString());
+                Log.e(TAG, "Was unable to copy " + LANG + " traineddata " + e.toString());
             }
         }
         // setting up CameraView
@@ -401,7 +401,7 @@ public class CameraUIActivity extends AppCompatActivity
                 bitmap.getHeight() / 10, false);
         TessBaseAPI baseAPI = new TessBaseAPI();
         baseAPI.setDebug(true);
-        baseAPI.init(DATA_PATH, lang);
+        baseAPI.init(DATA_PATH, LANG);
         baseAPI.setImage(toSend);
         String recognizedText = baseAPI.getUTF8Text();
         baseAPI.end();
@@ -409,7 +409,7 @@ public class CameraUIActivity extends AppCompatActivity
         // We will display a stripped out trimmed alpha-numeric version of it (if lang is eng)
         // so that garbage doesn't make it to the display.
         Log.v(TAG, "OCRED TEXT: " + recognizedText);
-        if (lang.equalsIgnoreCase("eng"))
+        if (LANG.equalsIgnoreCase("eng"))
         {
             recognizedText = recognizedText.replaceAll("[^a-zA-Z0-9]+", " ");
         }

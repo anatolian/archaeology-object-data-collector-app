@@ -11,8 +11,6 @@ import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.util.Log;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import static com.archaeology.util.StateStatic.LOG_TAG;
 import static com.archaeology.util.StateStatic.LOG_TAG_WIFI_DIRECT;
 public class WiFiDirectBroadcastReceiver extends BroadcastReceiver
@@ -23,17 +21,12 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver
          * Found peers
          * @param collectionOfDevices - peers
          */
-        void peersDiscovered(Collection<WifiP2pDevice> collectionOfDevices);
+        void peersDiscovered(ArrayList<WifiP2pDevice> collectionOfDevices);
 
         /**
          * Enable find peers button
          */
-        void enableDiscoverPeersButton();
-
-        /**
-         * Disable find peers button
-         */
-        void disableDiscoverPeersButton();
+        void discoverPeers();
 
         /**
          * Enable get IP button
@@ -59,8 +52,7 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver
     public boolean connectedToDevice = false;
     public boolean isGroupOwner = false;
     // if you can call mConnectionListener then you can call enableGetIpButton
-    public WifiP2pManager.ConnectionInfoListener mConnectionListener
-            = new WifiP2pManager.ConnectionInfoListener() {
+    public WifiP2pManager.ConnectionInfoListener mConnectionListener = new WifiP2pManager.ConnectionInfoListener() {
         /**
          * Info found
          * @param info - found info
@@ -68,11 +60,9 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver
         @Override
         public void onConnectionInfoAvailable(final WifiP2pInfo info)
         {
-            Log.v(LOG_TAG_WIFI_DIRECT, "onConnectionInfoAvailable: WifiP2pInfo: "
-                    + info.toString());
+            Log.v(LOG_TAG_WIFI_DIRECT, "onConnectionInfoAvailable: WifiP2pInfo: " + info.toString());
             // InetAddress from WifiP2pInfo struct.
-            NetworkInfo networkInfo =
-                    myIntent.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
+            NetworkInfo networkInfo = myIntent.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
             if (networkInfo != null)
             {
                 Log.v(LOG_TAG_WIFI_DIRECT, "networkInfo: " + networkInfo.toString());
@@ -97,9 +87,8 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver
             }
         }
     };
-    private List<WifiP2pDevice> peers = new ArrayList<>();
-    private WifiP2pManager.PeerListListener peerListListener =
-            new WifiP2pManager.PeerListListener() {
+    private ArrayList<WifiP2pDevice> peers = new ArrayList<>();
+    private WifiP2pManager.PeerListListener peerListListener = new WifiP2pManager.PeerListListener() {
         /**
          * Peers found
          * @param peerList - located peers
@@ -110,6 +99,7 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver
             // Out with the old, in with the new.
             peers.clear();
             peers.addAll(peerList.getDeviceList());
+//            ((WiFiPeerListAdapter) getListAdapter()).notifyDataSetChanged();
             // If an AdapterView is backed by this data, notify it of the change. For instance, if
             // you have a ListView of available peers, trigger an update.
             if (peers.size() == 0)
@@ -158,16 +148,16 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver
             if (state == WifiP2pManager.WIFI_P2P_STATE_ENABLED)
             {
                 // Wifi P2P is enabled
-                mActivity.enableDiscoverPeersButton();
+                mActivity.discoverPeers();
                 Log.v(LOG_TAG, "wifi state is enabled");
             }
             else
             {
-                mActivity.disableDiscoverPeersButton();
+                mActivity.discoverPeers();
                 Log.v(LOG_TAG, "wifi state is not enabled");
                 // WiFi P2P is not enabled
             }
-            // Check to see if WiFi is enabled and notify appropriate activity
+            // TODO: Check to see if WiFi is enabled and notify appropriate activity
         }
         else if (WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action))
         {

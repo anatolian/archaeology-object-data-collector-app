@@ -68,9 +68,9 @@ public class ManualActivity extends AppCompatActivity
      */
     public void onClick(View view)
     {
-        final Intent intent = new Intent(this, SearchActivity.class);
+        final Intent INTENT = new Intent(this, SearchActivity.class);
         EditText t = (EditText) findViewById(R.id.editText);
-        final String search = t.getText().toString();
+        final String SEARCH = t.getText().toString();
         new AsyncTask<Void, Void, Void>() {
             /**
              * Task started
@@ -101,19 +101,18 @@ public class ManualActivity extends AppCompatActivity
             @Override
             protected Void doInBackground(Void... params)
             {
-                String[] list = localRetriever.search(search);
+                String[] list = localRetriever.search(SEARCH);
                 // Add all possible search features
-                intent.putExtra("search", list[2]);
-                intent.putExtra("searchnumber", list[0]);
-                intent.putExtra("searchname", list[1]);
-                intent.putExtra("searchdescription", list[3]);
-                intent.putExtra("searchprovenience", list[4]);
-                intent.putExtra("searchmaterial", list[5]);
-                intent.putExtra("searchcuratorial_section", list[6]);
+                INTENT.putExtra("search", list[2]);
+                INTENT.putExtra("searchnumber", list[0]);
+                INTENT.putExtra("searchname", list[1]);
+                INTENT.putExtra("searchdescription", list[3]);
+                INTENT.putExtra("searchprovenience", list[4]);
+                INTENT.putExtra("searchmaterial", list[5]);
+                INTENT.putExtra("searchcuratorial_section", list[6]);
                 // Add to history
-                myDatabase.insertSearch(search, list[1], list[2], list[3], list[4], list[5],
-                        list[6]);
-                startActivity(intent);
+                myDatabase.insertSearch(SEARCH, list[1], list[2], list[3], list[4], list[5], list[6]);
+                startActivity(INTENT);
                 return null;
             }
         }.execute();

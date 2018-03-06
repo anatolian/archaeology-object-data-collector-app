@@ -4,7 +4,6 @@ package com.archaeology.util;
 import android.bluetooth.BluetoothAdapter;
 import android.content.res.Resources;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -20,7 +19,7 @@ public class StateStatic
     public static final int REQUEST_ENABLE_BT = 301;
     public static final String DEFAULT_WEB_SERVER_URL = "https://pacific-brook-36642.herokuapp.com";
     public static final String DEFAULT_BUCKET_URL = "s3.console.aws.amazon.com/s3/buckets/pennmuseum/";
-    public static final String DEFAULT_CAMERA_IP = "fe:c2:de:31:0a:e1";
+    public static final String DEFAULT_CAMERA_MAC = "fe:c2:de:31:0a:e1";
     // 30 minutes
     public static final long DEFAULT_CALIBRATION_INTERVAL = 1800000;
     // default url to connect to database to send photos back and forth
@@ -38,20 +37,20 @@ public class StateStatic
     public static final String ALL_SAMPLE_NUMBER = "all_available_sample_number";
     public static String deviceName = null;
     // offset values that help you to locate the correct fields in the data tables to store
-    // information. the global webserver is being set to a default value. need to make sure that
-    // app is able to find ip address on its own
+    // information. the global web server is being set to a default value. need to make sure that
+    // app is able to find IP address on its own
     // DEFAULT_WEB_SERVER_URL; connection to current IP camera address
     private static String globalWebServerURL = DEFAULT_WEB_SERVER_URL;
     private static String globalBucketURL = DEFAULT_BUCKET_URL;
-    private static String globalCameraIP = DEFAULT_CAMERA_IP;
+    private static String globalCameraMAC = DEFAULT_CAMERA_MAC;
     // global current object most likely is used to track the current object from the database that
     // you are trying to view.
     private static long remoteCameraCalibrationInterval = DEFAULT_CALIBRATION_INTERVAL;
     private static long tabletCameraCalibrationInterval = DEFAULT_CALIBRATION_INTERVAL;
     // variable to track connections
-    private static boolean isRemoteCameraSelected = false;
+    private static boolean isRemoteCameraSelected = true;
     public static boolean connectedToRemoteCamera = false;
-    public static String cameraIPAddress = "";
+    public static String cameraMACAddress = DEFAULT_CAMERA_MAC;
     public static boolean isTakePhotoButtonClicked = false;
     /**
      * Return web server URL that is used to connect to the main database
@@ -77,7 +76,6 @@ public class StateStatic
      */
     public static void setGlobalWebServerURL(String globalWebServerURL)
     {
-        Log.v(LOG_TAG, "globalWebServerURL changed into " + globalWebServerURL);
         StateStatic.globalWebServerURL = globalWebServerURL;
     }
 
@@ -87,27 +85,25 @@ public class StateStatic
      */
     public static void setGlobalBucketURL(String globalBucketURL)
     {
-        Log.v(LOG_TAG, "globalBucketURL changed into " + globalBucketURL);
         StateStatic.globalBucketURL = globalBucketURL;
     }
 
     /**
-     * Get Camera IP address
-     * @return Returns camera IP address
+     * Get Camera MAC address
+     * @return Returns camera MAC address
      */
-    public static String getGlobalCameraIP()
+    public static String getGlobalCameraMAC()
     {
-        return globalCameraIP;
+        return globalCameraMAC;
     }
 
     /**
-     * Set IP address
-     * @param globalCameraIP - new IP address
+     * Set MAC address
+     * @param globalCameraMAC - new MAC address
      */
-    public static void setGlobalCameraIP(String globalCameraIP)
+    public static void setGlobalCameraMAC(String globalCameraMAC)
     {
-        Log.v(LOG_TAG, "globalCameraIP changed into " + globalCameraIP);
-        StateStatic.globalCameraIP = globalCameraIP;
+        StateStatic.globalCameraMAC = globalCameraMAC;
     }
 
     /**

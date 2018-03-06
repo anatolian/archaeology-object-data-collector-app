@@ -14,6 +14,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.net.wifi.WpsInfo;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pManager;
@@ -45,7 +46,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Set;
 import com.archaeology.R;
 import com.archaeology.models.AfterImageSavedMethodWrapper;
@@ -69,7 +69,7 @@ import static com.archaeology.util.StateStatic.MESSAGE_STATUS_CHANGE;
 import static com.archaeology.util.StateStatic.MESSAGE_WEIGHT;
 import static com.archaeology.util.StateStatic.REQUEST_ENABLE_BT;
 import static com.archaeology.util.StateStatic.REQUEST_IMAGE_CAPTURE;
-import static com.archaeology.util.StateStatic.cameraIPAddress;
+import static com.archaeology.util.StateStatic.cameraMACAddress;
 import static com.archaeology.util.StateStatic.connectedToRemoteCamera;
 import static com.archaeology.util.StateStatic.convertDPToPixel;
 import static com.archaeology.util.StateStatic.getGlobalPhotoSavePath;
@@ -81,12 +81,12 @@ import static com.archaeology.util.StateStatic.isTakePhotoButtonClicked;
 public class ObjectDetailActivity extends AppCompatActivity
         implements WiFiDirectBroadcastReceiver.WifiDirectBroadcastReceivable
 {
-    // wifi manager will help you get information for wifi to build the url that you will need to
+    // wifi manager will help you get information for wifi to build the URL that you will need to
     // communicate with camera and the database (peer to peer connectivity)
     private WifiP2pManager mManager;
     private WifiP2pManager.Channel mChannel;
     IntentFilter mIntentFilter;
-    // to handle javascript requests
+    // to handle python requests
     RequestQueue queue;
     // handler used to process messages. will either set weight or inform of changes in bluetooth
     // connection status
@@ -98,8 +98,7 @@ public class ObjectDetailActivity extends AppCompatActivity
         @Override
         public void handleMessage(Message msg)
         {
-            Log.v(LOG_TAG, "Message received: " + msg.obj + ": " + msg.getData() + " : "
-                    + msg.what);
+            Log.v(LOG_TAG, "Message received: " + msg.obj + ": " + msg.getData() + " : " + msg.what);
             if (msg.what == MESSAGE_WEIGHT)
             {
                 int weightOnScale = Integer.parseInt(msg.obj.toString().trim());
@@ -113,7 +112,7 @@ public class ObjectDetailActivity extends AppCompatActivity
         }
     };
     // The BroadcastReceiver that listens for bluetooth broadcasts
-    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver M_RECEIVER = new BroadcastReceiver() {
         /**
          * Broadcast received
          * @param context - current app context
@@ -133,8 +132,7 @@ public class ObjectDetailActivity extends AppCompatActivity
             {
                 bluetoothService.reconnect(device);
                 // Device has disconnected
-                Toast.makeText(context, "Disconnected from scale: please restart the scale",
-                        Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Disconnected from scale: please restart the scale", Toast.LENGTH_SHORT).show();
             }
         }
     };
@@ -167,22 +165,17 @@ public class ObjectDetailActivity extends AppCompatActivity
         }
         bluetoothService = null;
         device = null;
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
-        filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED);
-        filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);
-        this.registerReceiver(mReceiver, filter);
-        queue = Volley.newRequestQueue(this);
-        mManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
-        mChannel = mManager.initialize(this, getMainLooper(), null);
-        wiFiDirectBroadcastReceiver = new WiFiDirectBroadcastReceiver(mManager, mChannel,
-                this);
-        // adding actions to intent filter
         mIntentFilter = new IntentFilter();
+        // adding actions to intent filter
+        mIntentFilter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
+        mIntentFilter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED);
+        mIntentFilter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
+        this.registerReceiver(M_RECEIVER, mIntentFilter);
+        queue = Volley.newRequestQueue(this);
         // getting object data from previous activity
         Bundle myBundle = getIntent().getExtras();
         areaEasting = Integer.parseInt(myBundle.getString("area_easting"));
@@ -190,11 +183,9 @@ public class ObjectDetailActivity extends AppCompatActivity
         contextNumber = Integer.parseInt(myBundle.getString("context_number"));
         sampleNumber = Integer.parseInt(myBundle.getString("sample_number"));
         // adding info about object to text field in view
-        fillSampleInfo(areaEasting + "", areaNorthing + "",
-                contextNumber + "");
+        fillSampleInfo(areaEasting + "", areaNorthing + "", contextNumber + "");
         fillSampleNumberSpinner();
-        ((Spinner) findViewById(R.id.sample_spinner))
-                .setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        ((Spinner) findViewById(R.id.sample_spinner)).setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             /**
              * User selected item
              * @param parent - spinner
@@ -207,8 +198,7 @@ public class ObjectDetailActivity extends AppCompatActivity
             {
                 // if the item you selected from the spinner has a different sample number than the
                 // item returned from the last intent then cancel the request.
-                String x = ((Spinner) findViewById(R.id.sample_spinner))
-                        .getItemAtPosition(position).toString();
+                String x = ((Spinner) findViewById(R.id.sample_spinner)).getItemAtPosition(position).toString();
                 int tmpSampleNumber = Integer.parseInt(x);
                 if (sampleNumber != tmpSampleNumber)
                 {
@@ -225,8 +215,7 @@ public class ObjectDetailActivity extends AppCompatActivity
                             return true;
                         }
                     });
-                    asyncPopulateFieldsFromDB(areaEasting, areaNorthing, contextNumber,
-                            sampleNumber);
+                    asyncPopulateFieldsFromDB(areaEasting, areaNorthing, contextNumber, sampleNumber);
                     fillSampleNumberSpinner();
                 }
             }
@@ -252,16 +241,15 @@ public class ObjectDetailActivity extends AppCompatActivity
         }
         else if (!isBluetoothEnabled())
         {
-            Toast.makeText(this, "Bluetooth disabled in settings",
-                    Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Bluetooth disabled in settings", Toast.LENGTH_SHORT).show();
         }
         else
         {
             // checking once again if not enabled. if it is not then enable it
             if (!mBluetoothAdapter.isEnabled())
             {
-                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+                Intent enableBluetoothIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                startActivityForResult(enableBluetoothIntent, REQUEST_ENABLE_BT);
             }
             nutriScaleBroadcastReceiver = new NutriScaleBroadcastReceiver(handler);
         }
@@ -293,8 +281,7 @@ public class ObjectDetailActivity extends AppCompatActivity
         });
         try
         {
-            Set<BluetoothDevice> pairedDevices = BluetoothAdapter.getDefaultAdapter()
-                    .getBondedDevices();
+            Set<BluetoothDevice> pairedDevices = BluetoothAdapter.getDefaultAdapter().getBondedDevices();
             if (pairedDevices.size() > 0)
             {
                 // There are paired devices. Get the name and address of each paired device.
@@ -312,18 +299,19 @@ public class ObjectDetailActivity extends AppCompatActivity
         }
         catch (Exception e)
         {
-            Toast.makeText(getApplicationContext(), "Phone does not support Bluetooth",
-                    Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Phone does not support Bluetooth", Toast.LENGTH_SHORT).show();
         }
         weightDialog = builder.create();
         // creating the camera dialog and setting up photo fragment to store the photos
         remoteCameraDialog = CameraDialog.createCameraDialog(this);
-        PhotoFragment photoFragment
-                = (PhotoFragment) getFragmentManager().findFragmentById(R.id.fragment);
+        PhotoFragment photoFragment = (PhotoFragment) getFragmentManager().findFragmentById(R.id.fragment);
         if (savedInstanceState == null)
         {
             photoFragment.prepareFragmentForNewPhotosFromNewItem();
         }
+        mManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
+        mChannel = mManager.initialize(this, getMainLooper(), null);
+        wiFiDirectBroadcastReceiver = new WiFiDirectBroadcastReceiver(mManager, mChannel, this);
     }
 
     /**
@@ -383,12 +371,11 @@ public class ObjectDetailActivity extends AppCompatActivity
                     Log.v(LOG_TAG, "data: " + data.getData());
                 }
                 // creating URI to save photo to once taken
-                final String originalFileName = tempFileName + ".jpg";
-                final Uri fileURI = CheatSheet.getThumbnail(originalFileName);
-                Log.v(LOG_TAG, fileURI.toString());
+                final String ORIGINAL_FILE_NAME = tempFileName + ".jpg";
+                final Uri FILE_URI = CheatSheet.getThumbnail(ORIGINAL_FILE_NAME);
+                Log.v(LOG_TAG, FILE_URI.toString());
                 // ApproveDialogCallback is an interface. see CameraDialog class
-                CameraDialog.ApproveDialogCallback approveDialogCallback
-                        = new CameraDialog.ApproveDialogCallback() {
+                CameraDialog.ApproveDialogCallback approveDialogCallback = new CameraDialog.ApproveDialogCallback() {
                     /**
                      * User pressed save
                      */
@@ -396,18 +383,15 @@ public class ObjectDetailActivity extends AppCompatActivity
                     public void onSaveButtonClicked()
                    {
                         // store image data into photo fragments
-                        loadPhotoIntoPhotoFragment(fileURI, MARKED_AS_ADDED);
-                        File mediaStorageDir = new File(
-                                Environment.getExternalStoragePublicDirectory(
+                        loadPhotoIntoPhotoFragment(FILE_URI, MARKED_AS_ADDED);
+                        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
                                 Environment.DIRECTORY_PICTURES), getGlobalPhotoSavePath());
-                        String originalFilePath = mediaStorageDir.getPath() + File.separator +
-                                originalFileName;
+                        String originalFilePath = mediaStorageDir.getPath() + File.separator + ORIGINAL_FILE_NAME;
                         BitmapFactory.Options options = new BitmapFactory.Options();
                         options.inJustDecodeBounds = true;
                         // Returns null, sizes are in the options variable
                         Bitmap savedBitmap = BitmapFactory.decodeFile(originalFilePath, options);
-                        File parent = new File(Environment.getExternalStorageDirectory()
-                                + "/Archaeology/");
+                        File parent = new File(Environment.getExternalStorageDirectory() + "/Archaeology/");
                         if (!parent.exists())
                         {
                             parent.mkdirs();
@@ -437,17 +421,15 @@ public class ObjectDetailActivity extends AppCompatActivity
                     @Override
                     public void onCancelButtonClicked()
                     {
-                        deleteOriginalAndThumbnailPhoto(fileURI);
+                        deleteOriginalAndThumbnailPhoto(FILE_URI);
                     }
                 };
                 // set up camera dialog
-                AlertDialog approveDialog = CameraDialog.createPhotoApprovalDialog(this,
-                        approveDialogCallback);
+                AlertDialog approveDialog = CameraDialog.createPhotoApprovalDialog(this, approveDialogCallback);
                 approveDialog.show();
                 // view photo you are trying to approve
-                ImageView approvePhotoImage
-                        = (ImageView) approveDialog.findViewById(R.id.approvePhotoImage);
-                approvePhotoImage.setImageURI(fileURI);
+                ImageView approvePhotoImage = (ImageView) approveDialog.findViewById(R.id.approvePhotoImage);
+                approvePhotoImage.setImageURI(FILE_URI);
             }
         }
     }
@@ -512,6 +494,16 @@ public class ObjectDetailActivity extends AppCompatActivity
     }
 
     /**
+     * App is paused
+     */
+    @Override
+    public void onPause()
+    {
+        super.onPause();
+        unregisterReceiver(wiFiDirectBroadcastReceiver);
+    }
+
+    /**
      * Updates database with changes in weight data for object
      * @param weightInGrams - weight from scale
      * @param areaEasting - easting
@@ -537,13 +529,11 @@ public class ObjectDetailActivity extends AppCompatActivity
             {
                 if (response.contains("Error"))
                 {
-                    Toast.makeText(currentContext, "Cannot update weight in DB",
-                            Toast.LENGTH_LONG).show();
+                    Toast.makeText(currentContext, "Cannot update weight in DB", Toast.LENGTH_LONG).show();
                 }
                 else
                 {
-                    Toast.makeText(currentContext, "New Weight Value Stored into DB",
-                            Toast.LENGTH_LONG).show();
+                    Toast.makeText(currentContext, "New Weight Value Stored into DB", Toast.LENGTH_LONG).show();
                 }
             }
 
@@ -569,9 +559,9 @@ public class ObjectDetailActivity extends AppCompatActivity
     public void asyncPopulateFieldsFromDB(int areaEasting, int areaNorthing, int contextNumber,
                                           int sampleNumber)
     {
-        makeVolleyStringObjectRequest(getGlobalWebServerURL()
-                + "/get_sample/?easting=" + areaEasting + "&northing=" + areaNorthing + "&context="
-                        + contextNumber + "&sample=" + sampleNumber, queue,
+        makeVolleyStringObjectRequest(getGlobalWebServerURL() + "/get_sample/?easting=" +
+                        areaEasting + "&northing=" + areaNorthing + "&context=" + contextNumber +
+                        "&sample=" + sampleNumber, queue,
                 new StringObjectResponseWrapper(this) {
             /**
              * Response received
@@ -622,8 +612,7 @@ public class ObjectDetailActivity extends AppCompatActivity
     public void asyncPopulatePhotos()
     {
         String URL = getGlobalWebServerURL() + "/get_image_urls/?easting=" + areaEasting +
-                "&northing=" + areaNorthing + "&context=" + contextNumber + "&sample=" +
-                sampleNumber;
+                "&northing=" + areaNorthing + "&context=" + contextNumber + "&sample=" + sampleNumber;
         makeVolleyStringObjectRequest(URL, queue, new StringObjectResponseWrapper(this) {
             /**
              * Database response
@@ -818,14 +807,13 @@ public class ObjectDetailActivity extends AppCompatActivity
 
     /**
      * Open camera dialog
-     * @param view - camera view
+     * @param VIEW - camera view
      */
-    public void showRemoteCameraDialog(final View view)
+    public void showRemoteCameraDialog(final View VIEW)
     {
         remoteCameraDialog.show();
-        remoteCameraDialog.getWindow().setLayout(convertDPToPixel(700),
-                WindowManager.LayoutParams.WRAP_CONTENT);
-        final Activity parentActivity = this;
+        remoteCameraDialog.getWindow().setLayout(convertDPToPixel(700), WindowManager.LayoutParams.WRAP_CONTENT);
+        final Activity PARENT_ACTIVITY = this;
         remoteCameraDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
             /**
              * User cancelled camera
@@ -834,8 +822,7 @@ public class ObjectDetailActivity extends AppCompatActivity
             @Override
             public void onCancel(DialogInterface dialog)
             {
-                CameraDialog.stopLiveView(parentActivity, queue, sonyAPIRequestID++,
-                        getLiveViewSurface());
+                CameraDialog.stopLiveView(PARENT_ACTIVITY, queue, sonyAPIRequestID++, getLiveViewSurface());
             }
         });
         remoteCameraDialog.findViewById(R.id.take_photo).setOnClickListener(new View.OnClickListener() {
@@ -851,7 +838,7 @@ public class ObjectDetailActivity extends AppCompatActivity
                     isTakePhotoButtonClicked = true;
                     remoteCameraDialog.findViewById(R.id.take_photo).setEnabled(false);
                     Log.v(LOG_TAG_WIFI_DIRECT, "Take photo button clicked");
-                    CameraDialog.takePhoto(parentActivity, queue, sonyAPIRequestID++,
+                    CameraDialog.takePhoto(PARENT_ACTIVITY, queue, sonyAPIRequestID++,
                             getTimeStamp(), new AfterImageSavedMethodWrapper() {
                         /**
                          * Process saved image
@@ -888,17 +875,13 @@ public class ObjectDetailActivity extends AppCompatActivity
                                 }
                             };
                             // create dialog to view and approve photo
-                            AlertDialog approveDialog =
-                                    CameraDialog.createPhotoApprovalDialog(parentActivity,
+                            AlertDialog approveDialog = CameraDialog.createPhotoApprovalDialog(PARENT_ACTIVITY,
                                     approveDialogCallback);
                             approveDialog.show();
-                            ImageView approvePhotoImage =
-                                    (ImageView) approveDialog.findViewById(R.id.approvePhotoImage);
-                            Log.v(LOG_TAG, "Loading image " + THUMBNAIL_IMAGE_URL
-                                    + " into approvePhoto Dialog");
+                            ImageView approvePhotoImage = (ImageView) approveDialog.findViewById(R.id.approvePhotoImage);
+                            Log.v(LOG_TAG, "Loading image " + THUMBNAIL_IMAGE_URL + " into approvePhoto Dialog");
                             approvePhotoImage.setImageURI(THUMBNAIL_IMAGE_URL);
-                            Log.v(LOG_TAG, "Loading image " + THUMBNAIL_IMAGE_URL
-                                    + " into approvePhoto Dialog done!");
+                            Log.v(LOG_TAG, "Loading image " + THUMBNAIL_IMAGE_URL + " into approvePhoto Dialog done!");
                         }
                     }, getLiveViewSurface());
                 }
@@ -912,7 +895,7 @@ public class ObjectDetailActivity extends AppCompatActivity
             @Override
             public void onClick(View v)
             {
-                CameraDialog.zoomIn(parentActivity, queue, sonyAPIRequestID++);
+                CameraDialog.zoomIn(PARENT_ACTIVITY, queue, sonyAPIRequestID++);
             }
         });
         remoteCameraDialog.findViewById(R.id.zoom_out)
@@ -924,7 +907,7 @@ public class ObjectDetailActivity extends AppCompatActivity
             @Override
             public void onClick(View v)
             {
-                CameraDialog.zoomOut(parentActivity, queue, sonyAPIRequestID++);
+                CameraDialog.zoomOut(PARENT_ACTIVITY, queue, sonyAPIRequestID++);
             }
         });
         // should allow you to see what the camera is seeing
@@ -941,9 +924,8 @@ public class ObjectDetailActivity extends AppCompatActivity
         // create a file to save the image
         Context context = getApplicationContext();
         Log.v(LOG_TAG, "Stamp: " + stamp);
-        Uri fileURI = FileProvider.getUriForFile(context,
-                context.getApplicationContext().getPackageName()
-                        + ".my.package.name.provider", getOutputMediaFile(stamp));
+        Uri fileURI = FileProvider.getUriForFile(context, context.getApplicationContext().getPackageName()
+                + ".my.package.name.provider", getOutputMediaFile(stamp));
         Log.v(LOG_TAG, "fileURI: " + fileURI.toString());
         photoIntent.putExtra(MediaStore.EXTRA_OUTPUT, fileURI);
         photoIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
@@ -958,8 +940,7 @@ public class ObjectDetailActivity extends AppCompatActivity
      */
     public SimpleStreamSurfaceView getLiveViewSurface()
     {
-        return (SimpleStreamSurfaceView) remoteCameraDialog.findViewById(
-                R.id.surfaceview_liveview);
+        return (SimpleStreamSurfaceView) remoteCameraDialog.findViewById(R.id.surfaceview_liveview);
     }
 
     /**
@@ -989,8 +970,7 @@ public class ObjectDetailActivity extends AppCompatActivity
     {
         Log.v(LOG_TAG, "loadPhotoIntoPhotoFragment method called");
         // loading PhotoFragment class to add photo URIs
-        PhotoFragment photoFragment =
-                (PhotoFragment) getFragmentManager().findFragmentById(R.id.fragment);
+        PhotoFragment photoFragment = (PhotoFragment) getFragmentManager().findFragmentById(R.id.fragment);
         Log.v(LOG_TAG, "imageURI: " + imageURI);
         if (photoFragment != null)
         {
@@ -1005,20 +985,20 @@ public class ObjectDetailActivity extends AppCompatActivity
 
     /**
      * Interface from WiFiDirectBroadcastReceiver.java. will help to connect with external devices
-     * @param collectionOfDevices - connected devices
+     * @param LIST_OF_DEVICES - connected devices
      */
     @Override
-    public void peersDiscovered(Collection<WifiP2pDevice> collectionOfDevices)
+    public void peersDiscovered(final ArrayList<WifiP2pDevice> LIST_OF_DEVICES)
     {
-        Log.v(LOG_TAG_WIFI_DIRECT, collectionOfDevices.size() + " device discovered");
+        Log.v(LOG_TAG_WIFI_DIRECT, LIST_OF_DEVICES.size() + " device discovered");
         // so you can connect with camera organizing all devices phone can connect to
-        final ArrayList<String> listOfDeviceNames = new ArrayList<>(collectionOfDevices.size());
-        for (WifiP2pDevice myDevice: collectionOfDevices)
+        final ArrayList<String> LIST_OF_DEVICE_NAMES = new ArrayList<>(LIST_OF_DEVICES.size());
+        for (WifiP2pDevice myDevice: LIST_OF_DEVICES)
         {
-            listOfDeviceNames.add(myDevice.deviceAddress);
+            LIST_OF_DEVICE_NAMES.add(myDevice.deviceAddress);
         }
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Pick Remote Camera").setItems(listOfDeviceNames.toArray(new String[] {}),
+        builder.setTitle("Pick Remote Camera").setItems(LIST_OF_DEVICE_NAMES.toArray(new String[] {}),
                 new DialogInterface.OnClickListener() {
             /**
              * User clicked remote camera
@@ -1029,11 +1009,12 @@ public class ObjectDetailActivity extends AppCompatActivity
             {
                 // The 'which' argument contains the index position of the selected item.
                 // setting up connection with mac device
-                final String IP_ADDRESS = listOfDeviceNames.get(which);
-                WifiP2pDevice device = new WifiP2pDevice();
-                device.deviceAddress = IP_ADDRESS;
+                final String MAC_ADDRESS = LIST_OF_DEVICE_NAMES.get(which);
+                WifiP2pDevice device = LIST_OF_DEVICES.get(which);
+                device.deviceAddress = MAC_ADDRESS;
                 WifiP2pConfig config = new WifiP2pConfig();
                 config.deviceAddress = device.deviceAddress;
+                config.wps.setup = WpsInfo.PBC;
                 Log.v(LOG_TAG, "the device address is " + config.deviceAddress);
                 mManager.connect(mChannel, config, new WifiP2pManager.ActionListener() {
                     /**
@@ -1042,11 +1023,10 @@ public class ObjectDetailActivity extends AppCompatActivity
                     @Override
                     public void onSuccess()
                     {
-                        cameraIPAddress = IP_ADDRESS;
-                        Log.v(LOG_TAG, "IP address is " + IP_ADDRESS);
+                        cameraMACAddress = MAC_ADDRESS;
+                        Log.v(LOG_TAG, "MAC address is " + MAC_ADDRESS);
                         // so at this point the connection has been made
-                        ((TextView) findViewById(R.id.connectToCameraText))
-                                .setText(getString(R.string.wait));
+                        ((TextView) findViewById(R.id.connectToCameraText)).setText(getString(R.string.wait));
                     }
 
                     /**
@@ -1069,7 +1049,7 @@ public class ObjectDetailActivity extends AppCompatActivity
      * Allows you to connect with other devices
      */
     @Override
-    public void enableDiscoverPeersButton()
+    public void discoverPeers()
     {
         if (!connectedToRemoteCamera)
         {
@@ -1082,8 +1062,7 @@ public class ObjectDetailActivity extends AppCompatActivity
                 @Override
                 public void onSuccess()
                 {
-                    ((TextView) findViewById(R.id.connectToCameraText))
-                            .setText(getString(R.string.no_remote_camera));
+                    ((TextView) findViewById(R.id.connectToCameraText)).setText(getString(R.string.no_remote_camera));
                     Log.v(LOG_TAG_WIFI_DIRECT, "Peer discovery started");
                 }
 
@@ -1098,13 +1077,6 @@ public class ObjectDetailActivity extends AppCompatActivity
                 }
             });
         }
-    }
-
-    /**
-     * Disable discover peers button
-     */
-    public void disableDiscoverPeersButton()
-    {
     }
 
     /**
@@ -1131,10 +1103,10 @@ public class ObjectDetailActivity extends AppCompatActivity
                     Log.v(LOG_TAG, "inside the loop");
                     if (retryCount < retryLimit && connectedToRemoteCamera)
                     {
-                        if (cameraIPAddress != null)
+                        if (cameraMACAddress != null)
                         {
                             Log.v(LOG_TAG, "so you were able to get the IP address");
-                            IPInsertedIntoARPCallback();
+                            MACInsertedIntoARPCallback();
                             break;
                         }
                         else
@@ -1152,7 +1124,7 @@ public class ObjectDetailActivity extends AppCompatActivity
                     }
                     else
                     {
-                        IPNotFoundOnARPCallback();
+                        MACNotFoundOnARPCallback();
                         Log.v(LOG_TAG, "could not find the IP");
                         break;
                     }
@@ -1172,9 +1144,9 @@ public class ObjectDetailActivity extends AppCompatActivity
     }
 
     /**
-     * Called after IP inserted into ARP file
+     * Called after MAC inserted into ARP file
      */
-    public void IPInsertedIntoARPCallback()
+    public void MACInsertedIntoARPCallback()
     {
         runOnUiThread(new Runnable() {
             /**
@@ -1185,21 +1157,20 @@ public class ObjectDetailActivity extends AppCompatActivity
             {
                 connectedToRemoteCamera = true;
                 ((TextView) findViewById(R.id.connectToCameraText))
-                        .setText(getString(R.string.mac_connection, cameraIPAddress));
-                Log.v(LOG_TAG_WIFI_DIRECT, "Connected to device " + cameraIPAddress + " IP "
-                        + cameraIPAddress);
-                StateStatic.setGlobalCameraIP(cameraIPAddress);
+                        .setText(getString(R.string.mac_connection, cameraMACAddress));
+                Log.v(LOG_TAG_WIFI_DIRECT, "Connected to device " + cameraMACAddress + " IP " + cameraMACAddress);
+                StateStatic.setGlobalCameraMAC(cameraMACAddress);
                 toggleAddPhotoButton();
             }
         });
     }
 
     /**
-     * Called after IP not found
+     * Called after MAC not found
      */
-    public void IPNotFoundOnARPCallback()
+    public void MACNotFoundOnARPCallback()
     {
-        Log.v(LOG_TAG_WIFI_DIRECT, "IP not Found On ARP Callback called");
+        Log.v(LOG_TAG_WIFI_DIRECT, "MAC not Found On ARP Callback called");
         connectedToRemoteCamera = false;
         runOnUiThread(new Runnable() {
             /**
@@ -1208,7 +1179,7 @@ public class ObjectDetailActivity extends AppCompatActivity
             @Override
             public void run()
             {
-                enableDiscoverPeersButton();
+                discoverPeers();
                 toggleAddPhotoButton();
             }
         });
@@ -1245,8 +1216,7 @@ public class ObjectDetailActivity extends AppCompatActivity
      */
     public void clearCurrentPhotosOnLayoutAndFetchPhotosAsync()
     {
-        PhotoFragment photoFragment
-                = (PhotoFragment) getFragmentManager().findFragmentById(R.id.fragment);
+        PhotoFragment photoFragment = (PhotoFragment) getFragmentManager().findFragmentById(R.id.fragment);
         photoFragment.prepareFragmentForNewPhotosFromNewItem();
         asyncPopulatePhotos();
     }
@@ -1259,11 +1229,11 @@ public class ObjectDetailActivity extends AppCompatActivity
     {
         if (!networkInfo.isConnectedOrConnecting())
         {
-            if (cameraIPAddress == null)
+            if (cameraMACAddress == null)
             {
                 connectedToRemoteCamera = false;
                 toggleAddPhotoButton();
-                enableDiscoverPeersButton();
+                discoverPeers();
             }
         }
     }
@@ -1282,6 +1252,7 @@ public class ObjectDetailActivity extends AppCompatActivity
         if (selectedItemPos + 1 <= itemCount - 1)
         {
             sample.setSelection(selectedItemPos + 1);
+            clearCurrentPhotosOnLayoutAndFetchPhotosAsync();
         }
     }
 
@@ -1299,6 +1270,7 @@ public class ObjectDetailActivity extends AppCompatActivity
         if (selectedItemPos - 1 >= 0)
         {
             sample.setSelection(selectedItemPos - 1);
+            clearCurrentPhotosOnLayoutAndFetchPhotosAsync();
         }
     }
 

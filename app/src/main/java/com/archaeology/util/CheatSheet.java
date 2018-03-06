@@ -9,17 +9,13 @@ import android.graphics.BitmapFactory;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Environment;
-import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
-import org.json.JSONArray;
-import org.json.JSONException;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import com.archaeology.ui.SettingsActivity;
-import static com.archaeology.util.StateStatic.LOG_TAG;
 import static com.archaeology.util.StateStatic.THUMBNAIL_EXTENSION_STRING;
 import static com.archaeology.util.StateStatic.getGlobalPhotoSavePath;
 public class CheatSheet
@@ -95,7 +91,6 @@ public class CheatSheet
         BitmapFactory.decodeFile(originalFilePath, options);
         int width = options.outWidth;
         int height = options.outHeight;
-        Log.v(LOG_TAG, "originalFilePath: " + originalFilePath + " thumbPath: " + thumbPath);
         File thumbFile = new File(thumbPath);
         // creating a thumbnail image and setting the bounds of the thumbnail
         Bitmap thumbImage = ThumbnailUtils.extractThumbnail(BitmapFactory
@@ -110,7 +105,6 @@ public class CheatSheet
         catch (Exception ex)
         {
             // e.getMessage is returning a null value
-            Log.d("Error", "Error Message: " + ex.getMessage());
             ex.printStackTrace();
         }
         return Uri.fromFile(thumbFile);
@@ -126,7 +120,6 @@ public class CheatSheet
         String thumbnailURIString = thumbnailURI.toString();
         String x = thumbnailURIString.substring(0, thumbnailURIString.length()
                 - THUMBNAIL_EXTENSION_STRING.length());
-        Log.v(LOG_TAG, "Original file URI: " + x);
         return Uri.parse(x);
     }
 
@@ -162,7 +155,6 @@ public class CheatSheet
             String URL = response.substring(0, response.indexOf("\'"));
             tmpArray.add(URL.substring(URL.lastIndexOf("=") + 1));
         }
-        Log.v(LOG_TAG, "the array contains " + tmpArray.toString());
         return tmpArray;
     }
 
@@ -181,7 +173,6 @@ public class CheatSheet
             String URL = response.substring(0, response.indexOf("\'"));
             tmpArray.add(URL.substring(URL.lastIndexOf("=") + 1));
         }
-        Log.v(LOG_TAG, "the array contains " + tmpArray.toString());
         return tmpArray;
     }
 
@@ -209,13 +200,10 @@ public class CheatSheet
         // This location works best if you want the created images to be shared between
         // applications and persist after your app has been uninstalled. Create the storage
         // directory if it does not exist
-        Log.v(LOG_TAG, "Photo Directory exists?");
         if (!mediaStorageDir.isDirectory())
         {
-            Log.v(LOG_TAG, "isDirectory returns false");
             if (!mediaStorageDir.mkdirs())
             {
-                Log.v(LOG_TAG, "failed to create directory" + getGlobalPhotoSavePath());
                 return null;
             }
         }
@@ -237,7 +225,6 @@ public class CheatSheet
             {
                 file.delete();
             }
-            Log.v(LOG_TAG, "Clearing Photos Dir");
         }
     }
 
@@ -250,8 +237,6 @@ public class CheatSheet
         Uri originalImageURI = getOriginalImageURI(thumbnailURI);
         File thumbnailFile = new File(thumbnailURI.getPath());
         File originalFile = new File(originalImageURI.getPath());
-        Log.v(LOG_TAG, "Deleting original and thumbnail photo: "+ thumbnailURI.toString()
-                + ", " + originalImageURI.toString());
         thumbnailFile.delete();
         originalFile.delete();
     }
@@ -262,7 +247,6 @@ public class CheatSheet
      */
     public static void goToSettings(Activity anActivity)
     {
-        Log.v(LOG_TAG, "Settings button clicked");
         Intent myIntent = new Intent(anActivity, SettingsActivity.class);
         anActivity.startActivity(myIntent);
     }

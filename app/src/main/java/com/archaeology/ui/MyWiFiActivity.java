@@ -68,7 +68,7 @@ public class MyWiFiActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_wi_fi);
-        if (StateStatic.cameraIPAddress == null || StateStatic.cameraIPAddress.equals(""))
+        if (StateStatic.cameraMACAddress == null || StateStatic.cameraMACAddress.equals(""))
         {
             Toast.makeText(this, "Not Connected to Camera", Toast.LENGTH_SHORT).show();
         }
@@ -107,15 +107,15 @@ public class MyWiFiActivity extends AppCompatActivity
 
     /**
      * this should help you connect to the camera
-     * @param ipAddress - camera MAC address
+     * @param IP_ADDRESS - camera MAC address
      */
-    public void connectToWiFiDirectDevice(final String ipAddress)
+    public void connectToWiFiDirectDevice(final String IP_ADDRESS)
     {
         WifiP2pDevice device = new WifiP2pDevice();
-        device.deviceAddress = ipAddress;
+        device.deviceAddress = IP_ADDRESS;
         WifiP2pConfig config = new WifiP2pConfig();
         config.deviceAddress = device.deviceAddress;
-        cameraIPAddress = ipAddress;
+        cameraIPAddress = IP_ADDRESS;
         mManager.connect(mChannel, config, new WifiP2pManager.ActionListener() {
             /**
              * TODO: does this not require implementation or still yet to be implemented?
@@ -142,21 +142,21 @@ public class MyWiFiActivity extends AppCompatActivity
      * Found P2P device
      * @param collectionOfDevices - found devices
      */
-    public void peersDiscovered(Collection<WifiP2pDevice> collectionOfDevices)
+    public void peersDiscovered(ArrayList<WifiP2pDevice> collectionOfDevices)
     {
         Log.v(LOG_TAG_WIFI_DIRECT, "Peers Discovered Called");
-        final HashMap<String, String> pairsOfAddressAndNames
+        final HashMap<String, String> PAIRS_OF_ADDRESSES_AND_NAMES
                 = new HashMap<>(collectionOfDevices.size());
         // stores names of peer devices with corresponding addresses into hashmap
-        final ArrayList<String> listOfDeviceNames = new ArrayList<>(collectionOfDevices.size());
+        final ArrayList<String> LIST_OF_DEVICE_NAMES = new ArrayList<>(collectionOfDevices.size());
         for (WifiP2pDevice myDevice: collectionOfDevices)
         {
-            listOfDeviceNames.add(myDevice.deviceName);
-            pairsOfAddressAndNames.put(myDevice.deviceName, myDevice.deviceAddress);
+            LIST_OF_DEVICE_NAMES.add(myDevice.deviceName);
+            PAIRS_OF_ADDRESSES_AND_NAMES.put(myDevice.deviceName, myDevice.deviceAddress);
         }
         // load peer devices and addresses to dialog box
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Pick Device").setItems(listOfDeviceNames.toArray(new String[] {}),
+        builder.setTitle("Pick Device").setItems(LIST_OF_DEVICE_NAMES.toArray(new String[] {}),
                 new DialogInterface.OnClickListener() {
             /**
              * User clicked the alert
@@ -166,8 +166,7 @@ public class MyWiFiActivity extends AppCompatActivity
             public void onClick(DialogInterface dialog, int which)
             {
                 connectButtonClicked = true;
-                connectToWiFiDirectDevice(pairsOfAddressAndNames.get(
-                        listOfDeviceNames.get(which)));
+                connectToWiFiDirectDevice(PAIRS_OF_ADDRESSES_AND_NAMES.get(LIST_OF_DEVICE_NAMES.get(which)));
                 // The 'which' argument contains the index position of the selected item
             }
         });
@@ -177,9 +176,8 @@ public class MyWiFiActivity extends AppCompatActivity
 
     /**
      * Look for peers
-     * @param view - current view
      */
-    public void discoverPeers(View view)
+    public void discoverPeers()
     {
         mManager.discoverPeers(mChannel, new WifiP2pManager.ActionListener() {
             /**
@@ -212,7 +210,7 @@ public class MyWiFiActivity extends AppCompatActivity
     /**
      * Enable discover Peers button
      */
-    public void enableDiscoverPeersButton ()
+    public void enableDiscoverPeersButton()
     {
         findViewById(R.id.button14).setEnabled(true);
     }
@@ -234,7 +232,7 @@ public class MyWiFiActivity extends AppCompatActivity
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         Log.v(LOG_TAG_WIFI_DIRECT, "remote IPAddress " + cameraIPAddress);
         Log.v(LOG_TAG_WIFI_DIRECT, "my IPAddress "  + getMyIPAddress());
-        builder.setTitle("IP Address").setMessage(StateStatic.cameraIPAddress);
+        builder.setTitle("IP Address").setMessage(StateStatic.cameraMACAddress);
         builder.create().show();
     }
 
@@ -245,20 +243,19 @@ public class MyWiFiActivity extends AppCompatActivity
      */
     public int getMyIPAddress()
     {
-        WifiManager manager = (WifiManager) getApplicationContext()
-                .getSystemService(Context.WIFI_SERVICE);
+        WifiManager manager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         WifiInfo info = manager.getConnectionInfo();
         return info.getIpAddress();
     }
 
     /**
      * Get URL of IP
-     * @param ip - IP to connect to
+     * @param IP - IP to connect to
      * @return Returns IP's URL
      */
-    private String buildAPIURLFromIP(String ip)
+    private String buildAPIURLFromIP(String IP)
     {
-        return "http://" + ip + ":8080/sony/camera";
+        return "http://" + IP + ":8080/sony/camera";
     }
 
     /**
@@ -295,13 +292,10 @@ public class MyWiFiActivity extends AppCompatActivity
                             @Override
                             public void onSuccess()
                             {
-                                // convert url into bitmap
-                                ImageView takenPhoto
-                                        = (ImageView) findViewById(R.id.sonyCameraPhoto);
-                                Bitmap tmpBitmap
-                                        = ((BitmapDrawable) takenPhoto.getDrawable()).getBitmap();
-                                Log.v(LOG_TAG_WIFI_DIRECT, "Bitmap Size: "
-                                        + tmpBitmap.getByteCount());
+                                // convert URL into bitmap
+                                ImageView takenPhoto = (ImageView) findViewById(R.id.sonyCameraPhoto);
+                                Bitmap tmpBitmap = ((BitmapDrawable) takenPhoto.getDrawable()).getBitmap();
+                                Log.v(LOG_TAG_WIFI_DIRECT, "Bitmap Size: " + tmpBitmap.getByteCount());
                             }
 
                             /**
@@ -310,15 +304,12 @@ public class MyWiFiActivity extends AppCompatActivity
                             @Override
                             public void onError()
                             {
-                                Picasso.with(currentContext).cancelRequest((ImageView)
-                                        findViewById(R.id.sonyCameraPhoto));
+                                Picasso.with(currentContext).cancelRequest((ImageView) findViewById(R.id.sonyCameraPhoto));
                             }
                         };
-                        Picasso.with(currentContext).load(imageURL)
-                                .placeholder(android.R.drawable.ic_delete)
+                        Picasso.with(currentContext).load(imageURL).placeholder(android.R.drawable.ic_delete)
                                 .error(android.R.drawable.ic_dialog_alert)
-                                .into((ImageView) findViewById(R.id.sonyCameraPhoto),
-                                        onPhotoFetchedCallback);
+                                .into((ImageView) findViewById(R.id.sonyCameraPhoto), onPhotoFetchedCallback);
                     }
                     catch (JSONException e)
                     {
@@ -334,8 +325,7 @@ public class MyWiFiActivity extends AppCompatActivity
                 public void errorMethod(VolleyError error)
                 {
                     error.printStackTrace();
-                    Toast.makeText(getApplicationContext(), "Not Connected to Camera",
-                            Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Not Connected to Camera", Toast.LENGTH_SHORT).show();
                     Log.v(LOG_TAG_WIFI_DIRECT, error.toString());
                 }
             });
@@ -357,9 +347,9 @@ public class MyWiFiActivity extends AppCompatActivity
 
     /**
      * Live view from camera
-     * @param view - camera view
+     * @param VIEW - camera view
      */
-    public void startLiveView(final View view)
+    public void startLiveView(final View VIEW)
     {
         final String URL = buildAPIURLFromIP(cameraIPAddress);
         try
@@ -375,8 +365,7 @@ public class MyWiFiActivity extends AppCompatActivity
                 {
                     try
                     {
-                        final String liveViewUrl
-                                = response.getJSONArray("result").getString(0);
+                        final String LIVE_VIEW_URL = response.getJSONArray("result").getString(0);
                         runOnUiThread(new Runnable() {
                             /**
                              * Run Thread
@@ -384,8 +373,7 @@ public class MyWiFiActivity extends AppCompatActivity
                             @Override
                             public void run()
                             {
-                                getLiveViewSurface().start(liveViewUrl,
-                                        new SimpleStreamSurfaceView.StreamErrorListener() {
+                                getLiveViewSurface().start(LIVE_VIEW_URL, new SimpleStreamSurfaceView.StreamErrorListener() {
                                     /**
                                      * Connection failed
                                      * @param reason - error
@@ -393,7 +381,7 @@ public class MyWiFiActivity extends AppCompatActivity
                                     @Override
                                     public void onError(StreamErrorReason reason)
                                     {
-                                        stopLiveView(view);
+                                        stopLiveView(VIEW);
                                     }
                                 });
                             }

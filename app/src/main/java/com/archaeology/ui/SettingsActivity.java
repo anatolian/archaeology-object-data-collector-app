@@ -35,15 +35,14 @@ import static com.archaeology.services.VolleyStringWrapper.makeVolleyStringObjec
 import static com.archaeology.util.StateStatic.DEFAULT_BUCKET_URL;
 import static com.archaeology.util.StateStatic.DEFAULT_CALIBRATION_INTERVAL;
 import static com.archaeology.util.StateStatic.DEFAULT_WEB_SERVER_URL;
-import static com.archaeology.util.StateStatic.DEFAULT_CAMERA_IP;
-import static com.archaeology.util.StateStatic.LOG_TAG;
-import static com.archaeology.util.StateStatic.getGlobalCameraIP;
+import static com.archaeology.util.StateStatic.DEFAULT_CAMERA_MAC;
+import static com.archaeology.util.StateStatic.getGlobalCameraMAC;
 import static com.archaeology.util.StateStatic.getGlobalWebServerURL;
 import static com.archaeology.util.StateStatic.getGlobalBucketURL;
 import static com.archaeology.util.StateStatic.getRemoteCameraCalibrationInterval;
 import static com.archaeology.util.StateStatic.getTabletCameraCalibrationInterval;
 import static com.archaeology.util.StateStatic.isRemoteCameraSelected;
-import static com.archaeology.util.StateStatic.setGlobalCameraIP;
+import static com.archaeology.util.StateStatic.setGlobalCameraMAC;
 import static com.archaeology.util.StateStatic.setGlobalWebServerURL;
 import static com.archaeology.util.StateStatic.setGlobalBucketURL;
 import static com.archaeology.util.StateStatic.setIsRemoteCameraSelected;
@@ -80,8 +79,7 @@ public class SettingsActivity extends AppCompatActivity
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id)
                 {
-                    Set<BluetoothDevice> pairedDevices = BluetoothAdapter.getDefaultAdapter()
-                            .getBondedDevices();
+                    Set<BluetoothDevice> pairedDevices = BluetoothAdapter.getDefaultAdapter().getBondedDevices();
                     if (pairedDevices.size() > 0)
                     {
                         // There are paired devices. Get the name and address of each paired device.
@@ -100,7 +98,7 @@ public class SettingsActivity extends AppCompatActivity
             });
         }
         EditText webServerEditText = (EditText) findViewById(R.id.settingsWebServiceUrl);
-        EditText cameraIP = (EditText) findViewById(R.id.settingsCameraIP);
+        EditText cameraMAC = (EditText) findViewById(R.id.settingsCameraMAC);
         EditText calibrationInterval = (EditText) findViewById(R.id.calibrationInterval);
         Spinner cameraSelectBox = (Spinner) findViewById(R.id.cameraSelectBox);
         cameraSelectBox.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -135,9 +133,8 @@ public class SettingsActivity extends AppCompatActivity
             cameraSelectBox.setSelection(0);
         }
         webServerEditText.setText(getGlobalWebServerURL());
-        cameraIP.setText(getGlobalCameraIP());
-        calibrationInterval.setText(getString(R.string.long_frmt,
-                getRemoteCameraCalibrationInterval()));
+        cameraMAC.setText(getGlobalCameraMAC());
+        calibrationInterval.setText(getString(R.string.long_frmt, getRemoteCameraCalibrationInterval()));
     }
 
     /**
@@ -179,13 +176,13 @@ public class SettingsActivity extends AppCompatActivity
         else
         {
             setRemoteCameraCalibrationInterval(getCalibrationIntervalFromLayout());
-            setGlobalCameraIP(getCameraIPFromLayout());
+            setGlobalCameraMAC(getCameraMACFromLayout());
         }
         Cache cache = new DiskBasedCache(getCacheDir(), 1024 * 1024);
         Network network = new BasicNetwork(new HurlStack());
         RequestQueue queue = new RequestQueue(cache, network);
         queue.start();
-        final ProgressDialog barProgressDialog = new ProgressDialog(this);
+        final ProgressDialog BAR_PROGRESS_DIALOG = new ProgressDialog(this);
         makeVolleyStringObjectRequest(getWebServerURLFromLayout() +
                 "/add_property/?key=bucket_url&value=" + getBucketURLFromLayout(), queue,
                 new StringObjectResponseWrapper(this) {
@@ -196,8 +193,7 @@ public class SettingsActivity extends AppCompatActivity
             @Override
             public void responseMethod(String response)
             {
-                Log.v(LOG_TAG, "here is the response\n " + response);
-                barProgressDialog.dismiss();
+                BAR_PROGRESS_DIALOG.dismiss();
             }
 
             /**
@@ -207,35 +203,28 @@ public class SettingsActivity extends AppCompatActivity
             @Override
             public void errorMethod(VolleyError error)
             {
-                Log.v(LOG_TAG, "did not connect");
-                Log.v(LOG_TAG, error.toString());
                 // this just put in place to step through the app
                 if (error instanceof ServerError)
                 {
-                    Toast.makeText(getApplicationContext(), "server error",
-                            Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "server error", Toast.LENGTH_SHORT).show();
                 }
                 else if (error instanceof AuthFailureError)
                 {
-                    Toast.makeText(getApplicationContext(), "authentication failure",
-                            Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "authentication failure", Toast.LENGTH_SHORT).show();
                 }
                 else if (error instanceof ParseError)
                 {
-                    Toast.makeText(getApplicationContext(), "parse error",
-                            Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "parse error", Toast.LENGTH_SHORT).show();
                 }
                 else if (error instanceof NoConnectionError)
                 {
-                    Toast.makeText(getApplicationContext(), "no connection error",
-                            Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "no connection error", Toast.LENGTH_SHORT).show();
                 }
                 else if (error instanceof TimeoutError)
                 {
-                    Toast.makeText(getApplicationContext(), "time out error",
-                            Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "time out error", Toast.LENGTH_SHORT).show();
                 }
-                barProgressDialog.dismiss();
+                BAR_PROGRESS_DIALOG.dismiss();
             }
         });
         finish();
@@ -249,21 +238,20 @@ public class SettingsActivity extends AppCompatActivity
     {
         setGlobalWebServerURL(DEFAULT_WEB_SERVER_URL);
         setGlobalBucketURL(DEFAULT_BUCKET_URL);
-        setGlobalCameraIP(DEFAULT_CAMERA_IP);
+        setGlobalCameraMAC(DEFAULT_CAMERA_MAC);
         setRemoteCameraCalibrationInterval(DEFAULT_CALIBRATION_INTERVAL);
         setTabletCameraCalibrationInterval(DEFAULT_CALIBRATION_INTERVAL);
         setIsRemoteCameraSelected(false);
         EditText webServerEditText = (EditText) findViewById(R.id.settingsWebServiceUrl);
         EditText bucketEditText = (EditText) findViewById(R.id.settingsBucketUrl);
         Spinner cameraSelectBox = (Spinner) findViewById(R.id.cameraSelectBox);
-        EditText cameraIP = (EditText) findViewById(R.id.settingsCameraIP);
+        EditText cameraIP = (EditText) findViewById(R.id.settingsCameraMAC);
         EditText calibrationInterval = (EditText) findViewById(R.id.calibrationInterval);
         webServerEditText.setText(getGlobalWebServerURL());
         bucketEditText.setText(getGlobalBucketURL());
         cameraSelectBox.setSelection(0);
-        cameraIP.setText(getGlobalCameraIP());
-        calibrationInterval.setText(getString(R.string.long_frmt,
-                getRemoteCameraCalibrationInterval()));
+        cameraIP.setText(getGlobalCameraMAC());
+        calibrationInterval.setText(getString(R.string.long_frmt, getRemoteCameraCalibrationInterval()));
     }
 
     /**
@@ -272,22 +260,20 @@ public class SettingsActivity extends AppCompatActivity
      */
     public void cameraSelected(View view)
     {
-        EditText cameraIPText = (EditText) findViewById(R.id.settingsCameraIP);
+        EditText cameraMACText = (EditText) findViewById(R.id.settingsCameraMAC);
         EditText calibrationInterval = (EditText) findViewById(R.id.calibrationInterval);
         if (isTabletCameraSelectedOnLayout())
         {
-            cameraIPText.setText("");
-            cameraIPText.setEnabled(false);
-            calibrationInterval.setText(getString(R.string.long_frmt,
-                    getTabletCameraCalibrationInterval()));
+            cameraMACText.setText("");
+            cameraMACText.setEnabled(false);
+            calibrationInterval.setText(getString(R.string.long_frmt, getTabletCameraCalibrationInterval()));
             setIsRemoteCameraSelected(false);
         }
         else
         {
-            cameraIPText.setText(getGlobalCameraIP());
-            cameraIPText.setEnabled(true);
-            calibrationInterval.setText(getString(R.string.long_frmt,
-                    getRemoteCameraCalibrationInterval()));
+            cameraMACText.setText(getGlobalCameraMAC());
+            cameraMACText.setEnabled(true);
+            calibrationInterval.setText(getString(R.string.long_frmt, getRemoteCameraCalibrationInterval()));
             setIsRemoteCameraSelected(true);
         }
     }
@@ -311,12 +297,12 @@ public class SettingsActivity extends AppCompatActivity
     }
 
     /**
-     * Get the camera IP
-     * @return Returns the camera IP
+     * Get the camera MAC
+     * @return Returns the camera MAC
      */
-    public String getCameraIPFromLayout()
+    public String getCameraMACFromLayout()
     {
-        return ((EditText) findViewById(R.id.settingsCameraIP)).getText().toString().trim();
+        return ((EditText) findViewById(R.id.settingsCameraMAC)).getText().toString().trim();
     }
 
     /**

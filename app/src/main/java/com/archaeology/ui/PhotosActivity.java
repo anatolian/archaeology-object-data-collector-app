@@ -67,8 +67,7 @@ public class PhotosActivity extends AppCompatActivity
             {
                 try
                 {
-                    File parent = new File(Environment.getExternalStorageDirectory()
-                            + "/Archaeology/");
+                    File parent = new File(Environment.getExternalStorageDirectory() + "/Archaeology/");
                     if (!parent.exists())
                     {
                         parent.mkdirs();
@@ -80,14 +79,12 @@ public class PhotosActivity extends AppCompatActivity
                     correctedPhoto.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
                     outStream.flush();
                     outStream.close();
-                    Toast.makeText(getApplicationContext(), "Image stored at " +
-                            f.getAbsolutePath(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Image stored at " + f.getAbsolutePath(),
+                            Toast.LENGTH_LONG).show();
                 }
                 catch (Exception e)
                 {
-                    Toast.makeText(getApplicationContext(), "Could not save file",
-                            Toast.LENGTH_SHORT).show();
-                    Log.v("PHOTOS: ", e.getMessage());
+                    Toast.makeText(getApplicationContext(), "Could not save file", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -109,12 +106,10 @@ public class PhotosActivity extends AppCompatActivity
         }
         if (requestCode == EZPhotoPick.PHOTO_PICK_GALLERY_REQUEST_CODE)
         {
-            Log.v("GOOD REQUEST CODE", "Good request code");
             Bitmap photo = null;
             try
             {
                 photo = new EZPhotoPickStorage(this).loadLatestStoredPhotoBitmap();
-                Log.v("GRABBING PHOTO", "Grabbing photo...");
             }
             catch (IOException e)
             {
@@ -122,26 +117,20 @@ public class PhotosActivity extends AppCompatActivity
             }
             if (photo != null)
             {
-                Log.v("FILTERING", "Filtering...");
                 filter(photo);
             }
-        }
-        else
-        {
-            Log.v("BAD REQUEST CODE", "Bad request code");
         }
     }
 
     /**
      * Apply color correction
-     * @param newPhoto - corrected image
+     * @param NEW_PHOTO - corrected image
      */
-    public void filter(final Bitmap newPhoto)
+    public void filter(final Bitmap NEW_PHOTO)
     {
-        Log.v("DRAWING", "Drawing...");
         final MagnifyingGlass IV = new MagnifyingGlass(this);
-        IV.init(newPhoto);
-        IV.setImageBitmap(newPhoto);
+        IV.init(NEW_PHOTO);
+        IV.setImageBitmap(NEW_PHOTO);
         IV.setScaleType(ImageView.ScaleType.FIT_CENTER);
         llPhotoContainer.addView(IV);
         IV.setOnTouchListener(new ImageView.OnTouchListener() {
@@ -155,7 +144,7 @@ public class PhotosActivity extends AppCompatActivity
             public boolean onTouch(View v, MotionEvent event)
             {
                 IV.onTouchEvent(event);
-                correctedPhoto = newPhoto;
+                correctedPhoto = NEW_PHOTO;
                 return true;
             }
         });

@@ -6,7 +6,7 @@ import android.app.Fragment;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
+import android.support.v7.widget.AppCompatImageView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,7 +24,6 @@ import com.archaeology.R;
 import com.archaeology.models.AsyncHTTPCallbackWrapper;
 import com.archaeology.models.AsyncHTTPWrapper;
 import com.archaeology.util.CheatSheet;
-import static com.archaeology.util.StateStatic.LOG_TAG;
 import static com.archaeology.util.StateStatic.MARKED_AS_ADDED;
 import static com.archaeology.util.StateStatic.MARKED_AS_TO_DOWNLOAD;
 import static com.archaeology.util.StateStatic.SYNCED;
@@ -33,12 +32,12 @@ public class PhotoFragment extends Fragment
 {
     public abstract class CustomPicassoCallback implements Callback
     {
-        TaggedImageView actualImageView;
+        AppCompatImageView actualImageView;
         /**
          * Get the image view
          * @return Returns the image view
          */
-        public TaggedImageView getActualImageView()
+        public AppCompatImageView getActualImageView()
         {
             return actualImageView;
         }
@@ -47,7 +46,7 @@ public class PhotoFragment extends Fragment
          * Set the image view
          * @param actualImageView - new image view
          */
-        public void setActualImageView(TaggedImageView actualImageView)
+        public void setActualImageView(AppCompatImageView actualImageView)
         {
             this.actualImageView = actualImageView;
         }
@@ -55,7 +54,7 @@ public class PhotoFragment extends Fragment
     private static final String PHOTO_DICT = "pd";
     View inflatedView;
     LinkedHashMap<Uri, String> dictOfPhotoSyncStatus;
-    ArrayList<TaggedImageView> loadedPhotos;
+    ArrayList<AppCompatImageView> loadedPhotos;
     final PicassoWrapper PICASSO_SINGLETON = new PicassoWrapper();
     final CustomPicassoCallback PICASSO_CALLBACK = new CustomPicassoCallback() {
         /**
@@ -65,14 +64,10 @@ public class PhotoFragment extends Fragment
         public void onSuccess()
         {
             photoLoadedSemaphore--;
-            getActualImageView().setSyncStatus(SYNCED);
-            Log.v(LOG_TAG, "photoLoadedSemaphore: " + photoLoadedSemaphore);
             if (photoLoadedSemaphore == 0)
             {
                 // changed from getActivity()
-                PhotoLoadDeleteInterface containerActivity
-                        = (PhotoLoadDeleteInterface) getActivity();
-                Log.v(LOG_TAG, "Container: " + containerActivity);
+                PhotoLoadDeleteInterface containerActivity = (PhotoLoadDeleteInterface) getActivity();
                 if (containerActivity != null)
                 {
                     containerActivity.setAllPhotosLoaded();
@@ -87,8 +82,6 @@ public class PhotoFragment extends Fragment
         public void onError()
         {
             photoLoadedSemaphore++;
-            Log.v(LOG_TAG, "photo callback error");
-            Log.v(LOG_TAG, "photoLoadedSempahore: " + photoLoadedSemaphore);
         }
     };
     public int selectedPhotoCount = 0;
@@ -185,7 +178,6 @@ public class PhotoFragment extends Fragment
     @Override
     public void onSaveInstanceState(Bundle outState)
     {
-        Log.v(LOG_TAG, "SAVE FRAGMENT");
         super.onSaveInstanceState(outState);
         outState.putSerializable(PHOTO_DICT, dictOfPhotoSyncStatus);
     }
@@ -233,16 +225,13 @@ public class PhotoFragment extends Fragment
         {
             if (DICT_ENTRY.getValue().equals(MARKED_AS_TO_DOWNLOAD))
             {
-                Log.v(LOG_TAG, "Downloading remote image: " + DICT_ENTRY.getKey());
-                PICASSO_SINGLETON.fetchAndInsertImage((LinearLayout) inflatedView,
-                        DICT_ENTRY.getKey(), getActivity(), DICT_ENTRY.getValue(),
-                        new PhotoOnClickListener(), PICASSO_CALLBACK);
+                PICASSO_SINGLETON.fetchAndInsertImage((LinearLayout) inflatedView, DICT_ENTRY.getKey(),
+                        getActivity(), DICT_ENTRY.getValue(), new PhotoOnClickListener(), PICASSO_CALLBACK);
             }
             else if (DICT_ENTRY.getValue().equals(MARKED_AS_ADDED))
             {
-                PICASSO_SINGLETON.fetchAndInsertImage((LinearLayout) inflatedView,
-                        DICT_ENTRY.getKey(), getActivity(), DICT_ENTRY.getValue(),
-                        new PhotoOnClickListener(), PICASSO_CALLBACK);
+                PICASSO_SINGLETON.fetchAndInsertImage((LinearLayout) inflatedView, DICT_ENTRY.getKey(),
+                        getActivity(), DICT_ENTRY.getValue(), new PhotoOnClickListener(), PICASSO_CALLBACK);
                 final Activity PARENT_ACTIVITY = getActivity();
                 if (PARENT_ACTIVITY instanceof ObjectDetailActivity)
                 {
@@ -251,10 +240,8 @@ public class PhotoFragment extends Fragment
                     final int CONTEXT_NUMBER = ((ObjectDetailActivity) PARENT_ACTIVITY).contextNumber;
                     final int SAMPLE_NUMBER = ((ObjectDetailActivity) PARENT_ACTIVITY).sampleNumber;
                     String URL = getGlobalWebServerURL() + "/upload_file";
-                    Log.v(LOG_TAG, "Image to be uploaded" + DICT_ENTRY.getKey());
-                    AsyncHTTPWrapper.makeImageUpload(URL, DICT_ENTRY.getKey(),
-                            "" + AREA_EASTING, "" + AREA_NORTHING,
-                            "" + CONTEXT_NUMBER, "" + SAMPLE_NUMBER,
+                    AsyncHTTPWrapper.makeImageUpload(URL, DICT_ENTRY.getKey(), "" + AREA_EASTING,
+                            "" + AREA_NORTHING,"" + CONTEXT_NUMBER, "" + SAMPLE_NUMBER,
                             new AsyncHTTPCallbackWrapper() {
                         /**
                          * Connection succeeded
@@ -267,12 +254,9 @@ public class PhotoFragment extends Fragment
                             dictOfPhotoSyncStatus.put(DICT_ENTRY.getKey(), SYNCED);
                             if (!response.contains("Error"))
                             {
-                                Log.v(LOG_TAG, "Image New URL After Upload" + response);
-                                Toast.makeText(PARENT_ACTIVITY, "Image Uploaded To Server",
-                                        Toast.LENGTH_SHORT).show();
+                                Toast.makeText(PARENT_ACTIVITY, "Image Uploaded To Server", Toast.LENGTH_SHORT).show();
                             }
-                            ((ObjectDetailActivity) PARENT_ACTIVITY)
-                                    .clearCurrentPhotosOnLayoutAndFetchPhotosAsync();
+                            ((ObjectDetailActivity) PARENT_ACTIVITY).clearCurrentPhotosOnLayoutAndFetchPhotosAsync();
                         }
                     });
                 }

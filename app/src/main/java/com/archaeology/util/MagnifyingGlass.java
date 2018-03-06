@@ -12,7 +12,6 @@ import android.graphics.PointF;
 import android.graphics.Shader;
 import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.ImageView;
 public class MagnifyingGlass extends AppCompatImageView
@@ -82,8 +81,6 @@ public class MagnifyingGlass extends AppCompatImageView
             case MotionEvent.ACTION_MOVE:
                 zooming = true;
                 this.invalidate();
-                Log.v("RGB VALUES",  Color.red(pixel) + ", " + Color.green(pixel) + ", " +
-                        Color.blue(pixel));
                 break;
             case MotionEvent.ACTION_UP:
                 zooming = false;
@@ -93,13 +90,8 @@ public class MagnifyingGlass extends AppCompatImageView
                         Color.blue(pixel)};
                 float[] correctionMatrix = calcColorCorrectionMatrix(rgbValues,
                         maxChannelIndex(rgbValues));
-                Log.v("CORRECTING", "Correcting image...");
                 Bitmap correctedPhoto = colorCorrect(TOUCHED_PHOTO.copy(Bitmap.Config.ARGB_8888,
                         true), correctionMatrix);
-                Log.v("RGB VALUES",  rgbValues[0] + ", " + rgbValues[1] + ", " +
-                        rgbValues[2]);
-                Log.v("CORRECTION MATRIX", correctionMatrix[0] + ", " +
-                        correctionMatrix[1] + ", " + correctionMatrix[2]);
                 this.setImageBitmap(correctedPhoto);
                 this.setScaleType(ImageView.ScaleType.FIT_CENTER);
                 int black = Color.rgb(0, 0, 0);
