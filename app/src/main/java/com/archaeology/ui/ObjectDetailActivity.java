@@ -69,15 +69,19 @@ import static com.archaeology.util.StateStatic.MESSAGE_STATUS_CHANGE;
 import static com.archaeology.util.StateStatic.MESSAGE_WEIGHT;
 import static com.archaeology.util.StateStatic.REQUEST_ENABLE_BT;
 import static com.archaeology.util.StateStatic.REQUEST_IMAGE_CAPTURE;
+import static com.archaeology.util.StateStatic.cameraIPAddress;
 import static com.archaeology.util.StateStatic.cameraMACAddress;
 import static com.archaeology.util.StateStatic.connectedToRemoteCamera;
 import static com.archaeology.util.StateStatic.convertDPToPixel;
+import static com.archaeology.util.StateStatic.getGlobalCameraMAC;
 import static com.archaeology.util.StateStatic.getGlobalPhotoSavePath;
 import static com.archaeology.util.StateStatic.getGlobalWebServerURL;
 import static com.archaeology.util.StateStatic.getTimeStamp;
 import static com.archaeology.util.StateStatic.isBluetoothEnabled;
 import static com.archaeology.util.StateStatic.isRemoteCameraSelected;
 import static com.archaeology.util.StateStatic.isTakePhotoButtonClicked;
+import static com.archaeology.util.StateStatic.setCameraIP;
+
 public class ObjectDetailActivity extends AppCompatActivity
         implements WiFiDirectBroadcastReceiver.WifiDirectBroadcastReceivable
 {
@@ -98,12 +102,9 @@ public class ObjectDetailActivity extends AppCompatActivity
         @Override
         public void handleMessage(Message msg)
         {
-            Log.v(LOG_TAG, "Message received: " + msg.obj + ": " + msg.getData() + " : " + msg.what);
             if (msg.what == MESSAGE_WEIGHT)
             {
-                int weightOnScale = Integer.parseInt(msg.obj.toString().trim());
-                Log.v("SCALE READING", "" + weightOnScale);
-                setCurrentScaleWeight(weightOnScale + "");
+                setCurrentScaleWeight(Integer.parseInt(msg.obj.toString().trim()) + "");
             }
             else if(msg.what == MESSAGE_STATUS_CHANGE)
             {
@@ -355,7 +356,6 @@ public class ObjectDetailActivity extends AppCompatActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
     {
         // action to be performed when request is sent to take photo
-        Log.v(LOG_TAG, "Intent result receiving");
         if (requestCode == REQUEST_IMAGE_CAPTURE)
         {
             Log.v(LOG_TAG, "Intent Result for Camera Intent");
@@ -441,7 +441,6 @@ public class ObjectDetailActivity extends AppCompatActivity
     protected void onDestroy()
     {
         super.onDestroy();
-        Log.v(LOG_TAG, "Destroying Activity");
         isPickPeersDialogVisible = false;
         if (pickPeersDialog != null)
         {
@@ -465,7 +464,7 @@ public class ObjectDetailActivity extends AppCompatActivity
     protected void onResume()
     {
         super.onResume();
-        Log.v(LOG_TAG, "Resuming Activity");
+        wiFiDirectBroadcastReceiver = new WiFiDirectBroadcastReceiver(mManager, mChannel,this);
         registerReceiver(wiFiDirectBroadcastReceiver, mIntentFilter);
     }
 
@@ -476,7 +475,6 @@ public class ObjectDetailActivity extends AppCompatActivity
     protected void onStop()
     {
         super.onStop();
-        Log.v(LOG_TAG, "Stopping Activity");
         isPickPeersDialogVisible = false;
         if (pickPeersDialog != null)
         {
@@ -583,7 +581,6 @@ public class ObjectDetailActivity extends AppCompatActivity
                     }
                     else
                     {
-                        System.out.println(obj[7]);
                         BluetoothService.currWeight = (int) (1000 * Double.parseDouble(obj[7]));
                         getWeightInputText().setText(String.valueOf(BluetoothService.currWeight));
                     }
@@ -779,7 +776,6 @@ public class ObjectDetailActivity extends AppCompatActivity
                     Toast.LENGTH_SHORT).show();
         }
         bluetoothService.runService();
-        Log.v("SCALE CONNECTION", "" + BluetoothService.currWeight);
         ((TextView) findViewById(R.id.weightInput))
                 .setText(String.valueOf(BluetoothService.currWeight));
         asyncModifyWeightFieldInDB(BluetoothService.currWeight, areaEasting, areaNorthing,
@@ -793,10 +789,11 @@ public class ObjectDetailActivity extends AppCompatActivity
      */
     public void addPhotoAction(View view)
     {
-        Log.v(LOG_TAG, "Add Photo Action Method Called");
         imageNumber++;
         if (isRemoteCameraSelected())
         {
+            // Just connect to found IP
+            setCameraIP(CheatSheet.findIPFromMAC(getGlobalCameraMAC()));
             showRemoteCameraDialog(view);
         }
         else
@@ -837,7 +834,6 @@ public class ObjectDetailActivity extends AppCompatActivity
                 {
                     isTakePhotoButtonClicked = true;
                     remoteCameraDialog.findViewById(R.id.take_photo).setEnabled(false);
-                    Log.v(LOG_TAG_WIFI_DIRECT, "Take photo button clicked");
                     CameraDialog.takePhoto(PARENT_ACTIVITY, queue, sonyAPIRequestID++,
                             getTimeStamp(), new AfterImageSavedMethodWrapper() {
                         /**
@@ -875,13 +871,11 @@ public class ObjectDetailActivity extends AppCompatActivity
                                 }
                             };
                             // create dialog to view and approve photo
-                            AlertDialog approveDialog = CameraDialog.createPhotoApprovalDialog(PARENT_ACTIVITY,
-                                    approveDialogCallback);
+                            AlertDialog approveDialog = CameraDialog.createPhotoApprovalDialog(
+                                    PARENT_ACTIVITY, approveDialogCallback);
                             approveDialog.show();
                             ImageView approvePhotoImage = (ImageView) approveDialog.findViewById(R.id.approvePhotoImage);
-                            Log.v(LOG_TAG, "Loading image " + THUMBNAIL_IMAGE_URL + " into approvePhoto Dialog");
                             approvePhotoImage.setImageURI(THUMBNAIL_IMAGE_URL);
-                            Log.v(LOG_TAG, "Loading image " + THUMBNAIL_IMAGE_URL + " into approvePhoto Dialog done!");
                         }
                     }, getLiveViewSurface());
                 }
@@ -923,10 +917,8 @@ public class ObjectDetailActivity extends AppCompatActivity
         String stamp = getTimeStamp();
         // create a file to save the image
         Context context = getApplicationContext();
-        Log.v(LOG_TAG, "Stamp: " + stamp);
         Uri fileURI = FileProvider.getUriForFile(context, context.getApplicationContext().getPackageName()
                 + ".my.package.name.provider", getOutputMediaFile(stamp));
-        Log.v(LOG_TAG, "fileURI: " + fileURI.toString());
         photoIntent.putExtra(MediaStore.EXTRA_OUTPUT, fileURI);
         photoIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         tempFileName = stamp;
@@ -968,23 +960,17 @@ public class ObjectDetailActivity extends AppCompatActivity
      */
     public void loadPhotoIntoPhotoFragment(Uri imageURI, final String SYNC_STATUS)
     {
-        Log.v(LOG_TAG, "loadPhotoIntoPhotoFragment method called");
         // loading PhotoFragment class to add photo URIs
         PhotoFragment photoFragment = (PhotoFragment) getFragmentManager().findFragmentById(R.id.fragment);
-        Log.v(LOG_TAG, "imageURI: " + imageURI);
         if (photoFragment != null)
         {
             // photo URIs are added to hashmap in PhotoFragment class
             photoFragment.addPhoto(imageURI, SYNC_STATUS);
         }
-        else
-        {
-            Log.v(LOG_TAG, "loadPhotoIntoPhotoFragment method called on null photoFragment");
-        }
     }
 
     /**
-     * Interface from WiFiDirectBroadcastReceiver.java. will help to connect with external devices
+     * Interface from WiFiDirectBroadcastReceiver.java. Will help to connect with external devices
      * @param LIST_OF_DEVICES - connected devices
      */
     @Override
@@ -995,6 +981,7 @@ public class ObjectDetailActivity extends AppCompatActivity
         final ArrayList<String> LIST_OF_DEVICE_NAMES = new ArrayList<>(LIST_OF_DEVICES.size());
         for (WifiP2pDevice myDevice: LIST_OF_DEVICES)
         {
+            Log.v(LOG_TAG_WIFI_DIRECT, myDevice.deviceName);
             LIST_OF_DEVICE_NAMES.add(myDevice.deviceAddress);
         }
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -1103,10 +1090,10 @@ public class ObjectDetailActivity extends AppCompatActivity
                     Log.v(LOG_TAG, "inside the loop");
                     if (retryCount < retryLimit && connectedToRemoteCamera)
                     {
-                        if (cameraMACAddress != null)
+                        if (cameraIPAddress != null)
                         {
-                            Log.v(LOG_TAG, "so you were able to get the IP address");
-                            MACInsertedIntoARPCallback();
+                            Log.v(LOG_TAG, "you were able to get the IP address");
+                            IPFoundOnARPCallback();
                             break;
                         }
                         else
@@ -1124,7 +1111,7 @@ public class ObjectDetailActivity extends AppCompatActivity
                     }
                     else
                     {
-                        MACNotFoundOnARPCallback();
+                        IPNotFoundOnARPCallback();
                         Log.v(LOG_TAG, "could not find the IP");
                         break;
                     }
@@ -1144,9 +1131,9 @@ public class ObjectDetailActivity extends AppCompatActivity
     }
 
     /**
-     * Called after MAC inserted into ARP file
+     * Called after IP found in ARP file
      */
-    public void MACInsertedIntoARPCallback()
+    public void IPFoundOnARPCallback()
     {
         runOnUiThread(new Runnable() {
             /**
@@ -1158,19 +1145,18 @@ public class ObjectDetailActivity extends AppCompatActivity
                 connectedToRemoteCamera = true;
                 ((TextView) findViewById(R.id.connectToCameraText))
                         .setText(getString(R.string.mac_connection, cameraMACAddress));
-                Log.v(LOG_TAG_WIFI_DIRECT, "Connected to device " + cameraMACAddress + " IP " + cameraMACAddress);
-                StateStatic.setGlobalCameraMAC(cameraMACAddress);
+                Log.v(LOG_TAG_WIFI_DIRECT, "Connected to device " + cameraMACAddress + " IP " + cameraIPAddress);
                 toggleAddPhotoButton();
             }
         });
     }
 
     /**
-     * Called after MAC not found
+     * Called after IP not found
      */
-    public void MACNotFoundOnARPCallback()
+    public void IPNotFoundOnARPCallback()
     {
-        Log.v(LOG_TAG_WIFI_DIRECT, "MAC not Found On ARP Callback called");
+        Log.v(LOG_TAG_WIFI_DIRECT, "IP not Found In ARP Callback called");
         connectedToRemoteCamera = false;
         runOnUiThread(new Runnable() {
             /**
@@ -1190,13 +1176,11 @@ public class ObjectDetailActivity extends AppCompatActivity
      */
     public void fillSampleNumberSpinner()
     {
-        Log.v(LOG_TAG,"Filling sample number spinner");
         Bundle myBundle = getIntent().getExtras();
         String[] sampleNumbers = myBundle.getStringArray(ALL_SAMPLE_NUMBER);
         Spinner sampleSpinner = (Spinner) findViewById(R.id.sample_spinner);
         CheatSheet.setSpinnerItems(this, sampleSpinner, Arrays.asList(sampleNumbers),
                 sampleNumber + "", R.layout.spinner_item);
-        Log.v(LOG_TAG, "Available sample numbers: " + Arrays.asList(sampleNumbers));
     }
 
     /**
@@ -1247,8 +1231,6 @@ public class ObjectDetailActivity extends AppCompatActivity
         Spinner sample = (Spinner) findViewById(R.id.sample_spinner);
         int selectedItemPos = sample.getSelectedItemPosition();
         int itemCount = sample.getCount();
-        Log.v(LOG_TAG, "selectedItemPos: " + selectedItemPos);
-        Log.v(LOG_TAG, "count: " + itemCount);
         if (selectedItemPos + 1 <= itemCount - 1)
         {
             sample.setSelection(selectedItemPos + 1);
@@ -1265,8 +1247,6 @@ public class ObjectDetailActivity extends AppCompatActivity
         Spinner sample = (Spinner) findViewById(R.id.sample_spinner);
         int selectedItemPos = sample.getSelectedItemPosition();
         int itemCount = sample.getCount();
-        Log.v(LOG_TAG, "selectedItemPos: " + selectedItemPos);
-        Log.v(LOG_TAG, "count: " + itemCount);
         if (selectedItemPos - 1 >= 0)
         {
             sample.setSelection(selectedItemPos - 1);

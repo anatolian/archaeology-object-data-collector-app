@@ -9,10 +9,16 @@ import android.graphics.BitmapFactory;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Environment;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import com.archaeology.ui.SettingsActivity;
@@ -47,6 +53,53 @@ public class CheatSheet
                 android.R.layout.simple_spinner_item, items);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         aSpinner.setAdapter(adapter);
+    }
+
+    /**
+     * Read IP and MAC addresses from ARP file
+     * @return Returns a list of devices
+     */
+    public static String findIPFromMAC(String MACAddress)
+    {
+        BufferedReader bufferedReader = null;
+        String IP = null;
+        Log.v("ARP FILE", "Looking for MAC " + MACAddress);
+        try
+        {
+            bufferedReader = new BufferedReader(new FileReader("/proc/net/arp"));
+            String line;
+            while ((line = bufferedReader.readLine()) != null)
+            {
+                Log.v("ARP FILE", "Read line " + line);
+                String[] splitted = line.split(" +");
+                if (splitted != null && splitted.length >= 4)
+                {
+                    String MAC = splitted[3];
+                    Log.v("ARP FILE", "Found MAC " + MAC);
+                    if (MAC.matches("..:..:..:..:..:..") && MAC.equals(MACAddress))
+                    {
+                        IP = splitted[0];
+                        Log.v("ARP FILE", IP);
+                    }
+                }
+            }
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+        finally
+        {
+            try
+            {
+                bufferedReader.close();
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+        }
+        return IP;
     }
 
     /**

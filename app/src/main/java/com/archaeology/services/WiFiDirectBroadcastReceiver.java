@@ -1,6 +1,7 @@
 // WiFi direct receiver
 // @author: msenol86, ygowda
 package com.archaeology.services;
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -10,7 +11,13 @@ import android.net.wifi.p2p.WifiP2pDeviceList;
 import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.util.Log;
+import com.archaeology.R;
+import com.archaeology.ui.MyWiFiActivity;
+
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import static com.archaeology.util.StateStatic.LOG_TAG;
 import static com.archaeology.util.StateStatic.LOG_TAG_WIFI_DIRECT;
 public class WiFiDirectBroadcastReceiver extends BroadcastReceiver
@@ -162,16 +169,12 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver
         else if (WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action))
         {
             Log.v(LOG_TAG, "inside peers changed loop");
-            if (!mActivity.isConnectedDialogVisible())
+            if (mManager != null)
             {
-                Log.v(LOG_TAG, "connect dialog did not appear");
-                if (mManager != null)
-                {
-                    Log.v(LOG_TAG, "requesting peers from mywifiactivity");
-                    mManager.requestPeers(mChannel, peerListListener);
-                }
+                mManager.requestPeers(mChannel, peerListListener);
             }
-            else
+            Log.d(MyWiFiActivity.TAG, "P2P peers changed");
+            if (mActivity.isConnectedDialogVisible())
             {
                 Log.v(LOG_TAG, "peers changed and setting info listener");
                 mActivity.enableGetIPButton();
@@ -182,7 +185,6 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver
                     mManager.requestConnectionInfo(mChannel, mConnectionListener);
                 }
             }
-            // Call WifiP2pManager.requestPeers() to get a list of current peers
         }
         else if (WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action))
         {
@@ -206,6 +208,12 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver
             Log.v(LOG_TAG_WIFI_DIRECT, "Wifi Direct Connection Status Changed");
             mActivity.connectionStatusChangedCallback(networkInfo);
             // Respond to new connection or disconnections
+        }
+        else if (WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION.equals(action))
+        {
+            Log.v(LOG_TAG_WIFI_DIRECT, "This device P2P changed");
+//            DeviceListFragment fragment = (DeviceListFragment) activity.getFragmentManager().findFragmentById(R.id.frag_list);
+//            fragment.updateThisDevice((WifiP2pDevice) intent.getParcelableExtra(WifiP2pManager.EXTRA_WIFI_P2P_DEVICE));
         }
     }
 }

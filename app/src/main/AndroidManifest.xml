@@ -61,7 +61,7 @@
         <activity android:name="com.archaeology.ui.CeramicInputActivity" />
         <activity android:name="com.archaeology.ui.ObjectDetailActivity" />
         <activity android:name="com.archaeology.ui.MyWiFiActivity" />
-        <activity android:name="com.archaeology.ui.PhotosActivity"></activity>
+        <activity android:name="com.archaeology.ui.PhotosActivity"/>
     </application>
 
 </manifest>

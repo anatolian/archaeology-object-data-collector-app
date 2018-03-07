@@ -51,6 +51,7 @@ public class StateStatic
     private static boolean isRemoteCameraSelected = true;
     public static boolean connectedToRemoteCamera = false;
     public static String cameraMACAddress = DEFAULT_CAMERA_MAC;
+    public static String cameraIPAddress = CheatSheet.findIPFromMAC(cameraMACAddress);
     public static boolean isTakePhotoButtonClicked = false;
     /**
      * Return web server URL that is used to connect to the main database
@@ -104,6 +105,24 @@ public class StateStatic
     public static void setGlobalCameraMAC(String globalCameraMAC)
     {
         StateStatic.globalCameraMAC = globalCameraMAC;
+    }
+
+    /**
+     * Get Camera IP address
+     * @return Returns camera IP address
+     */
+    public static String getCameraIP()
+    {
+        return cameraIPAddress;
+    }
+
+    /**
+     * Set IP address
+     * @param cameraIP - new IP address
+     */
+    public static void setCameraIP(String cameraIP)
+    {
+        StateStatic.cameraIPAddress = cameraIP;
     }
 
     /**

@@ -116,9 +116,9 @@ public class VolleyWrapper
                                                              final JSONObjectResponseWrapper LAMBDA_WRAPPER)
             throws JSONException
     {
-        // setting up with params for json object
+        // setting up with params for JSON object
         final String POST_BODY = new JSONObject().put("method", "startLiveView")
-                .put("params", new JSONArray()).put("id", ID).put("version", "1.0").toString();
+                .put("params", new JSONArray()).put("id", ID).put("version","1.0").toString();
         JSONObject JSONPOSTBody = new JSONObject(POST_BODY);
         // making request
         JsonObjectRequest myRequest = new JsonObjectRequest(Method.POST, URL, JSONPOSTBody,
@@ -143,7 +143,7 @@ public class VolleyWrapper
                 LAMBDA_WRAPPER.errorMethod(error);
             }
         });
-        //setting up retry policy in case of failure
+        // setting up retry policy in case of failure
         myRequest.setRetryPolicy(new DefaultRetryPolicy(5000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         queue.add(myRequest);
@@ -160,7 +160,7 @@ public class VolleyWrapper
                                                             final JSONObjectResponseWrapper LAMBDA_WRAPPER)
             throws JSONException
     {
-        // adding params for json object
+        // adding params for JSON object
         final String POST_BODY = new JSONObject().put("method", "stopLiveView")
                 .put("params", new JSONArray()).put("id", ID).put("version", "1.0").toString();
         JSONObject JSONPOSTBody = new JSONObject(POST_BODY);

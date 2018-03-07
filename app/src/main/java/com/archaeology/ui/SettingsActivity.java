@@ -30,6 +30,7 @@ import com.android.volley.toolbox.DiskBasedCache;
 import com.android.volley.toolbox.HurlStack;
 import com.archaeology.R;
 import com.archaeology.models.StringObjectResponseWrapper;
+import com.archaeology.util.CheatSheet;
 import com.archaeology.util.StateStatic;
 import static com.archaeology.services.VolleyStringWrapper.makeVolleyStringObjectRequest;
 import static com.archaeology.util.StateStatic.DEFAULT_BUCKET_URL;
@@ -42,6 +43,7 @@ import static com.archaeology.util.StateStatic.getGlobalBucketURL;
 import static com.archaeology.util.StateStatic.getRemoteCameraCalibrationInterval;
 import static com.archaeology.util.StateStatic.getTabletCameraCalibrationInterval;
 import static com.archaeology.util.StateStatic.isRemoteCameraSelected;
+import static com.archaeology.util.StateStatic.setCameraIP;
 import static com.archaeology.util.StateStatic.setGlobalCameraMAC;
 import static com.archaeology.util.StateStatic.setGlobalWebServerURL;
 import static com.archaeology.util.StateStatic.setGlobalBucketURL;
@@ -177,8 +179,9 @@ public class SettingsActivity extends AppCompatActivity
         {
             setRemoteCameraCalibrationInterval(getCalibrationIntervalFromLayout());
             setGlobalCameraMAC(getCameraMACFromLayout());
+            setCameraIP(CheatSheet.findIPFromMAC(getCameraMACFromLayout()));
         }
-        Cache cache = new DiskBasedCache(getCacheDir(), 1024 * 1024);
+        Cache cache = new DiskBasedCache(getCacheDir(),1024 * 1024);
         Network network = new BasicNetwork(new HurlStack());
         RequestQueue queue = new RequestQueue(cache, network);
         queue.start();
