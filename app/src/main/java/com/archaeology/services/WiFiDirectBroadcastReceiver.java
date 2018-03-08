@@ -1,7 +1,6 @@
 // WiFi direct receiver
 // @author: msenol86, ygowda
 package com.archaeology.services;
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -11,13 +10,8 @@ import android.net.wifi.p2p.WifiP2pDeviceList;
 import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.util.Log;
-import com.archaeology.R;
 import com.archaeology.ui.MyWiFiActivity;
-
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import static com.archaeology.util.StateStatic.LOG_TAG;
 import static com.archaeology.util.StateStatic.LOG_TAG_WIFI_DIRECT;
 public class WiFiDirectBroadcastReceiver extends BroadcastReceiver
@@ -34,11 +28,6 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver
          * Enable find peers button
          */
         void discoverPeers();
-
-        /**
-         * Enable get IP button
-         */
-        void enableGetIPButton();
 
         /**
          * Connected message
@@ -82,7 +71,6 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver
                 isGroupOwner = true;
                 connectedToDevice = true;
                 Log.v(LOG_TAG, "the group has been formed and you found the owner");
-                mActivity.enableGetIPButton();
             }
             else if (info.groupFormed)
             {
@@ -90,7 +78,6 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver
                 // client thread that connects to the group owner.
                 Log.v(LOG_TAG, "the group has been formed but you cannot find the owner");
                 connectedToDevice = true;
-                mActivity.enableGetIPButton();
             }
         }
     };
@@ -177,7 +164,6 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver
             if (mActivity.isConnectedDialogVisible())
             {
                 Log.v(LOG_TAG, "peers changed and setting info listener");
-                mActivity.enableGetIPButton();
                 int state = intent.getIntExtra(WifiP2pManager.EXTRA_WIFI_STATE, -1);
                 Log.v(LOG_TAG, "the state is " + String.valueOf(state));
                 if (state == WifiP2pManager.WIFI_P2P_STATE_ENABLED)

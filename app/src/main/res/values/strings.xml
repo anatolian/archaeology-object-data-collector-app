@@ -75,11 +75,11 @@
     <string name="nil">null</string>
     <string name="scale_reading">%d</string>
     <string name="wait">Please wait&#8230;</string>
-    <string name="arp_ip">Fetching Ip From Arp File&#8230;</string>
-    <string name="mac_connection">Connected To %s</string>
+    <string name="arp_ip">Fetching IP From ARP File&#8230;</string>
+    <string name="ip_connection">Connected To %s</string>
     <string name="find_peers">Discover Peers</string>
-    <string name="get_ips">Get Ip Addresses</string>
-    <string name="api_call">Api Call</string>
+    <string name="get_ips">Get IP Address</string>
+    <string name="api_call">API Call</string>
     <string name="start_live">start Live View</string>
     <string name="stop_live">Stop Live View</string>
     <string name="zoom_in">Zoom In</string>

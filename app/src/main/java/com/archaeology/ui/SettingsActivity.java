@@ -37,13 +37,13 @@ import static com.archaeology.util.StateStatic.DEFAULT_BUCKET_URL;
 import static com.archaeology.util.StateStatic.DEFAULT_CALIBRATION_INTERVAL;
 import static com.archaeology.util.StateStatic.DEFAULT_WEB_SERVER_URL;
 import static com.archaeology.util.StateStatic.DEFAULT_CAMERA_MAC;
+import static com.archaeology.util.StateStatic.cameraIPAddress;
 import static com.archaeology.util.StateStatic.getGlobalCameraMAC;
 import static com.archaeology.util.StateStatic.getGlobalWebServerURL;
 import static com.archaeology.util.StateStatic.getGlobalBucketURL;
 import static com.archaeology.util.StateStatic.getRemoteCameraCalibrationInterval;
 import static com.archaeology.util.StateStatic.getTabletCameraCalibrationInterval;
 import static com.archaeology.util.StateStatic.isRemoteCameraSelected;
-import static com.archaeology.util.StateStatic.setCameraIP;
 import static com.archaeology.util.StateStatic.setGlobalCameraMAC;
 import static com.archaeology.util.StateStatic.setGlobalWebServerURL;
 import static com.archaeology.util.StateStatic.setGlobalBucketURL;
@@ -179,7 +179,7 @@ public class SettingsActivity extends AppCompatActivity
         {
             setRemoteCameraCalibrationInterval(getCalibrationIntervalFromLayout());
             setGlobalCameraMAC(getCameraMACFromLayout());
-            setCameraIP(CheatSheet.findIPFromMAC(getCameraMACFromLayout()));
+            cameraIPAddress = CheatSheet.findIPFromMAC(getCameraMACFromLayout());
         }
         Cache cache = new DiskBasedCache(getCacheDir(),1024 * 1024);
         Network network = new BasicNetwork(new HurlStack());

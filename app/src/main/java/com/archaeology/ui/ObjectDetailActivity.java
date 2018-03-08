@@ -80,10 +80,8 @@ import static com.archaeology.util.StateStatic.getTimeStamp;
 import static com.archaeology.util.StateStatic.isBluetoothEnabled;
 import static com.archaeology.util.StateStatic.isRemoteCameraSelected;
 import static com.archaeology.util.StateStatic.isTakePhotoButtonClicked;
-import static com.archaeology.util.StateStatic.setCameraIP;
-
 public class ObjectDetailActivity extends AppCompatActivity
-        implements WiFiDirectBroadcastReceiver.WifiDirectBroadcastReceivable
+//        implements WiFiDirectBroadcastReceiver.WifiDirectBroadcastReceivable
 {
     // wifi manager will help you get information for wifi to build the URL that you will need to
     // communicate with camera and the database (peer to peer connectivity)
@@ -106,7 +104,7 @@ public class ObjectDetailActivity extends AppCompatActivity
             {
                 setCurrentScaleWeight(Integer.parseInt(msg.obj.toString().trim()) + "");
             }
-            else if(msg.what == MESSAGE_STATUS_CHANGE)
+            else if (msg.what == MESSAGE_STATUS_CHANGE)
             {
                 setBluetoothConnectionStatus(msg.obj.toString().trim());
             }
@@ -175,7 +173,7 @@ public class ObjectDetailActivity extends AppCompatActivity
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
-        this.registerReceiver(M_RECEIVER, mIntentFilter);
+        registerReceiver(M_RECEIVER, mIntentFilter);
         queue = Volley.newRequestQueue(this);
         // getting object data from previous activity
         Bundle myBundle = getIntent().getExtras();
@@ -312,7 +310,14 @@ public class ObjectDetailActivity extends AppCompatActivity
         }
         mManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
         mChannel = mManager.initialize(this, getMainLooper(), null);
-        wiFiDirectBroadcastReceiver = new WiFiDirectBroadcastReceiver(mManager, mChannel, this);
+//        wiFiDirectBroadcastReceiver = new WiFiDirectBroadcastReceiver(mManager, mChannel, this);
+        cameraIPAddress = CheatSheet.findIPFromMAC(getGlobalCameraMAC());
+        if (cameraIPAddress != null)
+        {
+            ((TextView) findViewById(R.id.connectToCameraText))
+                    .setText(getString(R.string.ip_connection, cameraIPAddress));
+//            registerReceiver(wiFiDirectBroadcastReceiver, mIntentFilter);
+        }
     }
 
     /**
@@ -446,15 +451,22 @@ public class ObjectDetailActivity extends AppCompatActivity
         {
             pickPeersDialog.dismiss();
         }
-        try
-        {
-            unregisterReceiver(nutriScaleBroadcastReceiver);
-            unregisterReceiver(wiFiDirectBroadcastReceiver);
-        }
-        catch (IllegalArgumentException e)
-        {
-            Log.v(LOG_TAG_BLUETOOTH, "Trying to unregister a non registered receiver");
-        }
+//        try
+//        {
+//            unregisterReceiver(wiFiDirectBroadcastReceiver);
+//        }
+//        catch (IllegalArgumentException e)
+//        {
+//            Log.v(LOG_TAG_WIFI_DIRECT, "Trying to unregister non-registered receiver");
+//        }
+//        try
+//        {
+//            unregisterReceiver(nutriScaleBroadcastReceiver);
+//        }
+//        catch (IllegalArgumentException e)
+//        {
+//            Log.v(LOG_TAG_BLUETOOTH, "Trying to unregister non-registered receiver");
+//        }
     }
 
     /**
@@ -464,8 +476,8 @@ public class ObjectDetailActivity extends AppCompatActivity
     protected void onResume()
     {
         super.onResume();
-        wiFiDirectBroadcastReceiver = new WiFiDirectBroadcastReceiver(mManager, mChannel,this);
-        registerReceiver(wiFiDirectBroadcastReceiver, mIntentFilter);
+//        registerReceiver(nutriScaleBroadcastReceiver, mIntentFilter);
+//        registerReceiver(wiFiDirectBroadcastReceiver, mIntentFilter);
     }
 
     /**
@@ -480,15 +492,22 @@ public class ObjectDetailActivity extends AppCompatActivity
         {
             pickPeersDialog.dismiss();
         }
-        try
-        {
-            unregisterReceiver(wiFiDirectBroadcastReceiver);
-            unregisterReceiver(nutriScaleBroadcastReceiver);
-        }
-        catch (IllegalArgumentException e)
-        {
-            Log.v(LOG_TAG, "Trying to unregister a non registered receiver");
-        }
+//        try
+//        {
+//            unregisterReceiver(wiFiDirectBroadcastReceiver);
+//        }
+//        catch (IllegalArgumentException e)
+//        {
+//            Log.v(LOG_TAG_WIFI_DIRECT, "Trying to unregister non-registered receiver");
+//        }
+//        try
+//        {
+//            unregisterReceiver(nutriScaleBroadcastReceiver);
+//        }
+//        catch (IllegalArgumentException e)
+//        {
+//            Log.v(LOG_TAG_BLUETOOTH, "Trying to unregister non-registered receiver");
+//        }
     }
 
     /**
@@ -498,7 +517,22 @@ public class ObjectDetailActivity extends AppCompatActivity
     public void onPause()
     {
         super.onPause();
-        unregisterReceiver(wiFiDirectBroadcastReceiver);
+//        try
+//        {
+//            unregisterReceiver(wiFiDirectBroadcastReceiver);
+//        }
+//        catch (IllegalArgumentException e)
+//        {
+//            Log.v(LOG_TAG_WIFI_DIRECT, "Trying to unregister non-registered receiver");
+//        }
+//        try
+//        {
+//            unregisterReceiver(nutriScaleBroadcastReceiver);
+//        }
+//        catch (IllegalArgumentException e)
+//        {
+//            Log.v(LOG_TAG_BLUETOOTH, "Trying to unregister non-registered receiver");
+//        }
     }
 
     /**
@@ -793,7 +827,7 @@ public class ObjectDetailActivity extends AppCompatActivity
         if (isRemoteCameraSelected())
         {
             // Just connect to found IP
-            setCameraIP(CheatSheet.findIPFromMAC(getGlobalCameraMAC()));
+            cameraIPAddress = CheatSheet.findIPFromMAC(getGlobalCameraMAC());
             showRemoteCameraDialog(view);
         }
         else
@@ -969,207 +1003,113 @@ public class ObjectDetailActivity extends AppCompatActivity
         }
     }
 
-    /**
-     * Interface from WiFiDirectBroadcastReceiver.java. Will help to connect with external devices
-     * @param LIST_OF_DEVICES - connected devices
-     */
-    @Override
-    public void peersDiscovered(final ArrayList<WifiP2pDevice> LIST_OF_DEVICES)
-    {
-        Log.v(LOG_TAG_WIFI_DIRECT, LIST_OF_DEVICES.size() + " device discovered");
-        // so you can connect with camera organizing all devices phone can connect to
-        final ArrayList<String> LIST_OF_DEVICE_NAMES = new ArrayList<>(LIST_OF_DEVICES.size());
-        for (WifiP2pDevice myDevice: LIST_OF_DEVICES)
-        {
-            Log.v(LOG_TAG_WIFI_DIRECT, myDevice.deviceName);
-            LIST_OF_DEVICE_NAMES.add(myDevice.deviceAddress);
-        }
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Pick Remote Camera").setItems(LIST_OF_DEVICE_NAMES.toArray(new String[] {}),
-                new DialogInterface.OnClickListener() {
-            /**
-             * User clicked remote camera
-             * @param dialog - camera dialog
-             * @param which - item selected
-             */
-            public void onClick(DialogInterface dialog, int which)
-            {
-                // The 'which' argument contains the index position of the selected item.
-                // setting up connection with mac device
-                final String MAC_ADDRESS = LIST_OF_DEVICE_NAMES.get(which);
-                WifiP2pDevice device = LIST_OF_DEVICES.get(which);
-                device.deviceAddress = MAC_ADDRESS;
-                WifiP2pConfig config = new WifiP2pConfig();
-                config.deviceAddress = device.deviceAddress;
-                config.wps.setup = WpsInfo.PBC;
-                Log.v(LOG_TAG, "the device address is " + config.deviceAddress);
-                mManager.connect(mChannel, config, new WifiP2pManager.ActionListener() {
-                    /**
-                     * Connection succeeded
-                     */
-                    @Override
-                    public void onSuccess()
-                    {
-                        cameraMACAddress = MAC_ADDRESS;
-                        Log.v(LOG_TAG, "MAC address is " + MAC_ADDRESS);
-                        // so at this point the connection has been made
-                        ((TextView) findViewById(R.id.connectToCameraText)).setText(getString(R.string.wait));
-                    }
+//    /**
+//     * Interface from WiFiDirectBroadcastReceiver.java. Will help to connect with external devices
+//     * @param LIST_OF_DEVICES - connected devices
+//     */
+//    @Override
+//    public void peersDiscovered(final ArrayList<WifiP2pDevice> LIST_OF_DEVICES)
+//    {
+//        Log.v(LOG_TAG_WIFI_DIRECT, LIST_OF_DEVICES.size() + " device discovered");
+//        // so you can connect with camera organizing all devices phone can connect to
+//        final ArrayList<String> LIST_OF_DEVICE_NAMES = new ArrayList<>(LIST_OF_DEVICES.size());
+//        for (WifiP2pDevice myDevice: LIST_OF_DEVICES)
+//        {
+//            Log.v(LOG_TAG_WIFI_DIRECT, myDevice.deviceName);
+//            LIST_OF_DEVICE_NAMES.add(myDevice.deviceAddress);
+//        }
+//        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//        builder.setTitle("Pick Remote Camera").setItems(LIST_OF_DEVICE_NAMES.toArray(new String[] {}),
+//                new DialogInterface.OnClickListener() {
+//            /**
+//             * User clicked remote camera
+//             * @param dialog - camera dialog
+//             * @param which - item selected
+//             */
+//            public void onClick(DialogInterface dialog, int which)
+//            {
+//                // The 'which' argument contains the index position of the selected item.
+//                // setting up connection with mac device
+//                final String MAC_ADDRESS = LIST_OF_DEVICE_NAMES.get(which);
+//                WifiP2pDevice device = LIST_OF_DEVICES.get(which);
+//                device.deviceAddress = MAC_ADDRESS;
+//                WifiP2pConfig config = new WifiP2pConfig();
+//                config.deviceAddress = device.deviceAddress;
+//                config.wps.setup = WpsInfo.PBC;
+//                Log.v(LOG_TAG, "the device address is " + config.deviceAddress);
+//                mManager.connect(mChannel, config, new WifiP2pManager.ActionListener() {
+//                    /**
+//                     * Connection succeeded
+//                     */
+//                    @Override
+//                    public void onSuccess()
+//                    {
+//                        cameraMACAddress = MAC_ADDRESS;
+//                        Log.v(LOG_TAG, "MAC address is " + MAC_ADDRESS);
+//                        // so at this point the connection has been made
+//                        ((TextView) findViewById(R.id.connectToCameraText)).setText(getString(R.string.wait));
+//                    }
+//
+//                    /**
+//                     * Connection failed
+//                     * @param reason - error
+//                     */
+//                    @Override
+//                    public void onFailure(int reason)
+//                    {
+//                        // TODO: failure logic
+//                        Log.v(LOG_TAG, "the connection has failed " + reason);
+//                    }
+//                });
+//            }
+//        });
+//        pickPeersDialog = builder.create();
+//    }
 
-                    /**
-                     * Connection failed
-                     * @param reason - error
-                     */
-                    @Override
-                    public void onFailure(int reason)
-                    {
-                        // TODO: failure logic
-                        Log.v(LOG_TAG, "the connection has failed " + reason);
-                    }
-                });
-            }
-        });
-        pickPeersDialog = builder.create();
-    }
+//    /**
+//     * Allows you to connect with other devices
+//     */
+//    @Override
+//    public void discoverPeers()
+//    {
+//        if (!connectedToRemoteCamera)
+//        {
+//            mManager.removeGroup(mChannel, null);
+//            // if connection is successful then disable connect to camera button
+//            mManager.discoverPeers(mChannel, new WifiP2pManager.ActionListener() {
+//                /**
+//                 * Connection successful
+//                 */
+//                @Override
+//                public void onSuccess()
+//                {
+//                    ((TextView) findViewById(R.id.connectToCameraText))
+//                            .setText(getString(R.string.ip_connection, cameraIPAddress));
+//                    Log.v(LOG_TAG_WIFI_DIRECT, "Peer discovery started");
+//                }
+//
+//                /**
+//                 * Connection failed
+//                 * @param reason - error
+//                 */
+//                @Override
+//                public void onFailure(int reason)
+//                {
+//                    Log.v(LOG_TAG_WIFI_DIRECT, "Peers discovery failed");
+//                }
+//            });
+//        }
+//    }
 
-    /**
-     * Allows you to connect with other devices
-     */
-    @Override
-    public void discoverPeers()
-    {
-        if (!connectedToRemoteCamera)
-        {
-            mManager.removeGroup(mChannel, null);
-            // if connection is successful then disable connect to camera button
-            mManager.discoverPeers(mChannel, new WifiP2pManager.ActionListener() {
-                /**
-                 * Connection successful
-                 */
-                @Override
-                public void onSuccess()
-                {
-                    ((TextView) findViewById(R.id.connectToCameraText)).setText(getString(R.string.no_remote_camera));
-                    Log.v(LOG_TAG_WIFI_DIRECT, "Peer discovery started");
-                }
-
-                /**
-                 * Connection failed
-                 * @param reason - error
-                 */
-                @Override
-                public void onFailure(int reason)
-                {
-                    Log.v(LOG_TAG_WIFI_DIRECT, "Peers discovery failed");
-                }
-            });
-        }
-    }
-
-    /**
-     * Getting the IP address in order to establish a connection
-     */
-    @Override
-    public void enableGetIPButton()
-    {
-        // so at this point you were able to establish a connection with the camera
-        connectedToRemoteCamera = true;
-        ((TextView) findViewById(R.id.connectToCameraText)).setText(getString(R.string.arp_ip));
-        new Thread() {
-            /**
-             * Run the Thread
-             */
-            @Override
-            public void run()
-            {
-                // using thread to continuously try to connect to camera
-                int retryCount = 0;
-                int retryLimit = 5;
-                while (true)
-                {
-                    Log.v(LOG_TAG, "inside the loop");
-                    if (retryCount < retryLimit && connectedToRemoteCamera)
-                    {
-                        if (cameraIPAddress != null)
-                        {
-                            Log.v(LOG_TAG, "you were able to get the IP address");
-                            IPFoundOnARPCallback();
-                            break;
-                        }
-                        else
-                        {
-                            try
-                            {
-                                Thread.sleep(2000);
-                                retryCount = retryCount + 1;
-                            }
-                            catch (InterruptedException e)
-                            {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-                    else
-                    {
-                        IPNotFoundOnARPCallback();
-                        Log.v(LOG_TAG, "could not find the IP");
-                        break;
-                    }
-                }
-            }
-        }.start();
-    }
-
-    /**
-     * IsConnected dialog
-     * @return Returns whether the dialog opened
-     */
-    @Override
-    public boolean isConnectedDialogVisible()
-    {
-        return isPickPeersDialogVisible;
-    }
-
-    /**
-     * Called after IP found in ARP file
-     */
-    public void IPFoundOnARPCallback()
-    {
-        runOnUiThread(new Runnable() {
-            /**
-             * Run the thread
-             */
-            @Override
-            public void run()
-            {
-                connectedToRemoteCamera = true;
-                ((TextView) findViewById(R.id.connectToCameraText))
-                        .setText(getString(R.string.mac_connection, cameraMACAddress));
-                Log.v(LOG_TAG_WIFI_DIRECT, "Connected to device " + cameraMACAddress + " IP " + cameraIPAddress);
-                toggleAddPhotoButton();
-            }
-        });
-    }
-
-    /**
-     * Called after IP not found
-     */
-    public void IPNotFoundOnARPCallback()
-    {
-        Log.v(LOG_TAG_WIFI_DIRECT, "IP not Found In ARP Callback called");
-        connectedToRemoteCamera = false;
-        runOnUiThread(new Runnable() {
-            /**
-             * Run the thread
-             */
-            @Override
-            public void run()
-            {
-                discoverPeers();
-                toggleAddPhotoButton();
-            }
-        });
-    }
+//    /**
+//     * IsConnected dialog
+//     * @return Returns whether the dialog opened
+//     */
+//    @Override
+//    public boolean isConnectedDialogVisible()
+//    {
+//        return isPickPeersDialogVisible;
+//    }
 
     /**
      * Display sample number of items in spinner
@@ -1213,11 +1153,11 @@ public class ObjectDetailActivity extends AppCompatActivity
     {
         if (!networkInfo.isConnectedOrConnecting())
         {
-            if (cameraMACAddress == null)
+            if (cameraIPAddress == null)
             {
-                connectedToRemoteCamera = false;
+//                connectedToRemoteCamera = false;
                 toggleAddPhotoButton();
-                discoverPeers();
+//                discoverPeers();
             }
         }
     }
@@ -1246,7 +1186,6 @@ public class ObjectDetailActivity extends AppCompatActivity
     {
         Spinner sample = (Spinner) findViewById(R.id.sample_spinner);
         int selectedItemPos = sample.getSelectedItemPosition();
-        int itemCount = sample.getCount();
         if (selectedItemPos - 1 >= 0)
         {
             sample.setSelection(selectedItemPos - 1);
@@ -1261,7 +1200,7 @@ public class ObjectDetailActivity extends AppCompatActivity
     {
         if (isRemoteCameraSelected())
         {
-            if (connectedToRemoteCamera)
+            if (cameraIPAddress != null)
             {
                 findViewById(R.id.button26).setEnabled(true);
             }
@@ -1297,6 +1236,22 @@ public class ObjectDetailActivity extends AppCompatActivity
      */
     public void goToWiFiActivity(View v)
     {
+//        try
+//        {
+//            unregisterReceiver(wiFiDirectBroadcastReceiver);
+//        }
+//        catch (IllegalArgumentException e)
+//        {
+//            Log.v(LOG_TAG_WIFI_DIRECT, "Trying to unregister non-registered receiver");
+//        }
+//        try
+//        {
+//            unregisterReceiver(nutriScaleBroadcastReceiver);
+//        }
+//        catch (IllegalArgumentException e)
+//        {
+//            Log.v(LOG_TAG_BLUETOOTH, "Trying to unregister non-registered receiver");
+//        }
         Intent wifiActivity = new Intent(this, MyWiFiActivity.class);
         startActivity(wifiActivity);
     }
