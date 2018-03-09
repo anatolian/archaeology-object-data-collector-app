@@ -117,7 +117,7 @@ public class VolleyWrapper
             throws JSONException
     {
         // setting up with params for JSON object
-        final String POST_BODY = new JSONObject().put("method", "startLiveView")
+        final String POST_BODY = new JSONObject().put("method", "startLiveview")
                 .put("params", new JSONArray()).put("id", ID).put("version","1.0").toString();
         JSONObject JSONPOSTBody = new JSONObject(POST_BODY);
         // making request
@@ -161,7 +161,7 @@ public class VolleyWrapper
             throws JSONException
     {
         // adding params for JSON object
-        final String POST_BODY = new JSONObject().put("method", "stopLiveView")
+        final String POST_BODY = new JSONObject().put("method", "stopLiveview")
                 .put("params", new JSONArray()).put("id", ID).put("version", "1.0").toString();
         JSONObject JSONPOSTBody = new JSONObject(POST_BODY);
         // making request
@@ -300,7 +300,7 @@ public class VolleyWrapper
                                                                final JSONObjectResponseWrapper LAMBDA_WRAPPER)
             throws JSONException
     {
-        final String POST_BODY = new JSONObject().put("method", "setPostViewImageSize")
+        final String POST_BODY = new JSONObject().put("method", "setPostviewImageSize")
                 .put("params", new JSONArray().put("Original")).put("id", ID)
                 .put("version", "1.0").toString();
         JSONObject JSONPOSTBody = new JSONObject(POST_BODY);
