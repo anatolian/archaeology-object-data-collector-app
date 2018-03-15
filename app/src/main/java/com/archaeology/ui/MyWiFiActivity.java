@@ -19,6 +19,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 import com.android.volley.RequestQueue;
@@ -39,7 +40,7 @@ import com.archaeology.models.JSONObjectResponseWrapper;
 import static com.archaeology.util.StateStatic.LOG_TAG_WIFI_DIRECT;
 import static com.archaeology.util.StateStatic.cameraIPAddress;
 import static com.archaeology.util.StateStatic.cameraMACAddress;
-//import static com.archaeology.util.StateStatic.connectedToRemoteCamera;
+import static com.archaeology.util.StateStatic.connectedToRemoteCamera;
 public class MyWiFiActivity extends AppCompatActivity
 //        implements WiFiDirectBroadcastReceiver.WifiDirectBroadcastReceivable
 {
@@ -51,16 +52,16 @@ public class MyWiFiActivity extends AppCompatActivity
     RequestQueue queue;
     int requestID;
     IntentFilter mIntentFilter;
-    private boolean connectedDialogVisible = false;
-    public boolean connectButtonClicked = false;
-    /**
-     * Open connected dialog
-     * @return Returns whether the dialog appeared
-     */
-    public boolean isConnectedDialogVisible()
-    {
-        return connectedDialogVisible;
-    }
+//    private boolean connectedDialogVisible = false;
+//    public boolean connectButtonClicked = false;
+//    /**
+//     * Open connected dialog
+//     * @return Returns whether the dialog appeared
+//     */
+//    public boolean isConnectedDialogVisible()
+//    {
+//        return connectedDialogVisible;
+//    }
 
     /**
      * Launch activity
@@ -88,6 +89,7 @@ public class MyWiFiActivity extends AppCompatActivity
         mChannel = mManager.initialize(this, getMainLooper(), null);
 //        mReceiver = new WiFiDirectBroadcastReceiver(mManager, mChannel, this);
 //        registerReceiver(mReceiver, mIntentFilter);
+        disableAPIButtons();
     }
 
     /**
@@ -230,36 +232,37 @@ public class MyWiFiActivity extends AppCompatActivity
 //        }
 //    }
 
-//    /**
-//     * Look for peers
-//     */
-//    public void discoverPeers()
-//    {
-//        if (!connectedToRemoteCamera)
-//        {
-//            mManager.removeGroup(mChannel, null);
-//            mManager.discoverPeers(mChannel, new WifiP2pManager.ActionListener() {
-//                /**
-//                 * Peer found
-//                 */
-//                @Override
-//                public void onSuccess()
-//                {
-//                    Log.v(LOG_TAG_WIFI_DIRECT, "Peer discovery started");
-//                }
-//
-//                /**
-//                 * Nothing found
-//                 * @param reason - error
-//                 */
-//                @Override
-//                public void onFailure(int reason)
-//                {
-//                    Log.v(LOG_TAG_WIFI_DIRECT, "Peers discovery failed");
-//                }
-//            });
-//        }
-//    }
+    /**
+     * Look for peers
+     * @param view - discover peers button
+     */
+    public void discoverPeers(View view)
+    {
+        if (!connectedToRemoteCamera)
+        {
+            mManager.removeGroup(mChannel, null);
+            mManager.discoverPeers(mChannel, new WifiP2pManager.ActionListener() {
+                /**
+                 * Peer found
+                 */
+                @Override
+                public void onSuccess()
+                {
+                    Log.v(LOG_TAG_WIFI_DIRECT, "Peer discovery started");
+                }
+
+                /**
+                 * Nothing found
+                 * @param reason - error
+                 */
+                @Override
+                public void onFailure(int reason)
+                {
+                    Log.v(LOG_TAG_WIFI_DIRECT, "Peers discovery failed");
+                }
+            });
+        }
+    }
 
     /**
      * Show found IP address
@@ -362,8 +365,9 @@ public class MyWiFiActivity extends AppCompatActivity
                 @Override
                 public void errorMethod(VolleyError error)
                 {
+                    // TODO: See what was supposed to happen here. Should it go back to previous activity?
                     error.printStackTrace();
-                    Toast.makeText(getApplicationContext(), "Not Connected to Camera", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getApplicationContext(), "Not Connected to Camera", Toast.LENGTH_SHORT).show();
                     Log.v(LOG_TAG_WIFI_DIRECT, error.toString());
                 }
             });
@@ -424,6 +428,7 @@ public class MyWiFiActivity extends AppCompatActivity
                                         stopLiveView(VIEW);
                                     }
                                 });
+                                enableAPIButtons();
                             }
                         });
                     }
@@ -470,6 +475,17 @@ public class MyWiFiActivity extends AppCompatActivity
                 public void responseMethod(JSONObject response)
                 {
                     Log.v(LOG_TAG_WIFI_DIRECT, response.toString());
+                    runOnUiThread(new Runnable() {
+                        /**
+                         * Run Thread
+                         */
+                        @Override
+                        public void run()
+                        {
+                            getLiveViewSurface().stop();
+                        }
+                    });
+                    disableAPIButtons();
                 }
 
                 /**
@@ -488,6 +504,30 @@ public class MyWiFiActivity extends AppCompatActivity
             e.printStackTrace();
             Toast.makeText(this, "Not Connected to Camera", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    /**
+     * Disable API Buttons
+     */
+    private void disableAPIButtons()
+    {
+        findViewById(R.id.take_picture_button).setEnabled(false);
+        findViewById(R.id.start_live_view_button).setEnabled(true);
+        findViewById(R.id.stop_live_view_button).setEnabled(false);
+        findViewById(R.id.zoom_in_button).setEnabled(false);
+        findViewById(R.id.zoom_out_button).setEnabled(false);
+    }
+
+    /**
+     * Enable API Buttons
+     */
+    private void enableAPIButtons()
+    {
+        findViewById(R.id.take_picture_button).setEnabled(true);
+        findViewById(R.id.start_live_view_button).setEnabled(false);
+        findViewById(R.id.stop_live_view_button).setEnabled(true);
+        findViewById(R.id.zoom_in_button).setEnabled(true);
+        findViewById(R.id.zoom_out_button).setEnabled(true);
     }
 
     /**
@@ -521,6 +561,45 @@ public class MyWiFiActivity extends AppCompatActivity
                     error.printStackTrace();
                 }
             });
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+            Toast.makeText(this, "Not Connected to Camera", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /**
+     * Zoom out on camera
+     * @param view - camera view
+     */
+    public void zoomOut(View view)
+    {
+        final String URL = buildAPIURLFromIP(cameraIPAddress);
+        try
+        {
+            VolleyWrapper.makeVolleySonyAPIActZoomRequest("out", queue, URL, requestID++,
+                    new JSONObjectResponseWrapper(this) {
+                        /**
+                         * Response received
+                         * @param response - camera response
+                         */
+                        @Override
+                        public void responseMethod(JSONObject response)
+                        {
+                            Log.v(LOG_TAG_WIFI_DIRECT, response.toString());
+                        }
+
+                        /**
+                         * Connection failed
+                         * @param error - failure
+                         */
+                        @Override
+                        public void errorMethod(VolleyError error)
+                        {
+                            error.printStackTrace();
+                        }
+                    });
         }
         catch (JSONException e)
         {

@@ -226,12 +226,12 @@ public class PhotoFragment extends Fragment
             if (DICT_ENTRY.getValue().equals(MARKED_AS_TO_DOWNLOAD))
             {
                 PICASSO_SINGLETON.fetchAndInsertImage((LinearLayout) inflatedView, DICT_ENTRY.getKey(),
-                        getActivity(), DICT_ENTRY.getValue(), new PhotoOnClickListener(), PICASSO_CALLBACK);
+                        getActivity(), new PhotoOnClickListener(), PICASSO_CALLBACK);
             }
             else if (DICT_ENTRY.getValue().equals(MARKED_AS_ADDED))
             {
                 PICASSO_SINGLETON.fetchAndInsertImage((LinearLayout) inflatedView, DICT_ENTRY.getKey(),
-                        getActivity(), DICT_ENTRY.getValue(), new PhotoOnClickListener(), PICASSO_CALLBACK);
+                        getActivity(), new PhotoOnClickListener(), PICASSO_CALLBACK);
                 final Activity PARENT_ACTIVITY = getActivity();
                 if (PARENT_ACTIVITY instanceof ObjectDetailActivity)
                 {

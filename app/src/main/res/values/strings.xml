@@ -83,7 +83,7 @@
     <string name="start_live">start Live View</string>
     <string name="stop_live">Stop Live View</string>
     <string name="zoom_in">Zoom In</string>
-    <string name="get_api">Get Api Commands</string>
+    <string name="get_api">Get API Commands</string>
     <string name="call_api">Call Specific Api Function</string>
     <string name="connect">Connect</string>
     <string name="default_base_url">https://thawing-plains-16187.herokuapp.com/web</string>
@@ -158,4 +158,5 @@
     <string name = "artifact_image">Picture of the archived artifact</string>
     <string name = "bucket_url">S3 Bucket URL</string>
     <string name = "default_bucket_url">s3.console.aws.amazon.com/s3/buckets/pennmuseum/</string>
+    <string name = "zoom_out">Zoom Out</string>
 </resources>

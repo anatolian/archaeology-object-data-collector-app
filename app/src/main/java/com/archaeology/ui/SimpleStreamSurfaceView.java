@@ -216,6 +216,7 @@ public class SimpleStreamSurfaceView extends SurfaceView implements SurfaceHolde
     public void stop()
     {
         mWhileFetching = false;
+        drawBlackFrame();
     }
 
     /**

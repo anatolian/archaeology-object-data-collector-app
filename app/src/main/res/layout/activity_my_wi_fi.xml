@@ -40,8 +40,8 @@
             <Button
                 android:layout_width = "match_parent"
                 android:layout_height = "wrap_content"
-                android:text = "@string/api_call"
-                android:id = "@+id/button20"
+                android:text = "@string/take_picture"
+                android:id = "@+id/take_picture_button"
                 android:layout_below = "@+id/button15"
                 android:layout_centerHorizontal = "true"
                 android:onClick = "takePhoto"/>
@@ -49,23 +49,23 @@
                 android:layout_width = "match_parent"
                 android:layout_height = "wrap_content"
                 android:id = "@+id/sonyCameraPhoto"
-                android:layout_below = "@+id/button22"
+                android:layout_below = "@+id/stop_live_view_button"
                 android:layout_centerHorizontal = "true"
                 android:contentDescription="@string/camera_live_view"/>
             <Button
                 android:layout_width = "match_parent"
                 android:layout_height = "wrap_content"
                 android:text = "@string/start_live"
-                android:id = "@+id/button21"
-                android:layout_below = "@+id/button20"
+                android:id = "@+id/start_live_view_button"
+                android:layout_below = "@+id/take_picture_button"
                 android:layout_centerHorizontal = "true"
                 android:onClick = "startLiveView"/>
             <Button
                 android:layout_width = "match_parent"
                 android:layout_height = "wrap_content"
                 android:text = "@string/stop_live"
-                android:id = "@+id/button22"
-                android:layout_below = "@+id/button21"
+                android:id = "@+id/stop_live_view_button"
+                android:layout_below = "@+id/start_live_view_button"
                 android:layout_centerHorizontal = "true"
                 android:onClick = "stopLiveView"/>
             <Button
@@ -73,17 +73,19 @@
                 android:layout_width = "match_parent"
                 android:layout_height = "wrap_content"
                 android:text = "@string/zoom_in"
-                android:id = "@+id/button23"
-                android:layout_below = "@+id/button22"
+                android:id = "@+id/zoom_in_button"
+                android:layout_below = "@+id/stop_live_view_button"
                 android:layout_centerHorizontal = "true"
                 android:onClick = "zoomIn"/>
-            <EditText
+            <Button
+                style = "?android:attr/buttonStyleSmall"
                 android:layout_width = "match_parent"
                 android:layout_height = "wrap_content"
-                android:id = "@+id/apiFunctionName"
-                android:layout_below = "@+id/button22"
+                android:text = "@string/zoom_out"
+                android:id = "@+id/zoom_out_button"
+                android:layout_below = "@+id/zoom_in_button"
                 android:layout_centerHorizontal = "true"
-                android:hint="@string/api_call"/>
+                android:onClick = "zoomOut"/>
         </RelativeLayout>
     </ScrollView>
 </RelativeLayout>

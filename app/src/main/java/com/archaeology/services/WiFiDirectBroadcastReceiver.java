@@ -151,7 +151,6 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver
                 Log.v(LOG_TAG, "wifi state is not enabled");
                 // WiFi P2P is not enabled
             }
-            // TODO: Check to see if WiFi is enabled and notify appropriate activity
         }
         else if (WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action))
         {
@@ -189,8 +188,6 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver
                 Log.v(LOG_TAG, "you are connected with the device");
                 mManager.requestConnectionInfo(mChannel, mConnectionListener);
             }
-            // TODO: so it is going straight to here and then calling the connectionStatusChanged
-            // method which is causing display message to be no remote camera found.
             Log.v(LOG_TAG_WIFI_DIRECT, "Wifi Direct Connection Status Changed");
             mActivity.connectionStatusChangedCallback(networkInfo);
             // Respond to new connection or disconnections
@@ -198,8 +195,6 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver
         else if (WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION.equals(action))
         {
             Log.v(LOG_TAG_WIFI_DIRECT, "This device P2P changed");
-//            DeviceListFragment fragment = (DeviceListFragment) activity.getFragmentManager().findFragmentById(R.id.frag_list);
-//            fragment.updateThisDevice((WifiP2pDevice) intent.getParcelableExtra(WifiP2pManager.EXTRA_WIFI_P2P_DEVICE));
         }
     }
 }
