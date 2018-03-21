@@ -1,7 +1,6 @@
 // Camera Interface Screen
 // Andrej Ilic, Ben Greenberg, Anton Relin, and Tristrum Tuttle
 package com.archaeology.ui;
-import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
@@ -11,13 +10,11 @@ import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.graphics.YuvImage;
 import android.support.media.ExifInterface;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -35,9 +32,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import com.archaeology.util.HistoryHelper;
+
 import com.archaeology.R;
 import eu.livotov.labs.android.camview.CameraLiveView;
 import eu.livotov.labs.android.camview.ScannerLiveView;
@@ -52,7 +47,6 @@ import static com.archaeology.util.StateStatic.getGlobalWebServerURL;
 import static com.archaeology.util.StateStatic.setGlobalBucketURL;
 public class CameraUIActivity extends AppCompatActivity
 {
-    HistoryHelper myDatabase;
     // anton's stuff for OCR
     public static final String DATA_PATH = Environment.getExternalStorageDirectory().toString() + "/SimpleAndroidOCR/";
     public static final String LANG = "eng";
@@ -100,7 +94,6 @@ public class CameraUIActivity extends AppCompatActivity
                         Toast.LENGTH_LONG).show();
             }
         });
-        myDatabase = new HistoryHelper(this);
         // OCR-only stuff
         String[] paths = new String[]{DATA_PATH, DATA_PATH + "tessdata/"};
         for (String path: paths)
@@ -149,46 +142,6 @@ public class CameraUIActivity extends AppCompatActivity
         fab.setImageResource(R.drawable.qr);
         shutter.setImageResource(R.drawable.camera_icon);
         createCamera();
-    }
-
-    /**
-     * User pressed screen
-     * @param event - touch event
-     * @return Returns whether the event was handled
-     */
-    @Override
-    public boolean onTouchEvent(MotionEvent event)
-    {
-        switch (event.getAction())
-        {
-            case MotionEvent.ACTION_DOWN:
-                x1 = event.getX();
-                break;
-            case MotionEvent.ACTION_UP:
-                float x2 = event.getX();
-                float deltaX = x2 - x1;
-                if (Math.abs(deltaX) > 150)
-                {
-                    // Left to Right swipe action
-                    if (x2 < x1)
-                    {
-                        Intent intent = new Intent(this, FavoriteActivity.class);
-                        startActivity(intent);
-                        overridePendingTransition(R.anim.anim_slide_in_left,
-                                R.anim.anim_slide_out_left);
-                    }
-                    // Right to left swipe action
-                    else
-                    {
-                        Intent intent = new Intent(this, HistoryActivity.class);
-                        startActivity(intent);
-                        overridePendingTransition(R.anim.anim_slide_in_right,
-                                R.anim.anim_slide_out_right);
-                    }
-                }
-                break;
-        }
-        return super.onTouchEvent(event);
     }
 
     /**
@@ -432,10 +385,6 @@ public class CameraUIActivity extends AppCompatActivity
         cam.stopCamera();
         cam.startCamera();
         goToObjectDetail(recognizedText);
-//        Intent intent = new Intent(getApplicationContext(), ManualActivity.class);
-//        intent.putExtra("search", recognizedText);
-//        intent.putExtra("preview", toSend);
-//        startActivity(intent);
     }
 
     /**

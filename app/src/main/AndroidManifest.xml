@@ -40,22 +40,17 @@
                 android:resource="@xml/provider_paths" />
         </provider>
 
-        <activity android:name="com.archaeology.ui.InitialActivity" />
-        <activity android:name="com.archaeology.ui.SettingsActivity" />
-        <activity android:name="com.archaeology.ui.DownloadActivity">
+        <activity android:name="com.archaeology.ui.InitialActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name="com.archaeology.ui.SettingsActivity" />
         <activity android:name="com.archaeology.util.LocalRetriever" />
         <activity
             android:name="com.archaeology.ui.CameraUIActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
-        <activity android:name="com.archaeology.ui.FavoriteActivity" />
-        <activity android:name="com.archaeology.ui.SearchActivity" />
-        <activity android:name="com.archaeology.ui.HistoryActivity" />
-        <activity android:name="com.archaeology.ui.ManualActivity" />
         <activity android:name="com.archaeology.ui.CeramicInputActivity" />
         <activity android:name="com.archaeology.ui.ObjectDetailActivity" />
         <activity android:name="com.archaeology.ui.MyWiFiActivity" />
