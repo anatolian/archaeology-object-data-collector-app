@@ -60,6 +60,7 @@
                 android:minWidth="400dp"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="@android:color/black" />
+
             <TextView
                 android:id="@+id/textView6"
                 android:layout_width="wrap_content"
@@ -67,7 +68,7 @@
                 android:layout_below="@+id/cameraSelectBox"
                 android:layout_centerHorizontal="true"
                 android:minWidth="400dp"
-                android:text="@string/camera_IP"
+                android:text="@string/camera_MAC"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="@android:color/black" />
             <EditText
@@ -79,7 +80,7 @@
                 android:minWidth = "400dp"
                 android:lines = "1"
                 android:maxLines = "1"
-                android:hint = "@string/camera_IP"
+                android:hint = "@string/camera_MAC"
                 android:textAppearance = "?android:attr/textAppearanceMedium"/>
             <TextView
                 android:id="@+id/textView10"

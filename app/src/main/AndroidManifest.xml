@@ -47,7 +47,6 @@
             </intent-filter>
         </activity>
         <activity android:name="com.archaeology.ui.SettingsActivity" />
-        <activity android:name="com.archaeology.util.LocalRetriever" />
         <activity
             android:name="com.archaeology.ui.CameraUIActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar" />

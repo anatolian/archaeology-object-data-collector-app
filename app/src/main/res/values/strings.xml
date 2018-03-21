@@ -1,58 +1,19 @@
 <resources>
     <string name="app_name">Archaeology</string>
-    <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-    <string name="title_activity_ceramic_input">Add Ceramic Item</string>
-    <string-array name="site_list_stub">
-        <item>Array Item One</item>
-        <item>Array Item Two</item>
-        <item>Array Item Three</item>
-    </string-array>
     <string-array name="camera_list">
         <item>Tablet Camera</item>
         <item>Remote Camera</item>
     </string-array>
-    <string-array name="data_structure_list">
-        <item>Data Structure 1</item>
-        <item>Data Structure 2</item>
-    </string-array>
-    <string name="title_activity_settings">Settings</string>
-    <string name="title_activity_object_detail">Object Details</string>
-    <string name="title_activity_add_change_color">AddChangeColorActivity</string>
-    <string name="add_color">Add Color</string>
-    <string name="change_color">Change Color</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="title_activity_bitmap">BitmapActivity</string>
-    <string name="title_activity_ceramic_input2">CeramicInput2Activity</string>
-    <string name="title_activity_bluetooth">BluetoothActivity</string>
-    <string name="title_activity_record_weight">RecordWeightActivity</string>
-    <string name="title_activity_my_wi_fi">MyWiFiActivity</string>
-    <string name="title_activity_object_detail2">ObjectDetail2Activity</string>
-    <string name="title_activity_image_thumbnail_test">ImageThumbnailTestActivity</string>
-    <string name="cancel">Cancel</string>
-    <string name="save">Save</string>
-    <string name="color">Color</string>
     <string name="chroma">Chroma</string>
     <string name="lightness">Lightness</string>
     <string name="hue">Hue</string>
-    <string name="location">Reading Location</string>
-    <string name="hello_round">Hello Round World!</string>
-    <string name="hello_square">Hello Square World!</string>
-    <string name="camera_IP">Camera IP:</string>
     <string name="camera_MAC">Camera MAC Address:</string>
     <string name="camera_calibration">Camera Calibration Interval</string>
     <string name="select_camera">Select Camera</string>
-    <string name="data_type">Data Structure Type: </string>
     <string name="take_picture">Take Picture</string>
     <string name="pick_photo">Pick photo from gallery</string>
-    <string name="old_image">Image to apply color correction to</string>
-    <string name="reconnect">Reconnect</string>
-    <string name="zero">0</string>
     <string name="connection">Connection Status:</string>
-    <string name="photos">Go To Photos</string>
-    <string name="not_connected">Device Not Connected</string>
-    <string name="view_photos">View Photos</string>
-    <string name="color_correct">Color Correct</string>
     <string name="correct_color">Correct Color</string>
     <string name="add_photo">Add Photo</string>
     <string name="no_remote_camera">No Remote Camera Detected</string>
@@ -65,34 +26,20 @@
     <string name="previous">Previous</string>
     <string name="sample"> Sample: </string>
     <string name="new_weight">New Weight:</string>
-    <string name="copy_weight">Copy Weight Below</string>
     <string name="save_weight">Save Weight</string>
-    <string name="weight">Weight on Scale:</string>
-    <string name="tare">Tare Scale</string>
     <string name="minus">-</string>
     <string name="plus">+</string>
     <string name="P">P</string>
     <string name="nil">null</string>
-    <string name="scale_reading">%d</string>
-    <string name="wait">Please wait&#8230;</string>
-    <string name="arp_ip">Fetching IP From ARP File&#8230;</string>
     <string name="ip_connection">Connected To %s</string>
     <string name="find_peers">Discover Peers</string>
     <string name="get_ips">Get IP Address</string>
-    <string name="api_call">API Call</string>
     <string name="start_live">start Live View</string>
     <string name="stop_live">Stop Live View</string>
     <string name="zoom_in">Zoom In</string>
-    <string name="get_api">Get API Commands</string>
-    <string name="call_api">Call Specific Api Function</string>
     <string name="connect">Connect</string>
     <string name="default_base_url">https://thawing-plains-16187.herokuapp.com/web</string>
     <string name="base_url">Web Service Base URL:</string>
-    <string name="manual_input">Manual Object Number Input:</string>
-    <string name="current">Current Object:</string>
-    <string name="site">Site:</string>
-    <string name="async">Async Status</string>
-    <string name="delete_photos">Delete Photo(s)</string>
     <string name="continue_string">Continue</string>
     <string name="sample_number">Sample Number</string>
     <string name="context_number">Context Number</string>
@@ -102,61 +49,14 @@
     <string name="long_frmt">%d</string>
     <string name="default_settings">Default Settings</string>
     <string name="save_settings">Save Settings</string>
-    <string name="ocr">OCR</string>
-    <string name="manual_lookup">Manual Lookup</string>
-    <string name="qr_code">QR Code</string>
-    <string name="bookmark">Bookmark</string>
-    <string name="history">History</string>
-    <string name="title_activity_simple_android_ocr">SimpleAndroidOCRActivity</string>
-    <string name="button_text">OCR!</string>
-    <string name="text_hint">OCRed Text will appear here</string>
-    <string name="search">Search</string>
-    <string name="id_number">ID</string>
-    <string name="fav_menu">:</string>
-    <string name="fav">Favorite</string>
-    <string name="try_again">Try Again</string>
-    <string name="intro_text">Intro Text?</string>
-    <string name="database">Database Management</string>
-    <string name="qr_scanned_text_will_appear_here">QR Scanned Text Will Appear Here</string>
-    <string name="bookmarks">Bookmarks</string>
-    <string name="parsing">Set Parsing Style</string>
-    <string name="object_name">object_name</string>
-    <string name="url">url</string>
-    <string name="provenience">provenience</string>
-    <string name="material">material</string>
-    <string name="left_brace">{</string>
-    <string name="main_screen">Main Screen</string>
-    <string name="object_number">object_number</string>
-    <string name="description">description</string>
-    <string name="section">section</string>
-    <string name="left_bracket">[</string>
-    <string name="right_bracket">]</string>
-    <string name="test">testjson.txt</string>
-    <string name="search_history">Search history</string>
-    <string name="title_activity_test">TestActivity</string>
     <string name="captured_picture">Captured Picture</string>
     <string name="pair_device">Pair New Device</string>
     <string name="paired">Paired Devices</string>
-    <string name="visualization">Visualization</string>
-    <string name="session_report">Session Report</string>
-    <string name="deviation">Std. Deviation</string>
-    <string name="total_frmt">Total: %d</string>
-    <string name="num_frmt">%d</string>
-    <string name="average_weight">Average Weight</string>
-    <string name="average_size">Average Size</string>
-    <string name="glass">Glass</string>
-    <string name="ceramic">Ceramic</string>
-    <string name="metal">Metal</string>
-    <string name="stone">Stone</string>
-    <string name="organic">Organic</string>
-    <string name="collected"># Collected</string>
     <string name="configure_camera">Connect to Camera</string>
     <string name="update_bluetooth">Record from Scale</string>
-    <string name="weight_int_frmt">Weight" %dg</string>
     <string name="camera_live_view">Camera Live View</string>
-    <string name="lookup_preview">Camera Preview for Auto Lookup</string>
-    <string name = "artifact_image">Picture of the archived artifact</string>
     <string name = "bucket_url">S3 Bucket URL</string>
     <string name = "default_bucket_url">s3.console.aws.amazon.com/s3/buckets/pennmuseum/</string>
     <string name = "zoom_out">Zoom Out</string>
+    <string name = "save">Save</string>
 </resources>
