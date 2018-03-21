@@ -351,23 +351,19 @@ public class CameraUIActivity extends AppCompatActivity
      */
     private void goToObjectDetail(final String CODE)
     {
-        Log.v("QRCode scanned", CODE);
         final String[] KEYS = CODE.split("\\.");
+        final Intent INPUT_INTENT = new Intent(this, CeramicInputActivity.class);
         // TODO: Abstract to arbitrary data formats, not just E.N.C.S and E.N.S
-        if (KEYS.length < 4)
+        if (KEYS.length < 6)
         {
-            Toast.makeText(getApplicationContext(), "Invalid QR Code " + CODE, Toast.LENGTH_SHORT).show();
-            return;
+            Toast.makeText(getApplicationContext(), "Invalid Code \"" + CODE + "\"", Toast.LENGTH_SHORT).show();
+            startActivity(INPUT_INTENT);
         }
-        Log.v("QRCode scanned", String.valueOf((int) CODE.charAt(2)));
-        Log.v("QRCode scanned", String.valueOf((int) '.'));
-        Log.v("QRCode scanned", KEYS[0]);
         final Intent DETAIL_INTENT = new Intent(this, ObjectDetailActivity.class);
         DETAIL_INTENT.putExtra(AREA_EASTING, KEYS[2]);
         DETAIL_INTENT.putExtra(AREA_NORTHING, KEYS[3]);
         DETAIL_INTENT.putExtra(CONTEXT_NUMBER, KEYS[4]);
         DETAIL_INTENT.putExtra(SAMPLE_NUMBER, KEYS[5]);
-        final Intent CERAMIC_INTENT = new Intent(this, CeramicInputActivity.class);
         final List<String> SAMPLE_NUMBERS = new ArrayList<>();
         // TODO: Send sample numbers to object detail
         String URL = getGlobalWebServerURL() + "/get_sample_numbers/?easting=" + KEYS[2]
@@ -393,7 +389,7 @@ public class CameraUIActivity extends AppCompatActivity
                 else
                 {
                     Toast.makeText(getApplicationContext(), "Sample " + CODE + " not found", Toast.LENGTH_LONG).show();
-                    startActivity(CERAMIC_INTENT);
+                    startActivity(INPUT_INTENT);
                 }
             }
 
@@ -435,10 +431,11 @@ public class CameraUIActivity extends AppCompatActivity
         recognizedText = recognizedText.trim();
         cam.stopCamera();
         cam.startCamera();
-        Intent intent = new Intent(getApplicationContext(), ManualActivity.class);
-        intent.putExtra("search", recognizedText);
-        intent.putExtra("preview", toSend);
-        startActivity(intent);
+        goToObjectDetail(recognizedText);
+//        Intent intent = new Intent(getApplicationContext(), ManualActivity.class);
+//        intent.putExtra("search", recognizedText);
+//        intent.putExtra("preview", toSend);
+//        startActivity(intent);
     }
 
     /**

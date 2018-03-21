@@ -222,6 +222,7 @@ public class ObjectDetailActivity extends AppCompatActivity
                         }
                     });
                     asyncPopulateFieldsFromDB(areaEasting, areaNorthing, contextNumber, sampleNumber);
+                    clearCurrentPhotosOnLayoutAndFetchPhotosAsync();
                     fillSampleNumberSpinner();
                 }
             }
@@ -876,8 +877,8 @@ public class ObjectDetailActivity extends AppCompatActivity
                         {
                             final Uri ORIGINAL_IMAGE_URI = CheatSheet.getOriginalImageURI(THUMBNAIL_IMAGE_URL);
                             // implementing interface from CameraDialog class
-                            CameraDialog.ApproveDialogCallback approveDialogCallback
-                                    = new CameraDialog.ApproveDialogCallback() {
+                            CameraDialog.ApproveDialogCallback approveDialogCallback =
+                                    new CameraDialog.ApproveDialogCallback() {
                                 /**
                                  * Save button pressed
                                  */
@@ -902,8 +903,8 @@ public class ObjectDetailActivity extends AppCompatActivity
                                 }
                             };
                             // create dialog to view and approve photo
-                            AlertDialog approveDialog = CameraDialog.createPhotoApprovalDialog(
-                                    PARENT_ACTIVITY, approveDialogCallback);
+                            AlertDialog approveDialog = CameraDialog.createPhotoApprovalDialog(PARENT_ACTIVITY,
+                                    approveDialogCallback);
                             approveDialog.show();
                             ImageView approvePhotoImage = (ImageView) approveDialog.findViewById(R.id.approvePhotoImage);
                             approvePhotoImage.setImageURI(THUMBNAIL_IMAGE_URL);
@@ -923,8 +924,7 @@ public class ObjectDetailActivity extends AppCompatActivity
                 CameraDialog.zoomIn(PARENT_ACTIVITY, queue, sonyAPIRequestID++);
             }
         });
-        remoteCameraDialog.findViewById(R.id.zoom_out)
-                .setOnClickListener(new View.OnClickListener() {
+        remoteCameraDialog.findViewById(R.id.zoom_out).setOnClickListener(new View.OnClickListener() {
             /**
              * User pressed zoom out
              * @param v - camera view
@@ -1171,7 +1171,7 @@ public class ObjectDetailActivity extends AppCompatActivity
         if (selectedItemPos + 1 <= itemCount - 1)
         {
             sample.setSelection(selectedItemPos + 1);
-            clearCurrentPhotosOnLayoutAndFetchPhotosAsync();
+//            clearCurrentPhotosOnLayoutAndFetchPhotosAsync();
         }
     }
 
@@ -1186,7 +1186,7 @@ public class ObjectDetailActivity extends AppCompatActivity
         if (selectedItemPos - 1 >= 0)
         {
             sample.setSelection(selectedItemPos - 1);
-            clearCurrentPhotosOnLayoutAndFetchPhotosAsync();
+//            clearCurrentPhotosOnLayoutAndFetchPhotosAsync();
         }
     }
 
