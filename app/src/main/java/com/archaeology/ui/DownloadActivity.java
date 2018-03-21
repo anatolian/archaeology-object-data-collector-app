@@ -66,7 +66,7 @@ public class DownloadActivity extends AppCompatActivity
         {
             System.out.println(fileList()[i]);
         }
-        setUpLocalDB(uD.getDatabaseLocation());
+        setupLocalDB(uD.getDatabaseLocation());
         Intent intent = new Intent(this, InitialActivity.class);
         startActivity(intent);
     }
@@ -75,9 +75,8 @@ public class DownloadActivity extends AppCompatActivity
      * Create local DB
      * @param dbLoc - db location
      */
-    public void setUpLocalDB(String dbLoc)
+    public void setupLocalDB(String dbLoc)
     {
-        System.out.println(dbLoc);
         Context context = getApplicationContext();
         localRetriever = new LocalRetriever(context, dbLoc);
     }
@@ -93,12 +92,11 @@ public class DownloadActivity extends AppCompatActivity
             ActivityCompat.requestPermissions(this,
                     new String[] {Manifest.permission.INTERNET}, MY_PERMISSIONS_REQUEST_INTERNET);
         }
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED)
         {
             ActivityCompat.requestPermissions(this,
-                    new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                    MY_PERMISSIONS_WRITE_EXTERNAL);
+                    new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, MY_PERMISSIONS_WRITE_EXTERNAL);
         }
     }
 
@@ -111,8 +109,7 @@ public class DownloadActivity extends AppCompatActivity
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
                 .url("https://s3.us-east-2.amazonaws.com/archaeology-lookup/test.json").build();
-        client.newCall(request).enqueue(new Callback()
-        {
+        client.newCall(request).enqueue(new Callback() {
             /**
              * Client failed
              * @param call - failing call
@@ -178,16 +175,14 @@ public class DownloadActivity extends AppCompatActivity
                 try
                 {
                     in = assetManager.open(filename);
-                    File outFile =
-                            new File(Environment.getExternalStorageDirectory().toString() +
+                    File outFile = new File(Environment.getExternalStorageDirectory().toString() +
                             "/SimpleAndroidOCR/tessdata/", filename);
                     out = new FileOutputStream(outFile);
                     copyFile(in, out);
-                    System.out.println(outFile.getAbsolutePath());
                 }
                 catch (IOException e)
                 {
-                    Log.e("tag", "Failed to copy asset file: " + filename, e);
+                    // NOP
                 }
                 finally
                 {

@@ -167,9 +167,7 @@ public class CeramicInputActivity extends AppCompatActivity
     protected void onResume()
     {
         super.onResume();
-        Log.v(LOG_TAG, "Resuming CeramicInputActivity reloading sample numbers");
-        if (allDataLoadInfo.get(LoadState.areaEasting)
-                && allDataLoadInfo.get(LoadState.areaNorthing)
+        if (allDataLoadInfo.get(LoadState.areaEasting) && allDataLoadInfo.get(LoadState.areaNorthing)
                 && allDataLoadInfo.get(LoadState.contextNumber))
         {
             clearSampleNumbersSpinner();
@@ -398,9 +396,6 @@ public class CeramicInputActivity extends AppCompatActivity
             @Override
             public void responseMethod(String response)
             {
-                System.out.println("SAMPLES FOR: EASTING: " + getSelectedAreaEasting() +
-                        " NORTHING: " + getSelectedAreaNorthing() + " CONTEXT: "
-                        + getSelectedContextNumber());
                 // convert to regular array from json array
                 fillSampleNumberSpinner(CheatSheet.convertLinkListToArray(response));
                 // if data was received successfully you can put sample number as true and enable
@@ -507,8 +502,7 @@ public class CeramicInputActivity extends AppCompatActivity
         tmpIntent.putExtra(CONTEXT_NUMBER, getSelectedContextNumber());
         tmpIntent.putExtra(SAMPLE_NUMBER, getSelectedSampleNumber());
         List<String> availableSampleNumbers = CheatSheet.getSpinnerItems(sample);
-        tmpIntent.putExtra(ALL_SAMPLE_NUMBER,
-                availableSampleNumbers.toArray(new String[availableSampleNumbers.size()]));
+        tmpIntent.putExtra(ALL_SAMPLE_NUMBER, availableSampleNumbers.toArray(new String[availableSampleNumbers.size()]));
         tmpIntent.putExtra("preview", bmp);
         startActivity(tmpIntent);
     }

@@ -8,90 +8,28 @@
         android:id = "@+id/parent"
         android:layout_width = "match_parent"
         android:layout_height = "match_parent"
-        android:orientation = "vertical">
+        android:orientation = "vertical"
+        android:layout_gravity="center">
     </RelativeLayout>
-    <RelativeLayout
-        android:id = "@+id/shutterFAB"
+    <android.support.design.widget.FloatingActionButton
+        app:srcCompat = "@drawable/camera_icon"
+        app:fabSize = "normal"
+        android:backgroundTint = "#233069"
+        android:id = "@+id/shutter"
+        android:layout_width = "wrap_content"
+        android:layout_height = "wrap_content"
+        android:onClick = "takePic"
+        android:layout_marginTop = "10dp"
+        android:layout_gravity = "bottom|center"
+        android:layout_marginBottom = "10dp"/>
+    <android.support.design.widget.FloatingActionButton
+        app:srcCompat = "@drawable/ocr"
+        app:fabSize = "normal"
+        android:backgroundTint = "#971c20"
+        android:id = "@+id/fab"
         android:layout_width = "match_parent"
-        android:layout_height = "match_parent"
-        android:orientation = "vertical">
-        <android.support.design.widget.FloatingActionButton
-            app:srcCompat = "@drawable/camera_icon"
-            app:fabSize = "normal"
-            android:backgroundTint = "#233069"
-            android:id = "@+id/shutter"
-            android:layout_width = "wrap_content"
-            android:layout_height = "wrap_content"
-            android:onClick = "takePic"
-            android:layout_marginTop = "10dp"
-            android:layout_gravity = "bottom|center"
-            android:layout_alignParentBottom = "true"
-            android:layout_centerHorizontal = "true"
-            android:layout_marginBottom = "10dp"/>
-    </RelativeLayout>
-    <LinearLayout
-        android:id = "@+id/fabContainer"
-        android:layout_width = "match_parent"
-        android:layout_height = "match_parent"
+        android:layout_height = "wrap_content"
         android:layout_gravity = "top|center_horizontal"
-        android:orientation = "horizontal"
-        android:visibility = "visible">
-        <ImageView
-            android:layout_width = "wrap_content"
-            android:layout_height = "wrap_content"
-            android:backgroundTint = "@android:color/transparent"
-            android:id = "@+id/imageView12"
-            android:layout_weight = "1"
-            android:contentDescription="@string/lookup_preview"/>
-        <android.support.design.widget.FloatingActionButton
-            app:srcCompat = "@drawable/ocr"
-            app:fabSize = "normal"
-            android:backgroundTint = "#971c20"
-            android:id = "@+id/fab"
-            android:layout_width = "match_parent"
-            android:layout_height = "wrap_content"
-            android:onClick = "crossFade"
-            android:layout_marginTop = "10dp"/>
-        <ImageView
-            android:layout_width = "wrap_content"
-            android:layout_height = "wrap_content"
-            android:backgroundTint = "@android:color/transparent"
-            android:id = "@+id/imageView13"
-            android:layout_weight = "0.2"
-            android:contentDescription="@string/qr_code"/>
-        <android.support.design.widget.FloatingActionButton
-            app:srcCompat = "@drawable/pen"
-            app:fabSize = "normal"
-            android:backgroundTint = "#971c20"
-            android:id = "@+id/fab2"
-            android:layout_width = "match_parent"
-            android:layout_height = "wrap_content"
-            android:onClick = "manual"
-            android:layout_marginTop = "10dp"/>
-        <ImageView
-            android:layout_width = "wrap_content"
-            android:layout_height = "wrap_content"
-            android:backgroundTint = "@android:color/transparent"
-            android:id = "@+id/imageView14"
-            android:layout_weight = "0.2"
-            android:contentDescription="@string/manual_input"/>
-        <android.support.design.widget.FloatingActionButton
-            android:layout_width = "wrap_content"
-            android:layout_height = "wrap_content"
-            android:clickable = "true"
-            android:focusable="true"
-            android:backgroundTint = "#971c20"
-            android:onClick = "updateDatabase"
-            app:fabSize = "mini"
-            android:id = "@+id/floatingActionButton"
-            android:src = "@android:drawable/stat_sys_download"
-            android:layout_marginTop = "10dp"/>
-        <ImageView
-            android:layout_width = "wrap_content"
-            android:layout_height = "wrap_content"
-            android:src = "@android:color/transparent"
-            android:id = "@+id/imageView15"
-            android:layout_weight = "1"
-            android:contentDescription="@string/manual_lookup"/>
-    </LinearLayout>
+        android:onClick = "crossFade"
+        android:layout_marginTop = "10dp"/>
 </FrameLayout>

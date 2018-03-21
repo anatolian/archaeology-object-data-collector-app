@@ -25,32 +25,36 @@ import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 import com.archaeology.models.StringObjectResponseWrapper;
+import com.archaeology.util.CheatSheet;
 import com.googlecode.tesseract.android.TessBaseAPI;
-import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import com.archaeology.util.HistoryHelper;
 import com.archaeology.R;
-import com.archaeology.services.UpdateDatabase;
-import com.archaeology.services.UpdateDatabaseMuseum;
 import eu.livotov.labs.android.camview.CameraLiveView;
 import eu.livotov.labs.android.camview.ScannerLiveView;
 import eu.livotov.labs.android.camview.camera.LiveDataProcessingCallback;
 import static com.archaeology.services.VolleyStringWrapper.makeVolleyStringObjectRequest;
+import static com.archaeology.util.StateStatic.ALL_SAMPLE_NUMBER;
+import static com.archaeology.util.StateStatic.AREA_EASTING;
+import static com.archaeology.util.StateStatic.AREA_NORTHING;
+import static com.archaeology.util.StateStatic.CONTEXT_NUMBER;
+import static com.archaeology.util.StateStatic.SAMPLE_NUMBER;
 import static com.archaeology.util.StateStatic.getGlobalWebServerURL;
 import static com.archaeology.util.StateStatic.setGlobalBucketURL;
 public class CameraUIActivity extends AppCompatActivity
 {
     HistoryHelper myDatabase;
     // anton's stuff for OCR
-    public static final String DATA_PATH =
-            Environment.getExternalStorageDirectory().toString() + "/SimpleAndroidOCR/";
+    public static final String DATA_PATH = Environment.getExternalStorageDirectory().toString() + "/SimpleAndroidOCR/";
     public static final String LANG = "eng";
     // camera view and scanner view stuff:
     private float x1;
@@ -121,8 +125,7 @@ public class CameraUIActivity extends AppCompatActivity
             {
                 AssetManager assetManager = getAssets();
                 InputStream in = assetManager.open("tessdata/" + LANG + ".traineddata");
-                OutputStream out =
-                        new FileOutputStream(DATA_PATH + "tessdata/" + LANG + ".traineddata");
+                OutputStream out = new FileOutputStream(DATA_PATH + "tessdata/" + LANG + ".traineddata");
                 // Transfer bytes from in to out
                 byte[] buf = new byte[1024];
                 int len;
@@ -132,11 +135,11 @@ public class CameraUIActivity extends AppCompatActivity
                 }
                 in.close();
                 out.close();
-                Log.v(TAG, "Copied " + LANG + " traineddata");
+                Log.v(TAG, "Copied " + LANG + " trained data");
             }
             catch (IOException e)
             {
-                Log.e(TAG, "Was unable to copy " + LANG + " traineddata " + e.toString());
+                Log.e(TAG, "Was unable to copy " + LANG + " trained data " + e.toString());
             }
         }
         // setting up CameraView
@@ -145,8 +148,6 @@ public class CameraUIActivity extends AppCompatActivity
         shutter = (FloatingActionButton) findViewById(R.id.shutter);
         fab.setImageResource(R.drawable.qr);
         shutter.setImageResource(R.drawable.camera_icon);
-        FloatingActionButton fab2 = (FloatingActionButton) findViewById(R.id.fab2);
-        fab2.setImageResource(R.drawable.pen);
         createCamera();
     }
 
@@ -201,8 +202,8 @@ public class CameraUIActivity extends AppCompatActivity
         }
         parent.removeAllViews();
         cam = new CameraLiveView(this);
-        cam.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams
-                .MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT));
+        cam.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
+                RelativeLayout.LayoutParams.MATCH_PARENT));
         cam.setBackgroundColor(0x233069);
         parent.addView(cam);
         cam.startCamera();
@@ -220,8 +221,7 @@ public class CameraUIActivity extends AppCompatActivity
         }
         parent.removeAllViews();
         scan = new ScannerLiveView(this);
-        scan.setLayoutParams(new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.MATCH_PARENT,
+        scan.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
                 RelativeLayout.LayoutParams.MATCH_PARENT));
         scan.setBackgroundColor(0x233069);
         parent.addView(scan);
@@ -261,50 +261,7 @@ public class CameraUIActivity extends AppCompatActivity
             public void onCodeScanned(String data)
             {
                 Log.v("QRCode Scanned", data);
-                // from manual search
-                JSONObject JSON = null;
-                String JSONString = loadJSONFromAsset();
-                String searchURL = null;
-                try
-                {
-                    JSON = new JSONObject(JSONString);
-                }
-                catch (Exception e)
-                {
-                    searchURL = data;
-                }
-                JSONObject translatedSearch;
-                String searchItem = "";
-                String searchDescription = "";
-                String searchProvenience = "";
-                String searchMaterial = "";
-                String searchCuratorialSection = "";
-                try
-                {
-                    translatedSearch = JSON.getJSONObject(data);
-                    searchURL = translatedSearch.getString("url");
-                    searchItem = translatedSearch.getString("object_name");
-                    searchDescription = translatedSearch.getString("description");
-                    searchProvenience = translatedSearch.getString("provenience");
-                    searchMaterial = translatedSearch.getString("material");
-                    searchCuratorialSection =
-                            translatedSearch.getString("curatorial_section");
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
-                Intent intent = new Intent(getApplicationContext(), SearchActivity.class);
-                intent.putExtra("search", searchURL);
-                intent.putExtra("searchnumber", data);
-                intent.putExtra("searchname", searchItem);
-                intent.putExtra("searchdescription", searchDescription);
-                intent.putExtra("searchprovenience", searchProvenience);
-                intent.putExtra("searchmaterial", searchMaterial);
-                intent.putExtra("searchcuratorial_section", searchCuratorialSection);
-                myDatabase.insertSearch(data, searchItem, searchURL, searchDescription,
-                        searchProvenience, searchMaterial, searchCuratorialSection);
-                startActivity(intent);
+                goToObjectDetail(data);
             }
         });
         scan.startScanner();
@@ -329,26 +286,25 @@ public class CameraUIActivity extends AppCompatActivity
             @Override
             public Object onProcessCameraFrame(byte[] data, int width, int height)
             {
-                YuvImage yuvimage = new YuvImage(data, ImageFormat.NV21, width, height,
-                        null);
+                YuvImage yuvimage = new YuvImage(data, ImageFormat.NV21, width, height, null);
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 yuvimage.compressToJpeg(new Rect(0, 0, width, height), 80, baos);
                 // have to write camera frame to file to see if it is rotated
-                File f = new File(Environment.getExternalStorageDirectory() + "/ARCPHOTOS/");
+                File f = new File(Environment.getExternalStorageDirectory() + "/Archaeology/");
                 ExifInterface ei = null;
                 if (!f.exists())
                 {
                     f.mkdirs();
                 }
                 File file = new File(Environment.getExternalStorageDirectory()
-                        + "/ARCPHOTOS/temp.jpeg");
+                        + "/Archaeology/temp.jpeg");
                 try
                 {
                     OutputStream out = new FileOutputStream(file);
                     baos.writeTo(out);
                     out.close();
                     ei = new ExifInterface(Environment.getExternalStorageDirectory()
-                            + "/ARCPHOTOS/temp.jpeg");
+                            + "/Archaeology/temp.jpeg");
                     file.delete();
                     f.delete();
                 }
@@ -361,7 +317,6 @@ public class CameraUIActivity extends AppCompatActivity
                 Bitmap bitmap = BitmapFactory.decodeByteArray(jData, 0, jData.length);
                 int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION,
                         ExifInterface.ORIENTATION_UNDEFINED);
-                Log.v("ROTATION", "" + orientation);
                 if (orientation == ExifInterface.ORIENTATION_ROTATE_90)
                 {
                     bitmap = rotateImage(bitmap, 90);
@@ -391,6 +346,70 @@ public class CameraUIActivity extends AppCompatActivity
     }
 
     /**
+     * Go to ObjectDetailActivity from scanned QR code
+     * @param CODE - QR code data
+     */
+    private void goToObjectDetail(final String CODE)
+    {
+        Log.v("QRCode scanned", CODE);
+        final String[] KEYS = CODE.split("\\.");
+        // TODO: Abstract to arbitrary data formats, not just E.N.C.S and E.N.S
+        if (KEYS.length < 4)
+        {
+            Toast.makeText(getApplicationContext(), "Invalid QR Code " + CODE, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        Log.v("QRCode scanned", String.valueOf((int) CODE.charAt(2)));
+        Log.v("QRCode scanned", String.valueOf((int) '.'));
+        Log.v("QRCode scanned", KEYS[0]);
+        final Intent DETAIL_INTENT = new Intent(this, ObjectDetailActivity.class);
+        DETAIL_INTENT.putExtra(AREA_EASTING, KEYS[2]);
+        DETAIL_INTENT.putExtra(AREA_NORTHING, KEYS[3]);
+        DETAIL_INTENT.putExtra(CONTEXT_NUMBER, KEYS[4]);
+        DETAIL_INTENT.putExtra(SAMPLE_NUMBER, KEYS[5]);
+        final Intent CERAMIC_INTENT = new Intent(this, CeramicInputActivity.class);
+        final List<String> SAMPLE_NUMBERS = new ArrayList<>();
+        // TODO: Send sample numbers to object detail
+        String URL = getGlobalWebServerURL() + "/get_sample_numbers/?easting=" + KEYS[2]
+                + "&northing=" + KEYS[3] + "&context=" + KEYS[4];
+        makeVolleyStringObjectRequest(URL, queue, new StringObjectResponseWrapper(this) {
+            /**
+             * Database response
+             * @param response - response received
+             */
+            @Override
+            public void responseMethod(String response)
+            {
+                // convert to regular array from html link list
+                ArrayList<String> eastings = CheatSheet.convertLinkListToArray(response);
+                // If the easting, northing, context, or sample are not found, this will be false
+                // (nothing returned at all if any of the prior 3 are not found)
+                if (eastings.contains(KEYS[5]))
+                {
+                    SAMPLE_NUMBERS.addAll(eastings);
+                    DETAIL_INTENT.putExtra(ALL_SAMPLE_NUMBER, SAMPLE_NUMBERS.toArray(new String[SAMPLE_NUMBERS.size()]));
+                    startActivity(DETAIL_INTENT);
+                }
+                else
+                {
+                    Toast.makeText(getApplicationContext(), "Sample " + CODE + " not found", Toast.LENGTH_LONG).show();
+                    startActivity(CERAMIC_INTENT);
+                }
+            }
+
+            /**
+             * Connection failed
+             * @param error - failure
+             */
+            @Override
+            public void errorMethod(VolleyError error)
+            {
+                Toast.makeText(getApplicationContext(), "Error contacting server", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    /**
      * Picture taken
      * @param bitmap - image
      */
@@ -411,7 +430,7 @@ public class CameraUIActivity extends AppCompatActivity
         Log.v(TAG, "OCRED TEXT: " + recognizedText);
         if (LANG.equalsIgnoreCase("eng"))
         {
-            recognizedText = recognizedText.replaceAll("[^a-zA-Z0-9]+", " ");
+            recognizedText = recognizedText.replaceAll("[^a-zA-Z0-9]+", "");
         }
         recognizedText = recognizedText.trim();
         cam.stopCamera();
@@ -437,7 +456,7 @@ public class CameraUIActivity extends AppCompatActivity
     }
 
     /**
-     * Crossfade effect
+     * Switch between QR reader and OCR
      * @param view - camera view
      */
     public void crossFade(View view)
@@ -454,72 +473,6 @@ public class CameraUIActivity extends AppCompatActivity
             fab.setImageResource(R.drawable.qr);
             flag *= -1;
         }
-    }
-
-    /**
-     * Manual entry
-     * @param view - button
-     */
-    public void manual(View view)
-    {
-        Intent intent = new Intent(this, CeramicInputActivity.class);
-        startActivity(intent);
-    }
-
-    /**
-     * Fetch a JSON from file
-     * @return Returns JSON object
-     */
-    @TargetApi(Build.VERSION_CODES.KITKAT)
-    public String loadJSONFromAsset()
-    {
-        String JSON;
-        try
-        {
-            InputStream is = openFileInput("newjson.txt");
-            int size = is.available();
-            byte[] buffer = new byte[size];
-            is.read(buffer);
-            is.close();
-            JSON = new String(buffer, "UTF-8");
-        }
-        catch (IOException ex)
-        {
-            ex.printStackTrace();
-            return null;
-        }
-        StringBuilder JSONFixed = new StringBuilder("{ ");
-        String[] JSONArr = JSON.split("(?=\\{)");
-        for (int i = 0; i < JSONArr.length; i++)
-        {
-            Pattern pattern = Pattern.compile("\"object_number\": (.+)");
-            Matcher matcher = pattern.matcher(JSONArr[i]);
-            String idNumber = "";
-            if (matcher.find())
-            {
-                idNumber = matcher.group(1);
-                System.out.format("'%s'\n", idNumber);
-            }
-            String fixed = idNumber + " : {";
-            JSONArr[i] = JSONArr[i].replaceAll(Pattern.quote("{"), fixed);
-            JSONFixed.append(JSONArr[i]);
-        }
-        String JSONFixedContents = JSONFixed.toString();
-        JSONFixedContents = JSONFixedContents.replaceAll(Pattern.quote("}"), "\\},");
-        JSONFixedContents = JSONFixedContents.substring(0, JSONFixed.length() - 1);
-        JSONFixedContents += "}";
-        return JSONFixedContents;
-    }
-
-    /**
-     * Push an update
-     * @param view - button
-     */
-    public void updateDatabase(View view)
-    {
-        UpdateDatabase updater = new UpdateDatabaseMuseum();
-        updater.doUpdate(this);
-        Toast.makeText(this, "Database Downloaded", Toast.LENGTH_SHORT).show();
     }
 
     /**

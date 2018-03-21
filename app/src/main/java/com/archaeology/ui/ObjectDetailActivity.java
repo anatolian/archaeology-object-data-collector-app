@@ -46,6 +46,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Set;
 import com.archaeology.R;
 import com.archaeology.models.AfterImageSavedMethodWrapper;
@@ -143,10 +144,11 @@ public class ObjectDetailActivity extends AppCompatActivity
     // dialogs set up in order to provide interface to interact with other devices
     AlertDialog remoteCameraDialog, weightDialog, pickPeersDialog;
     // broadcast receiver objects used to receive messages from other devices
-    BroadcastReceiver nutriScaleBroadcastReceiver, wiFiDirectBroadcastReceiver;
+    BroadcastReceiver nutriScaleBroadcastReceiver;
     private boolean isPickPeersDialogVisible = false;
     // correspond to columns in database associated with finds
     int areaEasting, areaNorthing, contextNumber, sampleNumber, imageNumber;
+    HashMap<String, Integer> primaryKeys = new HashMap<>();
     public BluetoothService bluetoothService;
     public BluetoothDevice device = null;
     /**
@@ -181,6 +183,11 @@ public class ObjectDetailActivity extends AppCompatActivity
         areaNorthing = Integer.parseInt(myBundle.getString("area_northing"));
         contextNumber = Integer.parseInt(myBundle.getString("context_number"));
         sampleNumber = Integer.parseInt(myBundle.getString("sample_number"));
+        // TODO: Abstract to arbitrary formats, not just E.N.S and E.N.C.S
+//        if (myBundle.getString("context_number") != null)
+//        {
+//            contextNumber = Integer.parseInt(myBundle.getString("context_number"));
+//        }
         // adding info about object to text field in view
         fillSampleInfo(areaEasting + "", areaNorthing + "", contextNumber + "");
         fillSampleNumberSpinner();
@@ -711,8 +718,7 @@ public class ObjectDetailActivity extends AppCompatActivity
         this.currentScaleWeight = currentScaleWeight;
         if (dialogVisible)
         {
-            ((EditText) weightDialog.findViewById(R.id.dialogCurrentWeightInDBText))
-                    .setText(currentScaleWeight.trim());
+            ((EditText) weightDialog.findViewById(R.id.dialogCurrentWeightInDBText)).setText(currentScaleWeight.trim());
         }
     }
 
@@ -725,8 +731,7 @@ public class ObjectDetailActivity extends AppCompatActivity
         this.bluetoothConnectionStatus = bluetoothConnectionStatus;
         if (dialogVisible)
         {
-            ((TextView) weightDialog.findViewById(R.id.btConnectionStatusText))
-                    .setText(bluetoothConnectionStatus);
+            ((TextView) weightDialog.findViewById(R.id.btConnectionStatusText)).setText(bluetoothConnectionStatus);
         }
     }
 
@@ -739,13 +744,12 @@ public class ObjectDetailActivity extends AppCompatActivity
         try
         {
             ((TextView) findViewById(R.id.weightInput)).setText(weight);
-            asyncModifyWeightFieldInDB(Double.parseDouble(getWeightInputText().getText()
-                            .toString()), areaEasting, areaNorthing, contextNumber, sampleNumber);
+            asyncModifyWeightFieldInDB(Double.parseDouble(getWeightInputText().getText().toString()),
+                    areaEasting, areaNorthing, contextNumber, sampleNumber);
         }
         catch (NumberFormatException e)
         {
-            Toast.makeText(getApplicationContext(), "Invalid Weight",
-                    Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Invalid Weight", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -759,8 +763,7 @@ public class ObjectDetailActivity extends AppCompatActivity
         dialogVisible = true;
         // set up buttons on record_weight_dialog.xml so that you can view and save weight
         // information
-        weightDialog.findViewById(R.id.dialogSaveWeightButton)
-                .setOnClickListener(new View.OnClickListener() {
+        weightDialog.findViewById(R.id.dialogSaveWeightButton).setOnClickListener(new View.OnClickListener() {
             /**
              * User clicked save
              * @param v - dialog
@@ -773,8 +776,7 @@ public class ObjectDetailActivity extends AppCompatActivity
                 weightDialog.dismiss();
             }
         });
-        weightDialog.findViewById(R.id.update_bluetooth)
-                .setOnClickListener(new View.OnClickListener() {
+        weightDialog.findViewById(R.id.update_bluetooth).setOnClickListener(new View.OnClickListener() {
             /**
              * User clicked copy weight
              * @param v - dialog
@@ -793,10 +795,8 @@ public class ObjectDetailActivity extends AppCompatActivity
                 }
             }
         });
-        ((EditText) weightDialog.findViewById(R.id.dialogCurrentWeightInDBText))
-                .setText(getCurrentScaleWeight());
-        ((TextView) weightDialog.findViewById(R.id.btConnectionStatusText))
-                .setText(getBluetoothConnectionStatus());
+        ((EditText) weightDialog.findViewById(R.id.dialogCurrentWeightInDBText)).setText(getCurrentScaleWeight());
+        ((TextView) weightDialog.findViewById(R.id.btConnectionStatusText)).setText(getBluetoothConnectionStatus());
     }
 
     /**
@@ -806,14 +806,11 @@ public class ObjectDetailActivity extends AppCompatActivity
     {
         if (bluetoothService == null)
         {
-            Toast.makeText(getApplicationContext(), "Not connected to scale",
-                    Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Not connected to scale", Toast.LENGTH_SHORT).show();
         }
         bluetoothService.runService();
-        ((TextView) findViewById(R.id.weightInput))
-                .setText(String.valueOf(BluetoothService.currWeight));
-        asyncModifyWeightFieldInDB(BluetoothService.currWeight, areaEasting, areaNorthing,
-                contextNumber, sampleNumber);
+        ((TextView) findViewById(R.id.weightInput)).setText(String.valueOf(BluetoothService.currWeight));
+        asyncModifyWeightFieldInDB(BluetoothService.currWeight, areaEasting, areaNorthing, contextNumber, sampleNumber);
     }
 
     /**
@@ -1145,22 +1142,22 @@ public class ObjectDetailActivity extends AppCompatActivity
         asyncPopulatePhotos();
     }
 
-    /**
-     * Notify if connection status has been changed
-     * @param networkInfo - network changed
-     */
-    public void connectionStatusChangedCallback(NetworkInfo networkInfo)
-    {
-        if (!networkInfo.isConnectedOrConnecting())
-        {
-            if (cameraIPAddress == null)
-            {
-//                connectedToRemoteCamera = false;
-                toggleAddPhotoButton();
-//                discoverPeers();
-            }
-        }
-    }
+//    /**
+//     * Notify if connection status has been changed
+//     * @param networkInfo - network changed
+//     */
+//    public void connectionStatusChangedCallback(NetworkInfo networkInfo)
+//    {
+//        if (!networkInfo.isConnectedOrConnecting())
+//        {
+//            if (cameraIPAddress == null)
+//            {
+////                connectedToRemoteCamera = false;
+//                toggleAddPhotoButton();
+////                discoverPeers();
+//            }
+//        }
+//    }
 
     /**
      * Navigate through items in spinner

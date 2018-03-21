@@ -3,7 +3,7 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 25
     defaultConfig {
-        applicationId "cis573.com.archaeology"
+        applicationId "com.archaeology"
         minSdkVersion 21
         targetSdkVersion 25
         versionCode 1
@@ -45,5 +45,4 @@ dependencies {
     compile 'com.squareup.retrofit2:converter-gson:2.2.0'
     compile 'com.github.PhilJay:MPAndroidChart:v3.0.1'
     compile 'com.siclo.ezphotopick:library:1.0.7'
-//    compile ('com.amazonaws:aws-android-sdk-mobile-client:2.6.7@aar') { transitive = true; }
 }

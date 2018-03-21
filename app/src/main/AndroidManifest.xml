@@ -45,14 +45,12 @@
         <activity android:name="com.archaeology.ui.DownloadActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity android:name="com.archaeology.util.LocalRetriever" />
         <activity
             android:name="com.archaeology.ui.CameraUIActivity"
-            android:screenOrientation="landscape"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity android:name="com.archaeology.ui.FavoriteActivity" />
         <activity android:name="com.archaeology.ui.SearchActivity" />
