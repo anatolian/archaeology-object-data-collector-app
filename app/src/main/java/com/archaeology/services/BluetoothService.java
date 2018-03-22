@@ -57,6 +57,7 @@ public class BluetoothService
         else
         {
             connectedThread.run();
+            Toast.makeText(context, "Update successful", Toast.LENGTH_SHORT).show();
         }
     }
 

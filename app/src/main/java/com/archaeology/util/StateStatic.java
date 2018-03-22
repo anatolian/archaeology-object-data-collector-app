@@ -35,7 +35,7 @@ public class StateStatic
     public static final String CONTEXT_NUMBER = "context_number";
     public static final String SAMPLE_NUMBER = "sample_number";
     public static final String ALL_SAMPLE_NUMBER = "all_available_sample_number";
-    public static String deviceName = null;
+    public static String deviceName = "nutriscale_1910";
     // offset values that help you to locate the correct fields in the data tables to store
     // information. the global web server is being set to a default value. need to make sure that
     // app is able to find IP address on its own

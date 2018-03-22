@@ -2,24 +2,11 @@
 // @author: msenol86, ygowda
 package com.archaeology.ui;
 import android.app.AlertDialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.IntentFilter;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.net.NetworkInfo;
-import android.net.wifi.WifiInfo;
-import android.net.wifi.WifiManager;
-import android.net.wifi.p2p.WifiP2pConfig;
-import android.net.wifi.p2p.WifiP2pDevice;
-import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 import com.android.volley.RequestQueue;
@@ -30,39 +17,19 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import org.json.JSONException;
 import org.json.JSONObject;
-import java.util.ArrayList;
-import java.util.HashMap;
 import com.archaeology.R;
 import com.archaeology.util.StateStatic;
 import com.archaeology.services.VolleyWrapper;
-import com.archaeology.services.WiFiDirectBroadcastReceiver;
 import com.archaeology.models.JSONObjectResponseWrapper;
 import static com.archaeology.util.StateStatic.LOG_TAG_WIFI_DIRECT;
 import static com.archaeology.util.StateStatic.cameraIPAddress;
 import static com.archaeology.util.StateStatic.cameraMACAddress;
-import static com.archaeology.util.StateStatic.connectedToRemoteCamera;
 public class MyWiFiActivity extends AppCompatActivity
-//        implements WiFiDirectBroadcastReceiver.WifiDirectBroadcastReceivable
 {
     // helps to establish connection with peer devices
     public static String TAG = "WIFI P2P";
-    WifiP2pManager mManager;
-    WifiP2pManager.Channel mChannel;
-//    BroadcastReceiver mReceiver;
     RequestQueue queue;
     int requestID;
-    IntentFilter mIntentFilter;
-//    private boolean connectedDialogVisible = false;
-//    public boolean connectButtonClicked = false;
-//    /**
-//     * Open connected dialog
-//     * @return Returns whether the dialog appeared
-//     */
-//    public boolean isConnectedDialogVisible()
-//    {
-//        return connectedDialogVisible;
-//    }
-
     /**
      * Launch activity
      * @param savedInstanceState - state from memory
@@ -79,16 +46,6 @@ public class MyWiFiActivity extends AppCompatActivity
         }
         queue = Volley.newRequestQueue(this);
         requestID = 55;
-        // setting up intent filter
-        mIntentFilter = new IntentFilter();
-        mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
-        mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
-        mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
-        mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
-        mManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
-        mChannel = mManager.initialize(this, getMainLooper(), null);
-//        mReceiver = new WiFiDirectBroadcastReceiver(mManager, mChannel, this);
-//        registerReceiver(mReceiver, mIntentFilter);
         disableAPIButtons();
     }
 
@@ -99,7 +56,6 @@ public class MyWiFiActivity extends AppCompatActivity
     protected void onResume()
     {
         super.onResume();
-//        registerReceiver(mReceiver, mIntentFilter);
     }
 
     /**
@@ -109,14 +65,6 @@ public class MyWiFiActivity extends AppCompatActivity
     protected void onPause()
     {
         super.onPause();
-//        try
-//        {
-//            unregisterReceiver(mReceiver);
-//        }
-//        catch (IllegalArgumentException e)
-//        {
-//            Log.v(TAG, "Trying to unregister a non-registered receiver");
-//        }
     }
 
     /**
@@ -126,14 +74,6 @@ public class MyWiFiActivity extends AppCompatActivity
     protected void onStop()
     {
         super.onStop();
-//        try
-//        {
-//            unregisterReceiver(mReceiver);
-//        }
-//        catch (IllegalArgumentException e)
-//        {
-//            Log.v(LOG_TAG_WIFI_DIRECT, "Trying to unregister non-registered receiver");
-//        }
     }
 
     /**
@@ -143,125 +83,6 @@ public class MyWiFiActivity extends AppCompatActivity
     protected void onDestroy()
     {
         super.onDestroy();
-//        try
-//        {
-//            unregisterReceiver(mReceiver);
-//        }
-//        catch (IllegalArgumentException e)
-//        {
-//            Log.v(LOG_TAG_WIFI_DIRECT, "Trying to unregister non-registered receiver");
-//        }
-    }
-
-//    /**
-//     * This should help you connect to the camera
-//     * @param MAC_ADDRESS - camera MAC address
-//     */
-//    public void connectToWiFiDirectDevice(final String MAC_ADDRESS)
-//    {
-//        WifiP2pDevice device = new WifiP2pDevice();
-//        device.deviceAddress = MAC_ADDRESS;
-//        WifiP2pConfig config = new WifiP2pConfig();
-//        config.deviceAddress = device.deviceAddress;
-//        cameraIPAddress = CheatSheet.findIPFromMAC(MAC_ADDRESS);
-//        if (cameraIPAddress != null)
-//        {
-//            connectedDialogVisible = false;
-//            connectedToRemoteCamera = true;
-//        }
-//        mManager.connect(mChannel, config, new WifiP2pManager.ActionListener() {
-//            /**
-//             * TODO: does this not require implementation or still yet to be implemented?
-//             */
-//            @Override
-//            public void onSuccess()
-//            {
-//                // TODO: success logic
-//                Log.v(TAG, "Connected to Camera");
-//            }
-//
-//            /**
-//             * Connection failed
-//             * @param reason - error
-//             */
-//            @Override
-//            public void onFailure(int reason)
-//            {
-//                // TODO: failure logic
-//                Log.v(TAG, "Failed to connect. Error code " + reason);
-//            }
-//        });
-//    }
-
-//    /**
-//     * Found P2P device
-//     * @param collectionOfDevices - found devices
-//     */
-//    public void peersDiscovered(ArrayList<WifiP2pDevice> collectionOfDevices)
-//    {
-//        Log.v(LOG_TAG_WIFI_DIRECT, "Peers Discovered Called");
-//        if (!connectedToRemoteCamera && !connectedDialogVisible)
-//        {
-//            final HashMap<String, String> PAIRS_OF_ADDRESSES_AND_NAMES = new HashMap<>(collectionOfDevices.size());
-//            // stores names of peer devices with corresponding addresses into hashmap
-//            final ArrayList<String> LIST_OF_DEVICE_NAMES = new ArrayList<>(collectionOfDevices.size());
-//            for (WifiP2pDevice myDevice: collectionOfDevices)
-//            {
-//                LIST_OF_DEVICE_NAMES.add(myDevice.deviceName);
-//                PAIRS_OF_ADDRESSES_AND_NAMES.put(myDevice.deviceName, myDevice.deviceAddress);
-//            }
-//            // load peer devices and addresses to dialog box
-//            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-//            builder.setTitle("Pick Device").setItems(LIST_OF_DEVICE_NAMES.toArray(new String[]{}),
-//                    new DialogInterface.OnClickListener() {
-//                /**
-//                 * User clicked the alert
-//                 * @param dialog - alert window
-//                 * @param which  - selected option
-//                 */
-//                public void onClick(DialogInterface dialog, int which)
-//                {
-//                    connectButtonClicked = true;
-//                    Log.v(TAG, "Connecting to: " + PAIRS_OF_ADDRESSES_AND_NAMES.get(LIST_OF_DEVICE_NAMES.get(which)));
-//                    connectToWiFiDirectDevice(PAIRS_OF_ADDRESSES_AND_NAMES.get(LIST_OF_DEVICE_NAMES.get(which)));
-//                    // The 'which' argument contains the index position of the selected item
-//                }
-//            });
-//            builder.create().show();
-//            connectedDialogVisible = true;
-//        }
-//    }
-
-    /**
-     * Look for peers
-     * @param view - discover peers button
-     */
-    public void discoverPeers(View view)
-    {
-        if (!connectedToRemoteCamera)
-        {
-            mManager.removeGroup(mChannel, null);
-            mManager.discoverPeers(mChannel, new WifiP2pManager.ActionListener() {
-                /**
-                 * Peer found
-                 */
-                @Override
-                public void onSuccess()
-                {
-                    Log.v(LOG_TAG_WIFI_DIRECT, "Peer discovery started");
-                }
-
-                /**
-                 * Nothing found
-                 * @param reason - error
-                 */
-                @Override
-                public void onFailure(int reason)
-                {
-                    Log.v(LOG_TAG_WIFI_DIRECT, "Peers discovery failed");
-                }
-            });
-        }
     }
 
     /**
@@ -271,22 +92,8 @@ public class MyWiFiActivity extends AppCompatActivity
     public void showIPAddress(View view)
     {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        Log.v(LOG_TAG_WIFI_DIRECT, "remote IPAddress " + cameraIPAddress);
-        Log.v(LOG_TAG_WIFI_DIRECT, "my IPAddress "  + getMyIPAddress());
         builder.setTitle("Remote IP Address").setMessage(CheatSheet.findIPFromMAC(cameraMACAddress));
         builder.create().show();
-    }
-
-    /**
-     * Gets the IP address of the peer device it is connected to. This may help to create a URL to
-     * connect with the server as well
-     * @return Returns IP address
-     */
-    public int getMyIPAddress()
-    {
-        WifiManager manager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        WifiInfo info = manager.getConnectionInfo();
-        return info.getIpAddress();
     }
 
     /**
@@ -306,6 +113,7 @@ public class MyWiFiActivity extends AppCompatActivity
     public void takePhoto(View view)
     {
         String URL = buildAPIURLFromIP(cameraIPAddress);
+        Log.v(LOG_TAG_WIFI_DIRECT, URL);
         try
         {
             VolleyWrapper.makeVolleySonyAPITakePhotoRequest(URL, queue, requestID++,
@@ -333,10 +141,6 @@ public class MyWiFiActivity extends AppCompatActivity
                             @Override
                             public void onSuccess()
                             {
-                                // convert URL into bitmap
-                                ImageView takenPhoto = (ImageView) findViewById(R.id.sonyCameraPhoto);
-                                Bitmap tmpBitmap = ((BitmapDrawable) takenPhoto.getDrawable()).getBitmap();
-                                Log.v(LOG_TAG_WIFI_DIRECT, "Bitmap Size: " + tmpBitmap.getByteCount());
                             }
 
                             /**
@@ -365,9 +169,8 @@ public class MyWiFiActivity extends AppCompatActivity
                 @Override
                 public void errorMethod(VolleyError error)
                 {
-                    // TODO: See what was supposed to happen here. Should it go back to previous activity?
                     error.printStackTrace();
-//                    Toast.makeText(getApplicationContext(), "Not Connected to Camera", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Error communicating with camera", Toast.LENGTH_SHORT).show();
                     Log.v(LOG_TAG_WIFI_DIRECT, error.toString());
                 }
             });
@@ -394,7 +197,6 @@ public class MyWiFiActivity extends AppCompatActivity
     public void startLiveView(final View VIEW)
     {
         final String URL = buildAPIURLFromIP(cameraIPAddress);
-        Log.v(TAG, URL);
         try
         {
             VolleyWrapper.makeVolleySonyAPIStartLiveViewRequest(URL, queue, requestID++,
@@ -406,7 +208,6 @@ public class MyWiFiActivity extends AppCompatActivity
                 @Override
                 public void responseMethod(JSONObject response)
                 {
-                    Log.v(TAG, "This is the response: " + response.toString());
                     try
                     {
                         final String LIVE_VIEW_URL = response.getJSONArray("result").getString(0);
@@ -452,7 +253,7 @@ public class MyWiFiActivity extends AppCompatActivity
         catch (JSONException e)
         {
             e.printStackTrace();
-            Toast.makeText(this, "Not Connected to Camera", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Error communicating with camera", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -474,7 +275,6 @@ public class MyWiFiActivity extends AppCompatActivity
                 @Override
                 public void responseMethod(JSONObject response)
                 {
-                    Log.v(LOG_TAG_WIFI_DIRECT, response.toString());
                     runOnUiThread(new Runnable() {
                         /**
                          * Run Thread
@@ -502,7 +302,7 @@ public class MyWiFiActivity extends AppCompatActivity
         catch (JSONException e)
         {
             e.printStackTrace();
-            Toast.makeText(this, "Not Connected to Camera", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Error communicating with camera", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -548,7 +348,6 @@ public class MyWiFiActivity extends AppCompatActivity
                 @Override
                 public void responseMethod(JSONObject response)
                 {
-                    Log.v(LOG_TAG_WIFI_DIRECT, response.toString());
                 }
 
                 /**
@@ -565,7 +364,7 @@ public class MyWiFiActivity extends AppCompatActivity
         catch (JSONException e)
         {
             e.printStackTrace();
-            Toast.makeText(this, "Not Connected to Camera", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Error communicating with camera", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -580,40 +379,30 @@ public class MyWiFiActivity extends AppCompatActivity
         {
             VolleyWrapper.makeVolleySonyAPIActZoomRequest("out", queue, URL, requestID++,
                     new JSONObjectResponseWrapper(this) {
-                        /**
-                         * Response received
-                         * @param response - camera response
-                         */
-                        @Override
-                        public void responseMethod(JSONObject response)
-                        {
-                            Log.v(LOG_TAG_WIFI_DIRECT, response.toString());
-                        }
+                /**
+                 * Response received
+                 * @param response - camera response
+                 */
+                @Override
+                public void responseMethod(JSONObject response)
+                {
+                }
 
-                        /**
-                         * Connection failed
-                         * @param error - failure
-                         */
-                        @Override
-                        public void errorMethod(VolleyError error)
-                        {
-                            error.printStackTrace();
-                        }
-                    });
+                /**
+                 * Connection failed
+                 * @param error - failure
+                 */
+                @Override
+                public void errorMethod(VolleyError error)
+                {
+                    error.printStackTrace();
+                }
+            });
         }
         catch (JSONException e)
         {
             e.printStackTrace();
-            Toast.makeText(this, "Not Connected to Camera", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Error communicating with camera", Toast.LENGTH_SHORT).show();
         }
-    }
-
-    /**
-     * Connection changed
-     * @param networkInfo - change condition
-     */
-    public void connectionStatusChangedCallback(NetworkInfo networkInfo)
-    {
-        // TODO: Should we reconnect to the camera here?
     }
 }

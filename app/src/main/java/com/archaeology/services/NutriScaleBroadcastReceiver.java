@@ -36,27 +36,22 @@ public class NutriScaleBroadcastReceiver extends BroadcastReceiver
         {
             // Get the BluetoothDevice object from the Intent
             BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-            Log.v(LOG_TAG_BLUETOOTH, "Device found: " + device.getName() + " : " + device.getAddress());
         }
         else if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action))
         {
             M_HANDLER.obtainMessage(MESSAGE_STATUS_CHANGE, "Device Connected").sendToTarget();
-            Log.v(LOG_TAG_BLUETOOTH, "Device Connected");
         }
         else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action))
         {
             M_HANDLER.obtainMessage(MESSAGE_STATUS_CHANGE, "Discovery Finished").sendToTarget();
-            Log.v(LOG_TAG_BLUETOOTH, "Discovery Finished");
         }
         else if (BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED.equals(action))
         {
             M_HANDLER.obtainMessage(MESSAGE_STATUS_CHANGE,"Device About To Disconnect").sendToTarget();
-            Log.v(LOG_TAG_BLUETOOTH, "Device About To Disconnect");
         }
         else if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action))
         {
             M_HANDLER.obtainMessage(MESSAGE_STATUS_CHANGE, "Device Disconnected").sendToTarget();
-            Log.v(LOG_TAG_BLUETOOTH, "Device Disconnected");
         }
     }
 }

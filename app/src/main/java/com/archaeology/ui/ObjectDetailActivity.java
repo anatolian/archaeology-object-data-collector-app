@@ -12,12 +12,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.NetworkInfo;
 import android.net.Uri;
-import android.net.wifi.WpsInfo;
-import android.net.wifi.p2p.WifiP2pConfig;
-import android.net.wifi.p2p.WifiP2pDevice;
-import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -53,7 +48,6 @@ import com.archaeology.models.AfterImageSavedMethodWrapper;
 import com.archaeology.models.StringObjectResponseWrapper;
 import com.archaeology.services.BluetoothService;
 import com.archaeology.services.NutriScaleBroadcastReceiver;
-import com.archaeology.services.WiFiDirectBroadcastReceiver;
 import com.archaeology.util.CheatSheet;
 import com.archaeology.util.StateStatic;
 import static com.archaeology.services.VolleyStringWrapper.makeVolleyStringObjectRequest;
@@ -63,7 +57,6 @@ import static com.archaeology.util.CheatSheet.goToSettings;
 import static com.archaeology.util.StateStatic.ALL_SAMPLE_NUMBER;
 import static com.archaeology.util.StateStatic.LOG_TAG;
 import static com.archaeology.util.StateStatic.LOG_TAG_BLUETOOTH;
-import static com.archaeology.util.StateStatic.LOG_TAG_WIFI_DIRECT;
 import static com.archaeology.util.StateStatic.MARKED_AS_ADDED;
 import static com.archaeology.util.StateStatic.MARKED_AS_TO_DOWNLOAD;
 import static com.archaeology.util.StateStatic.MESSAGE_STATUS_CHANGE;
@@ -71,8 +64,6 @@ import static com.archaeology.util.StateStatic.MESSAGE_WEIGHT;
 import static com.archaeology.util.StateStatic.REQUEST_ENABLE_BT;
 import static com.archaeology.util.StateStatic.REQUEST_IMAGE_CAPTURE;
 import static com.archaeology.util.StateStatic.cameraIPAddress;
-import static com.archaeology.util.StateStatic.cameraMACAddress;
-import static com.archaeology.util.StateStatic.connectedToRemoteCamera;
 import static com.archaeology.util.StateStatic.convertDPToPixel;
 import static com.archaeology.util.StateStatic.getGlobalCameraMAC;
 import static com.archaeology.util.StateStatic.getGlobalPhotoSavePath;
@@ -82,12 +73,7 @@ import static com.archaeology.util.StateStatic.isBluetoothEnabled;
 import static com.archaeology.util.StateStatic.isRemoteCameraSelected;
 import static com.archaeology.util.StateStatic.isTakePhotoButtonClicked;
 public class ObjectDetailActivity extends AppCompatActivity
-//        implements WiFiDirectBroadcastReceiver.WifiDirectBroadcastReceivable
 {
-    // wifi manager will help you get information for wifi to build the URL that you will need to
-    // communicate with camera and the database (peer to peer connectivity)
-    private WifiP2pManager mManager;
-    private WifiP2pManager.Channel mChannel;
     IntentFilter mIntentFilter;
     // to handle python requests
     RequestQueue queue;
@@ -108,31 +94,6 @@ public class ObjectDetailActivity extends AppCompatActivity
             else if (msg.what == MESSAGE_STATUS_CHANGE)
             {
                 setBluetoothConnectionStatus(msg.obj.toString().trim());
-            }
-        }
-    };
-    // The BroadcastReceiver that listens for bluetooth broadcasts
-    private final BroadcastReceiver M_RECEIVER = new BroadcastReceiver() {
-        /**
-         * Broadcast received
-         * @param context - current app context
-         * @param intent - calling intent
-         */
-        @Override
-        public void onReceive(Context context, Intent intent)
-        {
-            String action = intent.getAction();
-            BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-            if (BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED.equals(action))
-            {
-                // Device is about to disconnect
-                Toast.makeText(context, "Disconnect requested", Toast.LENGTH_SHORT).show();
-            }
-            else if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action))
-            {
-                bluetoothService.reconnect(device);
-                // Device has disconnected
-                Toast.makeText(context, "Disconnected from scale: please restart the scale", Toast.LENGTH_SHORT).show();
             }
         }
     };
@@ -167,15 +128,6 @@ public class ObjectDetailActivity extends AppCompatActivity
         bluetoothService = null;
         device = null;
         mIntentFilter = new IntentFilter();
-        // adding actions to intent filter
-        mIntentFilter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
-        mIntentFilter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED);
-        mIntentFilter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);
-        mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
-        mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
-        mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
-        mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
-        registerReceiver(M_RECEIVER, mIntentFilter);
         queue = Volley.newRequestQueue(this);
         // getting object data from previous activity
         Bundle myBundle = getIntent().getExtras();
@@ -316,15 +268,10 @@ public class ObjectDetailActivity extends AppCompatActivity
         {
             photoFragment.prepareFragmentForNewPhotosFromNewItem();
         }
-        mManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
-        mChannel = mManager.initialize(this, getMainLooper(), null);
-//        wiFiDirectBroadcastReceiver = new WiFiDirectBroadcastReceiver(mManager, mChannel, this);
         cameraIPAddress = CheatSheet.findIPFromMAC(getGlobalCameraMAC());
         if (cameraIPAddress != null)
         {
-            ((TextView) findViewById(R.id.connectToCameraText))
-                    .setText(getString(R.string.ip_connection, cameraIPAddress));
-//            registerReceiver(wiFiDirectBroadcastReceiver, mIntentFilter);
+            ((TextView) findViewById(R.id.connectToCameraText)).setText(getString(R.string.ip_connection, cameraIPAddress));
         }
     }
 
@@ -422,8 +369,6 @@ public class ObjectDetailActivity extends AppCompatActivity
                         }
                         catch (IOException e)
                         {
-                            // e.getMessage is returning a null value
-                            Log.d("Error", "Error Message: " + e.getMessage());
                             e.printStackTrace();
                         }
                     }
@@ -459,22 +404,14 @@ public class ObjectDetailActivity extends AppCompatActivity
         {
             pickPeersDialog.dismiss();
         }
-//        try
-//        {
-//            unregisterReceiver(wiFiDirectBroadcastReceiver);
-//        }
-//        catch (IllegalArgumentException e)
-//        {
-//            Log.v(LOG_TAG_WIFI_DIRECT, "Trying to unregister non-registered receiver");
-//        }
-//        try
-//        {
-//            unregisterReceiver(nutriScaleBroadcastReceiver);
-//        }
-//        catch (IllegalArgumentException e)
-//        {
-//            Log.v(LOG_TAG_BLUETOOTH, "Trying to unregister non-registered receiver");
-//        }
+        try
+        {
+            unregisterReceiver(nutriScaleBroadcastReceiver);
+        }
+        catch (IllegalArgumentException e)
+        {
+            Log.v(LOG_TAG_BLUETOOTH, "Trying to unregister non-registered receiver");
+        }
     }
 
     /**
@@ -484,8 +421,7 @@ public class ObjectDetailActivity extends AppCompatActivity
     protected void onResume()
     {
         super.onResume();
-//        registerReceiver(nutriScaleBroadcastReceiver, mIntentFilter);
-//        registerReceiver(wiFiDirectBroadcastReceiver, mIntentFilter);
+        registerReceiver(nutriScaleBroadcastReceiver, mIntentFilter);
     }
 
     /**
@@ -500,22 +436,14 @@ public class ObjectDetailActivity extends AppCompatActivity
         {
             pickPeersDialog.dismiss();
         }
-//        try
-//        {
-//            unregisterReceiver(wiFiDirectBroadcastReceiver);
-//        }
-//        catch (IllegalArgumentException e)
-//        {
-//            Log.v(LOG_TAG_WIFI_DIRECT, "Trying to unregister non-registered receiver");
-//        }
-//        try
-//        {
-//            unregisterReceiver(nutriScaleBroadcastReceiver);
-//        }
-//        catch (IllegalArgumentException e)
-//        {
-//            Log.v(LOG_TAG_BLUETOOTH, "Trying to unregister non-registered receiver");
-//        }
+        try
+        {
+            unregisterReceiver(nutriScaleBroadcastReceiver);
+        }
+        catch (IllegalArgumentException e)
+        {
+            Log.v(LOG_TAG_BLUETOOTH, "Trying to unregister non-registered receiver");
+        }
     }
 
     /**
@@ -525,22 +453,14 @@ public class ObjectDetailActivity extends AppCompatActivity
     public void onPause()
     {
         super.onPause();
-//        try
-//        {
-//            unregisterReceiver(wiFiDirectBroadcastReceiver);
-//        }
-//        catch (IllegalArgumentException e)
-//        {
-//            Log.v(LOG_TAG_WIFI_DIRECT, "Trying to unregister non-registered receiver");
-//        }
-//        try
-//        {
-//            unregisterReceiver(nutriScaleBroadcastReceiver);
-//        }
-//        catch (IllegalArgumentException e)
-//        {
-//            Log.v(LOG_TAG_BLUETOOTH, "Trying to unregister non-registered receiver");
-//        }
+        try
+        {
+            unregisterReceiver(nutriScaleBroadcastReceiver);
+        }
+        catch (IllegalArgumentException e)
+        {
+            Log.v(LOG_TAG_BLUETOOTH, "Trying to unregister non-registered receiver");
+        }
     }
 
     /**
@@ -567,14 +487,6 @@ public class ObjectDetailActivity extends AppCompatActivity
             @Override
             public void responseMethod(String response)
             {
-                if (response.contains("Error"))
-                {
-                    Toast.makeText(currentContext, "Cannot update weight in DB", Toast.LENGTH_LONG).show();
-                }
-                else
-                {
-                    Toast.makeText(currentContext, "New Weight Value Stored into DB", Toast.LENGTH_LONG).show();
-                }
             }
 
             /**
@@ -808,6 +720,7 @@ public class ObjectDetailActivity extends AppCompatActivity
         if (bluetoothService == null)
         {
             Toast.makeText(getApplicationContext(), "Not connected to scale", Toast.LENGTH_SHORT).show();
+            return;
         }
         bluetoothService.runService();
         ((TextView) findViewById(R.id.weightInput)).setText(String.valueOf(BluetoothService.currWeight));
@@ -1000,114 +913,6 @@ public class ObjectDetailActivity extends AppCompatActivity
         }
     }
 
-//    /**
-//     * Interface from WiFiDirectBroadcastReceiver.java. Will help to connect with external devices
-//     * @param LIST_OF_DEVICES - connected devices
-//     */
-//    @Override
-//    public void peersDiscovered(final ArrayList<WifiP2pDevice> LIST_OF_DEVICES)
-//    {
-//        Log.v(LOG_TAG_WIFI_DIRECT, LIST_OF_DEVICES.size() + " device discovered");
-//        // so you can connect with camera organizing all devices phone can connect to
-//        final ArrayList<String> LIST_OF_DEVICE_NAMES = new ArrayList<>(LIST_OF_DEVICES.size());
-//        for (WifiP2pDevice myDevice: LIST_OF_DEVICES)
-//        {
-//            Log.v(LOG_TAG_WIFI_DIRECT, myDevice.deviceName);
-//            LIST_OF_DEVICE_NAMES.add(myDevice.deviceAddress);
-//        }
-//        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-//        builder.setTitle("Pick Remote Camera").setItems(LIST_OF_DEVICE_NAMES.toArray(new String[] {}),
-//                new DialogInterface.OnClickListener() {
-//            /**
-//             * User clicked remote camera
-//             * @param dialog - camera dialog
-//             * @param which - item selected
-//             */
-//            public void onClick(DialogInterface dialog, int which)
-//            {
-//                // The 'which' argument contains the index position of the selected item.
-//                // setting up connection with mac device
-//                final String MAC_ADDRESS = LIST_OF_DEVICE_NAMES.get(which);
-//                WifiP2pDevice device = LIST_OF_DEVICES.get(which);
-//                device.deviceAddress = MAC_ADDRESS;
-//                WifiP2pConfig config = new WifiP2pConfig();
-//                config.deviceAddress = device.deviceAddress;
-//                config.wps.setup = WpsInfo.PBC;
-//                Log.v(LOG_TAG, "the device address is " + config.deviceAddress);
-//                mManager.connect(mChannel, config, new WifiP2pManager.ActionListener() {
-//                    /**
-//                     * Connection succeeded
-//                     */
-//                    @Override
-//                    public void onSuccess()
-//                    {
-//                        cameraMACAddress = MAC_ADDRESS;
-//                        Log.v(LOG_TAG, "MAC address is " + MAC_ADDRESS);
-//                        // so at this point the connection has been made
-//                        ((TextView) findViewById(R.id.connectToCameraText)).setText(getString(R.string.wait));
-//                    }
-//
-//                    /**
-//                     * Connection failed
-//                     * @param reason - error
-//                     */
-//                    @Override
-//                    public void onFailure(int reason)
-//                    {
-//                        // TODO: failure logic
-//                        Log.v(LOG_TAG, "the connection has failed " + reason);
-//                    }
-//                });
-//            }
-//        });
-//        pickPeersDialog = builder.create();
-//    }
-
-//    /**
-//     * Allows you to connect with other devices
-//     */
-//    @Override
-//    public void discoverPeers()
-//    {
-//        if (!connectedToRemoteCamera)
-//        {
-//            mManager.removeGroup(mChannel, null);
-//            // if connection is successful then disable connect to camera button
-//            mManager.discoverPeers(mChannel, new WifiP2pManager.ActionListener() {
-//                /**
-//                 * Connection successful
-//                 */
-//                @Override
-//                public void onSuccess()
-//                {
-//                    ((TextView) findViewById(R.id.connectToCameraText))
-//                            .setText(getString(R.string.ip_connection, cameraIPAddress));
-//                    Log.v(LOG_TAG_WIFI_DIRECT, "Peer discovery started");
-//                }
-//
-//                /**
-//                 * Connection failed
-//                 * @param reason - error
-//                 */
-//                @Override
-//                public void onFailure(int reason)
-//                {
-//                    Log.v(LOG_TAG_WIFI_DIRECT, "Peers discovery failed");
-//                }
-//            });
-//        }
-//    }
-
-//    /**
-//     * IsConnected dialog
-//     * @return Returns whether the dialog opened
-//     */
-//    @Override
-//    public boolean isConnectedDialogVisible()
-//    {
-//        return isPickPeersDialogVisible;
-//    }
-
     /**
      * Display sample number of items in spinner
      */
@@ -1142,23 +947,6 @@ public class ObjectDetailActivity extends AppCompatActivity
         asyncPopulatePhotos();
     }
 
-//    /**
-//     * Notify if connection status has been changed
-//     * @param networkInfo - network changed
-//     */
-//    public void connectionStatusChangedCallback(NetworkInfo networkInfo)
-//    {
-//        if (!networkInfo.isConnectedOrConnecting())
-//        {
-//            if (cameraIPAddress == null)
-//            {
-////                connectedToRemoteCamera = false;
-//                toggleAddPhotoButton();
-////                discoverPeers();
-//            }
-//        }
-//    }
-
     /**
      * Navigate through items in spinner
      * @param view - button
@@ -1171,7 +959,6 @@ public class ObjectDetailActivity extends AppCompatActivity
         if (selectedItemPos + 1 <= itemCount - 1)
         {
             sample.setSelection(selectedItemPos + 1);
-//            clearCurrentPhotosOnLayoutAndFetchPhotosAsync();
         }
     }
 
@@ -1186,7 +973,6 @@ public class ObjectDetailActivity extends AppCompatActivity
         if (selectedItemPos - 1 >= 0)
         {
             sample.setSelection(selectedItemPos - 1);
-//            clearCurrentPhotosOnLayoutAndFetchPhotosAsync();
         }
     }
 
@@ -1195,16 +981,9 @@ public class ObjectDetailActivity extends AppCompatActivity
      */
     public void toggleAddPhotoButton()
     {
-        if (isRemoteCameraSelected())
+        if (isRemoteCameraSelected() && cameraIPAddress == null)
         {
-            if (cameraIPAddress != null)
-            {
-                findViewById(R.id.button26).setEnabled(true);
-            }
-            else
-            {
-                findViewById(R.id.button26).setEnabled(false);
-            }
+            findViewById(R.id.button26).setEnabled(false);
         }
         else
         {
@@ -1233,22 +1012,19 @@ public class ObjectDetailActivity extends AppCompatActivity
      */
     public void goToWiFiActivity(View v)
     {
-//        try
-//        {
-//            unregisterReceiver(wiFiDirectBroadcastReceiver);
-//        }
-//        catch (IllegalArgumentException e)
-//        {
-//            Log.v(LOG_TAG_WIFI_DIRECT, "Trying to unregister non-registered receiver");
-//        }
-//        try
-//        {
-//            unregisterReceiver(nutriScaleBroadcastReceiver);
-//        }
-//        catch (IllegalArgumentException e)
-//        {
-//            Log.v(LOG_TAG_BLUETOOTH, "Trying to unregister non-registered receiver");
-//        }
+        if (cameraIPAddress == null)
+        {
+            Toast.makeText(getApplicationContext(), "Not connected to camera", Toast.LENGTH_LONG).show();
+            return;
+        }
+        try
+        {
+            unregisterReceiver(nutriScaleBroadcastReceiver);
+        }
+        catch (IllegalArgumentException e)
+        {
+            Log.v(LOG_TAG_BLUETOOTH, "Trying to unregister non-registered receiver");
+        }
         Intent wifiActivity = new Intent(this, MyWiFiActivity.class);
         startActivity(wifiActivity);
     }

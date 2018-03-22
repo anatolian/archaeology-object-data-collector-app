@@ -108,7 +108,6 @@ public class InitialActivity extends AppCompatActivity
      */
     public void goToSettings(View view)
     {
-        Log.v(LOG_TAG, "Settings button clicked");
         setGlobalWebServerURL(getWebServerURLFromLayout());
         Intent myIntent = new Intent(this, SettingsActivity.class);
         startActivity(myIntent);
@@ -139,7 +138,6 @@ public class InitialActivity extends AppCompatActivity
         BAR_PROGRESS_DIALOG.setTitle("Connecting to Server ...");
         BAR_PROGRESS_DIALOG.setIndeterminate(true);
         BAR_PROGRESS_DIALOG.show();
-        Log.v(LOG_TAG, "Test Connection Button Clicked");
         cancelAllVolleyRequests(queue);
         makeVolleyStringObjectRequest(getWebServerURLFromLayout() + "/test_connection/", queue,
                 new StringObjectResponseWrapper(this) {
@@ -150,7 +148,6 @@ public class InitialActivity extends AppCompatActivity
             @Override
             public void responseMethod(String response)
             {
-                Log.v(LOG_TAG, "here is the response\n " + response);
                 // If the connection failed then an error message returns instead
                 BAR_PROGRESS_DIALOG.dismiss();
                 if (response.contains("Error"))
@@ -170,29 +167,27 @@ public class InitialActivity extends AppCompatActivity
             @Override
             public void errorMethod(VolleyError error)
             {
-                Log.v(LOG_TAG, "did not connect");
-                Log.v(LOG_TAG, error.toString());
                 // this just put in place to step through the app
                 if (error instanceof ServerError)
                 {
-                    Toast.makeText(getApplicationContext(), "server error", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Server Error", Toast.LENGTH_SHORT).show();
                 }
                 else if (error instanceof AuthFailureError)
                 {
-                    Toast.makeText(getApplicationContext(), "authentication failure",
+                    Toast.makeText(getApplicationContext(), "Authentication Failure",
                             Toast.LENGTH_SHORT).show();
                 }
                 else if (error instanceof ParseError)
                 {
-                    Toast.makeText(getApplicationContext(), "parse error", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Parse Error", Toast.LENGTH_SHORT).show();
                 }
                 else if (error instanceof NoConnectionError)
                 {
-                    Toast.makeText(getApplicationContext(), "no connection error", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "No Connection", Toast.LENGTH_SHORT).show();
                 }
                 else if (error instanceof TimeoutError)
                 {
-                    Toast.makeText(getApplicationContext(), "time out error", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Time Out Error", Toast.LENGTH_SHORT).show();
                 }
                 BAR_PROGRESS_DIALOG.dismiss();
                 connectionTestFailedCallback();

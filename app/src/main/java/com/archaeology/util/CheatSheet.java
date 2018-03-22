@@ -9,7 +9,6 @@ import android.graphics.BitmapFactory;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Environment;
-import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import java.io.BufferedReader;
@@ -61,23 +60,19 @@ public class CheatSheet
     {
         BufferedReader bufferedReader = null;
         String IP = null;
-        Log.v("ARP FILE", "Looking for MAC " + MACAddress);
         try
         {
             bufferedReader = new BufferedReader(new FileReader("/proc/net/arp"));
             String line;
             while ((line = bufferedReader.readLine()) != null)
             {
-                Log.v("ARP FILE", "Read line " + line);
                 String[] splitted = line.split(" +");
-                if (splitted != null && splitted.length >= 4)
+                if (splitted.length >= 4)
                 {
                     String MAC = splitted[3];
-                    Log.v("ARP FILE", "Found MAC " + MAC);
                     if (MAC.matches("..:..:..:..:..:..") && MAC.equals(MACAddress))
                     {
                         IP = splitted[0];
-                        Log.v("ARP FILE", IP);
                     }
                 }
             }

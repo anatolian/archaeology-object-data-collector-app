@@ -213,7 +213,6 @@ public class CameraUIActivity extends AppCompatActivity
             @Override
             public void onCodeScanned(String data)
             {
-                Log.v("QRCode Scanned", data);
                 goToObjectDetail(data);
             }
         });

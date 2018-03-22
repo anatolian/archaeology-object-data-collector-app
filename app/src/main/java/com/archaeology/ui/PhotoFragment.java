@@ -34,15 +34,6 @@ public class PhotoFragment extends Fragment
     {
         AppCompatImageView actualImageView;
         /**
-         * Get the image view
-         * @return Returns the image view
-         */
-        public AppCompatImageView getActualImageView()
-        {
-            return actualImageView;
-        }
-
-        /**
          * Set the image view
          * @param actualImageView - new image view
          */
@@ -165,8 +156,7 @@ public class PhotoFragment extends Fragment
         super.onActivityCreated(savedInstanceState);
         if (savedInstanceState != null)
         {
-            dictOfPhotoSyncStatus
-                    = (LinkedHashMap<Uri, String>) savedInstanceState.getSerializable(PHOTO_DICT);
+            dictOfPhotoSyncStatus = (LinkedHashMap<Uri, String>) savedInstanceState.getSerializable(PHOTO_DICT);
             syncPhotos();
         }
     }
