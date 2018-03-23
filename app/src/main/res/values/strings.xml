@@ -52,7 +52,7 @@
     <string name="captured_picture">Captured Picture</string>
     <string name="pair_device">Pair New Device</string>
     <string name="paired">Paired Devices</string>
-    <string name="configure_camera">Connect to Camera</string>
+    <string name="configure_camera">Remote Control Camera</string>
     <string name="update_bluetooth">Record from Scale</string>
     <string name="camera_live_view">Camera Live View</string>
     <string name = "bucket_url">S3 Bucket URL</string>

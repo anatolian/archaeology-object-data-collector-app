@@ -39,6 +39,7 @@
                 android:layout_width = "match_parent"
                 android:layout_height = "wrap_content"
                 android:id = "@+id/sonyCameraPhoto"
+                android:visibility="invisible"
                 android:layout_below = "@+id/stop_live_view_button"
                 android:layout_centerHorizontal = "true"
                 android:contentDescription="@string/camera_live_view"/>

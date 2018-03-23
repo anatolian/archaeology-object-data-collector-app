@@ -25,7 +25,7 @@ import com.archaeology.R;
 import com.archaeology.services.VolleyWrapper;
 import com.archaeology.models.AfterImageSavedMethodWrapper;
 import static com.archaeology.util.StateStatic.LOG_TAG_WIFI_DIRECT;
-import static com.archaeology.util.StateStatic.cameraMACAddress;
+import static com.archaeology.util.StateStatic.cameraIPAddress;
 public class CameraDialog
 {
     // interface that will be used by camera dialogs
@@ -42,21 +42,21 @@ public class CameraDialog
         void onCancelButtonClicked();
     }
 
-    /**
-     * Create a camera alert
-     * @param AN_ACTIVITY - calling activity
-     * @return Returns the alert window
-     */
-    public static AlertDialog createCameraDialog(final Activity AN_ACTIVITY)
-    {
-        AlertDialog.Builder builder = new AlertDialog.Builder(AN_ACTIVITY);
-        // Get the layout inflater
-        LayoutInflater inflater = AN_ACTIVITY.getLayoutInflater();
-        // Inflate and set the layout for the dialog. Pass null as the parent view because its
-        // going in the dialog layout
-        builder.setView(inflater.inflate(R.layout.remote_camera_layout, null));
-        return builder.create();
-    }
+//    /**
+//     * Create a camera alert
+//     * @param AN_ACTIVITY - calling activity
+//     * @return Returns the alert window
+//     */
+//    public static AlertDialog createCameraDialog(final Activity AN_ACTIVITY)
+//    {
+//        AlertDialog.Builder builder = new AlertDialog.Builder(AN_ACTIVITY);
+//        // Get the layout inflater
+//        LayoutInflater inflater = AN_ACTIVITY.getLayoutInflater();
+//        // Inflate and set the layout for the dialog. Pass null as the parent view because its
+//        // going in the dialog layout
+//        builder.setView(inflater.inflate(R.layout.remote_camera_layout, null));
+//        return builder.create();
+//    }
 
     /**
      * Creating approval dialog to view and approve photos
@@ -116,7 +116,7 @@ public class CameraDialog
     public static void startLiveView(final Activity AN_ACTIVITY, final RequestQueue QUEUE,
                                      final int ID, final SimpleStreamSurfaceView LIVE_VIEW_SURFACE)
     {
-        final String URL = buildAPIURLFromIP(cameraMACAddress);
+        final String URL = buildAPIURLFromIP(cameraIPAddress);
         try
         {
             VolleyWrapper.makeVolleySonyAPIStartLiveViewRequest(URL, QUEUE, ID,
@@ -187,7 +187,7 @@ public class CameraDialog
     public static void stopLiveView(final Activity AN_ACTIVITY, RequestQueue queue, int id,
                                     final SimpleStreamSurfaceView LIVE_VIEW_SURFACE)
     {
-        final String URL = buildAPIURLFromIP(cameraMACAddress);
+        final String URL = buildAPIURLFromIP(cameraIPAddress);
         try
         {
             VolleyWrapper.makeVolleySonyAPIStopLiveViewRequest(URL, queue, id,
@@ -236,7 +236,7 @@ public class CameraDialog
     {
         // creating a fileURI so that image can be saved
         final Uri SAVE_FILE_URI = CheatSheet.getOutputMediaFileURI(FILE_NAME);
-        final String URL = buildAPIURLFromIP(cameraMACAddress);
+        final String URL = buildAPIURLFromIP(cameraIPAddress);
         try
         {
             VolleyWrapper.makeVolleySonyAPISetJPEGQualityToFine(URL, QUEUE, ID + 3,
@@ -419,7 +419,7 @@ public class CameraDialog
      */
     public static void zoomIn(final Activity AN_ACTIVITY, RequestQueue queue, int id)
     {
-        final String URL = buildAPIURLFromIP(cameraMACAddress);
+        final String URL = buildAPIURLFromIP(cameraIPAddress);
         try
         {
             VolleyWrapper.makeVolleySonyAPIActZoomRequest("in", queue, URL, id,
@@ -459,7 +459,7 @@ public class CameraDialog
      */
     public static void zoomOut(final Activity AN_ACTIVITY, RequestQueue queue, int id)
     {
-        final String URL = buildAPIURLFromIP(cameraMACAddress);
+        final String URL = buildAPIURLFromIP(cameraIPAddress);
         try
         {
             VolleyWrapper.makeVolleySonyAPIActZoomRequest("out", queue, URL, id,

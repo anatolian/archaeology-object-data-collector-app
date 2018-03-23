@@ -274,13 +274,6 @@
                 android:onClick="goToImageGallery"
                 android:text="@string/correct_color" />
 
-            <Button
-                android:id="@+id/wifiActivity"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/correct_color"
-                android:onClick="goToWiFiActivity"
-                android:text="@string/configure_camera" />
         </RelativeLayout>
     </ScrollView>
 </RelativeLayout>

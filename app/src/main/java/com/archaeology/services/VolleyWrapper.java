@@ -2,6 +2,7 @@
 // @author: msenol
 package com.archaeology.services;
 import android.graphics.Bitmap;
+import android.util.Log;
 import android.widget.ImageView;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -19,49 +20,6 @@ import static com.android.volley.Request.Method;
 import static com.archaeology.util.StateStatic.DEFAULT_VOLLEY_TIMEOUT;
 public class VolleyWrapper
 {
-//    /**
-//     * Get the available APIs to be used for camera
-//     * @param URL - camera URL
-//     * @param queue - request queue
-//     * @param ID - request id
-//     * @param LAMBDA_WRAPPER - request wrapper
-//     * @throws JSONException if response is malformed
-//     */
-//    public static void makeVolleySonyAPIGetAPICommands(final String URL, RequestQueue queue, final int ID,
-//                                                       final JSONObjectResponseWrapper LAMBDA_WRAPPER)
-//            throws JSONException
-//    {
-//        final String POST_BODY = new JSONObject().put("method", "getAvailableAPIList")
-//                .put("params", new JSONArray()).put("id", ID).put("version", "1.0").toString();
-//        JSONObject JSONPOSTBody = new JSONObject(POST_BODY);
-//        Log.v(LOG_TAG_WIFI_DIRECT, "request body: " +  POST_BODY);
-//        JsonObjectRequest myRequest = new JsonObjectRequest(Method.POST, URL, JSONPOSTBody,
-//                new Response.Listener<JSONObject>() {
-//            /**
-//             * Response received
-//             * @param response - database response
-//             */
-//            @Override
-//            public void onResponse(JSONObject response)
-//            {
-//                LAMBDA_WRAPPER.responseMethod(response);
-//            }
-//        }, new Response.ErrorListener() {
-//            /**
-//             * Connection failed
-//             * @param error - failure
-//             */
-//            @Override
-//            public void onErrorResponse(VolleyError error)
-//            {
-//                LAMBDA_WRAPPER.errorMethod(error);
-//            }
-//        });
-//        myRequest.setRetryPolicy(new DefaultRetryPolicy(5000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-//                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-//        queue.add(myRequest);
-//    }
-
     /**
      * Send photo request
      * @param URL - camera URL
@@ -74,7 +32,7 @@ public class VolleyWrapper
                                                          final JSONObjectResponseWrapper LAMBDA_WRAPPER)
             throws JSONException
     {
-        final String POST_BODY = new JSONObject().put("method", "actTakePicture")
+        final String POST_BODY = new JSONObject().put("method", "awaitTakePicture")
                 .put("params", new JSONArray()).put("id", ID).put("version", "1.0").toString();
         JSONObject JSONPOSTBody = new JSONObject(POST_BODY);
         JsonObjectRequest myRequest = new JsonObjectRequest(Method.POST, URL, JSONPOSTBody,
@@ -99,7 +57,7 @@ public class VolleyWrapper
                 LAMBDA_WRAPPER.errorMethod(error);
             }
         });
-        myRequest.setRetryPolicy(new DefaultRetryPolicy(5000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+        myRequest.setRetryPolicy(new DefaultRetryPolicy(20000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         queue.add(myRequest);
     }
@@ -243,51 +201,6 @@ public class VolleyWrapper
         queue.add(myRequest);
     }
 
-//    /**
-//     * Custom camera request
-//     * @param methodName - function name
-//     * @param URL - camera URL
-//     * @param queue - request queue
-//     * @param ID - request id
-//     * @param LAMBDA_WRAPPER - request wrapper
-//     * @throws JSONException if the JSON is malformed
-//     */
-//    public static void makeVolleySonyAPICustomFunctionCall(String methodName, final String URL,
-//                                                           RequestQueue queue, final int ID,
-//                                                           final JSONObjectResponseWrapper LAMBDA_WRAPPER)
-//            throws JSONException
-//    {
-//        final String POST_BODY = new JSONObject().put("method", methodName)
-//                .put("params", new JSONArray()).put("id", id).put("version", "1.0").toString();
-//        JSONObject JSONPOSTBody = new JSONObject(POST_BODY);
-//        Log.v(LOG_TAG_WIFI_DIRECT, "request body: " + POST_BODY);
-//        JsonObjectRequest myRequest = new JsonObjectRequest(Method.POST, URL, JSONPOSTBody,
-//                new Response.Listener<JSONObject>() {
-//            /**
-//             * Response received
-//             * @param response - camera response
-//             */
-//            @Override
-//            public void onResponse(JSONObject response)
-//            {
-//                LAMBDA_WRAPPER.responseMethod(response);
-//            }
-//        }, new Response.ErrorListener() {
-//            /**
-//             * Connection failed
-//             * @param error - failure
-//             */
-//            @Override
-//            public void onErrorResponse(VolleyError error)
-//            {
-//                LAMBDA_WRAPPER.errorMethod(error);
-//            }
-//        });
-//        myRequest.setRetryPolicy(new DefaultRetryPolicy(5000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-//                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-//        queue.add(myRequest);
-//    }
-
     /**
      * Setting the image to the original size
      * @param URL - camera URL
@@ -373,57 +286,6 @@ public class VolleyWrapper
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         queue.add(myRequest);
     }
-
-//    /**
-//     * Request JSON array
-//     * @param URL - camera URL
-//     * @param queue - request queue
-//     * @param LAMBDA_WRAPPER - request wrapper
-//     */
-//    public static void makeVolleyJSONArrayRequest(final String URL, RequestQueue queue,
-//                                                  final JSONArrayResponseWrapper LAMBDA_WRAPPER)
-//    {
-//        Log.v(LOG_TAG, "volley URL:" + URL);
-//        JsonArrayRequest myRequest = new JsonArrayRequest(URL, new Response.Listener<JSONArray>() {
-//            /**
-//             * Response received
-//             * @param response - camera response
-//             */
-//            @Override
-//            public void onResponse(JSONArray response)
-//            {
-//                try
-//                {
-//                    JSONArray responseArray = new JSONArray();
-//                    for (int i = 0; i < response.length(); i++)
-//                    {
-//                        responseArray.put(response.getString(i));
-//                        Log.v(LOG_TAG, "the response is " + response.getString(i));
-//                    }
-//                    LAMBDA_WRAPPER.responseMethod(responseArray);
-//                }
-//                catch(Exception e)
-//                {
-//                    e.printStackTrace();
-//                    Log.v(LOG_TAG, e.toString());
-//                }
-//            }
-//        }, new Response.ErrorListener() {
-//            /**
-//             * Connection failed
-//             * @param error - failure
-//             */
-//            @Override
-//            public void onErrorResponse(VolleyError error)
-//            {
-//                LAMBDA_WRAPPER.errorMethod(error);
-//            }
-//        });
-//        // Add the request to the RequestQueue.
-//        myRequest.setRetryPolicy(new DefaultRetryPolicy(DEFAULT_VOLLEY_TIMEOUT,
-//                DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-//        queue.add(myRequest);
-//    }
 
     /**
      * Request image

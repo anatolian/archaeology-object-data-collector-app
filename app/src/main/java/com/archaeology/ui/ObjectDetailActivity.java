@@ -25,7 +25,6 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -44,7 +43,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Set;
 import com.archaeology.R;
-import com.archaeology.models.AfterImageSavedMethodWrapper;
 import com.archaeology.models.StringObjectResponseWrapper;
 import com.archaeology.services.BluetoothService;
 import com.archaeology.services.NutriScaleBroadcastReceiver;
@@ -55,7 +53,6 @@ import static com.archaeology.util.CheatSheet.deleteOriginalAndThumbnailPhoto;
 import static com.archaeology.util.CheatSheet.getOutputMediaFile;
 import static com.archaeology.util.CheatSheet.goToSettings;
 import static com.archaeology.util.StateStatic.ALL_SAMPLE_NUMBER;
-import static com.archaeology.util.StateStatic.LOG_TAG;
 import static com.archaeology.util.StateStatic.LOG_TAG_BLUETOOTH;
 import static com.archaeology.util.StateStatic.MARKED_AS_ADDED;
 import static com.archaeology.util.StateStatic.MARKED_AS_TO_DOWNLOAD;
@@ -63,15 +60,14 @@ import static com.archaeology.util.StateStatic.MESSAGE_STATUS_CHANGE;
 import static com.archaeology.util.StateStatic.MESSAGE_WEIGHT;
 import static com.archaeology.util.StateStatic.REQUEST_ENABLE_BT;
 import static com.archaeology.util.StateStatic.REQUEST_IMAGE_CAPTURE;
+import static com.archaeology.util.StateStatic.REQUEST_REMOTE_IMAGE;
 import static com.archaeology.util.StateStatic.cameraIPAddress;
-import static com.archaeology.util.StateStatic.convertDPToPixel;
 import static com.archaeology.util.StateStatic.getGlobalCameraMAC;
 import static com.archaeology.util.StateStatic.getGlobalPhotoSavePath;
 import static com.archaeology.util.StateStatic.getGlobalWebServerURL;
 import static com.archaeology.util.StateStatic.getTimeStamp;
 import static com.archaeology.util.StateStatic.isBluetoothEnabled;
 import static com.archaeology.util.StateStatic.isRemoteCameraSelected;
-import static com.archaeology.util.StateStatic.isTakePhotoButtonClicked;
 public class ObjectDetailActivity extends AppCompatActivity
 {
     IntentFilter mIntentFilter;
@@ -97,8 +93,6 @@ public class ObjectDetailActivity extends AppCompatActivity
             }
         }
     };
-    public String tempFileName;
-    public int sonyAPIRequestID = 1;
     private String currentScaleWeight = "";
     private String bluetoothConnectionStatus = "";
     boolean dialogVisible = false;
@@ -106,7 +100,6 @@ public class ObjectDetailActivity extends AppCompatActivity
     AlertDialog remoteCameraDialog, weightDialog, pickPeersDialog;
     // broadcast receiver objects used to receive messages from other devices
     BroadcastReceiver nutriScaleBroadcastReceiver;
-    private boolean isPickPeersDialogVisible = false;
     // correspond to columns in database associated with finds
     int areaEasting, areaNorthing, contextNumber, sampleNumber, imageNumber;
     HashMap<String, Integer> primaryKeys = new HashMap<>();
@@ -191,7 +184,7 @@ public class ObjectDetailActivity extends AppCompatActivity
         // populate fields with information about object
         asyncPopulateFieldsFromDB(areaEasting, areaNorthing, contextNumber, sampleNumber);
         asyncPopulatePhotos();
-        toggleAddPhotoButton();
+//        toggleAddPhotoButton();
         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         // check to see if bluetooth is enabled
         if (mBluetoothAdapter == null)
@@ -262,7 +255,7 @@ public class ObjectDetailActivity extends AppCompatActivity
         }
         weightDialog = builder.create();
         // creating the camera dialog and setting up photo fragment to store the photos
-        remoteCameraDialog = CameraDialog.createCameraDialog(this);
+//        remoteCameraDialog = CameraDialog.createCameraDialog(this);
         PhotoFragment photoFragment = (PhotoFragment) getFragmentManager().findFragmentById(R.id.fragment);
         if (savedInstanceState == null)
         {
@@ -315,80 +308,74 @@ public class ObjectDetailActivity extends AppCompatActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
     {
+        final String ORIGINAL_FILE_NAME = getTimeStamp() + ".jpg";
+        final Uri FILE_URI;
         // action to be performed when request is sent to take photo
         if (requestCode == REQUEST_IMAGE_CAPTURE)
         {
-            Log.v(LOG_TAG, "Intent Result for Camera Intent");
-            if (resultCode == RESULT_OK)
-            {
-                Log.v(LOG_TAG, "OK Code Received");
-                if (data == null)
+            // creating URI to save photo to once taken
+            FILE_URI = CheatSheet.getThumbnail(ORIGINAL_FILE_NAME);
+        }
+        else
+        {
+            FILE_URI = Uri.parse(data.getStringExtra("location"));
+        }
+        if (resultCode == RESULT_OK)
+        {
+            // ApproveDialogCallback is an interface. see CameraDialog class
+            CameraDialog.ApproveDialogCallback approveDialogCallback = new CameraDialog.ApproveDialogCallback() {
+                /**
+                 * User pressed save
+                 */
+                @Override
+                public void onSaveButtonClicked()
                 {
-                    Log.v(LOG_TAG, "data: " + "null");
-                }
-                else
-                {
-                    Log.v(LOG_TAG, "data: " + data.getData());
-                }
-                // creating URI to save photo to once taken
-                final String ORIGINAL_FILE_NAME = tempFileName + ".jpg";
-                final Uri FILE_URI = CheatSheet.getThumbnail(ORIGINAL_FILE_NAME);
-                Log.v(LOG_TAG, FILE_URI.toString());
-                // ApproveDialogCallback is an interface. see CameraDialog class
-                CameraDialog.ApproveDialogCallback approveDialogCallback = new CameraDialog.ApproveDialogCallback() {
-                    /**
-                     * User pressed save
-                     */
-                    @Override
-                    public void onSaveButtonClicked()
-                   {
-                        // store image data into photo fragments
-                        loadPhotoIntoPhotoFragment(FILE_URI, MARKED_AS_ADDED);
-                        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
-                                Environment.DIRECTORY_PICTURES), getGlobalPhotoSavePath());
-                        String originalFilePath = mediaStorageDir.getPath() + File.separator + ORIGINAL_FILE_NAME;
-                        BitmapFactory.Options options = new BitmapFactory.Options();
-                        options.inJustDecodeBounds = true;
-                        // Returns null, sizes are in the options variable
-                        Bitmap savedBitmap = BitmapFactory.decodeFile(originalFilePath, options);
-                        File parent = new File(Environment.getExternalStorageDirectory() + "/Archaeology/");
-                        if (!parent.exists())
-                        {
-                            parent.mkdirs();
-                        }
-                        try
-                        {
-                            File f = new File(parent, originalFilePath);
-                            f.createNewFile();
-                            FileOutputStream outStream = new FileOutputStream(f);
-                            savedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
-                            outStream.flush();
-                            outStream.close();
-                            Toast.makeText(getApplicationContext(), "Image stored at " +
-                                    f.getAbsolutePath(), Toast.LENGTH_LONG).show();
-                        }
-                        catch (IOException e)
-                        {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    /**
-                     * User cancelled picture
-                     */
-                    @Override
-                    public void onCancelButtonClicked()
+                    // store image data into photo fragments
+                    loadPhotoIntoPhotoFragment(FILE_URI, MARKED_AS_ADDED);
+                    File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
+                            Environment.DIRECTORY_PICTURES), getGlobalPhotoSavePath());
+                    String originalFilePath = mediaStorageDir.getPath() + File.separator + ORIGINAL_FILE_NAME;
+                    BitmapFactory.Options options = new BitmapFactory.Options();
+                    options.inJustDecodeBounds = true;
+                    // Returns null, sizes are in the options variable
+                    Bitmap savedBitmap = BitmapFactory.decodeFile(originalFilePath, options);
+                    File parent = new File(Environment.getExternalStorageDirectory() + "/Archaeology/");
+                    if (!parent.exists())
                     {
-                        deleteOriginalAndThumbnailPhoto(FILE_URI);
+                        parent.mkdirs();
                     }
-                };
-                // set up camera dialog
-                AlertDialog approveDialog = CameraDialog.createPhotoApprovalDialog(this, approveDialogCallback);
-                approveDialog.show();
-                // view photo you are trying to approve
-                ImageView approvePhotoImage = (ImageView) approveDialog.findViewById(R.id.approvePhotoImage);
-                approvePhotoImage.setImageURI(FILE_URI);
-            }
+                    try
+                    {
+                        File f = new File(parent, originalFilePath);
+                        f.createNewFile();
+                        FileOutputStream outStream = new FileOutputStream(f);
+                        savedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
+                        outStream.flush();
+                        outStream.close();
+                        Toast.makeText(getApplicationContext(), "Image stored at " +
+                                f.getAbsolutePath(), Toast.LENGTH_LONG).show();
+                    }
+                    catch (IOException e)
+                    {
+                        e.printStackTrace();
+                    }
+                }
+
+                /**
+                 * User cancelled picture
+                 */
+                @Override
+                public void onCancelButtonClicked()
+                {
+                    deleteOriginalAndThumbnailPhoto(FILE_URI);
+                }
+            };
+            // set up camera dialog
+            AlertDialog approveDialog = CameraDialog.createPhotoApprovalDialog(this, approveDialogCallback);
+            approveDialog.show();
+            // view photo you are trying to approve
+            ImageView approvePhotoImage = (ImageView) approveDialog.findViewById(R.id.approvePhotoImage);
+            approvePhotoImage.setImageURI(FILE_URI);
         }
     }
 
@@ -399,7 +386,6 @@ public class ObjectDetailActivity extends AppCompatActivity
     protected void onDestroy()
     {
         super.onDestroy();
-        isPickPeersDialogVisible = false;
         if (pickPeersDialog != null)
         {
             pickPeersDialog.dismiss();
@@ -431,7 +417,6 @@ public class ObjectDetailActivity extends AppCompatActivity
     protected void onStop()
     {
         super.onStop();
-        isPickPeersDialogVisible = false;
         if (pickPeersDialog != null)
         {
             pickPeersDialog.dismiss();
@@ -739,7 +724,7 @@ public class ObjectDetailActivity extends AppCompatActivity
         {
             // Just connect to found IP
             cameraIPAddress = CheatSheet.findIPFromMAC(getGlobalCameraMAC());
-            showRemoteCameraDialog(view);
+            goToWiFiActivity();
         }
         else
         {
@@ -747,110 +732,110 @@ public class ObjectDetailActivity extends AppCompatActivity
         }
     }
 
-    /**
-     * Open camera dialog
-     * @param VIEW - camera view
-     */
-    public void showRemoteCameraDialog(final View VIEW)
-    {
-        remoteCameraDialog.show();
-        remoteCameraDialog.getWindow().setLayout(convertDPToPixel(700), WindowManager.LayoutParams.WRAP_CONTENT);
-        final Activity PARENT_ACTIVITY = this;
-        remoteCameraDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-            /**
-             * User cancelled camera
-             * @param dialog - alert window
-             */
-            @Override
-            public void onCancel(DialogInterface dialog)
-            {
-                CameraDialog.stopLiveView(PARENT_ACTIVITY, queue, sonyAPIRequestID++, getLiveViewSurface());
-            }
-        });
-        remoteCameraDialog.findViewById(R.id.take_photo).setOnClickListener(new View.OnClickListener() {
-            /**
-             * User clicked take photo
-             * @param v - camera view
-             */
-            @Override
-            public void onClick(View v)
-            {
-                if (!isTakePhotoButtonClicked)
-                {
-                    isTakePhotoButtonClicked = true;
-                    remoteCameraDialog.findViewById(R.id.take_photo).setEnabled(false);
-                    CameraDialog.takePhoto(PARENT_ACTIVITY, queue, sonyAPIRequestID++,
-                            getTimeStamp(), new AfterImageSavedMethodWrapper() {
-                        /**
-                         * Process saved image
-                         * @param THUMBNAIL_IMAGE_URL - image URI
-                         */
-                        @Override
-                        public void doStuffWithSavedImage(final Uri THUMBNAIL_IMAGE_URL)
-                        {
-                            final Uri ORIGINAL_IMAGE_URI = CheatSheet.getOriginalImageURI(THUMBNAIL_IMAGE_URL);
-                            // implementing interface from CameraDialog class
-                            CameraDialog.ApproveDialogCallback approveDialogCallback =
-                                    new CameraDialog.ApproveDialogCallback() {
-                                /**
-                                 * Save button pressed
-                                 */
-                                @Override
-                                public void onSaveButtonClicked()
-                                {
-                                    // take picture and add as photo fragment
-                                    loadPhotoIntoPhotoFragment(ORIGINAL_IMAGE_URI, MARKED_AS_ADDED);
-                                    isTakePhotoButtonClicked = false;
-                                    remoteCameraDialog.findViewById(R.id.take_photo).setEnabled(true);
-                                }
-
-                                /**
-                                 * Cancel picture
-                                 */
-                                @Override
-                                public void onCancelButtonClicked()
-                                {
-                                    deleteOriginalAndThumbnailPhoto(ORIGINAL_IMAGE_URI);
-                                    isTakePhotoButtonClicked = false;
-                                    remoteCameraDialog.findViewById(R.id.take_photo).setEnabled(true);
-                                }
-                            };
-                            // create dialog to view and approve photo
-                            AlertDialog approveDialog = CameraDialog.createPhotoApprovalDialog(PARENT_ACTIVITY,
-                                    approveDialogCallback);
-                            approveDialog.show();
-                            ImageView approvePhotoImage = (ImageView) approveDialog.findViewById(R.id.approvePhotoImage);
-                            approvePhotoImage.setImageURI(THUMBNAIL_IMAGE_URL);
-                        }
-                    }, getLiveViewSurface());
-                }
-            }
-        });
-        remoteCameraDialog.findViewById(R.id.zoom_in).setOnClickListener(new View.OnClickListener() {
-            /**
-             * User pressed zoom in
-             * @param v - camera view
-             */
-            @Override
-            public void onClick(View v)
-            {
-                CameraDialog.zoomIn(PARENT_ACTIVITY, queue, sonyAPIRequestID++);
-            }
-        });
-        remoteCameraDialog.findViewById(R.id.zoom_out).setOnClickListener(new View.OnClickListener() {
-            /**
-             * User pressed zoom out
-             * @param v - camera view
-             */
-            @Override
-            public void onClick(View v)
-            {
-                CameraDialog.zoomOut(PARENT_ACTIVITY, queue, sonyAPIRequestID++);
-            }
-        });
-        // should allow you to see what the camera is seeing
-        CameraDialog.startLiveView(this, queue, sonyAPIRequestID++, getLiveViewSurface());
-    }
+//    /**
+//     * Open camera dialog
+//     * @param VIEW - camera view
+//     */
+//    public void showRemoteCameraDialog(final View VIEW)
+//    {
+//        remoteCameraDialog.show();
+//        remoteCameraDialog.getWindow().setLayout(convertDPToPixel(700), WindowManager.LayoutParams.WRAP_CONTENT);
+//        final Activity PARENT_ACTIVITY = this;
+//        remoteCameraDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+//            /**
+//             * User cancelled camera
+//             * @param dialog - alert window
+//             */
+//            @Override
+//            public void onCancel(DialogInterface dialog)
+//            {
+//                CameraDialog.stopLiveView(PARENT_ACTIVITY, queue, sonyAPIRequestID++, getLiveViewSurface());
+//            }
+//        });
+//        remoteCameraDialog.findViewById(R.id.take_photo).setOnClickListener(new View.OnClickListener() {
+//            /**
+//             * User clicked take photo
+//             * @param v - camera view
+//             */
+//            @Override
+//            public void onClick(View v)
+//            {
+//                if (!isTakePhotoButtonClicked)
+//                {
+//                    isTakePhotoButtonClicked = true;
+//                    remoteCameraDialog.findViewById(R.id.take_photo).setEnabled(false);
+//                    CameraDialog.takePhoto(PARENT_ACTIVITY, queue, sonyAPIRequestID++,
+//                            getTimeStamp(), new AfterImageSavedMethodWrapper() {
+//                        /**
+//                         * Process saved image
+//                         * @param THUMBNAIL_IMAGE_URL - image URI
+//                         */
+//                        @Override
+//                        public void doStuffWithSavedImage(final Uri THUMBNAIL_IMAGE_URL)
+//                        {
+//                            final Uri ORIGINAL_IMAGE_URI = CheatSheet.getOriginalImageURI(THUMBNAIL_IMAGE_URL);
+//                            // implementing interface from CameraDialog class
+//                            CameraDialog.ApproveDialogCallback approveDialogCallback =
+//                                    new CameraDialog.ApproveDialogCallback() {
+//                                /**
+//                                 * Save button pressed
+//                                 */
+//                                @Override
+//                                public void onSaveButtonClicked()
+//                                {
+//                                    // take picture and add as photo fragment
+//                                    loadPhotoIntoPhotoFragment(ORIGINAL_IMAGE_URI, MARKED_AS_ADDED);
+//                                    isTakePhotoButtonClicked = false;
+//                                    remoteCameraDialog.findViewById(R.id.take_photo).setEnabled(true);
+//                                }
+//
+//                                /**
+//                                 * Cancel picture
+//                                 */
+//                                @Override
+//                                public void onCancelButtonClicked()
+//                                {
+//                                    deleteOriginalAndThumbnailPhoto(ORIGINAL_IMAGE_URI);
+//                                    isTakePhotoButtonClicked = false;
+//                                    remoteCameraDialog.findViewById(R.id.take_photo).setEnabled(true);
+//                                }
+//                            };
+//                            // create dialog to view and approve photo
+//                            AlertDialog approveDialog = CameraDialog.createPhotoApprovalDialog(PARENT_ACTIVITY,
+//                                    approveDialogCallback);
+//                            approveDialog.show();
+//                            ImageView approvePhotoImage = (ImageView) approveDialog.findViewById(R.id.approvePhotoImage);
+//                            approvePhotoImage.setImageURI(THUMBNAIL_IMAGE_URL);
+//                        }
+//                    }, getLiveViewSurface());
+//                }
+//            }
+//        });
+//        remoteCameraDialog.findViewById(R.id.zoom_in).setOnClickListener(new View.OnClickListener() {
+//            /**
+//             * User pressed zoom in
+//             * @param v - camera view
+//             */
+//            @Override
+//            public void onClick(View v)
+//            {
+//                CameraDialog.zoomIn(PARENT_ACTIVITY, queue, sonyAPIRequestID++);
+//            }
+//        });
+//        remoteCameraDialog.findViewById(R.id.zoom_out).setOnClickListener(new View.OnClickListener() {
+//            /**
+//             * User pressed zoom out
+//             * @param v - camera view
+//             */
+//            @Override
+//            public void onClick(View v)
+//            {
+//                CameraDialog.zoomOut(PARENT_ACTIVITY, queue, sonyAPIRequestID++);
+//            }
+//        });
+//        // should allow you to see what the camera is seeing
+//        CameraDialog.startLiveView(this, queue, sonyAPIRequestID++, getLiveViewSurface());
+//    }
 
     /**
      * Starts the local camera
@@ -865,19 +850,18 @@ public class ObjectDetailActivity extends AppCompatActivity
                 + ".my.package.name.provider", getOutputMediaFile(stamp));
         photoIntent.putExtra(MediaStore.EXTRA_OUTPUT, fileURI);
         photoIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        tempFileName = stamp;
         startActivityForResult(photoIntent, REQUEST_IMAGE_CAPTURE);
     }
 
-    /**
-     * Allows you to see what camera is seeing. used in remote_camera_layout.xml and
-     * activity_my_wifi.xml
-     * @return Returns the camera view
-     */
-    public SimpleStreamSurfaceView getLiveViewSurface()
-    {
-        return (SimpleStreamSurfaceView) remoteCameraDialog.findViewById(R.id.surfaceview_liveview);
-    }
+//    /**
+//     * Allows you to see what camera is seeing. used in remote_camera_layout.xml and
+//     * activity_my_wifi.xml
+//     * @return Returns the camera view
+//     */
+//    public SimpleStreamSurfaceView getLiveViewSurface()
+//    {
+//        return (SimpleStreamSurfaceView) remoteCameraDialog.findViewById(R.id.surfaceview_liveview);
+//    }
 
     /**
      * Read from scale
@@ -976,20 +960,20 @@ public class ObjectDetailActivity extends AppCompatActivity
         }
     }
 
-    /**
-     * Enable buttons depending on connection with remote camera
-     */
-    public void toggleAddPhotoButton()
-    {
-        if (isRemoteCameraSelected() && cameraIPAddress == null)
-        {
-            findViewById(R.id.button26).setEnabled(false);
-        }
-        else
-        {
-            findViewById(R.id.button26).setEnabled(true);
-        }
-    }
+//    /**
+//     * Enable buttons depending on connection with remote camera
+//     */
+//    public void toggleAddPhotoButton()
+//    {
+//        if (isRemoteCameraSelected() && cameraIPAddress == null)
+//        {
+//            findViewById(R.id.button26).setEnabled(false);
+//        }
+//        else
+//        {
+//            findViewById(R.id.button26).setEnabled(true);
+//        }
+//    }
 
     /**
      * Open gallery
@@ -1008,9 +992,8 @@ public class ObjectDetailActivity extends AppCompatActivity
 
     /**
      * Open WiFi
-     * @param v - WiFi view
      */
-    public void goToWiFiActivity(View v)
+    public void goToWiFiActivity()
     {
         if (cameraIPAddress == null)
         {
@@ -1026,6 +1009,6 @@ public class ObjectDetailActivity extends AppCompatActivity
             Log.v(LOG_TAG_BLUETOOTH, "Trying to unregister non-registered receiver");
         }
         Intent wifiActivity = new Intent(this, MyWiFiActivity.class);
-        startActivity(wifiActivity);
+        startActivityForResult(wifiActivity, REQUEST_REMOTE_IMAGE);
     }
 }

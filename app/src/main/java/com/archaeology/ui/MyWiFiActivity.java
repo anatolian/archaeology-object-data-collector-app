@@ -1,7 +1,14 @@
 // Connect to Wifi
 // @author: msenol86, ygowda
 package com.archaeology.ui;
+import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -28,8 +35,11 @@ public class MyWiFiActivity extends AppCompatActivity
 {
     // helps to establish connection with peer devices
     public static String TAG = "WIFI P2P";
+    WifiP2pManager mManager;
+    WifiP2pManager.Channel mChannel;
     RequestQueue queue;
     int requestID;
+    IntentFilter mIntentFilter;
     /**
      * Launch activity
      * @param savedInstanceState - state from memory
@@ -46,43 +56,15 @@ public class MyWiFiActivity extends AppCompatActivity
         }
         queue = Volley.newRequestQueue(this);
         requestID = 55;
+        // setting up intent filter
+        mIntentFilter = new IntentFilter();
+        mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
+        mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
+        mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
+        mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
+        mManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
+        mChannel = mManager.initialize(this, getMainLooper(), null);
         disableAPIButtons();
-    }
-
-    /**
-     * Restart activity from context switch
-     */
-    @Override
-    protected void onResume()
-    {
-        super.onResume();
-    }
-
-    /**
-     * Switch activity out of memory
-     */
-    @Override
-    protected void onPause()
-    {
-        super.onPause();
-    }
-
-    /**
-     * Break connection with camera
-     */
-    @Override
-    protected void onStop()
-    {
-        super.onStop();
-    }
-
-    /**
-     * Breaks connection with camera
-     */
-    @Override
-    protected void onDestroy()
-    {
-        super.onDestroy();
     }
 
     /**
@@ -107,13 +89,22 @@ public class MyWiFiActivity extends AppCompatActivity
     }
 
     /**
+     * Activity back active
+     */
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        startLiveView(findViewById(R.id.start_live_view_button));
+    }
+
+    /**
      * Take a picture
      * @param view - camera view
      */
     public void takePhoto(View view)
     {
         String URL = buildAPIURLFromIP(cameraIPAddress);
-        Log.v(LOG_TAG_WIFI_DIRECT, URL);
         try
         {
             VolleyWrapper.makeVolleySonyAPITakePhotoRequest(URL, queue, requestID++,
@@ -125,15 +116,14 @@ public class MyWiFiActivity extends AppCompatActivity
                 @Override
                 public void responseMethod(JSONObject response)
                 {
-                    Toast.makeText(currentContext, response.toString(), Toast.LENGTH_SHORT).show();
                     Log.v(LOG_TAG_WIFI_DIRECT, response.toString());
                     try
                     {
                         // creating image URL from response
                         String imageURL = response.getJSONArray("result").getString(0);
                         imageURL = imageURL.substring(2, imageURL.length() - 2);
-                        imageURL = imageURL.replace("\\", "");
-                        Log.v(LOG_TAG_WIFI_DIRECT, "imageURL: " + imageURL);
+                        final String LOCATION = imageURL.replace("\\", "");
+                        Log.v(LOG_TAG_WIFI_DIRECT, "imageURL: " + LOCATION);
                         Callback onPhotoFetchedCallback = new Callback() {
                             /**
                              * Photo successfully fetched
@@ -141,6 +131,14 @@ public class MyWiFiActivity extends AppCompatActivity
                             @Override
                             public void onSuccess()
                             {
+//                                // convert URL into bitmap
+//                                ImageView takenPhoto = (ImageView) findViewById(R.id.sonyCameraPhoto);
+//                                Bitmap tmpBitmap = ((BitmapDrawable) takenPhoto.getDrawable()).getBitmap();
+//                                Log.v(LOG_TAG_WIFI_DIRECT, "Bitmap Size: " + tmpBitmap.getByteCount());
+                                Intent resultIntent = new Intent();
+                                resultIntent.putExtra("location", LOCATION);
+                                setResult(Activity.RESULT_OK, resultIntent);
+                                finish();
                             }
 
                             /**
@@ -152,7 +150,7 @@ public class MyWiFiActivity extends AppCompatActivity
                                 Picasso.with(currentContext).cancelRequest((ImageView) findViewById(R.id.sonyCameraPhoto));
                             }
                         };
-                        Picasso.with(currentContext).load(imageURL).placeholder(android.R.drawable.ic_delete)
+                        Picasso.with(currentContext).load(LOCATION).placeholder(android.R.drawable.ic_delete)
                                 .error(android.R.drawable.ic_dialog_alert)
                                 .into((ImageView) findViewById(R.id.sonyCameraPhoto), onPhotoFetchedCallback);
                     }
@@ -169,8 +167,6 @@ public class MyWiFiActivity extends AppCompatActivity
                 @Override
                 public void errorMethod(VolleyError error)
                 {
-                    error.printStackTrace();
-                    Toast.makeText(getApplicationContext(), "Error communicating with camera", Toast.LENGTH_SHORT).show();
                     Log.v(LOG_TAG_WIFI_DIRECT, error.toString());
                 }
             });
@@ -178,6 +174,7 @@ public class MyWiFiActivity extends AppCompatActivity
         catch (JSONException e)
         {
             e.printStackTrace();
+            Toast.makeText(this, "Camera error", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -253,7 +250,7 @@ public class MyWiFiActivity extends AppCompatActivity
         catch (JSONException e)
         {
             e.printStackTrace();
-            Toast.makeText(this, "Error communicating with camera", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Error connecting to camera", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -302,7 +299,7 @@ public class MyWiFiActivity extends AppCompatActivity
         catch (JSONException e)
         {
             e.printStackTrace();
-            Toast.makeText(this, "Error communicating with camera", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Communication error", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -364,7 +361,7 @@ public class MyWiFiActivity extends AppCompatActivity
         catch (JSONException e)
         {
             e.printStackTrace();
-            Toast.makeText(this, "Error communicating with camera", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Communication error", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -402,7 +399,7 @@ public class MyWiFiActivity extends AppCompatActivity
         catch (JSONException e)
         {
             e.printStackTrace();
-            Toast.makeText(this, "Error communicating with camera", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Communication error", Toast.LENGTH_SHORT).show();
         }
     }
 }

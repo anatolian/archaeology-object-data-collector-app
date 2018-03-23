@@ -14,6 +14,7 @@ public class StateStatic
     public static final String LOG_TAG_WIFI_DIRECT = "WIFIDIRECT";
     public static final String LOG_TAG_BLUETOOTH = "BLUETOOTH";
     public static final int REQUEST_IMAGE_CAPTURE = 301;
+    public static final int REQUEST_REMOTE_IMAGE = 302;
     public static final int MESSAGE_WEIGHT = 501;
     public static final int MESSAGE_STATUS_CHANGE = 502;
     public static final int REQUEST_ENABLE_BT = 301;
