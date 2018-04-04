@@ -13,11 +13,13 @@ public class AsyncHTTPWrapper
      * Upload image
      * @param URL - destination URL
      * @param imageURI - image location
+     * @param easting - find easting
+     * @param northing - find northing
+     * @param find - find number
      * @param CALLBACK_WRAPPER - callback function
      */
     public static void makeImageUpload(String URL, Uri imageURI, String easting, String northing,
-                                       String context, String sample,
-                                       final AsyncHTTPCallbackWrapper CALLBACK_WRAPPER)
+                                       String find, final AsyncHTTPCallbackWrapper CALLBACK_WRAPPER)
     {
         // setting up variables to establish connection with server
         AsyncHttpClient client = new AsyncHttpClient();
@@ -29,8 +31,7 @@ public class AsyncHTTPWrapper
             params.put("file_name", myFile.getPath());
             params.put("easting", easting);
             params.put("northing", northing);
-            params.put("context", context);
-            params.put("sample", sample);
+            params.put("find", find);
         }
         catch (FileNotFoundException e)
         {

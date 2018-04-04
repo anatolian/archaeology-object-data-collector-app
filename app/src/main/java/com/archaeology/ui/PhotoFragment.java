@@ -225,13 +225,12 @@ public class PhotoFragment extends Fragment
                 final Activity PARENT_ACTIVITY = getActivity();
                 if (PARENT_ACTIVITY instanceof ObjectDetailActivity)
                 {
-                    final int AREA_EASTING = ((ObjectDetailActivity) PARENT_ACTIVITY).areaEasting;
-                    final int AREA_NORTHING = ((ObjectDetailActivity) PARENT_ACTIVITY).areaNorthing;
-                    final int CONTEXT_NUMBER = ((ObjectDetailActivity) PARENT_ACTIVITY).contextNumber;
-                    final int SAMPLE_NUMBER = ((ObjectDetailActivity) PARENT_ACTIVITY).sampleNumber;
+                    final int EASTING = ((ObjectDetailActivity) PARENT_ACTIVITY).easting;
+                    final int NORTHING = ((ObjectDetailActivity) PARENT_ACTIVITY).northing;
+                    final int FIND_NUMBER = ((ObjectDetailActivity) PARENT_ACTIVITY).findNumber;
                     String URL = getGlobalWebServerURL() + "/upload_file";
-                    AsyncHTTPWrapper.makeImageUpload(URL, DICT_ENTRY.getKey(), "" + AREA_EASTING,
-                            "" + AREA_NORTHING,"" + CONTEXT_NUMBER, "" + SAMPLE_NUMBER,
+                    AsyncHTTPWrapper.makeImageUpload(URL, DICT_ENTRY.getKey(), "" + EASTING,
+                            "" + NORTHING, "" + FIND_NUMBER,
                             new AsyncHTTPCallbackWrapper() {
                         /**
                          * Connection succeeded

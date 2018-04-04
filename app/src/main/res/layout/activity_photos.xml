@@ -5,16 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.archaeology.ui.PhotosActivity">
-
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
         <Space
             android:layout_width="match_parent"
             android:layout_height="60dp" />
-
         <Button
             android:id="@+id/bt_gallery"
             android:layout_width="match_parent"
@@ -31,7 +28,6 @@
             android:layout_gravity="bottom|center_horizontal"
             app:layout_anchor="@+id/include"
             app:layout_anchorGravity="top|center_horizontal"/>
-
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -41,8 +37,5 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"/>
         </ScrollView>
-
     </LinearLayout>
-
-
 </android.support.design.widget.CoordinatorLayout>

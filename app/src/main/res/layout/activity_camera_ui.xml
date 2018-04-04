@@ -22,14 +22,29 @@
         android:layout_marginTop = "10dp"
         android:layout_gravity = "bottom|center"
         android:layout_marginBottom = "10dp"/>
-    <android.support.design.widget.FloatingActionButton
-        app:srcCompat = "@drawable/ocr"
-        app:fabSize = "normal"
-        android:backgroundTint = "#971c20"
-        android:id = "@+id/fab"
-        android:layout_width = "match_parent"
-        android:layout_height = "wrap_content"
-        android:layout_gravity = "top|center_horizontal"
-        android:onClick = "crossFade"
-        android:layout_marginTop = "10dp"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="top|center_horizontal"
+        android:layout_marginTop="10dp"
+        android:gravity = "center_horizontal">
+        <android.support.design.widget.FloatingActionButton
+            app:srcCompat = "@drawable/ocr"
+            app:fabSize = "normal"
+            android:backgroundTint = "#971c20"
+            android:id = "@+id/fab"
+            android:layout_width = "wrap_content"
+            android:layout_height = "wrap_content"
+            android:onClick = "crossFade"/>
+        <android.support.design.widget.FloatingActionButton
+            app:srcCompat = "@drawable/check_form"
+            app:fabSize = "normal"
+            android:backgroundTint = "#971c20"
+            android:id = "@+id/input"
+            android:layout_width = "wrap_content"
+            android:layout_height = "wrap_content"
+            android:layout_marginStart="10dp"
+            android:onClick = "goToManual"/>
+    </LinearLayout>
 </FrameLayout>

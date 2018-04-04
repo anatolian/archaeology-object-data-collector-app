@@ -32,9 +32,9 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="@android:color/black" />
             <Spinner
-                android:layout_width = "1dp"
                 android:layout_height = "wrap_content"
-                android:id = "@+id/easting_spinner"/>
+                android:id = "@+id/easting_spinner"
+                android:gravity="end"/>
         </TableRow>
         <TableRow
             android:layout_width = "match_parent"
@@ -51,24 +51,8 @@
             <Spinner
                 android:layout_width = "1dp"
                 android:layout_height = "wrap_content"
-                android:id = "@+id/northing_spinner"/>
-        </TableRow>
-        <TableRow
-            android:layout_width = "match_parent"
-            android:layout_height = "match_parent">
-            <TextView
-                android:id="@+id/textView20"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="start"
-                android:text="@string/context_number"
-                android:textAlignment="gravity"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@android:color/black" />
-            <Spinner
-                android:layout_width = "1dp"
-                android:layout_height = "wrap_content"
-                android:id = "@+id/context_spinner"/>
+                android:id = "@+id/northing_spinner"
+                android:gravity="end"/>
         </TableRow>
         <TableRow
             android:layout_width = "match_parent"
@@ -78,31 +62,23 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="start"
-                android:text="@string/sample_number"
+                android:text="@string/find_number"
                 android:textAlignment="gravity"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="@android:color/black" />
             <Spinner
                 android:layout_width = "1dp"
                 android:layout_height = "wrap_content"
-                android:id = "@+id/sample_spinner"/>
+                android:id = "@+id/find_spinner"
+                android:gravity="end"/>
         </TableRow>
     </TableLayout>
-    <LinearLayout
-        android:orientation = "horizontal"
+    <Button
         android:layout_width = "match_parent"
         android:layout_height = "wrap_content"
+        android:text = "@string/continue_string"
+        android:id = "@+id/continue_button"
         android:layout_alignParentBottom = "true"
-        android:layout_centerHorizontal = "true"
-        android:weightSum = "2"
-        android:id = "@+id/linearLayout2">
-        <Button
-            android:layout_width = "match_parent"
-            android:layout_height = "wrap_content"
-            android:text = "@string/continue_string"
-            android:id = "@+id/continue_button"
-            android:layout_weight = "1"
-            android:onClick = "goToObjectDetail"
-            android:textStyle="bold"/>
-    </LinearLayout>
+        android:onClick = "goToObjectDetail"
+        android:textStyle="bold"/>
 </RelativeLayout>

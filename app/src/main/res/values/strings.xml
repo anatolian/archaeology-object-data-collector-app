@@ -24,7 +24,7 @@
     <string name="gram"> grams</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
-    <string name="sample"> Sample: </string>
+    <string name="find"> Find: </string>
     <string name="new_weight">New Weight:</string>
     <string name="save_weight">Save Weight</string>
     <string name="minus">-</string>
@@ -41,11 +41,10 @@
     <string name="default_base_url">https://thawing-plains-16187.herokuapp.com/web</string>
     <string name="base_url">Web Service Base URL:</string>
     <string name="continue_string">Continue</string>
-    <string name="sample_number">Sample Number</string>
-    <string name="context_number">Context Number</string>
-    <string name="northing">Area Northing</string>
-    <string name="easting">Area Easting</string>
-    <string name="sample_frmt">%1$s.%2$s.%3$s.</string>
+    <string name="find_number">Find Number</string>
+    <string name="northing">Northing</string>
+    <string name="easting">Easting</string>
+    <string name = "find_frmt">%s.%s.</string>
     <string name="long_frmt">%d</string>
     <string name="default_settings">Default Settings</string>
     <string name="save_settings">Save Settings</string>

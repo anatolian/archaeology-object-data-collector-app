@@ -32,17 +32,15 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
-
 import com.archaeology.R;
 import eu.livotov.labs.android.camview.CameraLiveView;
 import eu.livotov.labs.android.camview.ScannerLiveView;
 import eu.livotov.labs.android.camview.camera.LiveDataProcessingCallback;
 import static com.archaeology.services.VolleyStringWrapper.makeVolleyStringObjectRequest;
-import static com.archaeology.util.StateStatic.ALL_SAMPLE_NUMBER;
-import static com.archaeology.util.StateStatic.AREA_EASTING;
-import static com.archaeology.util.StateStatic.AREA_NORTHING;
-import static com.archaeology.util.StateStatic.CONTEXT_NUMBER;
-import static com.archaeology.util.StateStatic.SAMPLE_NUMBER;
+import static com.archaeology.util.StateStatic.ALL_FIND_NUMBER;
+import static com.archaeology.util.StateStatic.EASTING;
+import static com.archaeology.util.StateStatic.NORTHING;
+import static com.archaeology.util.StateStatic.FIND_NUMBER;
 import static com.archaeology.util.StateStatic.getGlobalWebServerURL;
 import static com.archaeology.util.StateStatic.setGlobalBucketURL;
 public class CameraUIActivity extends AppCompatActivity
@@ -136,10 +134,12 @@ public class CameraUIActivity extends AppCompatActivity
             }
         }
         // setting up CameraView
-        parent = (RelativeLayout) findViewById(R.id.parent);
-        fab = (FloatingActionButton) findViewById(R.id.fab);
-        shutter = (FloatingActionButton) findViewById(R.id.shutter);
+        parent = findViewById(R.id.parent);
+        fab = findViewById(R.id.fab);
+        shutter = findViewById(R.id.shutter);
         fab.setImageResource(R.drawable.qr);
+        FloatingActionButton input = findViewById(R.id.input);
+        input.setImageResource(R.drawable.check_form);
         shutter.setImageResource(R.drawable.camera_icon);
         createCamera();
     }
@@ -305,21 +305,17 @@ public class CameraUIActivity extends AppCompatActivity
     {
         final String[] KEYS = CODE.split("\\.");
         final Intent INPUT_INTENT = new Intent(this, CeramicInputActivity.class);
-        // TODO: Abstract to arbitrary data formats, not just E.N.C.S and E.N.S
-        if (KEYS.length < 6)
+        if (KEYS.length != 5)
         {
             Toast.makeText(getApplicationContext(), "Invalid Code \"" + CODE + "\"", Toast.LENGTH_SHORT).show();
             startActivity(INPUT_INTENT);
         }
         final Intent DETAIL_INTENT = new Intent(this, ObjectDetailActivity.class);
-        DETAIL_INTENT.putExtra(AREA_EASTING, KEYS[2]);
-        DETAIL_INTENT.putExtra(AREA_NORTHING, KEYS[3]);
-        DETAIL_INTENT.putExtra(CONTEXT_NUMBER, KEYS[4]);
-        DETAIL_INTENT.putExtra(SAMPLE_NUMBER, KEYS[5]);
-        final List<String> SAMPLE_NUMBERS = new ArrayList<>();
-        // TODO: Send sample numbers to object detail
-        String URL = getGlobalWebServerURL() + "/get_sample_numbers/?easting=" + KEYS[2]
-                + "&northing=" + KEYS[3] + "&context=" + KEYS[4];
+        DETAIL_INTENT.putExtra(EASTING, KEYS[2]);
+        DETAIL_INTENT.putExtra(NORTHING, KEYS[3]);
+        DETAIL_INTENT.putExtra(FIND_NUMBER, KEYS[4]);
+        final List<String> FIND_NUMBERS = new ArrayList<>();
+        String URL = getGlobalWebServerURL() + "/get_finds/?easting=" + KEYS[2] + "&northing=" + KEYS[3];
         makeVolleyStringObjectRequest(URL, queue, new StringObjectResponseWrapper(this) {
             /**
              * Database response
@@ -329,18 +325,18 @@ public class CameraUIActivity extends AppCompatActivity
             public void responseMethod(String response)
             {
                 // convert to regular array from html link list
-                ArrayList<String> eastings = CheatSheet.convertLinkListToArray(response);
-                // If the easting, northing, context, or sample are not found, this will be false
+                ArrayList<String> finds = CheatSheet.convertLinkListToArray(response);
+                // If the easting, northing, or find are not found, this will be false
                 // (nothing returned at all if any of the prior 3 are not found)
-                if (eastings.contains(KEYS[5]))
+                if (finds.contains(KEYS[4]))
                 {
-                    SAMPLE_NUMBERS.addAll(eastings);
-                    DETAIL_INTENT.putExtra(ALL_SAMPLE_NUMBER, SAMPLE_NUMBERS.toArray(new String[SAMPLE_NUMBERS.size()]));
+                    FIND_NUMBERS.addAll(finds);
+                    DETAIL_INTENT.putExtra(ALL_FIND_NUMBER, FIND_NUMBERS.toArray(new String[FIND_NUMBERS.size()]));
                     startActivity(DETAIL_INTENT);
                 }
                 else
                 {
-                    Toast.makeText(getApplicationContext(), "Sample " + CODE + " not found", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Find " + CODE + " not found", Toast.LENGTH_LONG).show();
                     startActivity(INPUT_INTENT);
                 }
             }
@@ -358,12 +354,20 @@ public class CameraUIActivity extends AppCompatActivity
     }
 
     /**
+     * Go to manual input
+     * @param view - floating action button
+     */
+    public void goToManual(View view)
+    {
+        startActivity(new Intent(this, CeramicInputActivity.class));
+    }
+
+    /**
      * Picture taken
      * @param bitmap - image
      */
     private void handleImage(Bitmap bitmap)
     {
-        Log.v(TAG, "Before baseAPI");
         Bitmap toSend = Bitmap.createScaledBitmap(bitmap, bitmap.getWidth() / 10,
                 bitmap.getHeight() / 10, false);
         TessBaseAPI baseAPI = new TessBaseAPI();
@@ -375,12 +379,7 @@ public class CameraUIActivity extends AppCompatActivity
         // You now have the text in recognizedText var, you can do anything with it.
         // We will display a stripped out trimmed alpha-numeric version of it (if lang is eng)
         // so that garbage doesn't make it to the display.
-        Log.v(TAG, "OCRED TEXT: " + recognizedText);
-        if (LANG.equalsIgnoreCase("eng"))
-        {
-            recognizedText = recognizedText.replaceAll("[^a-zA-Z0-9]+", "");
-        }
-        recognizedText = recognizedText.trim();
+        recognizedText = recognizedText.replaceAll("[^a-zA-Z0-9]+", "").trim();
         cam.stopCamera();
         cam.startCamera();
         goToObjectDetail(recognizedText);

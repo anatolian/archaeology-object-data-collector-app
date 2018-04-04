@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.graphics.Bitmap;
@@ -25,7 +24,7 @@ public class PhotosActivity extends AppCompatActivity
 {
     LinearLayout llPhotoContainer;
     static Bitmap correctedPhoto;
-    int northing, easting, context, sample, number;
+    int northing, easting, find, number;
     /**
      * Launch activity
      * @param savedInstanceState - state from memory
@@ -38,10 +37,9 @@ public class PhotosActivity extends AppCompatActivity
         Bundle b = getIntent().getExtras();
         northing = Integer.parseInt(b.getString("northing"));
         easting = Integer.parseInt(b.getString("easting"));
-        context = Integer.parseInt(b.getString("context"));
-        sample = Integer.parseInt(b.getString("sample"));
+        find = Integer.parseInt(b.getString("find"));
         number = Integer.parseInt(b.getString("number"));
-        llPhotoContainer = (LinearLayout) findViewById(R.id.photo_container);
+        llPhotoContainer = findViewById(R.id.photo_container);
         findViewById(R.id.bt_gallery).setOnClickListener(new View.OnClickListener() {
             /**
              * User clicked gallery button
@@ -72,8 +70,7 @@ public class PhotosActivity extends AppCompatActivity
                     {
                         parent.mkdirs();
                     }
-                    File f = new File(parent, + easting + "_" + northing + "_" + context + "_"
-                            + sample + "_" + number + ".jpg");
+                    File f = new File(parent, + easting + "_" + northing + "_" + find + "_" + number + ".jpg");
                     f.createNewFile();
                     FileOutputStream outStream = new FileOutputStream(f);
                     correctedPhoto.compress(Bitmap.CompressFormat.JPEG, 100, outStream);

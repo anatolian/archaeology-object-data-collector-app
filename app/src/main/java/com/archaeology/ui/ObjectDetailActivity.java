@@ -1,7 +1,6 @@
 // Object information
 // @author: msenol86, ygowda
 package com.archaeology.ui;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -40,7 +39,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Set;
 import com.archaeology.R;
 import com.archaeology.models.StringObjectResponseWrapper;
@@ -52,7 +50,7 @@ import static com.archaeology.services.VolleyStringWrapper.makeVolleyStringObjec
 import static com.archaeology.util.CheatSheet.deleteOriginalAndThumbnailPhoto;
 import static com.archaeology.util.CheatSheet.getOutputMediaFile;
 import static com.archaeology.util.CheatSheet.goToSettings;
-import static com.archaeology.util.StateStatic.ALL_SAMPLE_NUMBER;
+import static com.archaeology.util.StateStatic.ALL_FIND_NUMBER;
 import static com.archaeology.util.StateStatic.LOG_TAG_BLUETOOTH;
 import static com.archaeology.util.StateStatic.MARKED_AS_ADDED;
 import static com.archaeology.util.StateStatic.MARKED_AS_TO_DOWNLOAD;
@@ -73,8 +71,7 @@ public class ObjectDetailActivity extends AppCompatActivity
     IntentFilter mIntentFilter;
     // to handle python requests
     RequestQueue queue;
-    // handler used to process messages. will either set weight or inform of changes in bluetooth
-    // connection status
+    // handler used to process messages. will either set weight or inform of changes in bluetooth connection status
     Handler handler = new Handler() {
         /**
          * Message received
@@ -97,12 +94,11 @@ public class ObjectDetailActivity extends AppCompatActivity
     private String bluetoothConnectionStatus = "";
     boolean dialogVisible = false;
     // dialogs set up in order to provide interface to interact with other devices
-    AlertDialog remoteCameraDialog, weightDialog, pickPeersDialog;
+    AlertDialog weightDialog, pickPeersDialog;
     // broadcast receiver objects used to receive messages from other devices
     BroadcastReceiver nutriScaleBroadcastReceiver;
     // correspond to columns in database associated with finds
-    int areaEasting, areaNorthing, contextNumber, sampleNumber, imageNumber;
-    HashMap<String, Integer> primaryKeys = new HashMap<>();
+    int easting, northing, findNumber, imageNumber;
     public BluetoothService bluetoothService;
     public BluetoothDevice device = null;
     /**
@@ -124,19 +120,13 @@ public class ObjectDetailActivity extends AppCompatActivity
         queue = Volley.newRequestQueue(this);
         // getting object data from previous activity
         Bundle myBundle = getIntent().getExtras();
-        areaEasting = Integer.parseInt(myBundle.getString("area_easting"));
-        areaNorthing = Integer.parseInt(myBundle.getString("area_northing"));
-        contextNumber = Integer.parseInt(myBundle.getString("context_number"));
-        sampleNumber = Integer.parseInt(myBundle.getString("sample_number"));
-        // TODO: Abstract to arbitrary formats, not just E.N.S and E.N.C.S
-//        if (myBundle.getString("context_number") != null)
-//        {
-//            contextNumber = Integer.parseInt(myBundle.getString("context_number"));
-//        }
+        easting = Integer.parseInt(myBundle.getString("easting"));
+        northing = Integer.parseInt(myBundle.getString("northing"));
+        findNumber = Integer.parseInt(myBundle.getString("find_number"));
         // adding info about object to text field in view
-        fillSampleInfo(areaEasting + "", areaNorthing + "", contextNumber + "");
-        fillSampleNumberSpinner();
-        ((Spinner) findViewById(R.id.sample_spinner)).setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        fillFindInfo(easting + "", northing + "");
+        fillFindNumberSpinner();
+        ((Spinner) findViewById(R.id.find_spinner)).setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             /**
              * User selected item
              * @param parent - spinner
@@ -147,13 +137,13 @@ public class ObjectDetailActivity extends AppCompatActivity
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
             {
-                // if the item you selected from the spinner has a different sample number than the
+                // if the item you selected from the spinner has a different find number than the
                 // item returned from the last intent then cancel the request.
-                String x = ((Spinner) findViewById(R.id.sample_spinner)).getItemAtPosition(position).toString();
-                int tmpSampleNumber = Integer.parseInt(x);
-                if (sampleNumber != tmpSampleNumber)
+                String x = ((Spinner) findViewById(R.id.find_spinner)).getItemAtPosition(position).toString();
+                int tmpFindNumber = Integer.parseInt(x);
+                if (findNumber != tmpFindNumber)
                 {
-                    sampleNumber = tmpSampleNumber;
+                    findNumber = tmpFindNumber;
                     queue.cancelAll(new RequestQueue.RequestFilter() {
                         /**
                          * Cancel all requests
@@ -166,9 +156,9 @@ public class ObjectDetailActivity extends AppCompatActivity
                             return true;
                         }
                     });
-                    asyncPopulateFieldsFromDB(areaEasting, areaNorthing, contextNumber, sampleNumber);
+                    asyncPopulateFieldsFromDB(easting, northing, findNumber);
                     clearCurrentPhotosOnLayoutAndFetchPhotosAsync();
-                    fillSampleNumberSpinner();
+                    fillFindNumberSpinner();
                 }
             }
 
@@ -182,7 +172,7 @@ public class ObjectDetailActivity extends AppCompatActivity
             }
         });
         // populate fields with information about object
-        asyncPopulateFieldsFromDB(areaEasting, areaNorthing, contextNumber, sampleNumber);
+        asyncPopulateFieldsFromDB(easting, northing, findNumber);
         asyncPopulatePhotos();
 //        toggleAddPhotoButton();
         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -451,19 +441,17 @@ public class ObjectDetailActivity extends AppCompatActivity
     /**
      * Updates database with changes in weight data for object
      * @param weightInGrams - weight from scale
-     * @param areaEasting - easting
-     * @param areaNorthing - northing
-     * @param contextNumber - context
-     * @param sampleNumber - sample
+     * @param easting - find easting
+     * @param northing - find northing
+     * @param findNumber - find
      */
-    public void asyncModifyWeightFieldInDB(double weightInGrams, int areaEasting, int areaNorthing,
-                                           int contextNumber, int sampleNumber)
+    public void asyncModifyWeightFieldInDB(double weightInGrams, int easting, int northing, int findNumber)
     {
         double weightInKg = weightInGrams / 1000.0;
         // making Python request to call the update method with updated params
         makeVolleyStringObjectRequest(getGlobalWebServerURL() + "/set_weight?easting="
-                        + areaEasting + "&northing=" + areaNorthing + "&context=" + contextNumber
-                        + "&sample=" + sampleNumber + "&weight=" + weightInKg, queue,
+                        + easting + "&northing=" + northing + "&find=" + findNumber
+                        + "&weight=" + weightInKg, queue,
                 new StringObjectResponseWrapper(this) {
             /**
              * Response received
@@ -472,6 +460,8 @@ public class ObjectDetailActivity extends AppCompatActivity
             @Override
             public void responseMethod(String response)
             {
+                Toast.makeText(getApplicationContext(), response, Toast.LENGTH_SHORT).show();
+                Log.v("Weight", response);
             }
 
             /**
@@ -487,18 +477,81 @@ public class ObjectDetailActivity extends AppCompatActivity
     }
 
     /**
-     * Populates exterior color fields for samples with Munsell color values
-     * @param areaEasting - easting
-     * @param areaNorthing - northing
-     * @param contextNumber - context
-     * @param sampleNumber - sample
+     * Populates exterior color fields for finds with Munsell color values
+     * @param easting - find easting
+     * @param northing - find northing
+     * @param findNumber - find
      */
-    public void asyncPopulateFieldsFromDB(int areaEasting, int areaNorthing, int contextNumber,
-                                          int sampleNumber)
+    public void asyncPopulateFieldsFromDB(int easting, int northing, int findNumber)
     {
-        makeVolleyStringObjectRequest(getGlobalWebServerURL() + "/get_sample/?easting=" +
-                        areaEasting + "&northing=" + areaNorthing + "&context=" + contextNumber +
-                        "&sample=" + sampleNumber, queue,
+        makeVolleyStringObjectRequest(getGlobalWebServerURL() + "/get_find_colors/?easting=" +
+                        easting + "&northing=" + northing + "&find=" + findNumber +
+                        "&location=exterior", queue, new StringObjectResponseWrapper(this) {
+            /**
+             * Response received
+             * @param response - database response
+             */
+            @Override
+            public void responseMethod(String response)
+            {
+                try
+                {
+                    // Response Schema: munsell_hue_number, munsell_hue_letter, munsell_lightness_value,
+                    // munsell_chroma, rgb_red_256_bit, rgb_green_256_bit, rgb_blue_256_bit
+                    String[] obj = response.split("\n")[1].split(" \\| ");
+                    populateExteriorColorFields(obj[0] + obj[1], obj[2], obj[3]);
+                }
+                catch (ArrayIndexOutOfBoundsException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+
+            /**
+             * Connection failed
+             * @param error - failure
+             */
+            @Override
+            public void errorMethod(VolleyError error)
+            {
+                error.printStackTrace();
+            }
+        });
+        makeVolleyStringObjectRequest(getGlobalWebServerURL() + "/get_find_colors/?easting=" +
+                easting + "&northing=" + northing + "&find=" + findNumber +
+                "&location=interior", queue, new StringObjectResponseWrapper(this) {
+            /**
+             * Response received
+             * @param response - database response
+             */
+            @Override
+            public void responseMethod(String response)
+            {
+                try
+                {
+                    // Response Schema: munsell_hue_number, munsell_hue_letter, munsell_lightness_value,
+                    // munsell_chroma, rgb_red_256_bit, rgb_green_256_bit, rgb_blue_256_bit
+                    String[] obj = response.split("\n")[1].split(" \\| ");
+                    populateInteriorColorFields(obj[0] + obj[1], obj[2], obj[3]);
+                }
+                catch (ArrayIndexOutOfBoundsException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+
+            /**
+             * Connection failed
+             * @param error - failure
+             */
+            @Override
+            public void errorMethod(VolleyError error)
+            {
+                error.printStackTrace();
+            }
+        });
+        makeVolleyStringObjectRequest(getGlobalWebServerURL() + "/get_find/?easting=" +
+                easting + "&northing=" + northing + "&find=" + findNumber, queue,
                 new StringObjectResponseWrapper(this) {
             /**
              * Response received
@@ -509,18 +562,17 @@ public class ObjectDetailActivity extends AppCompatActivity
             {
                 try
                 {
-                    // Response Schema: material, exterior_color_hue,
-                    //    exterior_color_lightness_value, exterior_color_chroma, interior_color_hue,
-                    //    interior_color_lightness_value, interior_color_chroma, weight_kilograms,
+                    // Response Schema: longitude_decimal_degrees, latitude_decimal_degrees,
+                    // utm_easting_meters, utm_northing_meters, material_general, material_specific,
+                    // category_general, category_specific,  weight_kilograms
                     String[] obj = response.split("\n")[1].split(" \\| ");
-                    populateColorFields(obj[1], obj[2], obj[3], obj[4], obj[5], obj[6]);
-                    if (obj[7].equals("null") || obj[7].equals(""))
+                    if (obj[8].equals("null") || obj[8].equals(""))
                     {
                         getWeightInputText().setText(getString(R.string.nil));
                     }
                     else
                     {
-                        BluetoothService.currWeight = (int) (1000 * Double.parseDouble(obj[7]));
+                        BluetoothService.currWeight = (int) (1000 * Double.parseDouble(obj[8]));
                         getWeightInputText().setText(String.valueOf(BluetoothService.currWeight));
                     }
                 }
@@ -547,8 +599,8 @@ public class ObjectDetailActivity extends AppCompatActivity
      */
     public void asyncPopulatePhotos()
     {
-        String URL = getGlobalWebServerURL() + "/get_image_urls/?easting=" + areaEasting +
-                "&northing=" + areaNorthing + "&context=" + contextNumber + "&sample=" + sampleNumber;
+        String URL = getGlobalWebServerURL() + "/get_image_urls/?easting=" + easting +
+                "&northing=" + northing + "&find=" + findNumber;
         makeVolleyStringObjectRequest(URL, queue, new StringObjectResponseWrapper(this) {
             /**
              * Database response
@@ -578,24 +630,29 @@ public class ObjectDetailActivity extends AppCompatActivity
     }
 
     /**
-     * Populate text fields with interior and exterior color
-     * @param exterior_hue - exterior image hue
-     * @param exterior_lightness - exterior image lightness
-     * @param exterior_chroma - exterior image colors
-     * @param interior_hue - interior image hue
-     * @param interior_lightness - interior image lightness
-     * @param interior_chroma - interior_image colors
+     * Populate text fields with interior color
+     * @param hue - image hue
+     * @param lightness - image lightness
+     * @param chroma - image chroma
      */
-    public void populateColorFields(String exterior_hue, String exterior_lightness,
-                                    String exterior_chroma, String interior_hue,
-                                    String interior_lightness, String interior_chroma)
+    public void populateInteriorColorFields(String hue, String lightness, String chroma)
     {
-        ((TextView) findViewById(R.id.exterior_color_hue)).setText(exterior_hue.trim());
-        ((TextView) findViewById(R.id.exterior_color_lightness)).setText(exterior_lightness.trim());
-        ((TextView) findViewById(R.id.exterior_color_chroma)).setText(exterior_chroma.trim());
-        ((TextView) findViewById(R.id.interior_color_hue)).setText(interior_hue.trim());
-        ((TextView) findViewById(R.id.interior_color_lightness)).setText(interior_lightness.trim());
-        ((TextView) findViewById(R.id.interior_color_chroma)).setText(interior_chroma.trim());
+        ((TextView) findViewById(R.id.interior_color_hue)).setText(hue.trim());
+        ((TextView) findViewById(R.id.interior_color_lightness)).setText(lightness.trim());
+        ((TextView) findViewById(R.id.interior_color_chroma)).setText(chroma.trim());
+    }
+
+    /**
+     * Populate text fields with exterior color
+     * @param hue - image hue
+     * @param lightness - image lightness
+     * @param chroma - image chroma
+     */
+    public void populateExteriorColorFields(String hue, String lightness, String chroma)
+    {
+        ((TextView) findViewById(R.id.exterior_color_hue)).setText(hue.trim());
+        ((TextView) findViewById(R.id.exterior_color_lightness)).setText(lightness.trim());
+        ((TextView) findViewById(R.id.exterior_color_chroma)).setText(chroma.trim());
     }
 
     /**
@@ -643,7 +700,7 @@ public class ObjectDetailActivity extends AppCompatActivity
         {
             ((TextView) findViewById(R.id.weightInput)).setText(weight);
             asyncModifyWeightFieldInDB(Double.parseDouble(getWeightInputText().getText().toString()),
-                    areaEasting, areaNorthing, contextNumber, sampleNumber);
+                    easting, northing, findNumber);
         }
         catch (NumberFormatException e)
         {
@@ -659,8 +716,7 @@ public class ObjectDetailActivity extends AppCompatActivity
     {
         weightDialog.show();
         dialogVisible = true;
-        // set up buttons on record_weight_dialog.xml so that you can view and save weight
-        // information
+        // set up buttons on record_weight_dialog.xml so that you can view and save weight information
         weightDialog.findViewById(R.id.dialogSaveWeightButton).setOnClickListener(new View.OnClickListener() {
             /**
              * User clicked save
@@ -709,7 +765,7 @@ public class ObjectDetailActivity extends AppCompatActivity
         }
         bluetoothService.runService();
         ((TextView) findViewById(R.id.weightInput)).setText(String.valueOf(BluetoothService.currWeight));
-        asyncModifyWeightFieldInDB(BluetoothService.currWeight, areaEasting, areaNorthing, contextNumber, sampleNumber);
+        asyncModifyWeightFieldInDB(BluetoothService.currWeight, easting, northing, findNumber);
     }
 
     /**
@@ -846,7 +902,7 @@ public class ObjectDetailActivity extends AppCompatActivity
         String stamp = getTimeStamp();
         // create a file to save the image
         Context context = getApplicationContext();
-        Uri fileURI = FileProvider.getUriForFile(context, context.getApplicationContext().getPackageName()
+        Uri fileURI = FileProvider.getUriForFile(context, context.getPackageName()
                 + ".my.package.name.provider", getOutputMediaFile(stamp));
         photoIntent.putExtra(MediaStore.EXTRA_OUTPUT, fileURI);
         photoIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
@@ -898,27 +954,25 @@ public class ObjectDetailActivity extends AppCompatActivity
     }
 
     /**
-     * Display sample number of items in spinner
+     * Display find number of items in spinner
      */
-    public void fillSampleNumberSpinner()
+    public void fillFindNumberSpinner()
     {
         Bundle myBundle = getIntent().getExtras();
-        String[] sampleNumbers = myBundle.getStringArray(ALL_SAMPLE_NUMBER);
-        Spinner sampleSpinner = (Spinner) findViewById(R.id.sample_spinner);
-        CheatSheet.setSpinnerItems(this, sampleSpinner, Arrays.asList(sampleNumbers),
-                sampleNumber + "", R.layout.spinner_item);
+        String[] findNumbers = myBundle.getStringArray(ALL_FIND_NUMBER);
+        Spinner findSpinner = findViewById(R.id.find_spinner);
+        CheatSheet.setSpinnerItems(this, findSpinner, Arrays.asList(findNumbers),
+                findNumber + "", R.layout.spinner_item);
     }
 
     /**
-     * Populate text fields with info about sample/object
-     * @param areaEasting - easting
-     * @param areaNorthing - northing
-     * @param contextNumber - context
+     * Populate text fields with info about find
+     * @param easting - find easting
+     * @param northing - find northing
      */
-    public void fillSampleInfo(String areaEasting, String areaNorthing, String contextNumber)
+    public void fillFindInfo(String easting, String northing)
     {
-        ((TextView) findViewById(R.id.sampleInfo)).setText(getString(R.string.sample_frmt,
-                areaEasting, areaNorthing, contextNumber));
+        ((TextView) findViewById(R.id.findInfo)).setText(getString(R.string.find_frmt, easting, northing));
     }
 
     /**
@@ -937,12 +991,12 @@ public class ObjectDetailActivity extends AppCompatActivity
      */
     public void goToNextItemIfAvailable(View view)
     {
-        Spinner sample = (Spinner) findViewById(R.id.sample_spinner);
-        int selectedItemPos = sample.getSelectedItemPosition();
-        int itemCount = sample.getCount();
+        Spinner find = findViewById(R.id.find_spinner);
+        int selectedItemPos = find.getSelectedItemPosition();
+        int itemCount = find.getCount();
         if (selectedItemPos + 1 <= itemCount - 1)
         {
-            sample.setSelection(selectedItemPos + 1);
+            find.setSelection(selectedItemPos + 1);
         }
     }
 
@@ -952,11 +1006,11 @@ public class ObjectDetailActivity extends AppCompatActivity
      */
     public void goToPreviousItemIfAvailable(View view)
     {
-        Spinner sample = (Spinner) findViewById(R.id.sample_spinner);
-        int selectedItemPos = sample.getSelectedItemPosition();
+        Spinner find = findViewById(R.id.find_spinner);
+        int selectedItemPos = find.getSelectedItemPosition();
         if (selectedItemPos - 1 >= 0)
         {
-            sample.setSelection(selectedItemPos - 1);
+            find.setSelection(selectedItemPos - 1);
         }
     }
 
@@ -982,10 +1036,9 @@ public class ObjectDetailActivity extends AppCompatActivity
     public void goToImageGallery(View v)
     {
         Intent photosActivity = new Intent(this, PhotosActivity.class);
-        photosActivity.putExtra("easting", "" + areaEasting);
-        photosActivity.putExtra("northing", "" + areaNorthing);
-        photosActivity.putExtra("context", "" + contextNumber);
-        photosActivity.putExtra("sample", "" + sampleNumber);
+        photosActivity.putExtra("easting", "" + easting);
+        photosActivity.putExtra("northing", "" + northing);
+        photosActivity.putExtra("find", "" + findNumber);
         photosActivity.putExtra("number", "" + imageNumber);
         startActivity(photosActivity);
     }

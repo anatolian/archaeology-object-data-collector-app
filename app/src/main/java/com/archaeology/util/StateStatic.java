@@ -31,11 +31,10 @@ public class StateStatic
     public static final String MARKED_AS_ADDED = "A";
     public static final String MARKED_AS_TO_DOWNLOAD = "D";
     // fields in the database
-    public static final String AREA_EASTING = "area_easting";
-    public static final String AREA_NORTHING = "area_northing";
-    public static final String CONTEXT_NUMBER = "context_number";
-    public static final String SAMPLE_NUMBER = "sample_number";
-    public static final String ALL_SAMPLE_NUMBER = "all_available_sample_number";
+    public static final String EASTING = "easting";
+    public static final String NORTHING = "northing";
+    public static final String FIND_NUMBER = "find_number";
+    public static final String ALL_FIND_NUMBER = "all_available_find_number";
     public static String deviceName = "nutriscale_1910";
     // offset values that help you to locate the correct fields in the data tables to store
     // information. the global web server is being set to a default value. need to make sure that
@@ -50,10 +49,8 @@ public class StateStatic
     private static long tabletCameraCalibrationInterval = DEFAULT_CALIBRATION_INTERVAL;
     // variable to track connections
     private static boolean isRemoteCameraSelected = true;
-    public static boolean connectedToRemoteCamera = false;
     public static String cameraMACAddress = DEFAULT_CAMERA_MAC;
     public static String cameraIPAddress = null;
-    public static boolean isTakePhotoButtonClicked = false;
     /**
      * Return web server URL that is used to connect to the main database
      * @return Returns the web server URL

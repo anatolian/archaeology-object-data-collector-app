@@ -5,7 +5,6 @@
     <ScrollView
         android:layout_width = "match_parent"
         android:layout_height = "match_parent">
-
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -13,99 +12,93 @@
             android:paddingLeft="@dimen/activity_horizontal_margin"
             android:paddingRight="@dimen/activity_horizontal_margin"
             android:paddingTop="@dimen/activity_vertical_margin">
-
             <TextView
-                android:id="@+id/sampleNumberLabel"
+                android:id="@+id/findNumberLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
                 android:layout_marginBottom="10dp"
                 android:background="#d7c474"
-                android:text="@string/sample"
+                android:text="@string/find"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textStyle="bold" />
-
             <TextView
-                android:id="@+id/sampleInfo"
+                android:id="@+id/findInfo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
-                android:layout_toEndOf="@+id/sampleNumberLabel"
+                android:layout_toEndOf="@+id/findNumberLabel"
                 android:background="#d7c474"
                 android:text=""
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textStyle="bold" />
-
             <Spinner
-                android:id="@+id/sample_spinner"
+                android:id="@+id/find_spinner"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
-                android:layout_toEndOf="@+id/sampleInfo" />
-
-            <Button
-                android:id="@+id/nextObjectButton"
-                android:layout_width="wrap_content"
+                android:layout_toEndOf="@+id/findInfo" />
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignBaseline="@+id/previousObjectButton"
-                android:layout_alignBottom="@+id/previousObjectButton"
-                android:layout_toEndOf="@+id/previousObjectButton"
-                android:onClick="goToNextItemIfAvailable"
-                android:text="@string/next" />
-
-            <Button
-                android:id="@+id/previousObjectButton"
-                android:layout_width="wrap_content"
+                android:layout_below="@+id/find_spinner"
+                android:orientation="horizontal"
+                android:id="@+id/cycle_button_container">
+                <Button
+                    android:id="@+id/nextObjectButton"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:onClick="goToNextItemIfAvailable"
+                    android:text="@string/next"/>
+                <Button
+                    android:id="@+id/previousObjectButton"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:onClick="goToPreviousItemIfAvailable"
+                    android:text="@string/previous" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_below="@+id/sampleInfo"
-                android:onClick="goToPreviousItemIfAvailable"
-                android:text="@string/previous" />
-
-            <TextView
-                android:id="@+id/weightInput"
-                android:layout_width="150dp"
-                android:layout_height="wrap_content"
-                android:layout_toEndOf="@+id/nextObjectButton"
-                android:layout_toStartOf="@+id/textView26"
-                android:gravity="center"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@android:color/black" />
-
-            <TextView
-                android:id="@+id/textView26"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/sample_spinner"
-                android:layout_alignParentEnd="true"
-                android:text="@string/gram"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@android:color/black" />
-
-            <Button
-                android:id="@+id/button16"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignBaseline="@+id/nextObjectButton"
-                android:layout_alignBottom="@+id/nextObjectButton"
-                android:layout_alignEnd="@+id/textView26"
-                android:onClick="startRecordWeight"
-                android:text="@string/record_weight" />
-
+                android:orientation="horizontal"
+                android:id="@+id/weight_container"
+                android:layout_below="@+id/cycle_button_container">
+                <TextView
+                    android:id="@+id/weightInput"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@android:color/black" />
+                <TextView
+                    android:id="@+id/textView26"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/gram"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@android:color/black" />
+                <Button
+                    android:id="@+id/button16"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:onClick="startRecordWeight"
+                    android:text="@string/record_weight" />
+            </LinearLayout>
             <TableLayout
                 android:id="@+id/tableLayout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_alignParentStart="true"
-                android:layout_below="@+id/sampleNumberLabel"
+                android:layout_below="@+id/weight_container"
                 android:layout_marginTop="30dp"
                 android:stretchColumns="*">
-
                 <TableRow
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
-
                     <TextView
                         android:id="@+id/textView2"
                         android:layout_width="1dp"
@@ -115,7 +108,6 @@
                         android:textAppearance="?android:attr/textAppearanceMedium"
                         android:textColor="@android:color/black"
                         android:textStyle="bold" />
-
                     <TextView
                         android:id="@+id/textView28"
                         android:layout_width="1dp"
@@ -125,7 +117,6 @@
                         android:textAppearance="?android:attr/textAppearanceMedium"
                         android:textColor="@android:color/black"
                         android:textStyle="bold" />
-
                     <TextView
                         android:id="@+id/textView29"
                         android:layout_width="1dp"
@@ -135,7 +126,6 @@
                         android:textAppearance="?android:attr/textAppearanceMedium"
                         android:textColor="@android:color/black"
                         android:textStyle="bold" />
-
                     <TextView
                         android:id="@+id/textView30"
                         android:layout_width="1dp"
@@ -146,12 +136,10 @@
                         android:textColor="@android:color/black"
                         android:textStyle="bold" />
                 </TableRow>
-
                 <TableRow
                     android:id="@+id/exteriorColorRow"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
-
                     <TextView
                         android:id="@+id/textView31"
                         android:layout_width="1dp"
@@ -161,7 +149,6 @@
                         android:textAppearance="?android:attr/textAppearanceMedium"
                         android:textColor="@android:color/black"
                         android:textStyle="italic" />
-
                     <TextView
                         android:id="@+id/exterior_color_hue"
                         android:layout_width="1dp"
@@ -170,7 +157,6 @@
                         android:gravity="center"
                         android:textAppearance="?android:attr/textAppearanceMedium"
                         android:textColor="@android:color/black" />
-
                     <TextView
                         android:id="@+id/exterior_color_lightness"
                         android:layout_width="1dp"
@@ -179,7 +165,6 @@
                         android:gravity="center"
                         android:textAppearance="?android:attr/textAppearanceMedium"
                         android:textColor="@android:color/black" />
-
                     <TextView
                         android:id="@+id/exterior_color_chroma"
                         android:layout_width="1dp"
@@ -189,12 +174,10 @@
                         android:textAppearance="?android:attr/textAppearanceMedium"
                         android:textColor="@android:color/black" />
                 </TableRow>
-
                 <TableRow
                     android:id="@+id/interiorColorRow"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
-
                     <TextView
                         android:id="@+id/textView35"
                         android:layout_width="1dp"
@@ -204,7 +187,6 @@
                         android:textAppearance="?android:attr/textAppearanceMedium"
                         android:textColor="@android:color/black"
                         android:textStyle="italic" />
-
                     <TextView
                         android:id="@+id/interior_color_hue"
                         android:layout_width="1dp"
@@ -213,7 +195,6 @@
                         android:gravity="center"
                         android:textAppearance="?android:attr/textAppearanceMedium"
                         android:textColor="@android:color/black" />
-
                     <TextView
                         android:id="@+id/interior_color_lightness"
                         android:layout_width="1dp"
@@ -222,7 +203,6 @@
                         android:gravity="center"
                         android:textAppearance="?android:attr/textAppearanceMedium"
                         android:textColor="@android:color/black" />
-
                     <TextView
                         android:id="@+id/interior_color_chroma"
                         android:layout_width="1dp"
@@ -233,7 +213,6 @@
                         android:textColor="@android:color/black" />
                 </TableRow>
             </TableLayout>
-
             <TextView
                 android:id="@+id/connectToCameraText"
                 android:layout_width="wrap_content"
@@ -242,14 +221,12 @@
                 android:gravity="center"
                 android:text="@string/no_remote_camera"
                 android:textColor="@android:color/holo_red_dark" />
-
             <HorizontalScrollView
                 android:id="@+id/photoScrollWrapper"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/connectToCameraText">
-
                 <fragment
                     android:id="@+id/fragment"
                     android:name="com.archaeology.ui.PhotoFragment"
@@ -257,7 +234,6 @@
                     android:layout_height="wrap_content"
                     tools:layout="@layout/photo_fragment" />
             </HorizontalScrollView>
-
             <Button
                 android:id="@+id/button26"
                 android:layout_width="match_parent"
@@ -265,7 +241,6 @@
                 android:layout_below="@+id/photoScrollWrapper"
                 android:onClick="addPhotoAction"
                 android:text="@string/add_photo" />
-
             <Button
                 android:id="@+id/correct_color"
                 android:layout_width="match_parent"
@@ -273,7 +248,6 @@
                 android:layout_below="@+id/button26"
                 android:onClick="goToImageGallery"
                 android:text="@string/correct_color" />
-
         </RelativeLayout>
     </ScrollView>
 </RelativeLayout>
