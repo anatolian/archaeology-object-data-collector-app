@@ -24,7 +24,7 @@ public class StateStatic
     // 30 minutes
     public static final long DEFAULT_CALIBRATION_INTERVAL = 1800000;
     // default url to connect to database to send photos back and forth
-    private static final String DEFAULT_PHOTO_PATH = "ARCPHOTOS";
+    private static final String DEFAULT_PHOTO_PATH = "Archaeology";
     public static final String THUMBNAIL_EXTENSION_STRING = "thumb.jpg";
     public static final int DEFAULT_VOLLEY_TIMEOUT = 7000;
     public static final String SYNCED = "S";

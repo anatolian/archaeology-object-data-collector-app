@@ -92,6 +92,7 @@ public class ObjectDetailActivity extends AppCompatActivity
     };
     private String currentScaleWeight = "";
     private String bluetoothConnectionStatus = "";
+    private Uri fileURI;
     boolean dialogVisible = false;
     // dialogs set up in order to provide interface to interact with other devices
     AlertDialog weightDialog, pickPeersDialog;
@@ -298,8 +299,9 @@ public class ObjectDetailActivity extends AppCompatActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
     {
-        final String ORIGINAL_FILE_NAME = getTimeStamp() + ".jpg";
+        String captureFile = fileURI.toString();
         final Uri FILE_URI;
+        final String ORIGINAL_FILE_NAME = captureFile.substring(captureFile.lastIndexOf('/') + 1);
         // action to be performed when request is sent to take photo
         if (requestCode == REQUEST_IMAGE_CAPTURE)
         {
@@ -322,33 +324,6 @@ public class ObjectDetailActivity extends AppCompatActivity
                 {
                     // store image data into photo fragments
                     loadPhotoIntoPhotoFragment(FILE_URI, MARKED_AS_ADDED);
-                    File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
-                            Environment.DIRECTORY_PICTURES), getGlobalPhotoSavePath());
-                    String originalFilePath = mediaStorageDir.getPath() + File.separator + ORIGINAL_FILE_NAME;
-                    BitmapFactory.Options options = new BitmapFactory.Options();
-                    options.inJustDecodeBounds = true;
-                    // Returns null, sizes are in the options variable
-                    Bitmap savedBitmap = BitmapFactory.decodeFile(originalFilePath, options);
-                    File parent = new File(Environment.getExternalStorageDirectory() + "/Archaeology/");
-                    if (!parent.exists())
-                    {
-                        parent.mkdirs();
-                    }
-                    try
-                    {
-                        File f = new File(parent, originalFilePath);
-                        f.createNewFile();
-                        FileOutputStream outStream = new FileOutputStream(f);
-                        savedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
-                        outStream.flush();
-                        outStream.close();
-                        Toast.makeText(getApplicationContext(), "Image stored at " +
-                                f.getAbsolutePath(), Toast.LENGTH_LONG).show();
-                    }
-                    catch (IOException e)
-                    {
-                        e.printStackTrace();
-                    }
                 }
 
                 /**
@@ -902,7 +877,7 @@ public class ObjectDetailActivity extends AppCompatActivity
         String stamp = getTimeStamp();
         // create a file to save the image
         Context context = getApplicationContext();
-        Uri fileURI = FileProvider.getUriForFile(context, context.getPackageName()
+        fileURI = FileProvider.getUriForFile(context, context.getPackageName()
                 + ".my.package.name.provider", getOutputMediaFile(stamp));
         photoIntent.putExtra(MediaStore.EXTRA_OUTPUT, fileURI);
         photoIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);

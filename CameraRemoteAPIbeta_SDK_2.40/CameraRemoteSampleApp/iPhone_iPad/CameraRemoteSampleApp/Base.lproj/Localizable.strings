@@ -1,0 +1,20 @@
+/**
+ * @file  Localizable.strings
+ * @brief CameraRemoteSampleApp
+ *
+ * Copyright 2014 Sony Corporation
+ */
+
+"DD_TEXT_START" = "Refresh device list";
+"DD_TEXT_SEARCHING" = "searching for device";
+"STR_TAKE_PICTURE" = "Take Picture";
+"STR_RECORD_START" = "Start movie recording";
+"STR_RECORD_STOP" = "Stop movie recording";
+"UNSUPPORTED_HEADING" = "Caution!";
+"UNSUPPORTED_MESSAGE" = "Unsupported device in this sample app.";
+"NETWORK_ERROR_HEADING" = "Caution!";
+"NETWORK_ERROR_MESSAGE" = "Failed to connect to the device.";
+"UNSUPPORTED_SHOOT_MODE_MESSAGE" = "Unsupported shoot mode.";
+"CANNOT_CONTROL_MESSAGE" = "Cannot control the device by API.";
+"UNSUPPORTED_STREAMING_HEADING" = "Caution!";
+"UNSUPPORTED_STREAMING_MESSAGE" = "Movie playback is not supported.";

@@ -1,0 +1,11 @@
+<!-- Copyright 2014 Sony Corporation -->
+<GridView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/contents_grid"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000"
+    android:columnWidth="90dp"
+    android:horizontalSpacing="10dp"
+    android:numColumns="4"
+    android:stretchMode="columnWidth"
+    android:verticalSpacing="10dp" />
