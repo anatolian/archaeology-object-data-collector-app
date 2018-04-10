@@ -7,8 +7,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
-import android.util.Log;
-import static com.archaeology.util.StateStatic.LOG_TAG_BLUETOOTH;
 import static com.archaeology.util.StateStatic.MESSAGE_STATUS_CHANGE;
 public class NutriScaleBroadcastReceiver extends BroadcastReceiver
 {
@@ -32,12 +30,7 @@ public class NutriScaleBroadcastReceiver extends BroadcastReceiver
     {
         String action = intent.getAction();
         // When discovery finds a device
-        if (BluetoothDevice.ACTION_FOUND.equals(action))
-        {
-            // Get the BluetoothDevice object from the Intent
-            BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-        }
-        else if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action))
+        if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action))
         {
             M_HANDLER.obtainMessage(MESSAGE_STATUS_CHANGE, "Device Connected").sendToTarget();
         }

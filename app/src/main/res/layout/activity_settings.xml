@@ -46,7 +46,6 @@
                 android:text="@string/bucket_url"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="@android:color/black" />
-
             <EditText
                 android:id="@+id/settingsBucketUrl"
                 android:layout_width="wrap_content"
@@ -59,8 +58,8 @@
                 android:maxLines="3"
                 android:minWidth="400dp"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@android:color/black" />
-
+                android:textColor="@android:color/black"
+                android:hint="@string/bucket_url"/>
             <TextView
                 android:id="@+id/textView6"
                 android:layout_width="wrap_content"
@@ -81,6 +80,7 @@
                 android:lines = "1"
                 android:maxLines = "1"
                 android:hint = "@string/camera_MAC"
+                android:inputType="none"
                 android:textAppearance = "?android:attr/textAppearanceMedium"/>
             <TextView
                 android:id="@+id/textView10"
@@ -93,15 +93,15 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="@android:color/black" />
             <EditText
-                android:layout_width = "wrap_content"
-                android:layout_height = "wrap_content"
-                android:id = "@+id/calibrationInterval"
-                android:layout_below = "@+id/textView10"
-                android:layout_centerHorizontal = "true"
-                android:minWidth = "400dp"
-                android:textAppearance = "?android:attr/textAppearanceMedium"
-                android:hint="@string/camera_calibration"/>
-
+                android:id="@+id/calibrationInterval"
+                android:layout_width="349dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/textView10"
+                android:layout_centerHorizontal="true"
+                android:hint="@string/camera_calibration"
+                android:minWidth="400dp"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:inputType="number"/>
             <TextView
                 android:id="@+id/textView11"
                 android:layout_width="wrap_content"
@@ -120,12 +120,28 @@
                 android:layout_centerHorizontal = "true"
                 android:minWidth = "400dp"
                 android:entries = "@array/camera_list"/>
-
+            <TextView
+                android:id="@+id/textView12"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/calibrationInterval"
+                android:minWidth="400dp"
+                android:text="@string/correct_color"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@android:color/black"/>
+            <CheckBox
+                android:id="@+id/colorCorrectionBox"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_below="@+id/textView12"
+                android:onClick="toggleColorCorrection"
+                android:checked="true"
+                android:visibility="visible"/>
             <TextView
                 android:id="@+id/paired_label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/calibrationInterval"
+                android:layout_below="@+id/colorCorrectionBox"
                 android:layout_marginTop="10dp"
                 android:text="@string/paired"
                 android:textColor="@android:color/black"
@@ -136,7 +152,6 @@
                 android:layout_below = "@+id/paired_label"
                 android:id = "@+id/paired_devices_list">
             </ListView>
-
             <Button
                 android:id="@+id/pair_new_device"
                 style="?android:textAppearanceSmall"

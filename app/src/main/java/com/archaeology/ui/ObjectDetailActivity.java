@@ -10,10 +10,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
@@ -23,6 +21,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
@@ -34,8 +33,6 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,6 +42,7 @@ import com.archaeology.models.StringObjectResponseWrapper;
 import com.archaeology.services.BluetoothService;
 import com.archaeology.services.NutriScaleBroadcastReceiver;
 import com.archaeology.util.CheatSheet;
+import com.archaeology.util.MagnifyingGlass;
 import com.archaeology.util.StateStatic;
 import static com.archaeology.services.VolleyStringWrapper.makeVolleyStringObjectRequest;
 import static com.archaeology.util.CheatSheet.deleteOriginalAndThumbnailPhoto;
@@ -60,8 +58,8 @@ import static com.archaeology.util.StateStatic.REQUEST_ENABLE_BT;
 import static com.archaeology.util.StateStatic.REQUEST_IMAGE_CAPTURE;
 import static com.archaeology.util.StateStatic.REQUEST_REMOTE_IMAGE;
 import static com.archaeology.util.StateStatic.cameraIPAddress;
+import static com.archaeology.util.StateStatic.colorCorrectionEnabled;
 import static com.archaeology.util.StateStatic.getGlobalCameraMAC;
-import static com.archaeology.util.StateStatic.getGlobalPhotoSavePath;
 import static com.archaeology.util.StateStatic.getGlobalWebServerURL;
 import static com.archaeology.util.StateStatic.getTimeStamp;
 import static com.archaeology.util.StateStatic.isBluetoothEnabled;
@@ -102,6 +100,7 @@ public class ObjectDetailActivity extends AppCompatActivity
     int easting, northing, findNumber, imageNumber;
     public BluetoothService bluetoothService;
     public BluetoothDevice device = null;
+    private Bitmap photo;
     /**
      * Launch the activity
      * @param savedInstanceState - activity from memory
@@ -175,7 +174,6 @@ public class ObjectDetailActivity extends AppCompatActivity
         // populate fields with information about object
         asyncPopulateFieldsFromDB(easting, northing, findNumber);
         asyncPopulatePhotos();
-//        toggleAddPhotoButton();
         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         // check to see if bluetooth is enabled
         if (mBluetoothAdapter == null)
@@ -245,8 +243,7 @@ public class ObjectDetailActivity extends AppCompatActivity
             Toast.makeText(getApplicationContext(), "Phone does not support Bluetooth", Toast.LENGTH_SHORT).show();
         }
         weightDialog = builder.create();
-        // creating the camera dialog and setting up photo fragment to store the photos
-//        remoteCameraDialog = CameraDialog.createCameraDialog(this);
+        // Setting up photo fragment to store the photos
         PhotoFragment photoFragment = (PhotoFragment) getFragmentManager().findFragmentById(R.id.fragment);
         if (savedInstanceState == null)
         {
@@ -314,6 +311,19 @@ public class ObjectDetailActivity extends AppCompatActivity
         }
         if (resultCode == RESULT_OK)
         {
+            if (colorCorrectionEnabled)
+            {
+                try
+                {
+                    photo = MediaStore.Images.Media.getBitmap(this.getContentResolver(), FILE_URI);
+                    filter(photo);
+                }
+                catch (IOException e)
+                {
+                    Toast.makeText(getApplicationContext(), "Could not load bitmap", Toast.LENGTH_SHORT).show();
+                    Log.v("Bitmap", e.getMessage());
+                }
+            }
             // ApproveDialogCallback is an interface. see CameraDialog class
             CameraDialog.ApproveDialogCallback approveDialogCallback = new CameraDialog.ApproveDialogCallback() {
                 /**
@@ -339,7 +349,7 @@ public class ObjectDetailActivity extends AppCompatActivity
             AlertDialog approveDialog = CameraDialog.createPhotoApprovalDialog(this, approveDialogCallback);
             approveDialog.show();
             // view photo you are trying to approve
-            ImageView approvePhotoImage = (ImageView) approveDialog.findViewById(R.id.approvePhotoImage);
+            ImageView approvePhotoImage = approveDialog.findViewById(R.id.approvePhotoImage);
             approvePhotoImage.setImageURI(FILE_URI);
         }
     }
@@ -426,8 +436,7 @@ public class ObjectDetailActivity extends AppCompatActivity
         // making Python request to call the update method with updated params
         makeVolleyStringObjectRequest(getGlobalWebServerURL() + "/set_weight?easting="
                         + easting + "&northing=" + northing + "&find=" + findNumber
-                        + "&weight=" + weightInKg, queue,
-                new StringObjectResponseWrapper(this) {
+                        + "&weight=" + weightInKg, queue, new StringObjectResponseWrapper() {
             /**
              * Response received
              * @param response - database response
@@ -461,7 +470,7 @@ public class ObjectDetailActivity extends AppCompatActivity
     {
         makeVolleyStringObjectRequest(getGlobalWebServerURL() + "/get_find_colors/?easting=" +
                         easting + "&northing=" + northing + "&find=" + findNumber +
-                        "&location=exterior", queue, new StringObjectResponseWrapper(this) {
+                        "&location=exterior", queue, new StringObjectResponseWrapper() {
             /**
              * Response received
              * @param response - database response
@@ -494,7 +503,7 @@ public class ObjectDetailActivity extends AppCompatActivity
         });
         makeVolleyStringObjectRequest(getGlobalWebServerURL() + "/get_find_colors/?easting=" +
                 easting + "&northing=" + northing + "&find=" + findNumber +
-                "&location=interior", queue, new StringObjectResponseWrapper(this) {
+                "&location=interior", queue, new StringObjectResponseWrapper() {
             /**
              * Response received
              * @param response - database response
@@ -527,7 +536,7 @@ public class ObjectDetailActivity extends AppCompatActivity
         });
         makeVolleyStringObjectRequest(getGlobalWebServerURL() + "/get_find/?easting=" +
                 easting + "&northing=" + northing + "&find=" + findNumber, queue,
-                new StringObjectResponseWrapper(this) {
+                new StringObjectResponseWrapper() {
             /**
              * Response received
              * @param response - database response
@@ -576,7 +585,7 @@ public class ObjectDetailActivity extends AppCompatActivity
     {
         String URL = getGlobalWebServerURL() + "/get_image_urls/?easting=" + easting +
                 "&northing=" + northing + "&find=" + findNumber;
-        makeVolleyStringObjectRequest(URL, queue, new StringObjectResponseWrapper(this) {
+        makeVolleyStringObjectRequest(URL, queue, new StringObjectResponseWrapper() {
             /**
              * Database response
              * @param response - response received
@@ -763,111 +772,6 @@ public class ObjectDetailActivity extends AppCompatActivity
         }
     }
 
-//    /**
-//     * Open camera dialog
-//     * @param VIEW - camera view
-//     */
-//    public void showRemoteCameraDialog(final View VIEW)
-//    {
-//        remoteCameraDialog.show();
-//        remoteCameraDialog.getWindow().setLayout(convertDPToPixel(700), WindowManager.LayoutParams.WRAP_CONTENT);
-//        final Activity PARENT_ACTIVITY = this;
-//        remoteCameraDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-//            /**
-//             * User cancelled camera
-//             * @param dialog - alert window
-//             */
-//            @Override
-//            public void onCancel(DialogInterface dialog)
-//            {
-//                CameraDialog.stopLiveView(PARENT_ACTIVITY, queue, sonyAPIRequestID++, getLiveViewSurface());
-//            }
-//        });
-//        remoteCameraDialog.findViewById(R.id.take_photo).setOnClickListener(new View.OnClickListener() {
-//            /**
-//             * User clicked take photo
-//             * @param v - camera view
-//             */
-//            @Override
-//            public void onClick(View v)
-//            {
-//                if (!isTakePhotoButtonClicked)
-//                {
-//                    isTakePhotoButtonClicked = true;
-//                    remoteCameraDialog.findViewById(R.id.take_photo).setEnabled(false);
-//                    CameraDialog.takePhoto(PARENT_ACTIVITY, queue, sonyAPIRequestID++,
-//                            getTimeStamp(), new AfterImageSavedMethodWrapper() {
-//                        /**
-//                         * Process saved image
-//                         * @param THUMBNAIL_IMAGE_URL - image URI
-//                         */
-//                        @Override
-//                        public void doStuffWithSavedImage(final Uri THUMBNAIL_IMAGE_URL)
-//                        {
-//                            final Uri ORIGINAL_IMAGE_URI = CheatSheet.getOriginalImageURI(THUMBNAIL_IMAGE_URL);
-//                            // implementing interface from CameraDialog class
-//                            CameraDialog.ApproveDialogCallback approveDialogCallback =
-//                                    new CameraDialog.ApproveDialogCallback() {
-//                                /**
-//                                 * Save button pressed
-//                                 */
-//                                @Override
-//                                public void onSaveButtonClicked()
-//                                {
-//                                    // take picture and add as photo fragment
-//                                    loadPhotoIntoPhotoFragment(ORIGINAL_IMAGE_URI, MARKED_AS_ADDED);
-//                                    isTakePhotoButtonClicked = false;
-//                                    remoteCameraDialog.findViewById(R.id.take_photo).setEnabled(true);
-//                                }
-//
-//                                /**
-//                                 * Cancel picture
-//                                 */
-//                                @Override
-//                                public void onCancelButtonClicked()
-//                                {
-//                                    deleteOriginalAndThumbnailPhoto(ORIGINAL_IMAGE_URI);
-//                                    isTakePhotoButtonClicked = false;
-//                                    remoteCameraDialog.findViewById(R.id.take_photo).setEnabled(true);
-//                                }
-//                            };
-//                            // create dialog to view and approve photo
-//                            AlertDialog approveDialog = CameraDialog.createPhotoApprovalDialog(PARENT_ACTIVITY,
-//                                    approveDialogCallback);
-//                            approveDialog.show();
-//                            ImageView approvePhotoImage = (ImageView) approveDialog.findViewById(R.id.approvePhotoImage);
-//                            approvePhotoImage.setImageURI(THUMBNAIL_IMAGE_URL);
-//                        }
-//                    }, getLiveViewSurface());
-//                }
-//            }
-//        });
-//        remoteCameraDialog.findViewById(R.id.zoom_in).setOnClickListener(new View.OnClickListener() {
-//            /**
-//             * User pressed zoom in
-//             * @param v - camera view
-//             */
-//            @Override
-//            public void onClick(View v)
-//            {
-//                CameraDialog.zoomIn(PARENT_ACTIVITY, queue, sonyAPIRequestID++);
-//            }
-//        });
-//        remoteCameraDialog.findViewById(R.id.zoom_out).setOnClickListener(new View.OnClickListener() {
-//            /**
-//             * User pressed zoom out
-//             * @param v - camera view
-//             */
-//            @Override
-//            public void onClick(View v)
-//            {
-//                CameraDialog.zoomOut(PARENT_ACTIVITY, queue, sonyAPIRequestID++);
-//            }
-//        });
-//        // should allow you to see what the camera is seeing
-//        CameraDialog.startLiveView(this, queue, sonyAPIRequestID++, getLiveViewSurface());
-//    }
-
     /**
      * Starts the local camera
      */
@@ -883,16 +787,6 @@ public class ObjectDetailActivity extends AppCompatActivity
         photoIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         startActivityForResult(photoIntent, REQUEST_IMAGE_CAPTURE);
     }
-
-//    /**
-//     * Allows you to see what camera is seeing. used in remote_camera_layout.xml and
-//     * activity_my_wifi.xml
-//     * @return Returns the camera view
-//     */
-//    public SimpleStreamSurfaceView getLiveViewSurface()
-//    {
-//        return (SimpleStreamSurfaceView) remoteCameraDialog.findViewById(R.id.surfaceview_liveview);
-//    }
 
     /**
      * Read from scale
@@ -989,37 +883,8 @@ public class ObjectDetailActivity extends AppCompatActivity
         }
     }
 
-//    /**
-//     * Enable buttons depending on connection with remote camera
-//     */
-//    public void toggleAddPhotoButton()
-//    {
-//        if (isRemoteCameraSelected() && cameraIPAddress == null)
-//        {
-//            findViewById(R.id.button26).setEnabled(false);
-//        }
-//        else
-//        {
-//            findViewById(R.id.button26).setEnabled(true);
-//        }
-//    }
-
     /**
-     * Open gallery
-     * @param v - gallery view
-     */
-    public void goToImageGallery(View v)
-    {
-        Intent photosActivity = new Intent(this, PhotosActivity.class);
-        photosActivity.putExtra("easting", "" + easting);
-        photosActivity.putExtra("northing", "" + northing);
-        photosActivity.putExtra("find", "" + findNumber);
-        photosActivity.putExtra("number", "" + imageNumber);
-        startActivity(photosActivity);
-    }
-
-    /**
-     * Open WiFi
+     * Go to remote controlling camera
      */
     public void goToWiFiActivity()
     {
@@ -1038,5 +903,32 @@ public class ObjectDetailActivity extends AppCompatActivity
         }
         Intent wifiActivity = new Intent(this, MyWiFiActivity.class);
         startActivityForResult(wifiActivity, REQUEST_REMOTE_IMAGE);
+    }
+
+    /**
+     * Apply color correction
+     * @param NEW_PHOTO - corrected image
+     */
+    public void filter(final Bitmap NEW_PHOTO)
+    {
+        final MagnifyingGlass IV = new MagnifyingGlass(this);
+        IV.init(NEW_PHOTO);
+        IV.setImageBitmap(NEW_PHOTO);
+        IV.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        IV.setOnTouchListener(new ImageView.OnTouchListener() {
+            /**
+             * User touched image
+             * @param v - image
+             * @param event - touch event
+             * @return Returns true
+             */
+            @Override
+            public boolean onTouch(View v, MotionEvent event)
+            {
+                IV.onTouchEvent(event);
+                photo = NEW_PHOTO;
+                return true;
+            }
+        });
     }
 }

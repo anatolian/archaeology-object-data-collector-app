@@ -15,9 +15,10 @@ public class StateStatic
     public static final String LOG_TAG_BLUETOOTH = "BLUETOOTH";
     public static final int REQUEST_IMAGE_CAPTURE = 301;
     public static final int REQUEST_REMOTE_IMAGE = 302;
+    public static final int REQUEST_CORRECT_COLOR = 303;
     public static final int MESSAGE_WEIGHT = 501;
     public static final int MESSAGE_STATUS_CHANGE = 502;
-    public static final int REQUEST_ENABLE_BT = 301;
+    public static final int REQUEST_ENABLE_BT = 503;
     public static final String DEFAULT_WEB_SERVER_URL = "https://pacific-brook-36642.herokuapp.com";
     public static final String DEFAULT_BUCKET_URL = "s3.console.aws.amazon.com/s3/buckets/pennmuseum/";
     public static final String DEFAULT_CAMERA_MAC = "fe:c2:de:31:0a:e1";
@@ -48,9 +49,10 @@ public class StateStatic
     private static long remoteCameraCalibrationInterval = DEFAULT_CALIBRATION_INTERVAL;
     private static long tabletCameraCalibrationInterval = DEFAULT_CALIBRATION_INTERVAL;
     // variable to track connections
-    private static boolean isRemoteCameraSelected = true;
+    private static boolean isRemoteCameraSelected = false;
     public static String cameraMACAddress = DEFAULT_CAMERA_MAC;
     public static String cameraIPAddress = null;
+    public static boolean colorCorrectionEnabled = true;
     /**
      * Return web server URL that is used to connect to the main database
      * @return Returns the web server URL

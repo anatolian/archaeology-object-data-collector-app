@@ -161,7 +161,7 @@ public class CheatSheet
      * @param thumbnailURI - thumbnail location
      * @return Returns the original's location
      */
-    public static Uri getOriginalImageURI(Uri thumbnailURI)
+    private static Uri getOriginalImageURI(Uri thumbnailURI)
     {
         String thumbnailURIString = thumbnailURI.toString();
         String x = thumbnailURIString.substring(0, thumbnailURIString.length()
@@ -220,16 +220,6 @@ public class CheatSheet
             tmpArray.add(URL.substring(URL.lastIndexOf("=") + 1));
         }
         return tmpArray;
-    }
-
-    /**
-     * Create a file URI for saving an image
-     * @param fileName - image location
-     * @return Returns the image URI
-     */
-    public static Uri getOutputMediaFileURI(String fileName)
-    {
-        return Uri.fromFile(getOutputMediaFile(fileName));
     }
 
     /**

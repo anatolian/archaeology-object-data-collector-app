@@ -1,22 +1,18 @@
 // String JSON Object response
 // @author: msenol
 package com.archaeology.models;
-import android.content.Context;
 import com.android.volley.VolleyError;
 public abstract class StringObjectResponseWrapper
 {
-    protected Context currentContext;
     /**
      * Constructor
      */
-    protected StringObjectResponseWrapper(Context aContext)
+    protected StringObjectResponseWrapper()
     {
-        this.currentContext = aContext;
     }
 
     /**
-     * This will be overrided in many of the api calls that will be used to interact with the
-     * camera
+     * This will be overwritten in many of the API calls that will be used to interact with the camera
      * @param response - camera response
      */
     public abstract void responseMethod(String response);

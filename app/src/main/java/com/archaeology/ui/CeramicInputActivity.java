@@ -5,7 +5,6 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -222,7 +221,7 @@ public class CeramicInputActivity extends AppCompatActivity
     {
         allDataLoadInfo.put(LoadState.areaEasting, false);
         String URL = getGlobalWebServerURL() + "/get_eastings/";
-        makeVolleyStringObjectRequest(URL, queue, new StringObjectResponseWrapper(this) {
+        makeVolleyStringObjectRequest(URL, queue, new StringObjectResponseWrapper() {
             /**
              * Response received
              * @param response - volley response
@@ -255,7 +254,7 @@ public class CeramicInputActivity extends AppCompatActivity
     {
         allDataLoadInfo.put(LoadState.areaNorthing, false);
         String URL = getGlobalWebServerURL() + "/get_northings/?easting=" + getSelectedEasting();
-        makeVolleyStringObjectRequest(URL, queue, new StringObjectResponseWrapper(this) {
+        makeVolleyStringObjectRequest(URL, queue, new StringObjectResponseWrapper() {
             /**
              * Response received
              * @param response - database response
@@ -291,7 +290,7 @@ public class CeramicInputActivity extends AppCompatActivity
         toggleContinueButton();
         String URL = getGlobalWebServerURL() + "/get_finds/?easting=" + getSelectedEasting()
                 + "&northing=" + getSelectedNorthing();
-        makeVolleyStringObjectRequest(URL, queue, new StringObjectResponseWrapper(this) {
+        makeVolleyStringObjectRequest(URL, queue, new StringObjectResponseWrapper() {
             /**
              * Database response
              * @param response - response received

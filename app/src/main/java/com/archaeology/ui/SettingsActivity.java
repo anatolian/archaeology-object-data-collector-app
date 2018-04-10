@@ -7,7 +7,6 @@ import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -38,6 +37,7 @@ import static com.archaeology.util.StateStatic.DEFAULT_CALIBRATION_INTERVAL;
 import static com.archaeology.util.StateStatic.DEFAULT_WEB_SERVER_URL;
 import static com.archaeology.util.StateStatic.DEFAULT_CAMERA_MAC;
 import static com.archaeology.util.StateStatic.cameraIPAddress;
+import static com.archaeology.util.StateStatic.colorCorrectionEnabled;
 import static com.archaeology.util.StateStatic.getGlobalCameraMAC;
 import static com.archaeology.util.StateStatic.getGlobalWebServerURL;
 import static com.archaeology.util.StateStatic.getGlobalBucketURL;
@@ -66,7 +66,7 @@ public class SettingsActivity extends AppCompatActivity
         getPairedDevices();
         if (devices != null)
         {
-            ListView list = (ListView) findViewById(R.id.paired_devices_list);
+            ListView list = findViewById(R.id.paired_devices_list);
             ArrayAdapter<String> adapter = new ArrayAdapter<>(list.getContext(),
                     android.R.layout.simple_list_item_1, devices);
             list.setAdapter(adapter);
@@ -99,10 +99,10 @@ public class SettingsActivity extends AppCompatActivity
                 }
             });
         }
-        EditText webServerEditText = (EditText) findViewById(R.id.settingsWebServiceUrl);
-        EditText cameraMAC = (EditText) findViewById(R.id.settingsCameraMAC);
-        EditText calibrationInterval = (EditText) findViewById(R.id.calibrationInterval);
-        Spinner cameraSelectBox = (Spinner) findViewById(R.id.cameraSelectBox);
+        EditText webServerEditText = findViewById(R.id.settingsWebServiceUrl);
+        EditText cameraMAC = findViewById(R.id.settingsCameraMAC);
+        EditText calibrationInterval = findViewById(R.id.calibrationInterval);
+        Spinner cameraSelectBox = findViewById(R.id.cameraSelectBox);
         cameraSelectBox.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             /**
              * User selected item
@@ -188,7 +188,7 @@ public class SettingsActivity extends AppCompatActivity
         final ProgressDialog BAR_PROGRESS_DIALOG = new ProgressDialog(this);
         makeVolleyStringObjectRequest(getWebServerURLFromLayout() +
                 "/add_property/?key=bucket_url&value=" + getBucketURLFromLayout(), queue,
-                new StringObjectResponseWrapper(this) {
+                new StringObjectResponseWrapper() {
             /**
              * Response received
              * @param response - database response
@@ -245,11 +245,11 @@ public class SettingsActivity extends AppCompatActivity
         setRemoteCameraCalibrationInterval(DEFAULT_CALIBRATION_INTERVAL);
         setTabletCameraCalibrationInterval(DEFAULT_CALIBRATION_INTERVAL);
         setIsRemoteCameraSelected(false);
-        EditText webServerEditText = (EditText) findViewById(R.id.settingsWebServiceUrl);
-        EditText bucketEditText = (EditText) findViewById(R.id.settingsBucketUrl);
-        Spinner cameraSelectBox = (Spinner) findViewById(R.id.cameraSelectBox);
-        EditText cameraIP = (EditText) findViewById(R.id.settingsCameraMAC);
-        EditText calibrationInterval = (EditText) findViewById(R.id.calibrationInterval);
+        EditText webServerEditText = findViewById(R.id.settingsWebServiceUrl);
+        EditText bucketEditText = findViewById(R.id.settingsBucketUrl);
+        Spinner cameraSelectBox = findViewById(R.id.cameraSelectBox);
+        EditText cameraIP = findViewById(R.id.settingsCameraMAC);
+        EditText calibrationInterval = findViewById(R.id.calibrationInterval);
         webServerEditText.setText(getGlobalWebServerURL());
         bucketEditText.setText(getGlobalBucketURL());
         cameraSelectBox.setSelection(0);
@@ -263,8 +263,8 @@ public class SettingsActivity extends AppCompatActivity
      */
     public void cameraSelected(View view)
     {
-        EditText cameraMACText = (EditText) findViewById(R.id.settingsCameraMAC);
-        EditText calibrationInterval = (EditText) findViewById(R.id.calibrationInterval);
+        EditText cameraMACText = findViewById(R.id.settingsCameraMAC);
+        EditText calibrationInterval = findViewById(R.id.calibrationInterval);
         if (isTabletCameraSelectedOnLayout())
         {
             cameraMACText.setText("");
@@ -336,5 +336,14 @@ public class SettingsActivity extends AppCompatActivity
         Intent intentOpenBluetoothSettings = new Intent();
         intentOpenBluetoothSettings.setAction(android.provider.Settings.ACTION_BLUETOOTH_SETTINGS);
         startActivity(intentOpenBluetoothSettings);
+    }
+
+    /**
+     * Toggle color correcting photos
+     * @param v - the checkbox
+     */
+    public void toggleColorCorrection(View v)
+    {
+        colorCorrectionEnabled  = !colorCorrectionEnabled;
     }
 }

@@ -10,7 +10,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 public class SimpleLiveViewSlicer
 {
-    private static final String TAG = SimpleLiveViewSlicer.class.getSimpleName();
     /**
      * Payload data class. See also Camera Remote API specification document to
      * know the data structure.

@@ -45,7 +45,7 @@ import static com.archaeology.util.StateStatic.getGlobalWebServerURL;
 import static com.archaeology.util.StateStatic.setGlobalBucketURL;
 public class CameraUIActivity extends AppCompatActivity
 {
-    // anton's stuff for OCR
+    // Assets for OCR
     public static final String DATA_PATH = Environment.getExternalStorageDirectory().toString() + "/SimpleAndroidOCR/";
     public static final String LANG = "eng";
     // camera view and scanner view stuff:
@@ -69,7 +69,7 @@ public class CameraUIActivity extends AppCompatActivity
         setContentView(R.layout.activity_camera_ui);
         String URL = getGlobalWebServerURL() + "/get_property/?key=bucket_url";
         queue = Volley.newRequestQueue(this);
-        makeVolleyStringObjectRequest(URL, queue, new StringObjectResponseWrapper(this) {
+        makeVolleyStringObjectRequest(URL, queue, new StringObjectResponseWrapper() {
             /**
              * Response received
              * @param response - database response
@@ -316,7 +316,7 @@ public class CameraUIActivity extends AppCompatActivity
         DETAIL_INTENT.putExtra(FIND_NUMBER, KEYS[4]);
         final List<String> FIND_NUMBERS = new ArrayList<>();
         String URL = getGlobalWebServerURL() + "/get_finds/?easting=" + KEYS[2] + "&northing=" + KEYS[3];
-        makeVolleyStringObjectRequest(URL, queue, new StringObjectResponseWrapper(this) {
+        makeVolleyStringObjectRequest(URL, queue, new StringObjectResponseWrapper() {
             /**
              * Database response
              * @param response - response received

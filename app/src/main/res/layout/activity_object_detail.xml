@@ -241,13 +241,6 @@
                 android:layout_below="@+id/photoScrollWrapper"
                 android:onClick="addPhotoAction"
                 android:text="@string/add_photo" />
-            <Button
-                android:id="@+id/correct_color"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/button26"
-                android:onClick="goToImageGallery"
-                android:text="@string/correct_color" />
         </RelativeLayout>
     </ScrollView>
 </RelativeLayout>

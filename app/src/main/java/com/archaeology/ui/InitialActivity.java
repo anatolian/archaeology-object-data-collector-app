@@ -5,7 +5,6 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,7 +25,6 @@ import com.android.volley.toolbox.HurlStack;
 import com.archaeology.R;
 import com.archaeology.models.StringObjectResponseWrapper;
 import static com.archaeology.services.VolleyStringWrapper.makeVolleyStringObjectRequest;
-import static com.archaeology.util.StateStatic.LOG_TAG;
 import static com.archaeology.util.StateStatic.getGlobalWebServerURL;
 import static com.archaeology.util.StateStatic.setGlobalWebServerURL;
 import static com.archaeology.services.VolleyWrapper.cancelAllVolleyRequests;
@@ -46,7 +44,7 @@ public class InitialActivity extends AppCompatActivity
         Network network = new BasicNetwork(new HurlStack());
         queue = new RequestQueue(cache, network);
         queue.start();
-        EditText webServer = (EditText) findViewById(R.id.urlText);
+        EditText webServer = findViewById(R.id.urlText);
         webServer.setText(getGlobalWebServerURL());
     }
 
@@ -88,7 +86,7 @@ public class InitialActivity extends AppCompatActivity
     public void onResume()
     {
         super.onResume();
-        EditText webServer = (EditText) findViewById(R.id.urlText);
+        EditText webServer = findViewById(R.id.urlText);
         webServer.setText(getGlobalWebServerURL());
         testConnection(null);
     }
@@ -140,7 +138,7 @@ public class InitialActivity extends AppCompatActivity
         BAR_PROGRESS_DIALOG.show();
         cancelAllVolleyRequests(queue);
         makeVolleyStringObjectRequest(getWebServerURLFromLayout() + "/test_connection/", queue,
-                new StringObjectResponseWrapper(this) {
+                new StringObjectResponseWrapper() {
             /**
              * Response received
              * @param response - database response

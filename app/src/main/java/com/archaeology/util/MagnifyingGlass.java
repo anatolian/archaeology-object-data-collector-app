@@ -126,8 +126,7 @@ public class MagnifyingGlass extends AppCompatImageView
         else
         {
             Bitmap bitmap = getDrawingCache();
-            BitmapShader shader = new BitmapShader(bitmap, Shader.TileMode.CLAMP,
-                    Shader.TileMode.CLAMP);
+            BitmapShader shader = new BitmapShader(bitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
             paint = new Paint();
             paint.setShader(shader);
             matrix.reset();

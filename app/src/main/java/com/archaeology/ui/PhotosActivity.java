@@ -1,30 +1,28 @@
 // Apply color correction
 // @author: Kevin Trinh
 package com.archaeology.ui;
-import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.graphics.Bitmap;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import com.archaeology.R;
 import com.archaeology.util.MagnifyingGlass;
-import siclo.com.ezphotopicker.api.EZPhotoPick;
-import siclo.com.ezphotopicker.api.EZPhotoPickStorage;
-import siclo.com.ezphotopicker.api.models.EZPhotoPickConfig;
-import siclo.com.ezphotopicker.api.models.PhotoSource;
 public class PhotosActivity extends AppCompatActivity
 {
-    LinearLayout llPhotoContainer;
     static Bitmap correctedPhoto;
-    int northing, easting, find, number;
+    ImageView mCapturedImage;
+    int northing, easting, find;
+    Uri location;
     /**
      * Launch activity
      * @param savedInstanceState - state from memory
@@ -38,23 +36,19 @@ public class PhotosActivity extends AppCompatActivity
         northing = Integer.parseInt(b.getString("northing"));
         easting = Integer.parseInt(b.getString("easting"));
         find = Integer.parseInt(b.getString("find"));
-        number = Integer.parseInt(b.getString("number"));
-        llPhotoContainer = findViewById(R.id.photo_container);
-        findViewById(R.id.bt_gallery).setOnClickListener(new View.OnClickListener() {
-            /**
-             * User clicked gallery button
-             * @param v - button
-             */
-            @Override
-            public void onClick(View v)
-            {
-                EZPhotoPickConfig config = new EZPhotoPickConfig();
-                config.photoSource = PhotoSource.GALLERY;
-                config.isAllowMultipleSelect = false;
-                config.exportingSize = 1000;
-                EZPhotoPick.startPhotoPickActivity(PhotosActivity.this, config);
-            }
-        });
+        location = (Uri) b.get("location");
+        mCapturedImage = findViewById(R.id.capturedImage);
+        try
+        {
+            Bitmap bmp = MediaStore.Images.Media.getBitmap(this.getContentResolver(), location);
+            mCapturedImage.setImageBitmap(bmp);
+            filter(bmp);
+        }
+        catch (IOException e)
+        {
+            Toast.makeText(getApplicationContext(), "Could not open image", Toast.LENGTH_SHORT).show();
+            Log.v("Image Loading", e.getMessage());
+        }
         findViewById(R.id.save_image).setOnClickListener(new View.OnClickListener() {
             /**
              * Save image selected
@@ -70,10 +64,10 @@ public class PhotosActivity extends AppCompatActivity
                     {
                         parent.mkdirs();
                     }
-                    File f = new File(parent, + easting + "_" + northing + "_" + find + "_" + number + ".jpg");
+                    File f = new File(parent, + easting + "_" + northing + "_" + find + ".jpg");
                     f.createNewFile();
                     FileOutputStream outStream = new FileOutputStream(f);
-                    correctedPhoto.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
+                    mCapturedImage.getDrawingCache().compress(Bitmap.CompressFormat.JPEG, 100, outStream);
                     outStream.flush();
                     outStream.close();
                     Toast.makeText(getApplicationContext(), "Image stored at " + f.getAbsolutePath(),
@@ -88,38 +82,6 @@ public class PhotosActivity extends AppCompatActivity
     }
 
     /**
-     * Image activity finished
-     * @param requestCode - result request code
-     * @param resultCode - result code
-     * @param data - result
-     */
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode != RESULT_OK)
-        {
-            return;
-        }
-        if (requestCode == EZPhotoPick.PHOTO_PICK_GALLERY_REQUEST_CODE)
-        {
-            Bitmap photo = null;
-            try
-            {
-                photo = new EZPhotoPickStorage(this).loadLatestStoredPhotoBitmap();
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }
-            if (photo != null)
-            {
-                filter(photo);
-            }
-        }
-    }
-
-    /**
      * Apply color correction
      * @param NEW_PHOTO - corrected image
      */
@@ -129,7 +91,6 @@ public class PhotosActivity extends AppCompatActivity
         IV.init(NEW_PHOTO);
         IV.setImageBitmap(NEW_PHOTO);
         IV.setScaleType(ImageView.ScaleType.FIT_CENTER);
-        llPhotoContainer.addView(IV);
         IV.setOnTouchListener(new ImageView.OnTouchListener() {
             /**
              * User touched image

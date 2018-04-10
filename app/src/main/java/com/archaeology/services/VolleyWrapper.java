@@ -1,22 +1,17 @@
 // URL communication wrapper
 // @author: msenol
 package com.archaeology.services;
-import android.graphics.Bitmap;
-import android.widget.ImageView;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import com.archaeology.models.ImageResponseWrapper;
 import com.archaeology.models.JSONObjectResponseWrapper;
 import static com.android.volley.Request.Method;
-import static com.archaeology.util.StateStatic.DEFAULT_VOLLEY_TIMEOUT;
 public class VolleyWrapper
 {
     /**
@@ -198,130 +193,6 @@ public class VolleyWrapper
         myRequest.setRetryPolicy(new DefaultRetryPolicy(5000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         queue.add(myRequest);
-    }
-
-//    /**
-//     * Setting the image to the original size
-//     * @param URL - camera URL
-//     * @param queue - request queue
-//     * @param ID - request id
-//     * @param LAMBDA_WRAPPER - request wrapper
-//     * @throws JSONException if the JSON is malformed
-//     */
-//    public static void makeVolleySonyAPISetImageSizeToOriginal(final String URL, RequestQueue queue, final int ID,
-//                                                               final JSONObjectResponseWrapper LAMBDA_WRAPPER)
-//            throws JSONException
-//    {
-//        final String POST_BODY = new JSONObject().put("method", "setPostviewImageSize")
-//                .put("params", new JSONArray().put("Original")).put("id", ID)
-//                .put("version", "1.0").toString();
-//        JSONObject JSONPOSTBody = new JSONObject(POST_BODY);
-//        JsonObjectRequest myRequest = new JsonObjectRequest(Method.POST, URL, JSONPOSTBody,
-//                new Response.Listener<JSONObject>() {
-//            /**
-//             * Response received
-//             * @param response - camera response
-//             */
-//            @Override
-//            public void onResponse(JSONObject response)
-//            {
-//                LAMBDA_WRAPPER.responseMethod(response);
-//            }
-//        }, new Response.ErrorListener() {
-//            /**
-//             * Connection failed
-//             * @param error - failure
-//             */
-//            @Override
-//            public void onErrorResponse(VolleyError error)
-//            {
-//                LAMBDA_WRAPPER.errorMethod(error);
-//            }
-//        });
-//        myRequest.setRetryPolicy(new DefaultRetryPolicy(5000,
-//                DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-//        queue.add(myRequest);
-//    }
-
-//    /**
-//     * Change picture quality to fine
-//     * @param URL - camera URL
-//     * @param queue - request queue
-//     * @param ID - request id
-//     * @param LAMBDA_WRAPPER - request wrapper
-//     * @throws JSONException if the JSON is malformed
-//     */
-//    public static void makeVolleySonyAPISetJPEGQualityToFine(final String URL, RequestQueue queue,
-//                                                             final int ID, final JSONObjectResponseWrapper LAMBDA_WRAPPER)
-//            throws JSONException
-//    {
-//        final String POST_BODY = new JSONObject().put("method", "setStillQuality")
-//                .put("params", new JSONArray().put("Fine")).put("id", ID)
-//                .put("version", "1.0").toString();
-//        JSONObject JSONPOSTBody = new JSONObject(POST_BODY);
-//        JsonObjectRequest myRequest = new JsonObjectRequest(Method.POST, URL, JSONPOSTBody,
-//                new Response.Listener<JSONObject>() {
-//            /**
-//             * Response received
-//             * @param response - camera response
-//             */
-//            @Override
-//            public void onResponse(JSONObject response)
-//            {
-//                LAMBDA_WRAPPER.responseMethod(response);
-//            }
-//        }, new Response.ErrorListener() {
-//            /**
-//             * Connection failed
-//             * @param error - failure
-//             */
-//            @Override
-//            public void onErrorResponse(VolleyError error)
-//            {
-//                LAMBDA_WRAPPER.errorMethod(error);
-//            }
-//        });
-//        myRequest.setRetryPolicy(new DefaultRetryPolicy(5000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-//                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-//        queue.add(myRequest);
-//    }
-
-    /**
-     * Request image
-     * @param URL - camera URL
-     * @param queue - request queue
-     * @param LAMBDA_WRAPPER - request wrapper
-     */
-    public static void makeVolleyImageRequest(final String URL, RequestQueue queue,
-                                              final ImageResponseWrapper LAMBDA_WRAPPER)
-    {
-        ImageRequest request = new ImageRequest(URL, new Response.Listener<Bitmap>() {
-            /**
-             * Response received
-             * @param bitmap - image
-             */
-            @Override
-            public void onResponse(Bitmap bitmap)
-            {
-                LAMBDA_WRAPPER.responseMethod(bitmap);
-            }
-        }, 0, 0, ImageView.ScaleType.CENTER, Bitmap.Config.ARGB_8888,
-                new Response.ErrorListener() {
-            /**
-             * Connection failed
-             * @param error - failure
-             */
-            public void onErrorResponse(VolleyError error)
-            {
-                LAMBDA_WRAPPER.errorMethod(error);
-            }
-        });
-        request.setRetryPolicy(new DefaultRetryPolicy(8000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        // Add the request to the RequestQueue.
-        request.setRetryPolicy(new DefaultRetryPolicy(DEFAULT_VOLLEY_TIMEOUT,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        queue.add(request);
     }
 
     /**

@@ -17,8 +17,7 @@ abstract public class JSONObjectResponseWrapper
     }
 
     /**
-     * This will be overwritten in many of the api calls that will be used to interact with the
-     * camera
+     * This will be overwritten in many of the api calls that will be used to interact with the camera
      * @param response - camera response
      */
     public abstract void responseMethod(JSONObject response);

@@ -186,8 +186,7 @@ public class BluetoothService
         {
             mmSocket = socket;
             InputStream tmpIn = null;
-            // Get the input and output streams; using temp objects because member streams are
-            // final.
+            // Get the input and output streams; using temp objects because member streams are final.
             try
             {
                 tmpIn = socket.getInputStream();
