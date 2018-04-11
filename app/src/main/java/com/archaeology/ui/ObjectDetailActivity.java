@@ -10,8 +10,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
@@ -24,6 +26,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
@@ -33,7 +36,11 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
+
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Set;
@@ -44,6 +51,9 @@ import com.archaeology.services.NutriScaleBroadcastReceiver;
 import com.archaeology.util.CheatSheet;
 import com.archaeology.util.MagnifyingGlass;
 import com.archaeology.util.StateStatic;
+
+import org.w3c.dom.Text;
+
 import static com.archaeology.services.VolleyStringWrapper.makeVolleyStringObjectRequest;
 import static com.archaeology.util.CheatSheet.deleteOriginalAndThumbnailPhoto;
 import static com.archaeology.util.CheatSheet.getOutputMediaFile;
@@ -298,12 +308,12 @@ public class ObjectDetailActivity extends AppCompatActivity
     {
         String captureFile = fileURI.toString();
         final Uri FILE_URI;
-        final String ORIGINAL_FILE_NAME = captureFile.substring(captureFile.lastIndexOf('/') + 1);
+        String originalFileName = captureFile.substring(captureFile.lastIndexOf('/') + 1);
         // action to be performed when request is sent to take photo
         if (requestCode == REQUEST_IMAGE_CAPTURE)
         {
             // creating URI to save photo to once taken
-            FILE_URI = CheatSheet.getThumbnail(ORIGINAL_FILE_NAME);
+            FILE_URI = CheatSheet.getThumbnail(originalFileName);
         }
         else
         {
@@ -311,46 +321,79 @@ public class ObjectDetailActivity extends AppCompatActivity
         }
         if (resultCode == RESULT_OK)
         {
-            if (colorCorrectionEnabled)
-            {
-                try
-                {
-                    photo = MediaStore.Images.Media.getBitmap(this.getContentResolver(), FILE_URI);
-                    filter(photo);
-                }
-                catch (IOException e)
-                {
-                    Toast.makeText(getApplicationContext(), "Could not load bitmap", Toast.LENGTH_SHORT).show();
-                    Log.v("Bitmap", e.getMessage());
-                }
-            }
-            // ApproveDialogCallback is an interface. see CameraDialog class
-            CameraDialog.ApproveDialogCallback approveDialogCallback = new CameraDialog.ApproveDialogCallback() {
-                /**
-                 * User pressed save
-                 */
-                @Override
-                public void onSaveButtonClicked()
-                {
-                    // store image data into photo fragments
-                    loadPhotoIntoPhotoFragment(FILE_URI, MARKED_AS_ADDED);
-                }
-
-                /**
-                 * User cancelled picture
-                 */
-                @Override
-                public void onCancelButtonClicked()
-                {
-                    deleteOriginalAndThumbnailPhoto(FILE_URI);
-                }
-            };
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            LayoutInflater inflater = this.getLayoutInflater();
+            builder.setView(inflater.inflate(R.layout.approve_photo_dialog,null));
             // set up camera dialog
-            AlertDialog approveDialog = CameraDialog.createPhotoApprovalDialog(this, approveDialogCallback);
+            final AlertDialog approveDialog = builder.create();
             approveDialog.show();
             // view photo you are trying to approve
-            ImageView approvePhotoImage = approveDialog.findViewById(R.id.approvePhotoImage);
-            approvePhotoImage.setImageURI(FILE_URI);
+            final MagnifyingGlass APPROVE_PHOTO_IMAGE = approveDialog.findViewById(R.id.approvePhotoImage);
+            APPROVE_PHOTO_IMAGE.setImageURI(FILE_URI);
+            if (colorCorrectionEnabled)
+            {
+                TextView label = approveDialog.findViewById(R.id.correctionLabel);
+                label.setText(getString(R.string.tap_to_correct));
+            }
+            Button saveButton = approveDialog.findViewById(R.id.saveButton);
+            saveButton.setOnClickListener(new View.OnClickListener() {
+                /**
+                 * User pressed save
+                 * @param view - the save button
+                 */
+                @Override
+                public void onClick(View view)
+                {
+                    String path = Environment.getExternalStorageDirectory() + "/Archaeology/temp.png";
+                    Bitmap bmp = ((BitmapDrawable) APPROVE_PHOTO_IMAGE.getDrawable()).getBitmap();
+                    FileOutputStream out = null;
+                    try
+                    {
+                        out = new FileOutputStream(path);
+                        bmp.compress(Bitmap.CompressFormat.PNG, 100, out);
+                    }
+                    catch (Exception e)
+                    {
+                        Toast.makeText(getApplicationContext(), "Could not save image", Toast.LENGTH_SHORT).show();
+                        e.printStackTrace();
+                    }
+                    finally
+                    {
+                        try
+                        {
+                            if (out != null)
+                            {
+                                out.close();
+                            }
+                        }
+                        catch (IOException e)
+                        {
+                            Toast.makeText(getApplicationContext(), "Could not save image", Toast.LENGTH_SHORT).show();
+                            e.printStackTrace();
+                        }
+                    }
+                    File tempFile = new File(path);
+                    // Have to convert java.net.URI to android.net.Uri
+                    URI tempURI = tempFile.toURI();
+                    Uri convertedURI = Uri.parse(tempURI.toString());
+                    // store image data into photo fragments
+                    loadPhotoIntoPhotoFragment(convertedURI, MARKED_AS_ADDED);
+                    approveDialog.dismiss();
+                }
+            });
+            Button cancelButton = approveDialog.findViewById(R.id.cancelButton);
+            cancelButton.setOnClickListener(new View.OnClickListener() {
+                /**
+                 * User cancelled image upload
+                 * @param view - the cancel button
+                 */
+                @Override
+                public void onClick(View view)
+                {
+                    deleteOriginalAndThumbnailPhoto(FILE_URI);
+                    approveDialog.dismiss();
+                }
+            });
         }
     }
 
@@ -903,32 +946,5 @@ public class ObjectDetailActivity extends AppCompatActivity
         }
         Intent wifiActivity = new Intent(this, MyWiFiActivity.class);
         startActivityForResult(wifiActivity, REQUEST_REMOTE_IMAGE);
-    }
-
-    /**
-     * Apply color correction
-     * @param NEW_PHOTO - corrected image
-     */
-    public void filter(final Bitmap NEW_PHOTO)
-    {
-        final MagnifyingGlass IV = new MagnifyingGlass(this);
-        IV.init(NEW_PHOTO);
-        IV.setImageBitmap(NEW_PHOTO);
-        IV.setScaleType(ImageView.ScaleType.FIT_CENTER);
-        IV.setOnTouchListener(new ImageView.OnTouchListener() {
-            /**
-             * User touched image
-             * @param v - image
-             * @param event - touch event
-             * @return Returns true
-             */
-            @Override
-            public boolean onTouch(View v, MotionEvent event)
-            {
-                IV.onTouchEvent(event);
-                photo = NEW_PHOTO;
-                return true;
-            }
-        });
     }
 }

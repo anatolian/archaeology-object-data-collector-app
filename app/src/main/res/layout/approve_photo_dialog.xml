@@ -1,10 +1,41 @@
 <?xml version = "1.0" encoding = "utf-8"?>
-<LinearLayout xmlns:android = "http://schemas.android.com/apk/res/android"
-    android:orientation = "vertical" android:layout_width = "match_parent"
+<RelativeLayout xmlns:android = "http://schemas.android.com/apk/res/android"
+    android:layout_width = "match_parent"
     android:layout_height = "match_parent">
-    <ImageView
+    <TextView
+        android:id="@+id/correctionLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="20dp"
+        android:textColor="@android:color/background_dark" />
+    <com.archaeology.util.MagnifyingGlass
         android:layout_width = "fill_parent"
         android:layout_height = "wrap_content"
+        android:layout_below="@+id/correctionLabel"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
         android:id = "@+id/approvePhotoImage"
-        android:layout_gravity = "center_horizontal"/>
-</LinearLayout>
+        android:layout_gravity = "center_horizontal"
+        android:contentDescription="@string/correct_color"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@+id/approvePhotoImage">
+        <Button
+            android:id="@+id/cancelButton"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="@string/cancel"
+            android:textColor="@android:color/background_dark" />
+        <Button
+            android:id="@+id/saveButton"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="@string/save"
+            android:textColor="@android:color/black" />
+    </LinearLayout>
+</RelativeLayout>

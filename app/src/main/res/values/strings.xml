@@ -58,4 +58,6 @@
     <string name = "default_bucket_url">s3.console.aws.amazon.com/s3/buckets/pennmuseum/</string>
     <string name = "zoom_out">Zoom Out</string>
     <string name = "save">Save</string>
+    <string name = "tap_to_correct">Tap a white pixel to color correct the image</string>
+    <string name = "cancel">Cancel</string>
 </resources>

@@ -134,9 +134,9 @@
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
                 android:layout_below="@+id/textView12"
-                android:onClick="toggleColorCorrection"
                 android:checked="true"
-                android:visibility="visible"/>
+                android:visibility="visible"
+                android:buttonTint="@color/black"/>
             <TextView
                 android:id="@+id/paired_label"
                 android:layout_width="match_parent"

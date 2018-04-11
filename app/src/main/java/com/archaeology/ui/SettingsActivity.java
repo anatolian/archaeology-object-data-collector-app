@@ -7,9 +7,11 @@ import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
@@ -34,13 +36,15 @@ import com.archaeology.util.StateStatic;
 import static com.archaeology.services.VolleyStringWrapper.makeVolleyStringObjectRequest;
 import static com.archaeology.util.StateStatic.DEFAULT_BUCKET_URL;
 import static com.archaeology.util.StateStatic.DEFAULT_CALIBRATION_INTERVAL;
+import static com.archaeology.util.StateStatic.DEFAULT_CORRECTION_SELECTION;
+import static com.archaeology.util.StateStatic.DEFAULT_REMOTE_CAMERA_SELECTED;
 import static com.archaeology.util.StateStatic.DEFAULT_WEB_SERVER_URL;
 import static com.archaeology.util.StateStatic.DEFAULT_CAMERA_MAC;
 import static com.archaeology.util.StateStatic.cameraIPAddress;
 import static com.archaeology.util.StateStatic.colorCorrectionEnabled;
+import static com.archaeology.util.StateStatic.getGlobalBucketURL;
 import static com.archaeology.util.StateStatic.getGlobalCameraMAC;
 import static com.archaeology.util.StateStatic.getGlobalWebServerURL;
-import static com.archaeology.util.StateStatic.getGlobalBucketURL;
 import static com.archaeology.util.StateStatic.getRemoteCameraCalibrationInterval;
 import static com.archaeology.util.StateStatic.getTabletCameraCalibrationInterval;
 import static com.archaeology.util.StateStatic.isRemoteCameraSelected;
@@ -53,6 +57,9 @@ import static com.archaeology.util.StateStatic.setTabletCameraCalibrationInterva
 public class SettingsActivity extends AppCompatActivity
 {
     String[] devices;
+    EditText mWebServerEditText, mCameraMAC, mCalibrationInterval, mBucketEditText;
+    Spinner mCameraSelectBox;
+    CheckBox mCorrectionBox;
     /**
      * Launch the activity
      * @param savedInstanceState - state from memory
@@ -99,11 +106,12 @@ public class SettingsActivity extends AppCompatActivity
                 }
             });
         }
-        EditText webServerEditText = findViewById(R.id.settingsWebServiceUrl);
-        EditText cameraMAC = findViewById(R.id.settingsCameraMAC);
-        EditText calibrationInterval = findViewById(R.id.calibrationInterval);
-        Spinner cameraSelectBox = findViewById(R.id.cameraSelectBox);
-        cameraSelectBox.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        mWebServerEditText = findViewById(R.id.settingsWebServiceUrl);
+        mBucketEditText = findViewById(R.id.settingsBucketUrl);
+        mCameraMAC = findViewById(R.id.settingsCameraMAC);
+        mCalibrationInterval = findViewById(R.id.calibrationInterval);
+        mCameraSelectBox = findViewById(R.id.cameraSelectBox);
+        mCameraSelectBox.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             /**
              * User selected item
              * @param parent - spinner
@@ -128,15 +136,18 @@ public class SettingsActivity extends AppCompatActivity
         });
         if (isRemoteCameraSelected())
         {
-            cameraSelectBox.setSelection(1);
+            mCameraSelectBox.setSelection(1);
         }
         else
         {
-            cameraSelectBox.setSelection(0);
+            mCameraSelectBox.setSelection(0);
         }
-        webServerEditText.setText(getGlobalWebServerURL());
-        cameraMAC.setText(getGlobalCameraMAC());
-        calibrationInterval.setText(getString(R.string.long_frmt, getRemoteCameraCalibrationInterval()));
+        mWebServerEditText.setText(getGlobalWebServerURL());
+        mBucketEditText.setText(getGlobalBucketURL());
+        mCameraMAC.setText(getGlobalCameraMAC());
+        mCalibrationInterval.setText(getString(R.string.long_frmt, getRemoteCameraCalibrationInterval()));
+        mCorrectionBox = findViewById(R.id.colorCorrectionBox);
+        mCorrectionBox.setChecked(colorCorrectionEnabled);
     }
 
     /**
@@ -155,9 +166,7 @@ public class SettingsActivity extends AppCompatActivity
                 int index = 0;
                 for (BluetoothDevice device: pairedDevices)
                 {
-                    String deviceName = device.getName();
-                    devices[index] = deviceName;
-                    index++;
+                    devices[index++] = device.getName();
                 }
             }
         }
@@ -169,26 +178,26 @@ public class SettingsActivity extends AppCompatActivity
      */
     public void saveSettings(View view)
     {
-        setGlobalWebServerURL(getWebServerURLFromLayout());
-        setGlobalBucketURL(getBucketURLFromLayout());
+        setGlobalWebServerURL(mWebServerEditText.getText().toString().trim());
+        setGlobalBucketURL(mBucketEditText.getText().toString().trim());
         if (isTabletCameraSelectedOnLayout())
         {
-            setTabletCameraCalibrationInterval(getCalibrationIntervalFromLayout());
+            setTabletCameraCalibrationInterval(Long.parseLong(mCalibrationInterval.getText().toString().trim()));
         }
         else
         {
-            setRemoteCameraCalibrationInterval(getCalibrationIntervalFromLayout());
-            setGlobalCameraMAC(getCameraMACFromLayout());
-            cameraIPAddress = CheatSheet.findIPFromMAC(getCameraMACFromLayout());
+            setRemoteCameraCalibrationInterval(Long.parseLong(mCalibrationInterval.getText().toString().trim()));
+            setGlobalCameraMAC(mCameraMAC.getText().toString().trim());
+            cameraIPAddress = CheatSheet.findIPFromMAC(getGlobalCameraMAC());
         }
         Cache cache = new DiskBasedCache(getCacheDir(),1024 * 1024);
         Network network = new BasicNetwork(new HurlStack());
         RequestQueue queue = new RequestQueue(cache, network);
         queue.start();
         final ProgressDialog BAR_PROGRESS_DIALOG = new ProgressDialog(this);
-        makeVolleyStringObjectRequest(getWebServerURLFromLayout() +
-                "/add_property/?key=bucket_url&value=" + getBucketURLFromLayout(), queue,
-                new StringObjectResponseWrapper() {
+        makeVolleyStringObjectRequest(getGlobalBucketURL() +
+                "/add_property/?key=bucket_url&value=" + mBucketEditText.getText().toString().trim(),
+                queue, new StringObjectResponseWrapper() {
             /**
              * Response received
              * @param response - database response
@@ -209,27 +218,28 @@ public class SettingsActivity extends AppCompatActivity
                 // this just put in place to step through the app
                 if (error instanceof ServerError)
                 {
-                    Toast.makeText(getApplicationContext(), "server error", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Server Error", Toast.LENGTH_SHORT).show();
                 }
                 else if (error instanceof AuthFailureError)
                 {
-                    Toast.makeText(getApplicationContext(), "authentication failure", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Authentication Failure", Toast.LENGTH_SHORT).show();
                 }
                 else if (error instanceof ParseError)
                 {
-                    Toast.makeText(getApplicationContext(), "parse error", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Parse Error", Toast.LENGTH_SHORT).show();
                 }
                 else if (error instanceof NoConnectionError)
                 {
-                    Toast.makeText(getApplicationContext(), "no connection error", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "No Connection Error", Toast.LENGTH_SHORT).show();
                 }
                 else if (error instanceof TimeoutError)
                 {
-                    Toast.makeText(getApplicationContext(), "time out error", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Time Out Error", Toast.LENGTH_SHORT).show();
                 }
                 BAR_PROGRESS_DIALOG.dismiss();
             }
         });
+        colorCorrectionEnabled = mCorrectionBox.isChecked();
         finish();
     }
 
@@ -244,17 +254,14 @@ public class SettingsActivity extends AppCompatActivity
         setGlobalCameraMAC(DEFAULT_CAMERA_MAC);
         setRemoteCameraCalibrationInterval(DEFAULT_CALIBRATION_INTERVAL);
         setTabletCameraCalibrationInterval(DEFAULT_CALIBRATION_INTERVAL);
-        setIsRemoteCameraSelected(false);
-        EditText webServerEditText = findViewById(R.id.settingsWebServiceUrl);
-        EditText bucketEditText = findViewById(R.id.settingsBucketUrl);
-        Spinner cameraSelectBox = findViewById(R.id.cameraSelectBox);
-        EditText cameraIP = findViewById(R.id.settingsCameraMAC);
-        EditText calibrationInterval = findViewById(R.id.calibrationInterval);
-        webServerEditText.setText(getGlobalWebServerURL());
-        bucketEditText.setText(getGlobalBucketURL());
-        cameraSelectBox.setSelection(0);
-        cameraIP.setText(getGlobalCameraMAC());
-        calibrationInterval.setText(getString(R.string.long_frmt, getRemoteCameraCalibrationInterval()));
+        setIsRemoteCameraSelected(DEFAULT_REMOTE_CAMERA_SELECTED);
+        colorCorrectionEnabled = DEFAULT_CORRECTION_SELECTION;
+        mWebServerEditText.setText(DEFAULT_WEB_SERVER_URL);
+        mBucketEditText.setText(DEFAULT_BUCKET_URL);
+        mCameraSelectBox.setSelection(0);
+        mCameraMAC.setText(getString(R.string.camera_MAC));
+        mCalibrationInterval.setText(getString(R.string.long_frmt, DEFAULT_CALIBRATION_INTERVAL));
+        mCorrectionBox.setChecked(DEFAULT_CORRECTION_SELECTION);
     }
 
     /**
@@ -263,59 +270,19 @@ public class SettingsActivity extends AppCompatActivity
      */
     public void cameraSelected(View view)
     {
-        EditText cameraMACText = findViewById(R.id.settingsCameraMAC);
-        EditText calibrationInterval = findViewById(R.id.calibrationInterval);
         if (isTabletCameraSelectedOnLayout())
         {
-            cameraMACText.setText("");
-            cameraMACText.setEnabled(false);
-            calibrationInterval.setText(getString(R.string.long_frmt, getTabletCameraCalibrationInterval()));
-            setIsRemoteCameraSelected(false);
+            mCameraMAC.setText("");
+            mCameraMAC.setEnabled(false);
+            mCalibrationInterval.setText(getString(R.string.long_frmt, getTabletCameraCalibrationInterval()));
         }
         else
         {
-            cameraMACText.setText(getGlobalCameraMAC());
-            cameraMACText.setEnabled(true);
-            calibrationInterval.setText(getString(R.string.long_frmt, getRemoteCameraCalibrationInterval()));
-            setIsRemoteCameraSelected(true);
+            mCameraMAC.setText(getGlobalCameraMAC());
+            mCameraMAC.setEnabled(true);
+            mCalibrationInterval.setText(getString(R.string.long_frmt, getRemoteCameraCalibrationInterval()));
         }
-    }
-
-    /**
-     * Get the server URL
-     * @return @return Returns the server location
-     */
-    public String getWebServerURLFromLayout()
-    {
-        return ((EditText) findViewById(R.id.settingsWebServiceUrl)).getText().toString().trim();
-    }
-
-    /**
-     * Get the bucket URL
-     * @return @return Returns the server location
-     */
-    public String getBucketURLFromLayout()
-    {
-        return ((EditText) findViewById(R.id.settingsBucketUrl)).getText().toString().trim();
-    }
-
-    /**
-     * Get the camera MAC
-     * @return Returns the camera MAC
-     */
-    public String getCameraMACFromLayout()
-    {
-        return ((EditText) findViewById(R.id.settingsCameraMAC)).getText().toString().trim();
-    }
-
-    /**
-     * Get calibration interval
-     * @return - returns calibration interval
-     */
-    public long getCalibrationIntervalFromLayout()
-    {
-        return Long.parseLong(((EditText) findViewById(R.id.calibrationInterval)).getText()
-                .toString().trim());
+        setIsRemoteCameraSelected(!isTabletCameraSelectedOnLayout());
     }
 
     /**
@@ -324,7 +291,7 @@ public class SettingsActivity extends AppCompatActivity
      */
     public boolean isTabletCameraSelectedOnLayout()
     {
-        return (((Spinner) findViewById(R.id.cameraSelectBox)).getSelectedItemPosition() == 0);
+        return mCameraSelectBox.getSelectedItemPosition() == 0;
     }
 
     /**
@@ -336,14 +303,5 @@ public class SettingsActivity extends AppCompatActivity
         Intent intentOpenBluetoothSettings = new Intent();
         intentOpenBluetoothSettings.setAction(android.provider.Settings.ACTION_BLUETOOTH_SETTINGS);
         startActivity(intentOpenBluetoothSettings);
-    }
-
-    /**
-     * Toggle color correcting photos
-     * @param v - the checkbox
-     */
-    public void toggleColorCorrection(View v)
-    {
-        colorCorrectionEnabled  = !colorCorrectionEnabled;
     }
 }

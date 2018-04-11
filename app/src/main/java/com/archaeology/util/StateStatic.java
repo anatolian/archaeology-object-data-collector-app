@@ -15,7 +15,6 @@ public class StateStatic
     public static final String LOG_TAG_BLUETOOTH = "BLUETOOTH";
     public static final int REQUEST_IMAGE_CAPTURE = 301;
     public static final int REQUEST_REMOTE_IMAGE = 302;
-    public static final int REQUEST_CORRECT_COLOR = 303;
     public static final int MESSAGE_WEIGHT = 501;
     public static final int MESSAGE_STATUS_CHANGE = 502;
     public static final int REQUEST_ENABLE_BT = 503;
@@ -49,10 +48,12 @@ public class StateStatic
     private static long remoteCameraCalibrationInterval = DEFAULT_CALIBRATION_INTERVAL;
     private static long tabletCameraCalibrationInterval = DEFAULT_CALIBRATION_INTERVAL;
     // variable to track connections
-    private static boolean isRemoteCameraSelected = false;
+    public static final boolean DEFAULT_REMOTE_CAMERA_SELECTED = false;
+    public static boolean isRemoteCameraSelected = DEFAULT_REMOTE_CAMERA_SELECTED;
     public static String cameraMACAddress = DEFAULT_CAMERA_MAC;
     public static String cameraIPAddress = null;
-    public static boolean colorCorrectionEnabled = true;
+    public static final boolean DEFAULT_CORRECTION_SELECTION = true;
+    public static boolean colorCorrectionEnabled = DEFAULT_CORRECTION_SELECTION;
     /**
      * Return web server URL that is used to connect to the main database
      * @return Returns the web server URL

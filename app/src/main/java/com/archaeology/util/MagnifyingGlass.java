@@ -10,17 +10,19 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.Shader;
+import android.graphics.drawable.BitmapDrawable;
 import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.ImageView;
 public class MagnifyingGlass extends AppCompatImageView
 {
-    private PointF zoomPos;
+    private PointF zoomPos = new PointF(0, 0);
     private boolean zooming = false;
-    private Matrix matrix;
-    private Paint paint;
-    protected Bitmap newPhoto, correctedPhoto;
+    private Matrix matrix = new Matrix();
+    private Paint paint = new Paint();
+    protected Bitmap correctedPhoto;
     /**
      * Constructor
      * @param context - calling context
@@ -52,18 +54,6 @@ public class MagnifyingGlass extends AppCompatImageView
     }
 
     /**
-     * Initialize view
-     * @param photo - image
-     */
-    public void init(Bitmap photo)
-    {
-        zoomPos = new PointF(0, 0);
-        matrix = new Matrix();
-        paint = new Paint();
-        newPhoto = photo;
-    }
-
-    /**
      * User touched screen
      * @param event - touch event
      * @return Returns if the event was handled
@@ -71,10 +61,17 @@ public class MagnifyingGlass extends AppCompatImageView
     @Override
     public boolean onTouchEvent(MotionEvent event)
     {
+        if (!StateStatic.colorCorrectionEnabled)
+        {
+            return true;
+        }
         int action = event.getAction();
         zoomPos.x = event.getX();
         zoomPos.y = event.getY();
-        int pixel = newPhoto.getPixel((int) zoomPos.x, (int) zoomPos.y);
+        Bitmap oldPhoto = ((BitmapDrawable) getDrawable()).getBitmap();
+        int x = (int) Math.max(Math.min(zoomPos.x, oldPhoto.getWidth() - 1), 0);
+        int y = (int) Math.max(Math.min(zoomPos.y, oldPhoto.getHeight() - 1), 0);
+        int pixel = oldPhoto.getPixel(x, y);
         switch (action)
         {
             case MotionEvent.ACTION_DOWN:
@@ -85,24 +82,12 @@ public class MagnifyingGlass extends AppCompatImageView
             case MotionEvent.ACTION_UP:
                 zooming = false;
                 this.invalidate();
-                final Bitmap TOUCHED_PHOTO = newPhoto;
-                int[] rgbValues = new int[] {Color.red(pixel), Color.green(pixel),
-                        Color.blue(pixel)};
-                float[] correctionMatrix = calcColorCorrectionMatrix(rgbValues,
-                        maxChannelIndex(rgbValues));
-                Bitmap correctedPhoto = colorCorrect(TOUCHED_PHOTO.copy(Bitmap.Config.ARGB_8888,
-                        true), correctionMatrix);
+                int[] rgbValues = new int[] {Color.red(pixel), Color.green(pixel), Color.blue(pixel)};
+                float[] correctionMatrix = calcColorCorrectionMatrix(rgbValues, maxChannelIndex(rgbValues));
+                Bitmap correctedPhoto = colorCorrect(oldPhoto.copy(Bitmap.Config.ARGB_8888, true),
+                        correctionMatrix);
                 this.setImageBitmap(correctedPhoto);
                 this.setScaleType(ImageView.ScaleType.FIT_CENTER);
-                int black = Color.rgb(0, 0, 0);
-                for (int i = 0; i < correctedPhoto.getWidth(); i++)
-                {
-                    correctedPhoto.setPixel(i, (int) event.getY(), black);
-                }
-                for (int i = 0; i < correctedPhoto.getHeight(); i++)
-                {
-                    correctedPhoto.setPixel((int)event.getX(), i, black);
-                }
                 this.invalidate();
                 break;
             default:
@@ -159,8 +144,7 @@ public class MagnifyingGlass extends AppCompatImageView
                 correctedRGB[1] = Color.green(pixel) * correctionMatrix[1];
                 correctedRGB[2] = Color.blue(pixel) * correctionMatrix[2];
                 // consolidates RGB values into a color integer
-                int correctPixelColor = Color.rgb((int) correctedRGB[0], (int) correctedRGB[1],
-                        (int) correctedRGB[2]);
+                int correctPixelColor = Color.rgb((int) correctedRGB[0], (int) correctedRGB[1], (int) correctedRGB[2]);
                 // sets the adjusted pixel color to the correctedPhoto
                 correctedPhoto.setPixel(x, y, correctPixelColor);
             }
