@@ -25,12 +25,12 @@ import com.android.volley.toolbox.HurlStack;
 import com.archaeology.R;
 import com.archaeology.models.StringObjectResponseWrapper;
 import static com.archaeology.services.VolleyStringWrapper.makeVolleyStringObjectRequest;
-import static com.archaeology.util.StateStatic.getGlobalWebServerURL;
-import static com.archaeology.util.StateStatic.setGlobalWebServerURL;
+import static com.archaeology.util.StateStatic.globalWebServerURL;
 import static com.archaeology.services.VolleyWrapper.cancelAllVolleyRequests;
 public class InitialActivity extends AppCompatActivity
 {
     RequestQueue queue;
+    EditText mWebServer;
     /**
      * Launch the activity
      * @param savedInstanceState - state from memory
@@ -44,8 +44,8 @@ public class InitialActivity extends AppCompatActivity
         Network network = new BasicNetwork(new HurlStack());
         queue = new RequestQueue(cache, network);
         queue.start();
-        EditText webServer = findViewById(R.id.urlText);
-        webServer.setText(getGlobalWebServerURL());
+        mWebServer = findViewById(R.id.urlText);
+        mWebServer.setText(globalWebServerURL);
     }
 
     /**
@@ -86,18 +86,8 @@ public class InitialActivity extends AppCompatActivity
     public void onResume()
     {
         super.onResume();
-        EditText webServer = findViewById(R.id.urlText);
-        webServer.setText(getGlobalWebServerURL());
+        mWebServer.setText(globalWebServerURL);
         testConnection(null);
-    }
-
-    /**
-     * Get the base server URL
-     * @return Returns the server URL
-     */
-    public String getWebServerURLFromLayout()
-    {
-        return ((EditText) findViewById(R.id.urlText)).getText().toString().trim();
     }
 
     /**
@@ -106,7 +96,7 @@ public class InitialActivity extends AppCompatActivity
      */
     public void goToSettings(View view)
     {
-        setGlobalWebServerURL(getWebServerURLFromLayout());
+        globalWebServerURL = mWebServer.getText().toString().trim();
         Intent myIntent = new Intent(this, SettingsActivity.class);
         startActivity(myIntent);
     }
@@ -117,7 +107,7 @@ public class InitialActivity extends AppCompatActivity
     public void goToLookup()
     {
         Intent tmpIntent = new Intent(this, CameraUIActivity.class);
-        setGlobalWebServerURL(getWebServerURLFromLayout());
+        globalWebServerURL = mWebServer.getText().toString().trim();
         final ProgressDialog BAR_PROGRESS_DIALOG = new ProgressDialog(this);
         BAR_PROGRESS_DIALOG.setTitle("Connecting to Server ...");
         BAR_PROGRESS_DIALOG.setIndeterminate(true);
@@ -137,8 +127,8 @@ public class InitialActivity extends AppCompatActivity
         BAR_PROGRESS_DIALOG.setIndeterminate(true);
         BAR_PROGRESS_DIALOG.show();
         cancelAllVolleyRequests(queue);
-        makeVolleyStringObjectRequest(getWebServerURLFromLayout() + "/test_connection/", queue,
-                new StringObjectResponseWrapper() {
+        makeVolleyStringObjectRequest(mWebServer.getText().toString().trim() + "/test_connection/",
+                queue, new StringObjectResponseWrapper() {
             /**
              * Response received
              * @param response - database response
@@ -172,8 +162,7 @@ public class InitialActivity extends AppCompatActivity
                 }
                 else if (error instanceof AuthFailureError)
                 {
-                    Toast.makeText(getApplicationContext(), "Authentication Failure",
-                            Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Authentication Failure", Toast.LENGTH_SHORT).show();
                 }
                 else if (error instanceof ParseError)
                 {
@@ -198,7 +187,7 @@ public class InitialActivity extends AppCompatActivity
      */
     public void connectionTestFailedCallback()
     {
-        findViewById(R.id.urlText).setEnabled(true);
+        mWebServer.setEnabled(true);
         findViewById(R.id.connectButton).setEnabled(true);
     }
 

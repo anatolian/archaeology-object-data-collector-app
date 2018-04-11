@@ -24,7 +24,7 @@ public class StateStatic
     // 30 minutes
     public static final long DEFAULT_CALIBRATION_INTERVAL = 1800000;
     // default url to connect to database to send photos back and forth
-    private static final String DEFAULT_PHOTO_PATH = "Archaeology";
+    public static final String DEFAULT_PHOTO_PATH = "Archaeology";
     public static final String THUMBNAIL_EXTENSION_STRING = "thumb.jpg";
     public static final int DEFAULT_VOLLEY_TIMEOUT = 7000;
     public static final String SYNCED = "S";
@@ -40,73 +40,27 @@ public class StateStatic
     // information. the global web server is being set to a default value. need to make sure that
     // app is able to find IP address on its own
     // DEFAULT_WEB_SERVER_URL; connection to current IP camera address
-    private static String globalWebServerURL = DEFAULT_WEB_SERVER_URL;
-    private static String globalBucketURL = DEFAULT_BUCKET_URL;
-    private static String globalCameraMAC = DEFAULT_CAMERA_MAC;
+    public static String globalWebServerURL = DEFAULT_WEB_SERVER_URL;
+    public static String globalBucketURL = DEFAULT_BUCKET_URL;
+    public static String cameraMACAddress = DEFAULT_CAMERA_MAC;
     // global current object most likely is used to track the current object from the database that
     // you are trying to view.
-    private static long remoteCameraCalibrationInterval = DEFAULT_CALIBRATION_INTERVAL;
-    private static long tabletCameraCalibrationInterval = DEFAULT_CALIBRATION_INTERVAL;
+    public static long remoteCameraCalibrationInterval = DEFAULT_CALIBRATION_INTERVAL;
+    public static long tabletCameraCalibrationInterval = DEFAULT_CALIBRATION_INTERVAL;
     // variable to track connections
     public static final boolean DEFAULT_REMOTE_CAMERA_SELECTED = false;
     public static boolean isRemoteCameraSelected = DEFAULT_REMOTE_CAMERA_SELECTED;
-    public static String cameraMACAddress = DEFAULT_CAMERA_MAC;
     public static String cameraIPAddress = null;
     public static final boolean DEFAULT_CORRECTION_SELECTION = true;
     public static boolean colorCorrectionEnabled = DEFAULT_CORRECTION_SELECTION;
-    /**
-     * Return web server URL that is used to connect to the main database
-     * @return Returns the web server URL
-     */
-    public static String getGlobalWebServerURL()
-    {
-        return globalWebServerURL;
-    }
-
-    /**
-     * Return Bucket URL for storing images
-     * @return Returns the bucket URL
-     */
-    public static String getGlobalBucketURL()
-    {
-        return globalBucketURL;
-    }
-
-    /**
-     * Change server URL
-     * @param globalWebServerURL - new server URL
-     */
-    public static void setGlobalWebServerURL(String globalWebServerURL)
-    {
-        StateStatic.globalWebServerURL = globalWebServerURL;
-    }
-
-    /**
-     * Change bucket URL
-     * @param globalBucketURL - new bucket URL
-     */
-    public static void setGlobalBucketURL(String globalBucketURL)
-    {
-        StateStatic.globalBucketURL = globalBucketURL;
-    }
-
-    /**
-     * Get Camera MAC address
-     * @return Returns camera MAC address
-     */
-    public static String getGlobalCameraMAC()
-    {
-        return globalCameraMAC;
-    }
-
     /**
      * Set MAC address
      * @param globalCameraMAC - new MAC address
      */
     public static void setGlobalCameraMAC(String globalCameraMAC)
     {
-        StateStatic.globalCameraMAC = globalCameraMAC;
         cameraMACAddress = globalCameraMAC;
+        cameraIPAddress = CheatSheet.findIPFromMAC(cameraMACAddress);
     }
 
     /**
@@ -116,60 +70,6 @@ public class StateStatic
     public static String getGlobalPhotoSavePath()
     {
         return DEFAULT_PHOTO_PATH;
-    }
-
-    /**
-     * Camera Methods
-     * @return Returns camera calibration interval
-     */
-    public static long getRemoteCameraCalibrationInterval()
-    {
-        return remoteCameraCalibrationInterval;
-    }
-
-    /**
-     * Change calibration frequency
-     * @param remoteCameraCalibrationInterval - new frequency
-     */
-    public static void setRemoteCameraCalibrationInterval(long remoteCameraCalibrationInterval)
-    {
-        StateStatic.remoteCameraCalibrationInterval = remoteCameraCalibrationInterval;
-    }
-
-    /**
-     * Get phone camera calibration frequency
-     * @return - Returns phone camera calibration frequency
-     */
-    public static long getTabletCameraCalibrationInterval()
-    {
-        return tabletCameraCalibrationInterval;
-    }
-
-    /**
-     * Change phone camera calibration frequency
-     * @param tabletCameraCalibrationInterval - new phone camera calibration frequency
-     */
-    public static void setTabletCameraCalibrationInterval(long tabletCameraCalibrationInterval)
-    {
-        StateStatic.tabletCameraCalibrationInterval = tabletCameraCalibrationInterval;
-    }
-
-    /**
-     * Are we using Sony camera?
-     * @return Returns whether Sony camera is used
-     */
-    public static boolean isRemoteCameraSelected()
-    {
-        return isRemoteCameraSelected;
-    }
-
-    /**
-     * Change active camera
-     * @param isRemoteCameraSelected - true if Sony is used
-     */
-    public static void setIsRemoteCameraSelected(boolean isRemoteCameraSelected)
-    {
-        StateStatic.isRemoteCameraSelected = isRemoteCameraSelected;
     }
 
     /**

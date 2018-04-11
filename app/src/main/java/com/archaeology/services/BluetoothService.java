@@ -146,8 +146,8 @@ public class BluetoothService
             mBluetoothAdapter.cancelDiscovery();
             try
             {
-                // Connect to the remote device through the socket. This call blocks
-                // until it succeeds or throws an exception.
+                // Connect to the remote device through the socket. This call blocks until it
+                // succeeds or throws an exception.
                 MM_SOCKET.connect();
             }
             catch (IOException connectException)
@@ -166,8 +166,7 @@ public class BluetoothService
                 }
                 return;
             }
-            // The connection attempt succeeded. Perform work associated with the connection in a
-            // separate thread.
+            // The connection attempt succeeded. Perform work associated with the connection in a separate thread.
             connectedThread = new ConnectedThread(MM_SOCKET);
         }
     }
@@ -193,8 +192,7 @@ public class BluetoothService
             }
             catch (IOException e)
             {
-                Toast.makeText(context, "Error occurred when creating input stream",
-                        Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Error occurred when creating input stream", Toast.LENGTH_SHORT).show();
             }
             mmInStream = tmpIn;
         }
@@ -210,8 +208,7 @@ public class BluetoothService
             // Keep listening to the InputStream until an exception occurs.
             try
             {
-                // Read from the InputStream. Can speed up pull time by checking if data is
-                // available
+                // Read from the InputStream. Can speed up pull time by checking if data is available
                 if (mmInStream.available() >= 2)
                 {
                     numBytes = mmInStream.read(mmBuffer);

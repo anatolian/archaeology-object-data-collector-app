@@ -19,9 +19,8 @@ import android.widget.ImageView;
 public class MagnifyingGlass extends AppCompatImageView
 {
     private PointF zoomPos = new PointF(0, 0);
-    private boolean zooming = false;
+    private boolean zooming = false, correctedAlready = false;
     private Matrix matrix = new Matrix();
-    private Paint paint = new Paint();
     protected Bitmap correctedPhoto;
     /**
      * Constructor
@@ -61,10 +60,12 @@ public class MagnifyingGlass extends AppCompatImageView
     @Override
     public boolean onTouchEvent(MotionEvent event)
     {
-        if (!StateStatic.colorCorrectionEnabled)
+        // Tapping the image does nothing if color correction is disabled or the image was corrected already
+        if (!StateStatic.colorCorrectionEnabled || correctedAlready)
         {
             return true;
         }
+        correctedAlready = true;
         int action = event.getAction();
         zoomPos.x = event.getX();
         zoomPos.y = event.getY();
@@ -112,7 +113,7 @@ public class MagnifyingGlass extends AppCompatImageView
         {
             Bitmap bitmap = getDrawingCache();
             BitmapShader shader = new BitmapShader(bitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
-            paint = new Paint();
+            Paint paint = new Paint();
             paint.setShader(shader);
             matrix.reset();
             matrix.postScale(4f, 4f, zoomPos.x, zoomPos.y);
@@ -153,13 +154,12 @@ public class MagnifyingGlass extends AppCompatImageView
     }
 
     /**
-     * white balance works by balancing RGB channels from a reference white pixel
-     * looks at relative percentage each channel needs to change to be balanced correctly
-     * aka scale the two lower channels to match the highest channel value
-     * according to PhotoDirector, "white" square is RGB(214, 204, 167)
-     * highest channel value is 214
-     * so correction factor is (214 / 214 = 1, 214 / 204 = 1.049, 214 / 167 = 1.28)
-     * so correction should be original pixel RGB values * (1, 1.049, 1.28)
+     * White balance works by balancing RGB channels from a reference white pixel looks at relative
+     * percentage each channel needs to change to be balanced correctly aka scale the two lower
+     * channels to match the highest channel value according to PhotoDirector, "white" square is
+     * RGB(214, 204, 167) highest channel value is 214 so correction factor is
+     * (214 / 214 = 1, 214 / 204 = 1.049, 214 / 167 = 1.28) so correction should be original pixel
+     * RGB values * (1, 1.049, 1.28)
      * @param rgbValues - color values for the pixel
      * @param maxChannelIndex - location of max channel
      * @return Returns the corrected pixel

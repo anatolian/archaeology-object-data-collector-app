@@ -26,8 +26,8 @@ import static com.archaeology.util.StateStatic.ALL_FIND_NUMBER;
 import static com.archaeology.util.StateStatic.EASTING;
 import static com.archaeology.util.StateStatic.NORTHING;
 import static com.archaeology.util.StateStatic.FIND_NUMBER;
-import static com.archaeology.util.StateStatic.getGlobalWebServerURL;
 import static com.archaeology.services.VolleyWrapper.cancelAllVolleyRequests;
+import static com.archaeology.util.StateStatic.globalWebServerURL;
 public class CeramicInputActivity extends AppCompatActivity
 {
     RequestQueue queue;
@@ -220,7 +220,7 @@ public class CeramicInputActivity extends AppCompatActivity
     public void asyncGetEastingsFromDB()
     {
         allDataLoadInfo.put(LoadState.areaEasting, false);
-        String URL = getGlobalWebServerURL() + "/get_eastings/";
+        String URL = globalWebServerURL + "/get_eastings/";
         makeVolleyStringObjectRequest(URL, queue, new StringObjectResponseWrapper() {
             /**
              * Response received
@@ -253,7 +253,7 @@ public class CeramicInputActivity extends AppCompatActivity
     private void asyncGetNorthingsFromDB()
     {
         allDataLoadInfo.put(LoadState.areaNorthing, false);
-        String URL = getGlobalWebServerURL() + "/get_northings/?easting=" + getSelectedEasting();
+        String URL = globalWebServerURL + "/get_northings/?easting=" + getSelectedEasting();
         makeVolleyStringObjectRequest(URL, queue, new StringObjectResponseWrapper() {
             /**
              * Response received
@@ -288,7 +288,7 @@ public class CeramicInputActivity extends AppCompatActivity
     {
         allDataLoadInfo.put(LoadState.findNumber, false);
         toggleContinueButton();
-        String URL = getGlobalWebServerURL() + "/get_finds/?easting=" + getSelectedEasting()
+        String URL = globalWebServerURL + "/get_finds/?easting=" + getSelectedEasting()
                 + "&northing=" + getSelectedNorthing();
         makeVolleyStringObjectRequest(URL, queue, new StringObjectResponseWrapper() {
             /**

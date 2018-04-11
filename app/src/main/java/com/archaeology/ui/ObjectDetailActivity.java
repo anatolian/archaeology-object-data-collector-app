@@ -23,12 +23,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,7 +34,6 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -51,9 +48,6 @@ import com.archaeology.services.NutriScaleBroadcastReceiver;
 import com.archaeology.util.CheatSheet;
 import com.archaeology.util.MagnifyingGlass;
 import com.archaeology.util.StateStatic;
-
-import org.w3c.dom.Text;
-
 import static com.archaeology.services.VolleyStringWrapper.makeVolleyStringObjectRequest;
 import static com.archaeology.util.CheatSheet.deleteOriginalAndThumbnailPhoto;
 import static com.archaeology.util.CheatSheet.getOutputMediaFile;
@@ -68,10 +62,10 @@ import static com.archaeology.util.StateStatic.REQUEST_ENABLE_BT;
 import static com.archaeology.util.StateStatic.REQUEST_IMAGE_CAPTURE;
 import static com.archaeology.util.StateStatic.REQUEST_REMOTE_IMAGE;
 import static com.archaeology.util.StateStatic.cameraIPAddress;
+import static com.archaeology.util.StateStatic.cameraMACAddress;
 import static com.archaeology.util.StateStatic.colorCorrectionEnabled;
-import static com.archaeology.util.StateStatic.getGlobalCameraMAC;
-import static com.archaeology.util.StateStatic.getGlobalWebServerURL;
 import static com.archaeology.util.StateStatic.getTimeStamp;
+import static com.archaeology.util.StateStatic.globalWebServerURL;
 import static com.archaeology.util.StateStatic.isBluetoothEnabled;
 import static com.archaeology.util.StateStatic.isRemoteCameraSelected;
 public class ObjectDetailActivity extends AppCompatActivity
@@ -259,7 +253,7 @@ public class ObjectDetailActivity extends AppCompatActivity
         {
             photoFragment.prepareFragmentForNewPhotosFromNewItem();
         }
-        cameraIPAddress = CheatSheet.findIPFromMAC(getGlobalCameraMAC());
+        cameraIPAddress = CheatSheet.findIPFromMAC(cameraMACAddress);
         if (cameraIPAddress != null)
         {
             ((TextView) findViewById(R.id.connectToCameraText)).setText(getString(R.string.ip_connection, cameraIPAddress));
@@ -477,9 +471,9 @@ public class ObjectDetailActivity extends AppCompatActivity
     {
         double weightInKg = weightInGrams / 1000.0;
         // making Python request to call the update method with updated params
-        makeVolleyStringObjectRequest(getGlobalWebServerURL() + "/set_weight?easting="
-                        + easting + "&northing=" + northing + "&find=" + findNumber
-                        + "&weight=" + weightInKg, queue, new StringObjectResponseWrapper() {
+        makeVolleyStringObjectRequest(globalWebServerURL + "/set_weight?easting=" + easting
+                + "&northing=" + northing + "&find=" + findNumber + "&weight=" + weightInKg, queue,
+                new StringObjectResponseWrapper() {
             /**
              * Response received
              * @param response - database response
@@ -511,9 +505,9 @@ public class ObjectDetailActivity extends AppCompatActivity
      */
     public void asyncPopulateFieldsFromDB(int easting, int northing, int findNumber)
     {
-        makeVolleyStringObjectRequest(getGlobalWebServerURL() + "/get_find_colors/?easting=" +
-                        easting + "&northing=" + northing + "&find=" + findNumber +
-                        "&location=exterior", queue, new StringObjectResponseWrapper() {
+        makeVolleyStringObjectRequest(globalWebServerURL + "/get_find_colors/?easting="
+                + easting + "&northing=" + northing + "&find=" + findNumber + "&location=exterior",
+                queue, new StringObjectResponseWrapper() {
             /**
              * Response received
              * @param response - database response
@@ -544,9 +538,9 @@ public class ObjectDetailActivity extends AppCompatActivity
                 error.printStackTrace();
             }
         });
-        makeVolleyStringObjectRequest(getGlobalWebServerURL() + "/get_find_colors/?easting=" +
-                easting + "&northing=" + northing + "&find=" + findNumber +
-                "&location=interior", queue, new StringObjectResponseWrapper() {
+        makeVolleyStringObjectRequest(globalWebServerURL + "/get_find_colors/?easting="
+                + easting + "&northing=" + northing + "&find=" + findNumber + "&location=interior",
+                queue, new StringObjectResponseWrapper() {
             /**
              * Response received
              * @param response - database response
@@ -577,9 +571,8 @@ public class ObjectDetailActivity extends AppCompatActivity
                 error.printStackTrace();
             }
         });
-        makeVolleyStringObjectRequest(getGlobalWebServerURL() + "/get_find/?easting=" +
-                easting + "&northing=" + northing + "&find=" + findNumber, queue,
-                new StringObjectResponseWrapper() {
+        makeVolleyStringObjectRequest(globalWebServerURL + "/get_find/?easting=" + easting
+                        + "&northing=" + northing + "&find=" + findNumber, queue, new StringObjectResponseWrapper() {
             /**
              * Response received
              * @param response - database response
@@ -626,8 +619,8 @@ public class ObjectDetailActivity extends AppCompatActivity
      */
     public void asyncPopulatePhotos()
     {
-        String URL = getGlobalWebServerURL() + "/get_image_urls/?easting=" + easting +
-                "&northing=" + northing + "&find=" + findNumber;
+        String URL = globalWebServerURL + "/get_image_urls/?easting=" + easting + "&northing="
+                + northing + "&find=" + findNumber;
         makeVolleyStringObjectRequest(URL, queue, new StringObjectResponseWrapper() {
             /**
              * Database response
@@ -803,10 +796,10 @@ public class ObjectDetailActivity extends AppCompatActivity
     public void addPhotoAction(View view)
     {
         imageNumber++;
-        if (isRemoteCameraSelected())
+        if (isRemoteCameraSelected)
         {
             // Just connect to found IP
-            cameraIPAddress = CheatSheet.findIPFromMAC(getGlobalCameraMAC());
+            cameraIPAddress = CheatSheet.findIPFromMAC(cameraMACAddress);
             goToWiFiActivity();
         }
         else

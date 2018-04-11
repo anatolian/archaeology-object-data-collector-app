@@ -27,7 +27,8 @@ import com.archaeology.util.CheatSheet;
 import static com.archaeology.util.StateStatic.MARKED_AS_ADDED;
 import static com.archaeology.util.StateStatic.MARKED_AS_TO_DOWNLOAD;
 import static com.archaeology.util.StateStatic.SYNCED;
-import static com.archaeology.util.StateStatic.getGlobalWebServerURL;
+import static com.archaeology.util.StateStatic.globalWebServerURL;
+
 public class PhotoFragment extends Fragment
 {
     public abstract class CustomPicassoCallback implements Callback
@@ -125,8 +126,7 @@ public class PhotoFragment extends Fragment
      */
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState)
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         this.dictOfPhotoSyncStatus = new LinkedHashMap<>();
         this.loadedPhotos = new ArrayList<>();
@@ -228,10 +228,9 @@ public class PhotoFragment extends Fragment
                     final int EASTING = ((ObjectDetailActivity) PARENT_ACTIVITY).easting;
                     final int NORTHING = ((ObjectDetailActivity) PARENT_ACTIVITY).northing;
                     final int FIND_NUMBER = ((ObjectDetailActivity) PARENT_ACTIVITY).findNumber;
-                    String URL = getGlobalWebServerURL() + "/upload_file";
+                    String URL = globalWebServerURL + "/upload_file";
                     AsyncHTTPWrapper.makeImageUpload(URL, DICT_ENTRY.getKey(), "" + EASTING,
-                            "" + NORTHING, "" + FIND_NUMBER,
-                            new AsyncHTTPCallbackWrapper() {
+                            "" + NORTHING, "" + FIND_NUMBER, new AsyncHTTPCallbackWrapper() {
                         /**
                          * Connection succeeded
                          * @param response - HTTP response

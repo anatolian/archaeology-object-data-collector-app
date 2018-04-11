@@ -51,6 +51,7 @@
             android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity android:name="com.archaeology.ui.CeramicInputActivity" />
         <activity android:name="com.archaeology.ui.ObjectDetailActivity" />
-        <activity android:name="com.archaeology.ui.MyWiFiActivity" />
+        <activity android:name="com.archaeology.ui.MyWiFiActivity"
+            android:windowSoftInputMode = "stateHidden"/>
     </application>
 </manifest>

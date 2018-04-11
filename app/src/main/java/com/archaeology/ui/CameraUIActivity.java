@@ -41,8 +41,8 @@ import static com.archaeology.util.StateStatic.ALL_FIND_NUMBER;
 import static com.archaeology.util.StateStatic.EASTING;
 import static com.archaeology.util.StateStatic.NORTHING;
 import static com.archaeology.util.StateStatic.FIND_NUMBER;
-import static com.archaeology.util.StateStatic.getGlobalWebServerURL;
-import static com.archaeology.util.StateStatic.setGlobalBucketURL;
+import static com.archaeology.util.StateStatic.globalBucketURL;
+import static com.archaeology.util.StateStatic.globalWebServerURL;
 public class CameraUIActivity extends AppCompatActivity
 {
     // Assets for OCR
@@ -67,7 +67,7 @@ public class CameraUIActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera_ui);
-        String URL = getGlobalWebServerURL() + "/get_property/?key=bucket_url";
+        String URL = globalWebServerURL + "/get_property/?key=bucket_url";
         queue = Volley.newRequestQueue(this);
         makeVolleyStringObjectRequest(URL, queue, new StringObjectResponseWrapper() {
             /**
@@ -77,7 +77,7 @@ public class CameraUIActivity extends AppCompatActivity
             @Override
             public void responseMethod(String response)
             {
-                setGlobalBucketURL(response);
+                globalBucketURL = response;
             }
 
             /**
@@ -87,8 +87,7 @@ public class CameraUIActivity extends AppCompatActivity
             @Override
             public void errorMethod(VolleyError error)
             {
-                Toast.makeText(getApplicationContext(),
-                        "Bucket URL could not be found. Go to Settings to change it.",
+                Toast.makeText(getApplicationContext(), "Bucket URL could not be found. Go to Settings to change it.",
                         Toast.LENGTH_LONG).show();
             }
         });
@@ -315,7 +314,7 @@ public class CameraUIActivity extends AppCompatActivity
         DETAIL_INTENT.putExtra(NORTHING, KEYS[3]);
         DETAIL_INTENT.putExtra(FIND_NUMBER, KEYS[4]);
         final List<String> FIND_NUMBERS = new ArrayList<>();
-        String URL = getGlobalWebServerURL() + "/get_finds/?easting=" + KEYS[2] + "&northing=" + KEYS[3];
+        String URL = globalWebServerURL + "/get_finds/?easting=" + KEYS[2] + "&northing=" + KEYS[3];
         makeVolleyStringObjectRequest(URL, queue, new StringObjectResponseWrapper() {
             /**
              * Database response
@@ -395,8 +394,7 @@ public class CameraUIActivity extends AppCompatActivity
     {
         Matrix matrix = new Matrix();
         matrix.postRotate(angle);
-        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(),
-                matrix,true);
+        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix,true);
     }
 
     /**

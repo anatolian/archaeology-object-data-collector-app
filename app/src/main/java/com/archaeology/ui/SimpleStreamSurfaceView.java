@@ -76,7 +76,6 @@ public class SimpleStreamSurfaceView extends SurfaceView implements SurfaceHolde
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height)
     {
-        // do nothing.
     }
 
     /**
@@ -86,7 +85,6 @@ public class SimpleStreamSurfaceView extends SurfaceView implements SurfaceHolde
     @Override
     public void surfaceCreated(SurfaceHolder holder)
     {
-        // do nothing.
     }
 
     /**

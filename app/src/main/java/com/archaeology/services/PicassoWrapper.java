@@ -67,8 +67,8 @@ public class PicassoWrapper
      * @param anOnClickListener - click listener
      * @param ON_PHOTO_FETCHED_CALLBACK - called after image loads
      */
-    public void fetchAndInsertImage(LinearLayout photoLayout, final Uri REMOTE_IMAGE_URL, final Context A_CONTEXT,
-                                    View.OnClickListener anOnClickListener,
+    public void fetchAndInsertImage(LinearLayout photoLayout, final Uri REMOTE_IMAGE_URL,
+                                    final Context A_CONTEXT, View.OnClickListener anOnClickListener,
                                     final PhotoFragment.CustomPicassoCallback ON_PHOTO_FETCHED_CALLBACK)
     {
         final AppCompatImageView PHOTO_VIEW = new AppCompatImageView(A_CONTEXT, null, 0);

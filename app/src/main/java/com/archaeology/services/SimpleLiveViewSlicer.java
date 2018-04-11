@@ -11,8 +11,7 @@ import java.net.URL;
 public class SimpleLiveViewSlicer
 {
     /**
-     * Payload data class. See also Camera Remote API specification document to
-     * know the data structure.
+     * Payload data class. See also Camera Remote API specification document to know the data structure.
      */
     public static final class PAYLOAD
     {
