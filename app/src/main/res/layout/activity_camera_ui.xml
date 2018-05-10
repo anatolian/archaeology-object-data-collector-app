@@ -14,8 +14,9 @@
     <android.support.design.widget.FloatingActionButton
         app:srcCompat = "@drawable/camera_icon"
         app:fabSize = "normal"
-        android:backgroundTint = "#233069"
+        app:backgroundTint = "#233069"
         android:id = "@+id/shutter"
+        android:background = "@drawable/camera_icon"
         android:layout_width = "wrap_content"
         android:layout_height = "wrap_content"
         android:onClick = "takePic"
@@ -30,9 +31,9 @@
         android:layout_marginTop="10dp"
         android:gravity = "center_horizontal">
         <android.support.design.widget.FloatingActionButton
-            app:srcCompat = "@drawable/ocr"
+            app:srcCompat = "@drawable/qr"
             app:fabSize = "normal"
-            android:backgroundTint = "#971c20"
+            app:backgroundTint = "#971c20"
             android:id = "@+id/fab"
             android:layout_width = "wrap_content"
             android:layout_height = "wrap_content"
@@ -40,7 +41,7 @@
         <android.support.design.widget.FloatingActionButton
             app:srcCompat = "@drawable/check_form"
             app:fabSize = "normal"
-            android:backgroundTint = "#971c20"
+            app:backgroundTint = "#971c20"
             android:id = "@+id/input"
             android:layout_width = "wrap_content"
             android:layout_height = "wrap_content"
