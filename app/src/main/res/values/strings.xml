@@ -38,7 +38,7 @@
     <string name="stop_live">Stop Live View</string>
     <string name="zoom_in">Zoom In</string>
     <string name="connect">Connect</string>
-    <string name="default_base_url">https://thawing-plains-16187.herokuapp.com/web</string>
+    <string name="default_base_url">https://object-data-collector-service.herokuapp.com</string>
     <string name="base_url">Web Service Base URL:</string>
     <string name="continue_string">Continue</string>
     <string name="find_number">Find Number</string>
