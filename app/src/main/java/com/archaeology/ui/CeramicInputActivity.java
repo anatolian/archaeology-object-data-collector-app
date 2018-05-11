@@ -38,7 +38,7 @@ public class CeramicInputActivity extends AppCompatActivity
     {
         areaEasting, areaNorthing, findNumber
     }
-    Spinner easting, northing, find;
+    Spinner majorEastings, minorEastings, majorNorthings, minorNorthings, find;
     /**
      * Launch the activity
      * @param savedInstanceState - state from memory
@@ -58,9 +58,11 @@ public class CeramicInputActivity extends AppCompatActivity
         barProgressDialog = new ProgressDialog(this);
         barProgressDialog.setTitle("Downloading Information From Database ...");
         barProgressDialog.setIndeterminate(true);
-        easting = findViewById(R.id.easting_spinner);
-        northing = findViewById(R.id.northing_spinner);
+        majorEastings = findViewById(R.id.major_easting);
+        majorNorthings = findViewById(R.id.major_northing);
         find = findViewById(R.id.find_spinner);
+        minorEastings = findViewById(R.id.minor_easting);
+        minorNorthings = findViewById(R.id.minor_northing);
     }
 
     /**
@@ -72,7 +74,7 @@ public class CeramicInputActivity extends AppCompatActivity
         super.onStart();
         // calls methods to populate spinners with data gathered from the database northing,
         // easting, and find number
-        easting.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        majorEastings.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             /**
              * User selected an item
              * @param parent - spinner
@@ -83,8 +85,8 @@ public class CeramicInputActivity extends AppCompatActivity
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
             {
-                clearNorthingsSpinner();
-                asyncGetNorthingsFromDB();
+                clearMinorEastingsSpinner();
+                asyncGetMinorEastingsFromDB();
             }
 
             /**
@@ -96,7 +98,55 @@ public class CeramicInputActivity extends AppCompatActivity
             {
             }
         });
-        northing.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        minorEastings.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            /**
+             * User selected an item
+             * @param parent - spinner
+             * @param view - container view
+             * @param position - selected item
+             * @param id - item id
+             */
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
+            {
+                clearMajorNorthingsSpinner();
+                asyncGetMajorNorthingsFromDB();
+            }
+
+            /**
+             * Nothing selected
+             * @param parent - spinner
+             */
+            @Override
+            public void onNothingSelected(AdapterView<?> parent)
+            {
+            }
+        });
+        majorNorthings.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            /**
+             * User selected an item
+             * @param parent - spinner
+             * @param view - container view
+             * @param position - selected item
+             * @param id - item id
+             */
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
+            {
+                clearMinorNorthingsSpinner();
+                asyncGetMinorNorthingsFromDB();
+            }
+
+            /**
+             * Nothing selected
+             * @param parent - spinner
+             */
+            @Override
+            public void onNothingSelected(AdapterView<?> parent)
+            {
+            }
+        });
+        minorNorthings.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             /**
              * User selected an item
              * @param parent - spinner
@@ -136,7 +186,7 @@ public class CeramicInputActivity extends AppCompatActivity
         }
         else
         {
-            asyncGetEastingsFromDB();
+            asyncGetMajorEastingsFromDB();
         }
     }
 
@@ -172,21 +222,39 @@ public class CeramicInputActivity extends AppCompatActivity
     }
 
     /**
-     * methods to clear and fill spinners
+     * Fill major eastings
      * @param entries - spinner values
      */
-    public void fillEastingSpinner(ArrayList<String> entries)
+    public void fillMajorEastingsSpinner(ArrayList<String> entries)
     {
-        CheatSheet.setSpinnerItems(this, easting, entries);
+        CheatSheet.setSpinnerItems(this, majorEastings, entries);
     }
 
     /**
-     * Fill northings
+     * Fill minor eastings
      * @param entries - spinner values
      */
-    public void fillNorthingSpinner(ArrayList<String> entries)
+    public void fillMinorEastingsSpinner(ArrayList<String> entries)
     {
-        CheatSheet.setSpinnerItems(this, northing, entries);
+        CheatSheet.setSpinnerItems(this, minorEastings, entries);
+    }
+
+    /**
+     * Fill major northings
+     * @param entries - spinner values
+     */
+    public void fillMajorNorthingsSpinner(ArrayList<String> entries)
+    {
+        CheatSheet.setSpinnerItems(this, majorNorthings, entries);
+    }
+
+    /**
+     * Fill minor northings
+     * @param entries - spinner values
+     */
+    public void fillMinorNorthingsSpinner(ArrayList<String> entries)
+    {
+        CheatSheet.setSpinnerItems(this, minorNorthings, entries);
     }
 
     /**
@@ -199,11 +267,27 @@ public class CeramicInputActivity extends AppCompatActivity
     }
 
     /**
-     * Clear northings
+     * Clear minor eastings
      */
-    public void clearNorthingsSpinner()
+    public void clearMinorEastingsSpinner()
     {
-        CheatSheet.setSpinnerItems(this, northing, new ArrayList<String>());
+        CheatSheet.setSpinnerItems(this, minorEastings, new ArrayList<String>());
+    }
+
+    /**
+     * Clear major northings
+     */
+    public void clearMajorNorthingsSpinner()
+    {
+        CheatSheet.setSpinnerItems(this, majorNorthings, new ArrayList<String>());
+    }
+
+    /**
+     * Clear minor northings
+     */
+    public void clearMinorNorthingsSpinner()
+    {
+        CheatSheet.setSpinnerItems(this, minorNorthings, new ArrayList<String>());
     }
 
     /**
@@ -217,7 +301,7 @@ public class CeramicInputActivity extends AppCompatActivity
     /**
      * Get area easting data and fill spinner
      */
-    public void asyncGetEastingsFromDB()
+    public void asyncGetMajorEastingsFromDB()
     {
         allDataLoadInfo.put(LoadState.areaEasting, false);
         String URL = globalWebServerURL + "/get_eastings/";
@@ -229,8 +313,58 @@ public class CeramicInputActivity extends AppCompatActivity
             @Override
             public void responseMethod(String response)
             {
+                ArrayList<String> eastings = CheatSheet.convertLinkListToArray(response);
+                ArrayList<String> majorEastings = new ArrayList<>();
+                for (int i = 0; i < eastings.size(); i++)
+                {
+                    String s = eastings.get(i);
+                    majorEastings.add(s.substring(0, s.length() / 2));
+                }
                 // converting HTML list of links to regular array to populate the spinner
-                fillEastingSpinner(CheatSheet.convertLinkListToArray(response));
+                fillMajorEastingsSpinner(majorEastings);
+                allDataLoadInfo.put(LoadState.areaEasting, true);
+                toggleContinueButton();
+            }
+
+            /**
+             * Connection failed
+             * @param error - failure
+             */
+            @Override
+            public void errorMethod(VolleyError error)
+            {
+                error.printStackTrace();
+            }
+        });
+    }
+
+    /**
+     * Get area easting data and fill spinner
+     */
+    public void asyncGetMinorEastingsFromDB()
+    {
+        allDataLoadInfo.put(LoadState.areaEasting, false);
+        String URL = globalWebServerURL + "/get_eastings/";
+        makeVolleyStringObjectRequest(URL, queue, new StringObjectResponseWrapper() {
+            /**
+             * Response received
+             * @param response - volley response
+             */
+            @Override
+            public void responseMethod(String response)
+            {
+                ArrayList<String> eastings = CheatSheet.convertLinkListToArray(response);
+                ArrayList<String> minorEastings = new ArrayList<>();
+                for (int i = 0; i < eastings.size(); i++)
+                {
+                    String s = eastings.get(i);
+                    if (s.substring(0, s.length() / 2).equals(getSelectedMajorEasting()))
+                    {
+                        minorEastings.add(s.substring(s.length() / 2));
+                    }
+                }
+                // converting HTML list of links to regular array to populate the spinner
+                fillMinorEastingsSpinner(minorEastings);
                 allDataLoadInfo.put(LoadState.areaEasting, true);
                 toggleContinueButton();
             }
@@ -250,10 +384,11 @@ public class CeramicInputActivity extends AppCompatActivity
     /**
      * Get northing data from database and populate spinner
      */
-    private void asyncGetNorthingsFromDB()
+    private void asyncGetMajorNorthingsFromDB()
     {
         allDataLoadInfo.put(LoadState.areaNorthing, false);
-        String URL = globalWebServerURL + "/get_northings/?easting=" + getSelectedEasting();
+        String URL = globalWebServerURL + "/get_northings/?easting=" + getSelectedMajorEasting() +
+                getSelectedMinorEasting();
         makeVolleyStringObjectRequest(URL, queue, new StringObjectResponseWrapper() {
             /**
              * Response received
@@ -262,8 +397,15 @@ public class CeramicInputActivity extends AppCompatActivity
             @Override
             public void responseMethod(String response)
             {
+                ArrayList<String> northings = CheatSheet.convertLinkListToArray(response);
+                ArrayList<String> majorNorthings = new ArrayList<>();
+                for (int i = 0; i < northings.size(); i++)
+                {
+                    String s = northings.get(i);
+                    majorNorthings.add(s.substring(0, s.length() / 2));
+                }
                 // convert HTML link list to regular array to populate spinner
-                fillNorthingSpinner(CheatSheet.convertLinkListToArray(response));
+                fillMajorNorthingsSpinner(majorNorthings);
                 // if data was received successfully you can put find number as true and enable buttons
                 allDataLoadInfo.put(LoadState.areaNorthing, true);
                 toggleContinueButton();
@@ -282,14 +424,60 @@ public class CeramicInputActivity extends AppCompatActivity
     }
 
     /**
-     * Get find number from db and populate spinner
+     * Get northing data from database and populate spinner
+     */
+    private void asyncGetMinorNorthingsFromDB()
+    {
+        allDataLoadInfo.put(LoadState.areaNorthing, false);
+        String URL = globalWebServerURL + "/get_northings/?easting=" + getSelectedMajorEasting() +
+                getSelectedMinorEasting();
+        makeVolleyStringObjectRequest(URL, queue, new StringObjectResponseWrapper() {
+            /**
+             * Response received
+             * @param response - database response
+             */
+            @Override
+            public void responseMethod(String response)
+            {
+                ArrayList<String> northings = CheatSheet.convertLinkListToArray(response);
+                ArrayList<String> minorNorthings = new ArrayList<>();
+                for (int i = 0; i < northings.size(); i++)
+                {
+                    String s = northings.get(i);
+                    if (s.substring(0, s.length() / 2).equals(getSelectedMajorNorthing()))
+                    {
+                        minorNorthings.add(s.substring(s.length() / 2));
+                    }
+                }
+                // convert HTML link list to regular array to populate spinner
+                fillMinorNorthingsSpinner(minorNorthings);
+                // if data was received successfully you can put find number as true and enable buttons
+                allDataLoadInfo.put(LoadState.areaNorthing, true);
+                toggleContinueButton();
+            }
+
+            /**
+             * Connection failed
+             * @param error - failure
+             */
+            @Override
+            public void errorMethod(VolleyError error)
+            {
+                error.printStackTrace();
+            }
+        });
+    }
+
+    /**
+     * Get find number from database and populate spinner
      */
     private void asyncGetFindNumbersFromDB()
     {
         allDataLoadInfo.put(LoadState.findNumber, false);
         toggleContinueButton();
-        String URL = globalWebServerURL + "/get_finds/?easting=" + getSelectedEasting()
-                + "&northing=" + getSelectedNorthing();
+        String URL = globalWebServerURL + "/get_finds/?easting=" + getSelectedMajorEasting()
+                + getSelectedMinorEasting() + "&northing=" + getSelectedMajorNorthing()
+                + getSelectedMinorNorthing();
         makeVolleyStringObjectRequest(URL, queue, new StringObjectResponseWrapper() {
             /**
              * Database response
@@ -298,7 +486,7 @@ public class CeramicInputActivity extends AppCompatActivity
             @Override
             public void responseMethod(String response)
             {
-                // convert to regular array from json array
+                // convert to regular array from JSON array
                 fillFindNumberSpinner(CheatSheet.convertLinkListToArray(response));
                 // if data was received successfully you can put find number as true and enable button
                 allDataLoadInfo.put(LoadState.findNumber, true);
@@ -318,21 +506,39 @@ public class CeramicInputActivity extends AppCompatActivity
     }
 
     /**
-     * Getters for specific data fields
+     * Get major easting
      * @return Returns easting
      */
-    public String getSelectedEasting()
+    public String getSelectedMajorEasting()
     {
-        return easting.getSelectedItem().toString();
+        return majorEastings.getSelectedItem().toString();
     }
 
     /**
-     * Returns northing
+     * Get minor eastings
+     * @return Returns minor easting
+     */
+    public String getSelectedMinorEasting()
+    {
+        return minorEastings.getSelectedItem().toString();
+    }
+
+    /**
+     * Returns major northing
      * @return Returns northing
      */
-    public String getSelectedNorthing()
+    public String getSelectedMajorNorthing()
     {
-        return northing.getSelectedItem().toString();
+        return majorNorthings.getSelectedItem().toString();
+    }
+
+    /**
+     * Returns minor northing
+     * @return Returns minor northing
+     */
+    public String getSelectedMinorNorthing()
+    {
+        return minorNorthings.getSelectedItem().toString();
     }
 
     /**
@@ -389,8 +595,8 @@ public class CeramicInputActivity extends AppCompatActivity
     {
         cancelAllVolleyRequests(queue);
         Intent tmpIntent = new Intent(this, ObjectDetailActivity.class);
-        tmpIntent.putExtra(EASTING, getSelectedEasting());
-        tmpIntent.putExtra(NORTHING, getSelectedNorthing());
+        tmpIntent.putExtra(EASTING, getSelectedMajorEasting() + getSelectedMinorEasting());
+        tmpIntent.putExtra(NORTHING, getSelectedMajorNorthing() + getSelectedMinorNorthing());
         tmpIntent.putExtra(FIND_NUMBER, getSelectedFindNumber());
         List<String> availableFindNumbers = CheatSheet.getSpinnerItems(find);
         tmpIntent.putExtra(ALL_FIND_NUMBER, availableFindNumbers.toArray(new String[availableFindNumbers.size()]));
