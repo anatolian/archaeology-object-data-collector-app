@@ -21,6 +21,8 @@ public class MagnifyingGlass extends AppCompatImageView
     private PointF zoomPos = new PointF(0, 0);
     private boolean zooming = false, correctedAlready = false;
     private Matrix matrix = new Matrix();
+    public String location = "Exterior";
+    public int red = -1, green = -1, blue = -1;
     protected Bitmap correctedPhoto;
     /**
      * Constructor
@@ -60,12 +62,6 @@ public class MagnifyingGlass extends AppCompatImageView
     @Override
     public boolean onTouchEvent(MotionEvent event)
     {
-        // Tapping the image does nothing if color correction is disabled or the image was corrected already
-        if (!StateStatic.colorCorrectionEnabled || correctedAlready)
-        {
-            return true;
-        }
-        correctedAlready = true;
         int action = event.getAction();
         zoomPos.x = event.getX();
         zoomPos.y = event.getY();
@@ -84,12 +80,23 @@ public class MagnifyingGlass extends AppCompatImageView
                 zooming = false;
                 this.invalidate();
                 int[] rgbValues = new int[] {Color.red(pixel), Color.green(pixel), Color.blue(pixel)};
-                float[] correctionMatrix = calcColorCorrectionMatrix(rgbValues, maxChannelIndex(rgbValues));
-                Bitmap correctedPhoto = colorCorrect(oldPhoto.copy(Bitmap.Config.ARGB_8888, true),
-                        correctionMatrix);
-                this.setImageBitmap(correctedPhoto);
-                this.setScaleType(ImageView.ScaleType.FIT_CENTER);
-                this.invalidate();
+                if (StateStatic.colorCorrectionEnabled && !correctedAlready)
+                {
+                    correctedAlready = true;
+                    float[] correctionMatrix = calcColorCorrectionMatrix(rgbValues, maxChannelIndex(rgbValues));
+                    Bitmap correctedPhoto = whiteBalance(oldPhoto.copy(Bitmap.Config.ARGB_8888, true),
+                            correctionMatrix);
+                    this.setImageBitmap(correctedPhoto);
+                    this.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                    this.invalidate();
+                }
+                else {
+                    Log.v("Getting pixels", "(" + rgbValues[0] + ", " + rgbValues[1] + ", " + rgbValues[2] + ")");
+                    Log.v("Current location", location);
+                    red = rgbValues[0];
+                    green = rgbValues[1];
+                    blue = rgbValues[2];
+                }
                 break;
             default:
                 break;
@@ -129,7 +136,7 @@ public class MagnifyingGlass extends AppCompatImageView
      * @param correctionMatrix - corrections
      * @return Returns the corrected image
      */
-    public Bitmap colorCorrect(Bitmap photo, float[] correctionMatrix)
+    public Bitmap whiteBalance(Bitmap photo, float[] correctionMatrix)
     {
         // copies(?) the original photo
         correctedPhoto = photo;

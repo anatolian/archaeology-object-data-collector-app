@@ -5,6 +5,11 @@
         <item>Tablet Camera</item>
         <item>Remote Camera</item>
     </string-array>
+    <string-array name="location_labels">
+        <item>Exterior</item>
+        <item>Interior</item>
+    </string-array>
+    <string name = "location">Location: </string>
     <string name="chroma">Chroma</string>
     <string name="lightness">Lightness</string>
     <string name="hue">Hue</string>
@@ -31,6 +36,7 @@
     <string name="plus">+</string>
     <string name="P">P</string>
     <string name="nil">null</string>
+    <string name = "ok">OK</string>
     <string name="ip_connection">Connected To %s</string>
     <string name="find_peers">Discover Peers</string>
     <string name="get_ips">Get IP Address</string>

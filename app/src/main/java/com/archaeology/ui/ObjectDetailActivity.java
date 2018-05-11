@@ -26,8 +26,10 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.android.volley.Request;
@@ -339,57 +341,97 @@ public class ObjectDetailActivity extends AppCompatActivity
             // view photo you are trying to approve
             final MagnifyingGlass APPROVE_PHOTO_IMAGE = approveDialog.findViewById(R.id.approvePhotoImage);
             APPROVE_PHOTO_IMAGE.setImageURI(FILE_URI);
+            final Button OK_BUTTON = approveDialog.findViewById(R.id.saveButton);
             if (colorCorrectionEnabled)
             {
-                TextView label = approveDialog.findViewById(R.id.correctionLabel);
-                label.setText(getString(R.string.tap_to_correct));
-            }
-            Button saveButton = approveDialog.findViewById(R.id.saveButton);
-            saveButton.setOnClickListener(new View.OnClickListener() {
-                /**
-                 * User pressed save
-                 * @param view - the save button
-                 */
-                @Override
-                public void onClick(View view)
-                {
-                    String path = Environment.getExternalStorageDirectory() + "/Archaeology/temp.png";
-                    Bitmap bmp = ((BitmapDrawable) APPROVE_PHOTO_IMAGE.getDrawable()).getBitmap();
-                    FileOutputStream out = null;
-                    try
+                final TextView LABEL = approveDialog.findViewById(R.id.correctionLabel);
+                LABEL.setText(getString(R.string.tap_to_correct));
+                OK_BUTTON.setOnClickListener(new View.OnClickListener() {
+                    /**
+                     * User pressed save
+                     * @param view - the save button
+                     */
+                    @Override
+                    public void onClick(View view)
                     {
-                        out = new FileOutputStream(path);
-                        bmp.compress(Bitmap.CompressFormat.PNG, 100, out);
-                    }
-                    catch (Exception e)
-                    {
-                        Toast.makeText(getApplicationContext(), "Could not save image", Toast.LENGTH_SHORT).show();
-                        e.printStackTrace();
-                    }
-                    finally
-                    {
-                        try
-                        {
-                            if (out != null)
+                        LABEL.setVisibility(View.INVISIBLE);
+                        final Spinner LOCATIONS = approveDialog.findViewById(R.id.locationLabels);
+                        LOCATIONS.setVisibility(View.VISIBLE);
+                        TextView locationsLabel = approveDialog.findViewById(R.id.locationSpinnerLabel);
+                        locationsLabel.setVisibility(View.VISIBLE);
+                        LOCATIONS.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                            /**
+                             * Spinner item was selected
+                             * @param adapterView - container view
+                             * @param view - selected item
+                             * @param i - selected index
+                             * @param l - item id
+                             */
+                            @Override
+                            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l)
                             {
-                                out.close();
+                                APPROVE_PHOTO_IMAGE.location = LOCATIONS.getSelectedItem().toString();
                             }
-                        }
-                        catch (IOException e)
-                        {
-                            Toast.makeText(getApplicationContext(), "Could not save image", Toast.LENGTH_SHORT).show();
-                            e.printStackTrace();
-                        }
+
+                            /**
+                             * Nothing was selected
+                             * @param adapterView - container view
+                             */
+                            @Override
+                            public void onNothingSelected(AdapterView<?> adapterView)
+                            {
+                            }
+                        });
+                        OK_BUTTON.setOnClickListener(new View.OnClickListener() {
+                            /**
+                             * User pressed save
+                             * @param view - save button
+                             */
+                            @Override
+                            public void onClick(View view)
+                            {
+                                updateColorInDB(APPROVE_PHOTO_IMAGE.red, APPROVE_PHOTO_IMAGE.green,
+                                        APPROVE_PHOTO_IMAGE.blue, APPROVE_PHOTO_IMAGE.location);
+                                String path = Environment.getExternalStorageDirectory() + "/Archaeology/temp.png";
+                                Bitmap bmp = ((BitmapDrawable) APPROVE_PHOTO_IMAGE.getDrawable()).getBitmap();
+                                FileOutputStream out = null;
+                                try
+                                {
+                                    out = new FileOutputStream(path);
+                                    bmp.compress(Bitmap.CompressFormat.PNG, 100, out);
+                                }
+                                catch (Exception e)
+                                {
+                                    Toast.makeText(getApplicationContext(), "Could not save image", Toast.LENGTH_SHORT).show();
+                                    e.printStackTrace();
+                                }
+                                finally
+                                {
+                                    try
+                                    {
+                                        if (out != null)
+                                        {
+                                            out.close();
+                                        }
+                                    }
+                                    catch (IOException e)
+                                    {
+                                        Toast.makeText(getApplicationContext(), "Could not save image", Toast.LENGTH_SHORT).show();
+                                        e.printStackTrace();
+                                    }
+                                }
+                                File tempFile = new File(path);
+                                // Have to convert java.net.URI to android.net.Uri
+                                URI tempURI = tempFile.toURI();
+                                Uri convertedURI = Uri.parse(tempURI.toString());
+                                // store image data into photo fragments
+                                loadPhotoIntoPhotoFragment(convertedURI, MARKED_AS_ADDED);
+                                approveDialog.dismiss();
+                            }
+                        });
                     }
-                    File tempFile = new File(path);
-                    // Have to convert java.net.URI to android.net.Uri
-                    URI tempURI = tempFile.toURI();
-                    Uri convertedURI = Uri.parse(tempURI.toString());
-                    // store image data into photo fragments
-                    loadPhotoIntoPhotoFragment(convertedURI, MARKED_AS_ADDED);
-                    approveDialog.dismiss();
-                }
-            });
+                });
+            }
             Button cancelButton = approveDialog.findViewById(R.id.cancelButton);
             cancelButton.setOnClickListener(new View.OnClickListener() {
                 /**
@@ -473,6 +515,48 @@ public class ObjectDetailActivity extends AppCompatActivity
         {
             Log.v(LOG_TAG_BLUETOOTH, "Trying to unregister non-registered receiver");
         }
+    }
+
+    /**
+     * Update the color in DB
+     * @param red - red pixel
+     * @param green - green pixel
+     * @param blue - blue pixel
+     * @param location - pixel location
+     */
+    public void updateColorInDB(int red, int green, int blue, String location)
+    {
+        makeVolleyStringObjectRequest(globalWebServerURL + "set_color?easting=" + easting
+                        + "&northing=" + northing + "&find=" + findNumber + "&red=" + red
+                        + "&green=" + green + "&blue=" + blue + "&location=" + location.toLowerCase(), queue,
+                new StringObjectResponseWrapper() {
+            /**
+             * Response received
+             * @param response - database response
+             */
+            @Override
+            public void responseMethod(String response)
+            {
+                if (response.contains("Error"))
+                {
+                    Toast.makeText(getApplicationContext(), "Updating color failed", Toast.LENGTH_SHORT).show();
+                }
+                else
+                {
+                    Toast.makeText(getApplicationContext(), "Update successful", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            /**
+             * Connection failed
+             * @param error - failure
+             */
+            @Override
+            public void errorMethod(VolleyError error)
+            {
+                error.printStackTrace();
+            }
+        });
     }
 
     /**

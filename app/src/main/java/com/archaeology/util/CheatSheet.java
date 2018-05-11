@@ -286,4 +286,58 @@ public class CheatSheet
         Intent myIntent = new Intent(anActivity, SettingsActivity.class);
         anActivity.startActivity(myIntent);
     }
+
+    /**
+     * Convert RGB to hue
+     * @param red - red pixel
+     * @param green - green pixel
+     * @param blue - blue pixel
+     * @return Returns the hue
+     */
+    public static double rgbToHue(int red, int green, int blue)
+    {
+        double rp = red / 255.0;
+        double bp = blue / 255.0;
+        double gp = green / 255.0;
+        double cMax = Math.max(Math.max(rp, bp), gp);
+        double cMin = Math.min(Math.min(rp, bp), gp);
+        double delta = cMax - cMin;
+        // Close enough
+        if (delta - 0.0005 < 0 && delta + 0.0005 > 0)
+        {
+            return 0;
+        }
+        else if (cMax - 0.0005 < rp && cMax + 0.0005 > rp)
+        {
+            return 60 * (((gp - bp) / delta) % 6);
+        }
+        else if (cMax - 0.0005 < gp && cMax + 0.0005 > gp)
+        {
+            return 60 * (((bp - rp) / delta) + 2);
+        }
+        return 60 * (((rp - gp) / delta) + 4);
+    }
+
+    /**
+     * Convert RGB to saturation
+     * @param red - red pixel
+     * @param green - green pixel
+     * @param blue - blue pixel
+     * @return Returns the saturation
+     */
+    public static double rgbToSaturation(int red, int green, int blue)
+    {
+        double rp = red / 255.0;
+        double bp = blue / 255.0;
+        double gp = green / 255.0;
+        double cMax = Math.max(Math.max(rp, bp), gp);
+        double cMin = Math.min(Math.min(rp, bp), gp);
+        double delta = cMax - cMin;
+        double lightness = (cMax + cMin) / 2;
+        if (delta < 0.0005 && delta > -0.0005)
+        {
+            return 0;
+        }
+        return delta / (1 - Math.abs(2 * lightness - 1));
+    }
 }
