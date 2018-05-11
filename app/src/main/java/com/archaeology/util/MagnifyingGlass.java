@@ -19,7 +19,8 @@ import android.widget.ImageView;
 public class MagnifyingGlass extends AppCompatImageView
 {
     private PointF zoomPos = new PointF(0, 0);
-    private boolean zooming = false, correctedAlready = false;
+    private boolean zooming = false;
+    public boolean correctedAlready = false;
     private Matrix matrix = new Matrix();
     public String location = "Exterior";
     public int red = -1, green = -1, blue = -1;

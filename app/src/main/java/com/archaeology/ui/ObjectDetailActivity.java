@@ -355,6 +355,7 @@ public class ObjectDetailActivity extends AppCompatActivity
                     public void onClick(View view)
                     {
                         LABEL.setVisibility(View.INVISIBLE);
+                        APPROVE_PHOTO_IMAGE.correctedAlready = true;
                         final Spinner LOCATIONS = approveDialog.findViewById(R.id.locationLabels);
                         LOCATIONS.setVisibility(View.VISIBLE);
                         TextView locationsLabel = approveDialog.findViewById(R.id.locationSpinnerLabel);
@@ -390,8 +391,11 @@ public class ObjectDetailActivity extends AppCompatActivity
                             @Override
                             public void onClick(View view)
                             {
-                                updateColorInDB(APPROVE_PHOTO_IMAGE.red, APPROVE_PHOTO_IMAGE.green,
-                                        APPROVE_PHOTO_IMAGE.blue, APPROVE_PHOTO_IMAGE.location);
+                                if (APPROVE_PHOTO_IMAGE.red >= 0)
+                                {
+                                    updateColorInDB(APPROVE_PHOTO_IMAGE.red, APPROVE_PHOTO_IMAGE.green,
+                                            APPROVE_PHOTO_IMAGE.blue, APPROVE_PHOTO_IMAGE.location);
+                                }
                                 String path = Environment.getExternalStorageDirectory() + "/Archaeology/temp.png";
                                 Bitmap bmp = ((BitmapDrawable) APPROVE_PHOTO_IMAGE.getDrawable()).getBitmap();
                                 FileOutputStream out = null;
@@ -427,6 +431,7 @@ public class ObjectDetailActivity extends AppCompatActivity
                                 // store image data into photo fragments
                                 loadPhotoIntoPhotoFragment(convertedURI, MARKED_AS_ADDED);
                                 approveDialog.dismiss();
+                                asyncPopulateFieldsFromDB(easting, northing, findNumber);
                             }
                         });
                     }

@@ -18,7 +18,7 @@ public class StateStatic
     public static final int MESSAGE_WEIGHT = 501;
     public static final int MESSAGE_STATUS_CHANGE = 502;
     public static final int REQUEST_ENABLE_BT = 503;
-    public static final String DEFAULT_WEB_SERVER_URL = "https://object-data-collector-service.herokuapp.com/";
+    public static final String DEFAULT_WEB_SERVER_URL = "https://object-data-collector-service.herokuapp.com";
     // Default URL to connect to database to send photos back and forth
     public static final String DEFAULT_BUCKET_URL = "s3.console.aws.amazon.com/s3/buckets/pennmuseum/";
     public static final String DEFAULT_CAMERA_MAC = "fe:c2:de:31:0a:e1";
