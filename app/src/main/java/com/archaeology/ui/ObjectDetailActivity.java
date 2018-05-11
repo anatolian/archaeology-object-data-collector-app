@@ -19,15 +19,15 @@ import android.os.Message;
 import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.android.volley.Request;
@@ -39,7 +39,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Set;
 import com.archaeology.R;
 import com.archaeology.models.StringObjectResponseWrapper;
@@ -52,7 +51,6 @@ import static com.archaeology.services.VolleyStringWrapper.makeVolleyStringObjec
 import static com.archaeology.util.CheatSheet.deleteOriginalAndThumbnailPhoto;
 import static com.archaeology.util.CheatSheet.getOutputMediaFile;
 import static com.archaeology.util.CheatSheet.goToSettings;
-import static com.archaeology.util.StateStatic.ALL_FIND_NUMBER;
 import static com.archaeology.util.StateStatic.LOG_TAG_BLUETOOTH;
 import static com.archaeology.util.StateStatic.MARKED_AS_ADDED;
 import static com.archaeology.util.StateStatic.MARKED_AS_TO_DOWNLOAD;
@@ -105,6 +103,7 @@ public class ObjectDetailActivity extends AppCompatActivity
     public BluetoothService bluetoothService;
     public BluetoothDevice device = null;
     private Bitmap photo;
+    private TextView findLabel;
     /**
      * Launch the activity
      * @param savedInstanceState - activity from memory
@@ -128,51 +127,67 @@ public class ObjectDetailActivity extends AppCompatActivity
         northing = Integer.parseInt(myBundle.getString("northing"));
         findNumber = Integer.parseInt(myBundle.getString("find_number"));
         // adding info about object to text field in view
-        fillFindInfo(easting + "", northing + "");
-        fillFindNumberSpinner();
-        ((Spinner) findViewById(R.id.find_spinner)).setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        findLabel = findViewById(R.id.find);
+        findLabel.setText("35.N." + easting + "." + northing + "." + findNumber);
+        findLabel.addTextChangedListener(new TextWatcher() {
             /**
-             * User selected item
-             * @param parent - spinner
-             * @param view - item selected
-             * @param position - item position
-             * @param id - item id
+             * Text changed
+             * @param s - new string
+             * @param start - starting index of changed text
+             * @param before - length of changed text
+             * @param count - number of new characters
              */
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
+            public void onTextChanged(CharSequence s, int start, int before, int count)
             {
-                // if the item you selected from the spinner has a different find number than the
-                // item returned from the last intent then cancel the request.
-                String x = ((Spinner) findViewById(R.id.find_spinner)).getItemAtPosition(position).toString();
-                int tmpFindNumber = Integer.parseInt(x);
-                if (findNumber != tmpFindNumber)
-                {
-                    findNumber = tmpFindNumber;
-                    queue.cancelAll(new RequestQueue.RequestFilter() {
-                        /**
-                         * Cancel all requests
-                         * @param request - request to cancel requests
-                         * @return Returns true
-                         */
-                        @Override
-                        public boolean apply(Request<?> request)
-                        {
-                            return true;
-                        }
-                    });
-                    asyncPopulateFieldsFromDB(easting, northing, findNumber);
-                    clearCurrentPhotosOnLayoutAndFetchPhotosAsync();
-                    fillFindNumberSpinner();
-                }
             }
 
             /**
-             * Nothing selected
-             * @param parent - spinner
+             * Called before text changes
+             * @param s - old string
+             * @param start - starting index of change
+             * @param count - number of characters to change
+             * @param after - length after
              */
             @Override
-            public void onNothingSelected(AdapterView<?> parent)
+            public void beforeTextChanged(CharSequence s, int start, int count, int after)
             {
+                queue.cancelAll(new RequestQueue.RequestFilter() {
+                    /**
+                     * Cancel all requests
+                     * @param request - request to cancel requests
+                     * @return Returns true
+                     */
+                    @Override
+                    public boolean apply(Request<?> request)
+                    {
+                        return true;
+                    }
+                });
+            }
+
+            /**
+             * Find label changed
+             * @param s - new find
+             */
+            @Override
+            public void afterTextChanged(Editable s)
+            {
+                Log.v("Changing label", s.toString());
+                String[] findTokens = s.toString().split("\\.");
+                // if the item you selected from the spinner has a different find number than the
+                // item returned from the last intent then cancel the request.
+                int tmpEasting = Integer.parseInt(findTokens[2]);
+                int tmpNorthing = Integer.parseInt(findTokens[3]);
+                int tmpFindNumber = Integer.parseInt(findTokens[4]);
+                if (tmpEasting != easting || tmpNorthing != northing || findNumber != tmpFindNumber)
+                {
+                    easting = tmpEasting;
+                    northing = tmpNorthing;
+                    findNumber = tmpFindNumber;
+                    asyncPopulateFieldsFromDB(easting, northing, findNumber);
+                    clearCurrentPhotosOnLayoutAndFetchPhotosAsync();
+                }
             }
         });
         // populate fields with information about object
@@ -859,28 +874,6 @@ public class ObjectDetailActivity extends AppCompatActivity
     }
 
     /**
-     * Display find number of items in spinner
-     */
-    public void fillFindNumberSpinner()
-    {
-        Bundle myBundle = getIntent().getExtras();
-        String[] findNumbers = myBundle.getStringArray(ALL_FIND_NUMBER);
-        Spinner findSpinner = findViewById(R.id.find_spinner);
-        CheatSheet.setSpinnerItems(this, findSpinner, Arrays.asList(findNumbers),
-                findNumber + "", R.layout.spinner_item);
-    }
-
-    /**
-     * Populate text fields with info about find
-     * @param easting - find easting
-     * @param northing - find northing
-     */
-    public void fillFindInfo(String easting, String northing)
-    {
-        ((TextView) findViewById(R.id.findInfo)).setText(getString(R.string.find_frmt, easting, northing));
-    }
-
-    /**
      * Clear current photos and populate with photos from database
      */
     public void clearCurrentPhotosOnLayoutAndFetchPhotosAsync()
@@ -891,18 +884,34 @@ public class ObjectDetailActivity extends AppCompatActivity
     }
 
     /**
-     * Navigate through items in spinner
+     * Navigate through items in database
      * @param view - button
      */
     public void goToNextItemIfAvailable(View view)
     {
-        Spinner find = findViewById(R.id.find_spinner);
-        int selectedItemPos = find.getSelectedItemPosition();
-        int itemCount = find.getCount();
-        if (selectedItemPos + 1 <= itemCount - 1)
-        {
-            find.setSelection(selectedItemPos + 1);
-        }
+        String URL = globalWebServerURL + "/get_next_find_id/?easting=" + easting + "&northing="
+                + northing + "&find=" + findNumber;
+        makeVolleyStringObjectRequest(URL, queue, new StringObjectResponseWrapper() {
+            /**
+             * Response received
+             * @param response - volley response
+             */
+            @Override
+            public void responseMethod(String response)
+            {
+                findLabel.setText("35.N." + response);
+            }
+
+            /**
+             * Connection failed
+             * @param error - failure
+             */
+            @Override
+            public void errorMethod(VolleyError error)
+            {
+                error.printStackTrace();
+            }
+        });
     }
 
     /**
@@ -911,12 +920,29 @@ public class ObjectDetailActivity extends AppCompatActivity
      */
     public void goToPreviousItemIfAvailable(View view)
     {
-        Spinner find = findViewById(R.id.find_spinner);
-        int selectedItemPos = find.getSelectedItemPosition();
-        if (selectedItemPos - 1 >= 0)
-        {
-            find.setSelection(selectedItemPos - 1);
-        }
+        String URL = globalWebServerURL + "/get_previous_find_id/?easting=" + easting + "&northing="
+                + northing + "&find=" + findNumber;
+        makeVolleyStringObjectRequest(URL, queue, new StringObjectResponseWrapper() {
+            /**
+             * Response received
+             * @param response - volley response
+             */
+            @Override
+            public void responseMethod(String response)
+            {
+                findLabel.setText("35.N." + response);
+            }
+
+            /**
+             * Connection failed
+             * @param error - failure
+             */
+            @Override
+            public void errorMethod(VolleyError error)
+            {
+                error.printStackTrace();
+            }
+        });
     }
 
     /**

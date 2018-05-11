@@ -24,7 +24,7 @@
     <string name="gram"> grams</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
-    <string name="find"> Find: </string>
+    <string name="find">Find: </string>
     <string name="new_weight">New Weight:</string>
     <string name="save_weight">Save Weight</string>
     <string name="minus">-</string>
@@ -44,7 +44,7 @@
     <string name="find_number">Find Number</string>
     <string name="northing">Northing</string>
     <string name="easting">Easting</string>
-    <string name = "find_frmt">%s.%s.</string>
+    <string name = "find_frmt">35.N.%s.%s.%s</string>
     <string name="long_frmt">%d</string>
     <string name="default_settings">Default Settings</string>
     <string name="save_settings">Save Settings</string>

@@ -23,26 +23,22 @@
                 android:text="@string/find"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textStyle="bold" />
+
             <TextView
-                android:id="@+id/findInfo"
+                android:id="@+id/find"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:layout_toEndOf="@+id/findNumberLabel"
-                android:background="#d7c474"
-                android:text=""
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textStyle="bold" />
-            <Spinner
-                android:id="@+id/find_spinner"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_toEndOf="@+id/findInfo" />
+                android:paddingEnd="10dp"
+                android:paddingStart="10dp"
+                android:textColor="@android:color/black"
+                android:textSize="20sp" />
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/find_spinner"
+                android:layout_below="@+id/find"
+                android:paddingTop="10dp"
                 android:orientation="horizontal"
                 android:id="@+id/cycle_button_container">
                 <Button
