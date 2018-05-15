@@ -189,6 +189,7 @@ public class InitialActivity extends AppCompatActivity
     {
         mWebServer.setEnabled(true);
         findViewById(R.id.connectButton).setEnabled(true);
+        Toast.makeText(this, "Connection failed", Toast.LENGTH_SHORT).show();
     }
 
     /**

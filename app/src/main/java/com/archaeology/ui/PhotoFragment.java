@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatImageView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -229,8 +230,8 @@ public class PhotoFragment extends Fragment
                     final int NORTHING = ((ObjectDetailActivity) PARENT_ACTIVITY).northing;
                     final int FIND_NUMBER = ((ObjectDetailActivity) PARENT_ACTIVITY).findNumber;
                     String URL = globalWebServerURL + "/upload_file";
-                    AsyncHTTPWrapper.makeImageUpload(URL, DICT_ENTRY.getKey(), "" + EASTING,
-                            "" + NORTHING, "" + FIND_NUMBER, new AsyncHTTPCallbackWrapper() {
+                    AsyncHTTPWrapper.makeImageUpload(URL, DICT_ENTRY.getKey(), String.valueOf(EASTING),
+                            String.valueOf(NORTHING), String.valueOf(FIND_NUMBER), new AsyncHTTPCallbackWrapper() {
                         /**
                          * Connection succeeded
                          * @param response - HTTP response
@@ -240,8 +241,9 @@ public class PhotoFragment extends Fragment
                         {
                             super.onSuccessCallback(response);
                             dictOfPhotoSyncStatus.put(DICT_ENTRY.getKey(), SYNCED);
-                            if (!response.contains("Error"))
+                            if (response.contains("https://") && !response.contains("form method"))
                             {
+                                Log.v("Uploading Image", response);
                                 Toast.makeText(PARENT_ACTIVITY, "Image Uploaded To Server", Toast.LENGTH_SHORT).show();
                             }
                             ((ObjectDetailActivity) PARENT_ACTIVITY).clearCurrentPhotosOnLayoutAndFetchPhotosAsync();

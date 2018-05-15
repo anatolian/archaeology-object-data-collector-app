@@ -64,20 +64,9 @@ public class MyWiFiActivity extends AppCompatActivity
     }
 
     /**
-     * Show found IP address
-     * @param view - view for IP address
-     */
-    public void showIPAddress(View view)
-    {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Remote IP Address").setMessage(CheatSheet.findIPFromMAC(cameraMACAddress));
-        builder.create().show();
-    }
-
-    /**
      * Get URL of IP
      * @param IP - IP to connect to
-     * @return Returns IP's URL
+     * @return Returns URL from IP
      */
     private String buildAPIURLFromIP(String IP)
     {

@@ -10,6 +10,8 @@
         <item>Interior</item>
     </string-array>
     <string name = "location">Location: </string>
+    <string name = "hemisphere">Hemisphere</string>
+    <string name = "zone">Zone</string>
     <string name="chroma">Chroma</string>
     <string name="lightness">Lightness</string>
     <string name="hue">Hue</string>

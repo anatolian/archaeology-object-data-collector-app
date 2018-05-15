@@ -101,7 +101,8 @@ public class ObjectDetailActivity extends AppCompatActivity
     // broadcast receiver objects used to receive messages from other devices
     BroadcastReceiver nutriScaleBroadcastReceiver;
     // correspond to columns in database associated with finds
-    int easting, northing, findNumber, imageNumber;
+    String hemisphere;
+    int zone, easting, northing, findNumber, imageNumber;
     public BluetoothService bluetoothService;
     public BluetoothDevice device = null;
     private Bitmap photo;
@@ -125,12 +126,14 @@ public class ObjectDetailActivity extends AppCompatActivity
         queue = Volley.newRequestQueue(this);
         // getting object data from previous activity
         Bundle myBundle = getIntent().getExtras();
+        hemisphere = myBundle.getString("hemispheres");
+        zone = Integer.parseInt(myBundle.getString("zone"));
         easting = Integer.parseInt(myBundle.getString("easting"));
         northing = Integer.parseInt(myBundle.getString("northing"));
         findNumber = Integer.parseInt(myBundle.getString("find_number"));
         // adding info about object to text field in view
         findLabel = findViewById(R.id.find);
-        findLabel.setText("35.N." + easting + "." + northing + "." + findNumber);
+        findLabel.setText(zone + "." + hemisphere + "." + easting + "." + northing + "." + findNumber);
         findLabel.addTextChangedListener(new TextWatcher() {
             /**
              * Text changed
@@ -175,7 +178,6 @@ public class ObjectDetailActivity extends AppCompatActivity
             @Override
             public void afterTextChanged(Editable s)
             {
-                Log.v("Changing label", s.toString());
                 String[] findTokens = s.toString().split("\\.");
                 // if the item you selected from the spinner has a different find number than the
                 // item returned from the last intent then cancel the request.
@@ -317,6 +319,10 @@ public class ObjectDetailActivity extends AppCompatActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
     {
+        if (fileURI == null)
+        {
+            return;
+        }
         String captureFile = fileURI.toString();
         final Uri FILE_URI;
         String originalFileName = captureFile.substring(captureFile.lastIndexOf('/') + 1);
@@ -397,6 +403,15 @@ public class ObjectDetailActivity extends AppCompatActivity
                                             APPROVE_PHOTO_IMAGE.blue, APPROVE_PHOTO_IMAGE.location);
                                 }
                                 String path = Environment.getExternalStorageDirectory() + "/Archaeology/temp.png";
+//                                File folder = new File(Environment.getExternalStorageDirectory() + "/Archaeology");
+//                                boolean success = true;
+//                                if (!folder.exists()) {
+//                                    success = folder.mkdirs();
+//                                }
+//                                if (!success)
+//                                {
+//                                    Toast.makeText(getApplicationContext(), "Directory creation failed", Toast.LENGTH_SHORT).show();
+//                                }
                                 Bitmap bmp = ((BitmapDrawable) APPROVE_PHOTO_IMAGE.getDrawable()).getBitmap();
                                 FileOutputStream out = null;
                                 try
@@ -406,7 +421,8 @@ public class ObjectDetailActivity extends AppCompatActivity
                                 }
                                 catch (Exception e)
                                 {
-                                    Toast.makeText(getApplicationContext(), "Could not save image", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getApplicationContext(), "Could not save image",
+                                            Toast.LENGTH_SHORT).show();
                                     e.printStackTrace();
                                 }
                                 finally
@@ -420,7 +436,8 @@ public class ObjectDetailActivity extends AppCompatActivity
                                     }
                                     catch (IOException e)
                                     {
-                                        Toast.makeText(getApplicationContext(), "Could not save image", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getApplicationContext(),
+                                                "Could not save image", Toast.LENGTH_SHORT).show();
                                         e.printStackTrace();
                                     }
                                 }
@@ -531,9 +548,10 @@ public class ObjectDetailActivity extends AppCompatActivity
      */
     public void updateColorInDB(int red, int green, int blue, String location)
     {
-        makeVolleyStringObjectRequest(globalWebServerURL + "set_color?easting=" + easting
-                        + "&northing=" + northing + "&find=" + findNumber + "&red=" + red
-                        + "&green=" + green + "&blue=" + blue + "&location=" + location.toLowerCase(), queue,
+        makeVolleyStringObjectRequest(globalWebServerURL + "set_color/?hemisphere="
+                        + hemisphere + "&zone=" + zone + "&easting=" + easting + "&northing="
+                        + northing + "&find=" + findNumber + "&red=" + red + "&green=" + green
+                        + "&blue=" + blue + "&location=" + location.toLowerCase(), queue,
                 new StringObjectResponseWrapper() {
             /**
              * Response received
@@ -575,8 +593,9 @@ public class ObjectDetailActivity extends AppCompatActivity
     {
         double weightInKg = weightInGrams / 1000.0;
         // making Python request to call the update method with updated params
-        makeVolleyStringObjectRequest(globalWebServerURL + "/set_weight?easting=" + easting
-                + "&northing=" + northing + "&find=" + findNumber + "&weight=" + weightInKg, queue,
+        makeVolleyStringObjectRequest(globalWebServerURL + "/set_weight/?hemisphere="
+                        + hemisphere + "&zone=" + zone + "&easting=" + easting + "&northing="
+                        + northing + "&find=" + findNumber + "&weight=" + weightInKg, queue,
                 new StringObjectResponseWrapper() {
             /**
              * Response received
@@ -609,9 +628,10 @@ public class ObjectDetailActivity extends AppCompatActivity
      */
     public void asyncPopulateFieldsFromDB(int easting, int northing, int findNumber)
     {
-        makeVolleyStringObjectRequest(globalWebServerURL + "/get_find_colors/?easting="
-                + easting + "&northing=" + northing + "&find=" + findNumber + "&location=exterior",
-                queue, new StringObjectResponseWrapper() {
+        makeVolleyStringObjectRequest(globalWebServerURL + "/get_find_colors/?hemisphere="
+                        + hemisphere + "&zone=" + zone + "&easting=" + easting + "&northing="
+                        + northing + "&find=" + findNumber + "&location=exterior", queue,
+                new StringObjectResponseWrapper() {
             /**
              * Response received
              * @param response - database response
@@ -642,9 +662,10 @@ public class ObjectDetailActivity extends AppCompatActivity
                 error.printStackTrace();
             }
         });
-        makeVolleyStringObjectRequest(globalWebServerURL + "/get_find_colors/?easting="
-                + easting + "&northing=" + northing + "&find=" + findNumber + "&location=interior",
-                queue, new StringObjectResponseWrapper() {
+        makeVolleyStringObjectRequest(globalWebServerURL + "/get_find_colors/?hemisphere="
+                        + hemisphere + "&zone=" + zone + "&easting=" + easting + "&northing="
+                        + northing + "&find=" + findNumber + "&location=interior", queue,
+                new StringObjectResponseWrapper() {
             /**
              * Response received
              * @param response - database response
@@ -675,8 +696,9 @@ public class ObjectDetailActivity extends AppCompatActivity
                 error.printStackTrace();
             }
         });
-        makeVolleyStringObjectRequest(globalWebServerURL + "/get_find/?easting=" + easting
-                        + "&northing=" + northing + "&find=" + findNumber, queue, new StringObjectResponseWrapper() {
+        makeVolleyStringObjectRequest(globalWebServerURL + "/get_find/?hemisphere=" + hemisphere
+                + "&zone=" + zone + "&easting=" + easting + "&northing=" + northing + "&find="
+                + findNumber, queue, new StringObjectResponseWrapper() {
             /**
              * Response received
              * @param response - database response
@@ -723,8 +745,8 @@ public class ObjectDetailActivity extends AppCompatActivity
      */
     public void asyncPopulatePhotos()
     {
-        String URL = globalWebServerURL + "/get_image_urls/?easting=" + easting + "&northing="
-                + northing + "&find=" + findNumber;
+        String URL = globalWebServerURL + "/get_image_urls/?hemisphere=" + hemisphere + "&zone="
+                + zone + "&easting=" + easting + "&northing=" + northing + "&find=" + findNumber;
         makeVolleyStringObjectRequest(URL, queue, new StringObjectResponseWrapper() {
             /**
              * Database response
@@ -978,8 +1000,8 @@ public class ObjectDetailActivity extends AppCompatActivity
      */
     public void goToNextItemIfAvailable(View view)
     {
-        String URL = globalWebServerURL + "/get_next_find_id/?easting=" + easting + "&northing="
-                + northing + "&find=" + findNumber;
+        String URL = globalWebServerURL + "/get_next_find_id/?hemisphere=" + hemisphere + "&zone="
+                + zone + "&easting=" + easting + "&northing=" + northing + "&find=" + findNumber;
         makeVolleyStringObjectRequest(URL, queue, new StringObjectResponseWrapper() {
             /**
              * Response received
@@ -988,7 +1010,7 @@ public class ObjectDetailActivity extends AppCompatActivity
             @Override
             public void responseMethod(String response)
             {
-                findLabel.setText("35.N." + response);
+                findLabel.setText(response);
             }
 
             /**
@@ -1009,8 +1031,8 @@ public class ObjectDetailActivity extends AppCompatActivity
      */
     public void goToPreviousItemIfAvailable(View view)
     {
-        String URL = globalWebServerURL + "/get_previous_find_id/?easting=" + easting + "&northing="
-                + northing + "&find=" + findNumber;
+        String URL = globalWebServerURL + "/get_previous_find_id/?hemisphere=" + hemisphere + "&zone="
+                + zone + "&easting=" + easting + "&northing=" + northing + "&find=" + findNumber;
         makeVolleyStringObjectRequest(URL, queue, new StringObjectResponseWrapper() {
             /**
              * Response received
@@ -1019,7 +1041,7 @@ public class ObjectDetailActivity extends AppCompatActivity
             @Override
             public void responseMethod(String response)
             {
-                findLabel.setText("35.N." + response);
+                findLabel.setText(response);
             }
 
             /**

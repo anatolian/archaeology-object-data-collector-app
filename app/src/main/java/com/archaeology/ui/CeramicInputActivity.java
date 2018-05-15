@@ -16,13 +16,13 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import com.archaeology.models.StringObjectResponseWrapper;
 import com.archaeology.util.CheatSheet;
 import com.archaeology.R;
 import static com.archaeology.services.VolleyStringWrapper.makeVolleyStringObjectRequest;
 import static com.archaeology.util.CheatSheet.goToSettings;
-import static com.archaeology.util.StateStatic.ALL_FIND_NUMBER;
+import static com.archaeology.util.StateStatic.HEMISPHERE;
+import static com.archaeology.util.StateStatic.ZONE;
 import static com.archaeology.util.StateStatic.EASTING;
 import static com.archaeology.util.StateStatic.NORTHING;
 import static com.archaeology.util.StateStatic.FIND_NUMBER;
@@ -36,9 +36,9 @@ public class CeramicInputActivity extends AppCompatActivity
     // representing database fields for object
     enum LoadState
     {
-        areaEasting, areaNorthing, findNumber
+        hemisphere, zone, areaEasting, areaNorthing, findNumber
     }
-    Spinner majorEastings, minorEastings, majorNorthings, minorNorthings, find;
+    Spinner hemispheres, zones, majorEastings, minorEastings, majorNorthings, minorNorthings, find;
     /**
      * Launch the activity
      * @param savedInstanceState - state from memory
@@ -58,6 +58,8 @@ public class CeramicInputActivity extends AppCompatActivity
         barProgressDialog = new ProgressDialog(this);
         barProgressDialog.setTitle("Downloading Information From Database ...");
         barProgressDialog.setIndeterminate(true);
+        hemispheres = findViewById(R.id.hemisphere);
+        zones = findViewById(R.id.zone);
         majorEastings = findViewById(R.id.major_easting);
         majorNorthings = findViewById(R.id.major_northing);
         find = findViewById(R.id.find_spinner);
@@ -74,6 +76,54 @@ public class CeramicInputActivity extends AppCompatActivity
         super.onStart();
         // calls methods to populate spinners with data gathered from the database northing,
         // easting, and find number
+        hemispheres.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            /**
+             * User selected an item
+             * @param parent - spinner
+             * @param view - container view
+             * @param position - selected item
+             * @param id - item id
+             */
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
+            {
+                clearZonesSpinner();
+                asyncGetZonesFromDB();
+            }
+
+            /**
+             * Nothing selected
+             * @param parent - spinner
+             */
+            @Override
+            public void onNothingSelected(AdapterView<?> parent)
+            {
+            }
+        });
+        zones.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            /**
+             * User selected an item
+             * @param parent - spinner
+             * @param view - container view
+             * @param position - selected item
+             * @param id - item id
+             */
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
+            {
+                clearMajorEastingsSpinner();
+                asyncGetMajorEastingsFromDB();
+            }
+
+            /**
+             * Nothing selected
+             * @param parent - spinner
+             */
+            @Override
+            public void onNothingSelected(AdapterView<?> parent)
+            {
+            }
+        });
         majorEastings.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             /**
              * User selected an item
@@ -186,7 +236,7 @@ public class CeramicInputActivity extends AppCompatActivity
         }
         else
         {
-            asyncGetMajorEastingsFromDB();
+            asyncGetHemispheresFromDB();
         }
     }
 
@@ -219,6 +269,15 @@ public class CeramicInputActivity extends AppCompatActivity
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    /**
+     * Fill major eastings
+     * @param entries - spinner values
+     */
+    public void fillZonesSpinner(ArrayList<String> entries)
+    {
+        CheatSheet.setSpinnerItems(this, zones, entries);
     }
 
     /**
@@ -267,6 +326,22 @@ public class CeramicInputActivity extends AppCompatActivity
     }
 
     /**
+     * Clear zones
+     */
+    public void clearZonesSpinner()
+    {
+        CheatSheet.setSpinnerItems(this, zones, new ArrayList<String>());
+    }
+
+    /**
+     * Clear major eastings
+     */
+    public void clearMajorEastingsSpinner()
+    {
+        CheatSheet.setSpinnerItems(this, majorEastings, new ArrayList<String>());
+    }
+
+    /**
      * Clear minor eastings
      */
     public void clearMinorEastingsSpinner()
@@ -301,10 +376,77 @@ public class CeramicInputActivity extends AppCompatActivity
     /**
      * Get area easting data and fill spinner
      */
+    public void asyncGetHemispheresFromDB()
+    {
+        allDataLoadInfo.put(LoadState.hemisphere, false);
+        String URL = globalWebServerURL + "/get_hemispheres/";
+        makeVolleyStringObjectRequest(URL, queue, new StringObjectResponseWrapper() {
+            /**
+             * Response received
+             * @param response - volley response
+             */
+            @Override
+            public void responseMethod(String response)
+            {
+                // converting HTML list of links to regular array to populate the spinner
+                fillZonesSpinner(CheatSheet.convertLinkListToArray(response));
+                allDataLoadInfo.put(LoadState.hemisphere, true);
+                toggleContinueButton();
+            }
+
+            /**
+             * Connection failed
+             * @param error - failure
+             */
+            @Override
+            public void errorMethod(VolleyError error)
+            {
+                error.printStackTrace();
+            }
+        });
+    }
+
+    /**
+     * Get area easting data and fill spinner
+     */
+    public void asyncGetZonesFromDB()
+    {
+        allDataLoadInfo.put(LoadState.zone, false);
+        String URL = globalWebServerURL + "/get_zones/?hemisphere=" + getSelectedHemisphere();
+        makeVolleyStringObjectRequest(URL, queue, new StringObjectResponseWrapper() {
+            /**
+             * Response received
+             * @param response - volley response
+             */
+            @Override
+            public void responseMethod(String response)
+            {
+                // converting HTML list of links to regular array to populate the spinner
+                fillMajorEastingsSpinner(CheatSheet.convertLinkListToArray(response));
+                allDataLoadInfo.put(LoadState.zone, true);
+                toggleContinueButton();
+            }
+
+            /**
+             * Connection failed
+             * @param error - failure
+             */
+            @Override
+            public void errorMethod(VolleyError error)
+            {
+                error.printStackTrace();
+            }
+        });
+    }
+
+    /**
+     * Get area easting data and fill spinner
+     */
     public void asyncGetMajorEastingsFromDB()
     {
         allDataLoadInfo.put(LoadState.areaEasting, false);
-        String URL = globalWebServerURL + "/get_eastings/";
+        String URL = globalWebServerURL + "/get_eastings/?hemisphere=" + getSelectedHemisphere()
+                + "&zone=" + getSelectedZone();
         makeVolleyStringObjectRequest(URL, queue, new StringObjectResponseWrapper() {
             /**
              * Response received
@@ -344,7 +486,8 @@ public class CeramicInputActivity extends AppCompatActivity
     public void asyncGetMinorEastingsFromDB()
     {
         allDataLoadInfo.put(LoadState.areaEasting, false);
-        String URL = globalWebServerURL + "/get_eastings/";
+        String URL = globalWebServerURL + "/get_eastings/?hemisphere=" + getSelectedHemisphere()
+                + "&zone=" + getSelectedZone();
         makeVolleyStringObjectRequest(URL, queue, new StringObjectResponseWrapper() {
             /**
              * Response received
@@ -387,8 +530,9 @@ public class CeramicInputActivity extends AppCompatActivity
     private void asyncGetMajorNorthingsFromDB()
     {
         allDataLoadInfo.put(LoadState.areaNorthing, false);
-        String URL = globalWebServerURL + "/get_northings/?easting=" + getSelectedMajorEasting() +
-                getSelectedMinorEasting();
+        String URL = globalWebServerURL + "/get_northings/?hemisphere=" + getSelectedHemisphere()
+                + "&zone=" + getSelectedZone() + "&easting=" + getSelectedMajorEasting()
+                + getSelectedMinorEasting();
         makeVolleyStringObjectRequest(URL, queue, new StringObjectResponseWrapper() {
             /**
              * Response received
@@ -429,8 +573,9 @@ public class CeramicInputActivity extends AppCompatActivity
     private void asyncGetMinorNorthingsFromDB()
     {
         allDataLoadInfo.put(LoadState.areaNorthing, false);
-        String URL = globalWebServerURL + "/get_northings/?easting=" + getSelectedMajorEasting() +
-                getSelectedMinorEasting();
+        String URL = globalWebServerURL + "/get_northings/?hemisphere=" + getSelectedHemisphere()
+                + "&find=" + getSelectedFindNumber() + "&easting=" + getSelectedMajorEasting()
+                + getSelectedMinorEasting();
         makeVolleyStringObjectRequest(URL, queue, new StringObjectResponseWrapper() {
             /**
              * Response received
@@ -475,7 +620,8 @@ public class CeramicInputActivity extends AppCompatActivity
     {
         allDataLoadInfo.put(LoadState.findNumber, false);
         toggleContinueButton();
-        String URL = globalWebServerURL + "/get_finds/?easting=" + getSelectedMajorEasting()
+        String URL = globalWebServerURL + "/get_finds/?hemisphere=" + getSelectedHemisphere()
+                + "&zone=" + getSelectedZone() + "&easting=" + getSelectedMajorEasting()
                 + getSelectedMinorEasting() + "&northing=" + getSelectedMajorNorthing()
                 + getSelectedMinorNorthing();
         makeVolleyStringObjectRequest(URL, queue, new StringObjectResponseWrapper() {
@@ -503,6 +649,24 @@ public class CeramicInputActivity extends AppCompatActivity
                 error.printStackTrace();
             }
         });
+    }
+
+    /**
+     * Get hemisphere
+     * @return Returns easting
+     */
+    public String getSelectedHemisphere()
+    {
+        return hemispheres.getSelectedItem().toString();
+    }
+
+    /**
+     * Get zone
+     * @return Returns easting
+     */
+    public String getSelectedZone()
+    {
+        return zones.getSelectedItem().toString();
     }
 
     /**
@@ -595,11 +759,11 @@ public class CeramicInputActivity extends AppCompatActivity
     {
         cancelAllVolleyRequests(queue);
         Intent tmpIntent = new Intent(this, ObjectDetailActivity.class);
+        tmpIntent.putExtra(HEMISPHERE, getSelectedHemisphere());
+        tmpIntent.putExtra(ZONE, getSelectedZone());
         tmpIntent.putExtra(EASTING, getSelectedMajorEasting() + getSelectedMinorEasting());
         tmpIntent.putExtra(NORTHING, getSelectedMajorNorthing() + getSelectedMinorNorthing());
         tmpIntent.putExtra(FIND_NUMBER, getSelectedFindNumber());
-        List<String> availableFindNumbers = CheatSheet.getSpinnerItems(find);
-        tmpIntent.putExtra(ALL_FIND_NUMBER, availableFindNumbers.toArray(new String[availableFindNumbers.size()]));
         startActivity(tmpIntent);
     }
 }

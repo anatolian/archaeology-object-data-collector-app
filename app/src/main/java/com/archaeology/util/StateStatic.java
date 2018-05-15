@@ -30,7 +30,8 @@ public class StateStatic
     public static final String SYNCED = "S";
     public static final String MARKED_AS_ADDED = "A";
     public static final String MARKED_AS_TO_DOWNLOAD = "D";
-    // fields in the database
+    public static final String HEMISPHERE = "hemisphere";
+    public static final String ZONE = "zone";
     public static final String EASTING = "easting";
     public static final String NORTHING = "northing";
     public static final String FIND_NUMBER = "find_number";
