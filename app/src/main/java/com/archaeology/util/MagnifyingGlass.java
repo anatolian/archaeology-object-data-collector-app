@@ -92,11 +92,11 @@ public class MagnifyingGlass extends AppCompatImageView
                     this.invalidate();
                 }
                 else {
-                    Log.v("Getting pixels", "(" + rgbValues[0] + ", " + rgbValues[1] + ", " + rgbValues[2] + ")");
-                    Log.v("Current location", location);
                     red = rgbValues[0];
                     green = rgbValues[1];
                     blue = rgbValues[2];
+                    Log.v("Getting pixels", "(" + red + ", " + green + ", " + blue + ")");
+                    Log.v("Current location", location);
                 }
                 break;
             default:

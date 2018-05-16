@@ -27,8 +27,11 @@
     <string name="correct_color">Correct Color</string>
     <string name="add_photo">Add Photo</string>
     <string name="no_remote_camera">No Remote Camera Detected</string>
-    <string name="interior_color">Interior Color</string>
-    <string name="exterior_color">Exterior Color</string>
+    <string name="interior_surface">Interior Surface</string>
+    <string name="exterior_surface">Exterior Surface</string>
+    <string name="core">Core</string>
+    <string name="interior_slip">Interior Slip</string>
+    <string name="exterior_slip">Exterior Slip</string>
     <string name="surface">Surface Type</string>
     <string name="record_weight">Record Weight</string>
     <string name="gram"> grams</string>

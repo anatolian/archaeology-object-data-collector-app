@@ -63,7 +63,6 @@ import static com.archaeology.util.StateStatic.MARKED_AS_TO_DOWNLOAD;
 import static com.archaeology.util.StateStatic.MESSAGE_STATUS_CHANGE;
 import static com.archaeology.util.StateStatic.MESSAGE_WEIGHT;
 import static com.archaeology.util.StateStatic.NORTHING;
-import static com.archaeology.util.StateStatic.REQUEST_ENABLE_BT;
 import static com.archaeology.util.StateStatic.REQUEST_IMAGE_CAPTURE;
 import static com.archaeology.util.StateStatic.REQUEST_REMOTE_IMAGE;
 import static com.archaeology.util.StateStatic.ZONE;
@@ -105,7 +104,7 @@ public class ObjectDetailActivity extends AppCompatActivity
     // dialogs set up in order to provide interface to interact with other devices
     AlertDialog weightDialog, pickPeersDialog;
     // broadcast receiver objects used to receive messages from other devices
-    BroadcastReceiver nutriScaleBroadcastReceiver;
+    BroadcastReceiver nutriScaleBroadcastReceiver = null;
     // correspond to columns in database associated with finds
     String hemisphere;
     int zone, easting, northing, findNumber, imageNumber;
@@ -186,21 +185,26 @@ public class ObjectDetailActivity extends AppCompatActivity
                 String[] findTokens = s.toString().split("\\.");
                 // if the item you selected from the spinner has a different find number than the
                 // item returned from the last intent then cancel the request.
+                String tmpHemisphere = findTokens[0];
+                int tmpZone = Integer.parseInt(findTokens[1]);
                 int tmpEasting = Integer.parseInt(findTokens[2]);
                 int tmpNorthing = Integer.parseInt(findTokens[3]);
                 int tmpFindNumber = Integer.parseInt(findTokens[4]);
-                if (tmpEasting != easting || tmpNorthing != northing || findNumber != tmpFindNumber)
+                if (!tmpHemisphere.equals(hemisphere) || tmpZone != zone || tmpEasting != easting
+                        || tmpNorthing != northing || findNumber != tmpFindNumber)
                 {
+                    hemisphere = tmpHemisphere;
+                    zone = tmpZone;
                     easting = tmpEasting;
                     northing = tmpNorthing;
                     findNumber = tmpFindNumber;
-                    asyncPopulateFieldsFromDB(easting, northing, findNumber);
+                    asyncPopulateFieldsFromDB(hemisphere, zone, easting, northing, findNumber);
                     clearCurrentPhotosOnLayoutAndFetchPhotosAsync();
                 }
             }
         });
         // populate fields with information about object
-        asyncPopulateFieldsFromDB(easting, northing, findNumber);
+        asyncPopulateFieldsFromDB(hemisphere, zone, easting, northing, findNumber);
         asyncPopulatePhotos();
         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         // check to see if bluetooth is enabled
@@ -214,12 +218,6 @@ public class ObjectDetailActivity extends AppCompatActivity
         }
         else
         {
-            // checking once again if not enabled. if it is not then enable it
-            if (!mBluetoothAdapter.isEnabled())
-            {
-                Intent enableBluetoothIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                startActivityForResult(enableBluetoothIntent, REQUEST_ENABLE_BT);
-            }
             nutriScaleBroadcastReceiver = new NutriScaleBroadcastReceiver(handler);
         }
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -402,8 +400,13 @@ public class ObjectDetailActivity extends AppCompatActivity
                             @Override
                             public void onClick(View view)
                             {
-                                if (APPROVE_PHOTO_IMAGE.red >= 0)
+                                Log.v("Color: ", "" + APPROVE_PHOTO_IMAGE.red);
+                                if (APPROVE_PHOTO_IMAGE.red != -1)
                                 {
+                                    Log.v("Color: ", "Calling update color");
+                                    Log.v("Color: ", "(" + APPROVE_PHOTO_IMAGE.red + ", "
+                                            + APPROVE_PHOTO_IMAGE.green + ", " + APPROVE_PHOTO_IMAGE.blue + ")");
+                                    Log.v("Color: ", APPROVE_PHOTO_IMAGE.location);
                                     updateColorInDB(APPROVE_PHOTO_IMAGE.red, APPROVE_PHOTO_IMAGE.green,
                                             APPROVE_PHOTO_IMAGE.blue, APPROVE_PHOTO_IMAGE.location);
                                 }
@@ -457,7 +460,7 @@ public class ObjectDetailActivity extends AppCompatActivity
                                 // store image data into photo fragments
                                 loadPhotoIntoPhotoFragment(convertedURI, MARKED_AS_ADDED);
                                 approveDialog.dismiss();
-                                asyncPopulateFieldsFromDB(easting, northing, findNumber);
+                                asyncPopulateFieldsFromDB(hemisphere, zone, easting, northing, findNumber);
                             }
                         });
                     }
@@ -507,7 +510,10 @@ public class ObjectDetailActivity extends AppCompatActivity
     protected void onResume()
     {
         super.onResume();
-        registerReceiver(nutriScaleBroadcastReceiver, mIntentFilter);
+        if (nutriScaleBroadcastReceiver != null)
+        {
+            registerReceiver(nutriScaleBroadcastReceiver, mIntentFilter);
+        }
     }
 
     /**
@@ -521,13 +527,9 @@ public class ObjectDetailActivity extends AppCompatActivity
         {
             pickPeersDialog.dismiss();
         }
-        try
+        if (nutriScaleBroadcastReceiver != null)
         {
             unregisterReceiver(nutriScaleBroadcastReceiver);
-        }
-        catch (IllegalArgumentException e)
-        {
-            Log.v(LOG_TAG_BLUETOOTH, "Trying to unregister non-registered receiver");
         }
     }
 
@@ -538,13 +540,9 @@ public class ObjectDetailActivity extends AppCompatActivity
     public void onPause()
     {
         super.onPause();
-        try
+        if (nutriScaleBroadcastReceiver != null)
         {
             unregisterReceiver(nutriScaleBroadcastReceiver);
-        }
-        catch (IllegalArgumentException e)
-        {
-            Log.v(LOG_TAG_BLUETOOTH, "Trying to unregister non-registered receiver");
         }
     }
 
@@ -557,11 +555,11 @@ public class ObjectDetailActivity extends AppCompatActivity
      */
     public void updateColorInDB(int red, int green, int blue, String location)
     {
-        makeVolleyStringObjectRequest(globalWebServerURL + "set_color/?hemisphere="
-                        + hemisphere + "&zone=" + zone + "&easting=" + easting + "&northing="
-                        + northing + "&find=" + findNumber + "&red=" + red + "&green=" + green
-                        + "&blue=" + blue + "&location=" + location.toLowerCase(), queue,
-                new StringObjectResponseWrapper() {
+        String path = globalWebServerURL + "/set_color/?hemisphere=" + hemisphere + "&zone=" + zone
+                + "&easting=" + easting + "&northing=" + northing + "&find=" + findNumber + "&red="
+                + red + "&green=" + green + "&blue=" + blue + "&location="
+                + location.toLowerCase().replaceAll(" ", "%20");
+        makeVolleyStringObjectRequest(path, queue, new StringObjectResponseWrapper() {
             /**
              * Response received
              * @param response - database response
@@ -635,11 +633,12 @@ public class ObjectDetailActivity extends AppCompatActivity
      * @param northing - find northing
      * @param findNumber - find
      */
-    public void asyncPopulateFieldsFromDB(int easting, int northing, int findNumber)
+    public void asyncPopulateFieldsFromDB(String hemisphere, int zone, int easting, int northing, int findNumber)
     {
+        clearFields();
         makeVolleyStringObjectRequest(globalWebServerURL + "/get_find_colors/?hemisphere="
                         + hemisphere + "&zone=" + zone + "&easting=" + easting + "&northing="
-                        + northing + "&find=" + findNumber + "&location=exterior", queue,
+                        + northing + "&find=" + findNumber + "&location=exterior%20surface", queue,
                 new StringObjectResponseWrapper() {
             /**
              * Response received
@@ -653,7 +652,7 @@ public class ObjectDetailActivity extends AppCompatActivity
                     // Response Schema: munsell_hue_number, munsell_hue_letter, munsell_lightness_value,
                     // munsell_chroma, rgb_red_256_bit, rgb_green_256_bit, rgb_blue_256_bit
                     String[] obj = response.split("\n")[1].split(" \\| ");
-                    populateExteriorColorFields(obj[0] + obj[1], obj[2], obj[3]);
+                    populateExteriorSurfaceFields(obj[0] + obj[1], obj[2], obj[3]);
                 }
                 catch (ArrayIndexOutOfBoundsException e)
                 {
@@ -673,7 +672,7 @@ public class ObjectDetailActivity extends AppCompatActivity
         });
         makeVolleyStringObjectRequest(globalWebServerURL + "/get_find_colors/?hemisphere="
                         + hemisphere + "&zone=" + zone + "&easting=" + easting + "&northing="
-                        + northing + "&find=" + findNumber + "&location=interior", queue,
+                        + northing + "&find=" + findNumber + "&location=interior%20surface", queue,
                 new StringObjectResponseWrapper() {
             /**
              * Response received
@@ -684,10 +683,105 @@ public class ObjectDetailActivity extends AppCompatActivity
             {
                 try
                 {
-                    // Response Schema: munsell_hue_number, munsell_hue_letter, munsell_lightness_value,
-                    // munsell_chroma, rgb_red_256_bit, rgb_green_256_bit, rgb_blue_256_bit
+                    Log.v("Response", response);
                     String[] obj = response.split("\n")[1].split(" \\| ");
-                    populateInteriorColorFields(obj[0] + obj[1], obj[2], obj[3]);
+                    populateInteriorSurfaceFields(obj[0] + obj[1], obj[2], obj[3]);
+                }
+                catch (ArrayIndexOutOfBoundsException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+
+            /**
+             * Connection failed
+             * @param error - failure
+             */
+            @Override
+            public void errorMethod(VolleyError error)
+            {
+                error.printStackTrace();
+            }
+        });
+        makeVolleyStringObjectRequest(globalWebServerURL + "/get_find_colors/?hemisphere="
+                        + hemisphere + "&zone=" + zone + "&easting=" + easting + "&northing="
+                        + northing + "&find=" + findNumber + "&location=core", queue,
+                new StringObjectResponseWrapper() {
+            /**
+             * Response received
+             * @param response - database response
+             */
+            @Override
+            public void responseMethod(String response)
+            {
+                try
+                {
+                    String[] obj = response.split("\n")[1].split(" \\| ");
+                    populateCoreFields(obj[0] + obj[1], obj[2], obj[3]);
+                }
+                catch (ArrayIndexOutOfBoundsException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+
+            /**
+             * Connection failed
+             * @param error - failure
+             */
+            @Override
+            public void errorMethod(VolleyError error)
+            {
+                error.printStackTrace();
+            }
+        });
+        makeVolleyStringObjectRequest(globalWebServerURL + "/get_find_colors/?hemisphere="
+                        + hemisphere + "&zone=" + zone + "&easting=" + easting + "&northing="
+                        + northing + "&find=" + findNumber + "&location=interior%20slip", queue,
+                new StringObjectResponseWrapper() {
+            /**
+             * Response received
+             * @param response - database response
+             */
+            @Override
+            public void responseMethod(String response)
+            {
+                try
+                {
+                    String[] obj = response.split("\n")[1].split(" \\| ");
+                    populateInteriorSlipFields(obj[0] + obj[1], obj[2], obj[3]);
+                }
+                catch (ArrayIndexOutOfBoundsException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+
+            /**
+             * Connection failed
+             * @param error - failure
+             */
+            @Override
+            public void errorMethod(VolleyError error)
+            {
+                error.printStackTrace();
+            }
+        });
+        makeVolleyStringObjectRequest(globalWebServerURL + "/get_find_colors/?hemisphere="
+                        + hemisphere + "&zone=" + zone + "&easting=" + easting + "&northing="
+                        + northing + "&find=" + findNumber + "&location=exterior%20slip", queue,
+                new StringObjectResponseWrapper() {
+            /**
+             * Response received
+             * @param response - database response
+             */
+            @Override
+            public void responseMethod(String response)
+            {
+                try
+                {
+                    String[] obj = response.split("\n")[1].split(" \\| ");
+                    populateExteriorSlipFields(obj[0] + obj[1], obj[2], obj[3]);
                 }
                 catch (ArrayIndexOutOfBoundsException e)
                 {
@@ -723,12 +817,12 @@ public class ObjectDetailActivity extends AppCompatActivity
                     String[] obj = response.split("\n")[1].split(" \\| ");
                     if (obj[8].equals("null") || obj[8].equals("None") || obj[8].equals(""))
                     {
-                        getWeightInputText().setText(getString(R.string.nil));
+                        ((TextView) findViewById(R.id.weightInput)).setText(getString(R.string.nil));
                     }
                     else
                     {
                         BluetoothService.currWeight = (int) (1000 * Double.parseDouble(obj[8]));
-                        getWeightInputText().setText(String.valueOf(BluetoothService.currWeight));
+                        ((TextView) findViewById(R.id.weightInput)).setText(String.valueOf(BluetoothService.currWeight));
                     }
                 }
                 catch (ArrayIndexOutOfBoundsException e)
@@ -747,6 +841,29 @@ public class ObjectDetailActivity extends AppCompatActivity
                 error.printStackTrace();
             }
         });
+    }
+
+    /**
+     * Clear field values
+     */
+    public void clearFields()
+    {
+        ((TextView) findViewById(R.id.core_hue)).setText("");
+        ((TextView) findViewById(R.id.core_lightness)).setText("");
+        ((TextView) findViewById(R.id.core_chroma)).setText("");
+        ((TextView) findViewById(R.id.exterior_surface_hue)).setText("");
+        ((TextView) findViewById(R.id.exterior_surface_lightness)).setText("");
+        ((TextView) findViewById(R.id.exterior_surface_chroma)).setText("");
+        ((TextView) findViewById(R.id.interior_surface_hue)).setText("");
+        ((TextView) findViewById(R.id.interior_surface_lightness)).setText("");
+        ((TextView) findViewById(R.id.interior_surface_chroma)).setText("");
+        ((TextView) findViewById(R.id.interior_slip_hue)).setText("");
+        ((TextView) findViewById(R.id.interior_slip_lightness)).setText("");
+        ((TextView) findViewById(R.id.interior_slip_chroma)).setText("");
+        ((TextView) findViewById(R.id.exterior_slip_hue)).setText("");
+        ((TextView) findViewById(R.id.exterior_slip_lightness)).setText("");
+        ((TextView) findViewById(R.id.exterior_slip_chroma)).setText("");
+        ((TextView) findViewById(R.id.weightInput)).setText("");
     }
 
     /**
@@ -785,16 +902,55 @@ public class ObjectDetailActivity extends AppCompatActivity
     }
 
     /**
-     * Populate text fields with interior color
+     * Populate text fields with interior surface
      * @param hue - image hue
      * @param lightness - image lightness
      * @param chroma - image chroma
      */
-    public void populateInteriorColorFields(String hue, String lightness, String chroma)
+    public void populateInteriorSurfaceFields(String hue, String lightness, String chroma)
     {
-        ((TextView) findViewById(R.id.interior_color_hue)).setText(hue.trim());
-        ((TextView) findViewById(R.id.interior_color_lightness)).setText(lightness.trim());
-        ((TextView) findViewById(R.id.interior_color_chroma)).setText(chroma.trim());
+        ((TextView) findViewById(R.id.interior_surface_hue)).setText(hue.trim());
+        ((TextView) findViewById(R.id.interior_surface_lightness)).setText(lightness.trim());
+        ((TextView) findViewById(R.id.interior_surface_chroma)).setText(chroma.trim());
+    }
+
+    /**
+     * Populate text fields with exterior surface
+     * @param hue - image hue
+     * @param lightness - image lightness
+     * @param chroma - image chroma
+     */
+    public void populateExteriorSurfaceFields(String hue, String lightness, String chroma)
+    {
+        ((TextView) findViewById(R.id.exterior_surface_hue)).setText(hue.trim());
+        ((TextView) findViewById(R.id.exterior_surface_lightness)).setText(lightness.trim());
+        ((TextView) findViewById(R.id.exterior_surface_chroma)).setText(chroma.trim());
+    }
+
+    /**
+     * Populate text fields with core
+     * @param hue - image hue
+     * @param lightness - image lightness
+     * @param chroma - image chroma
+     */
+    public void populateCoreFields(String hue, String lightness, String chroma)
+    {
+        ((TextView) findViewById(R.id.core_hue)).setText(hue.trim());
+        ((TextView) findViewById(R.id.core_lightness)).setText(lightness.trim());
+        ((TextView) findViewById(R.id.core_chroma)).setText(chroma.trim());
+    }
+
+    /**
+     * Populate text fields with exterior slip
+     * @param hue - image hue
+     * @param lightness - image lightness
+     * @param chroma - image chroma
+     */
+    public void populateExteriorSlipFields(String hue, String lightness, String chroma)
+    {
+        ((TextView) findViewById(R.id.exterior_slip_hue)).setText(hue.trim());
+        ((TextView) findViewById(R.id.exterior_slip_lightness)).setText(lightness.trim());
+        ((TextView) findViewById(R.id.exterior_slip_chroma)).setText(chroma.trim());
     }
 
     /**
@@ -803,20 +959,11 @@ public class ObjectDetailActivity extends AppCompatActivity
      * @param lightness - image lightness
      * @param chroma - image chroma
      */
-    public void populateExteriorColorFields(String hue, String lightness, String chroma)
+    public void populateInteriorSlipFields(String hue, String lightness, String chroma)
     {
-        ((TextView) findViewById(R.id.exterior_color_hue)).setText(hue.trim());
-        ((TextView) findViewById(R.id.exterior_color_lightness)).setText(lightness.trim());
-        ((TextView) findViewById(R.id.exterior_color_chroma)).setText(chroma.trim());
-    }
-
-    /**
-     * Get weight
-     * @return Returns weight
-     */
-    public TextView getWeightInputText()
-    {
-        return (TextView) findViewById(R.id.weightInput);
+        ((TextView) findViewById(R.id.interior_slip_hue)).setText(hue.trim());
+        ((TextView) findViewById(R.id.interior_slip_lightness)).setText(lightness.trim());
+        ((TextView) findViewById(R.id.interior_slip_chroma)).setText(chroma.trim());
     }
 
     /**
@@ -854,7 +1001,7 @@ public class ObjectDetailActivity extends AppCompatActivity
         try
         {
             ((TextView) findViewById(R.id.weightInput)).setText(weight);
-            asyncModifyWeightFieldInDB(Double.parseDouble(getWeightInputText().getText().toString()),
+            asyncModifyWeightFieldInDB(Double.parseDouble(((TextView) findViewById(R.id.weightInput)).getText().toString()),
                     easting, northing, findNumber);
         }
         catch (NumberFormatException e)

@@ -131,7 +131,7 @@
                     android:textStyle="bold" />
             </TableRow>
             <TableRow
-                android:id="@+id/exteriorColorRow"
+                android:id="@+id/exteriorSurfaceRow"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
                 <TextView
@@ -139,12 +139,12 @@
                     android:layout_width="1dp"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="@string/exterior_color"
+                    android:text="@string/exterior_surface"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:textColor="@android:color/black"
                     android:textStyle="italic" />
                 <TextView
-                    android:id="@+id/exterior_color_hue"
+                    android:id="@+id/exterior_surface_hue"
                     android:layout_width="1dp"
                     android:layout_height="wrap_content"
                     android:layout_column="1"
@@ -152,7 +152,7 @@
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:textColor="@android:color/black" />
                 <TextView
-                    android:id="@+id/exterior_color_lightness"
+                    android:id="@+id/exterior_surface_lightness"
                     android:layout_width="1dp"
                     android:layout_height="wrap_content"
                     android:layout_column="2"
@@ -160,7 +160,7 @@
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:textColor="@android:color/black" />
                 <TextView
-                    android:id="@+id/exterior_color_chroma"
+                    android:id="@+id/exterior_surface_chroma"
                     android:layout_width="1dp"
                     android:layout_height="wrap_content"
                     android:layout_column="3"
@@ -169,20 +169,20 @@
                     android:textColor="@android:color/black" />
             </TableRow>
             <TableRow
-                android:id="@+id/interiorColorRow"
+                android:id="@+id/interiorSurfaceRow"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
                 <TextView
-                    android:id="@+id/textView35"
+                    android:id="@+id/textView32"
                     android:layout_width="1dp"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="@string/interior_color"
+                    android:text="@string/interior_surface"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:textColor="@android:color/black"
                     android:textStyle="italic" />
                 <TextView
-                    android:id="@+id/interior_color_hue"
+                    android:id="@+id/interior_surface_hue"
                     android:layout_width="1dp"
                     android:layout_height="wrap_content"
                     android:layout_column="1"
@@ -190,7 +190,7 @@
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:textColor="@android:color/black" />
                 <TextView
-                    android:id="@+id/interior_color_lightness"
+                    android:id="@+id/interior_surface_lightness"
                     android:layout_width="1dp"
                     android:layout_height="wrap_content"
                     android:layout_column="2"
@@ -198,7 +198,121 @@
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:textColor="@android:color/black" />
                 <TextView
-                    android:id="@+id/interior_color_chroma"
+                    android:id="@+id/interior_surface_chroma"
+                    android:layout_width="1dp"
+                    android:layout_height="wrap_content"
+                    android:layout_column="3"
+                    android:gravity="center"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@android:color/black" />
+            </TableRow>
+            <TableRow
+                android:id="@+id/coreRow"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <TextView
+                    android:id="@+id/textView33"
+                    android:layout_width="1dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/core"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@android:color/black"
+                    android:textStyle="italic" />
+                <TextView
+                    android:id="@+id/core_hue"
+                    android:layout_width="1dp"
+                    android:layout_height="wrap_content"
+                    android:layout_column="1"
+                    android:gravity="center"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@android:color/black" />
+                <TextView
+                    android:id="@+id/core_lightness"
+                    android:layout_width="1dp"
+                    android:layout_height="wrap_content"
+                    android:layout_column="2"
+                    android:gravity="center"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@android:color/black" />
+                <TextView
+                    android:id="@+id/core_chroma"
+                    android:layout_width="1dp"
+                    android:layout_height="wrap_content"
+                    android:layout_column="3"
+                    android:gravity="center"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@android:color/black" />
+            </TableRow>
+            <TableRow
+                android:id="@+id/exteriorSlipRow"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <TextView
+                    android:id="@+id/textView34"
+                    android:layout_width="1dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/exterior_slip"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@android:color/black"
+                    android:textStyle="italic" />
+                <TextView
+                    android:id="@+id/exterior_slip_hue"
+                    android:layout_width="1dp"
+                    android:layout_height="wrap_content"
+                    android:layout_column="1"
+                    android:gravity="center"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@android:color/black" />
+                <TextView
+                    android:id="@+id/exterior_slip_lightness"
+                    android:layout_width="1dp"
+                    android:layout_height="wrap_content"
+                    android:layout_column="2"
+                    android:gravity="center"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@android:color/black" />
+                <TextView
+                    android:id="@+id/exterior_slip_chroma"
+                    android:layout_width="1dp"
+                    android:layout_height="wrap_content"
+                    android:layout_column="3"
+                    android:gravity="center"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@android:color/black" />
+            </TableRow>
+            <TableRow
+                android:id="@+id/interiorSlipRow"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <TextView
+                    android:id="@+id/textView35"
+                    android:layout_width="1dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/interior_slip"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@android:color/black"
+                    android:textStyle="italic" />
+                <TextView
+                    android:id="@+id/interior_slip_hue"
+                    android:layout_width="1dp"
+                    android:layout_height="wrap_content"
+                    android:layout_column="1"
+                    android:gravity="center"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@android:color/black" />
+                <TextView
+                    android:id="@+id/interior_slip_lightness"
+                    android:layout_width="1dp"
+                    android:layout_height="wrap_content"
+                    android:layout_column="2"
+                    android:gravity="center"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@android:color/black" />
+                <TextView
+                    android:id="@+id/interior_slip_chroma"
                     android:layout_width="1dp"
                     android:layout_height="wrap_content"
                     android:layout_column="3"
