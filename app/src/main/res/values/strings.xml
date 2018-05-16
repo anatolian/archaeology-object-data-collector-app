@@ -6,8 +6,11 @@
         <item>Remote Camera</item>
     </string-array>
     <string-array name="location_labels">
-        <item>Exterior</item>
-        <item>Interior</item>
+        <item>Exterior Surface</item>
+        <item>Interior Surface</item>
+        <item>Core</item>
+        <item>Exterior Slip</item>
+        <item>Interior Slip</item>
     </string-array>
     <string name = "location">Location: </string>
     <string name = "hemisphere">Hemisphere</string>

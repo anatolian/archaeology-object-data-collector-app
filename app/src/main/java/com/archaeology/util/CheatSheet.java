@@ -4,11 +4,15 @@ package com.archaeology.util;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Environment;
+import android.provider.MediaStore;
+import android.support.media.ExifInterface;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import java.io.BufferedReader;
@@ -170,6 +174,58 @@ public class CheatSheet
     }
 
     /**
+     * Correct for exif rotation in image
+     * @param img - image to rotate
+     * @param context - calling context
+     * @param selectedImage - image uri
+     * @return Returns the rotated image
+     * @throws IOException if the image cannot be opened
+     */
+    public static Bitmap rotateImageIfRequired(Bitmap img, Context context, Uri selectedImage) throws IOException
+    {
+        if (selectedImage.getScheme().equals("content"))
+        {
+            String[] projection = {MediaStore.Images.ImageColumns.ORIENTATION};
+            Cursor c = context.getContentResolver().query(selectedImage, projection, null, null, null);
+            if (c.moveToFirst())
+            {
+                final int rotation = c.getInt(0);
+                c.close();
+                return rotateImage(img, rotation);
+            }
+            return img;
+        }
+        else {
+            ExifInterface ei = new ExifInterface(selectedImage.getPath());
+            int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+            switch (orientation)
+            {
+                case ExifInterface.ORIENTATION_ROTATE_90:
+                    return rotateImage(img, 90);
+                case ExifInterface.ORIENTATION_ROTATE_180:
+                    return rotateImage(img, 180);
+                case ExifInterface.ORIENTATION_ROTATE_270:
+                    return rotateImage(img, 270);
+                default:
+                    return img;
+            }
+        }
+    }
+
+    /**
+     * Rotate an image
+     * @param img - image to rotate
+     * @param degree - degree to rotate
+     * @return Returns the rotated image
+     */
+    private static Bitmap rotateImage(Bitmap img, int degree)
+    {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(degree);
+        return Bitmap.createBitmap(img, 0, 0, img.getWidth(), img.getHeight(), matrix, true);
+    }
+
+    /**
      * Count number of links in the string
      * @param body - string to search
      * @return Returns the number of links in the string
@@ -285,59 +341,5 @@ public class CheatSheet
     {
         Intent myIntent = new Intent(anActivity, SettingsActivity.class);
         anActivity.startActivity(myIntent);
-    }
-
-    /**
-     * Convert RGB to hue
-     * @param red - red pixel
-     * @param green - green pixel
-     * @param blue - blue pixel
-     * @return Returns the hue
-     */
-    public static double rgbToHue(int red, int green, int blue)
-    {
-        double rp = red / 255.0;
-        double bp = blue / 255.0;
-        double gp = green / 255.0;
-        double cMax = Math.max(Math.max(rp, bp), gp);
-        double cMin = Math.min(Math.min(rp, bp), gp);
-        double delta = cMax - cMin;
-        // Close enough
-        if (delta - 0.0005 < 0 && delta + 0.0005 > 0)
-        {
-            return 0;
-        }
-        else if (cMax - 0.0005 < rp && cMax + 0.0005 > rp)
-        {
-            return 60 * (((gp - bp) / delta) % 6);
-        }
-        else if (cMax - 0.0005 < gp && cMax + 0.0005 > gp)
-        {
-            return 60 * (((bp - rp) / delta) + 2);
-        }
-        return 60 * (((rp - gp) / delta) + 4);
-    }
-
-    /**
-     * Convert RGB to saturation
-     * @param red - red pixel
-     * @param green - green pixel
-     * @param blue - blue pixel
-     * @return Returns the saturation
-     */
-    public static double rgbToSaturation(int red, int green, int blue)
-    {
-        double rp = red / 255.0;
-        double bp = blue / 255.0;
-        double gp = green / 255.0;
-        double cMax = Math.max(Math.max(rp, bp), gp);
-        double cMin = Math.min(Math.min(rp, bp), gp);
-        double delta = cMax - cMin;
-        double lightness = (cMax + cMin) / 2;
-        if (delta < 0.0005 && delta > -0.0005)
-        {
-            return 0;
-        }
-        return delta / (1 - Math.abs(2 * lightness - 1));
     }
 }

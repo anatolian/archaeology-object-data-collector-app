@@ -15,7 +15,9 @@ import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import com.archaeology.models.StringObjectResponseWrapper;
 import com.archaeology.util.CheatSheet;
 import com.archaeology.R;
@@ -326,6 +328,15 @@ public class CeramicInputActivity extends AppCompatActivity
     }
 
     /**
+     * Fill find numbers
+     * @param entries - spinner values
+     */
+    public void fillHemispheresSpinner(ArrayList<String> entries)
+    {
+        CheatSheet.setSpinnerItems(this, hemispheres, entries);
+    }
+
+    /**
      * Clear zones
      */
     public void clearZonesSpinner()
@@ -389,7 +400,7 @@ public class CeramicInputActivity extends AppCompatActivity
             public void responseMethod(String response)
             {
                 // converting HTML list of links to regular array to populate the spinner
-                fillZonesSpinner(CheatSheet.convertLinkListToArray(response));
+                fillHemispheresSpinner(CheatSheet.convertLinkListToArray(response));
                 allDataLoadInfo.put(LoadState.hemisphere, true);
                 toggleContinueButton();
             }
@@ -422,7 +433,7 @@ public class CeramicInputActivity extends AppCompatActivity
             public void responseMethod(String response)
             {
                 // converting HTML list of links to regular array to populate the spinner
-                fillMajorEastingsSpinner(CheatSheet.convertLinkListToArray(response));
+                fillZonesSpinner(CheatSheet.convertLinkListToArray(response));
                 allDataLoadInfo.put(LoadState.zone, true);
                 toggleContinueButton();
             }
@@ -462,6 +473,9 @@ public class CeramicInputActivity extends AppCompatActivity
                     String s = eastings.get(i);
                     majorEastings.add(s.substring(0, s.length() / 2));
                 }
+                HashSet<String> e = new HashSet<>(majorEastings);
+                majorEastings.clear();
+                majorEastings.addAll(e);
                 // converting HTML list of links to regular array to populate the spinner
                 fillMajorEastingsSpinner(majorEastings);
                 allDataLoadInfo.put(LoadState.areaEasting, true);
@@ -506,6 +520,10 @@ public class CeramicInputActivity extends AppCompatActivity
                         minorEastings.add(s.substring(s.length() / 2));
                     }
                 }
+                HashSet<String> e = new HashSet<>(minorEastings);
+                minorEastings.clear();
+                minorEastings.addAll(e);
+                Collections.sort(minorEastings);
                 // converting HTML list of links to regular array to populate the spinner
                 fillMinorEastingsSpinner(minorEastings);
                 allDataLoadInfo.put(LoadState.areaEasting, true);
@@ -548,9 +566,11 @@ public class CeramicInputActivity extends AppCompatActivity
                     String s = northings.get(i);
                     majorNorthings.add(s.substring(0, s.length() / 2));
                 }
+                HashSet<String> e = new HashSet<>(majorNorthings);
+                majorNorthings.clear();
+                majorNorthings.addAll(e);
                 // convert HTML link list to regular array to populate spinner
                 fillMajorNorthingsSpinner(majorNorthings);
-                // if data was received successfully you can put find number as true and enable buttons
                 allDataLoadInfo.put(LoadState.areaNorthing, true);
                 toggleContinueButton();
             }
@@ -574,7 +594,7 @@ public class CeramicInputActivity extends AppCompatActivity
     {
         allDataLoadInfo.put(LoadState.areaNorthing, false);
         String URL = globalWebServerURL + "/get_northings/?hemisphere=" + getSelectedHemisphere()
-                + "&find=" + getSelectedFindNumber() + "&easting=" + getSelectedMajorEasting()
+                + "&zone=" + getSelectedZone() + "&easting=" + getSelectedMajorEasting()
                 + getSelectedMinorEasting();
         makeVolleyStringObjectRequest(URL, queue, new StringObjectResponseWrapper() {
             /**
@@ -594,9 +614,12 @@ public class CeramicInputActivity extends AppCompatActivity
                         minorNorthings.add(s.substring(s.length() / 2));
                     }
                 }
+                HashSet<String> e = new HashSet<>(minorNorthings);
+                minorNorthings.clear();
+                minorNorthings.addAll(e);
+                Collections.sort(minorNorthings);
                 // convert HTML link list to regular array to populate spinner
                 fillMinorNorthingsSpinner(minorNorthings);
-                // if data was received successfully you can put find number as true and enable buttons
                 allDataLoadInfo.put(LoadState.areaNorthing, true);
                 toggleContinueButton();
             }

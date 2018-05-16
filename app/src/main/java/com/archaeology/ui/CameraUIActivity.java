@@ -5,11 +5,6 @@ import android.content.Intent;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.ImageFormat;
-import android.graphics.Matrix;
-import android.graphics.Rect;
-import android.graphics.YuvImage;
-import android.support.media.ExifInterface;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
@@ -24,7 +19,6 @@ import com.android.volley.toolbox.Volley;
 import com.archaeology.models.StringObjectResponseWrapper;
 import com.archaeology.util.CheatSheet;
 import com.googlecode.tesseract.android.TessBaseAPI;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -237,50 +231,7 @@ public class CameraUIActivity extends AppCompatActivity
             @Override
             public Object onProcessCameraFrame(byte[] data, int width, int height)
             {
-                YuvImage yuvimage = new YuvImage(data, ImageFormat.NV21, width, height, null);
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                yuvimage.compressToJpeg(new Rect(0, 0, width, height), 80, baos);
-                // have to write camera frame to file to see if it is rotated
-                File f = new File(Environment.getExternalStorageDirectory() + "/Archaeology/");
-                ExifInterface ei = null;
-                if (!f.exists())
-                {
-                    f.mkdirs();
-                }
-                File file = new File(Environment.getExternalStorageDirectory()
-                        + "/Archaeology/temp.jpeg");
-                try
-                {
-                    OutputStream out = new FileOutputStream(file);
-                    baos.writeTo(out);
-                    out.close();
-                    ei = new ExifInterface(Environment.getExternalStorageDirectory()
-                            + "/Archaeology/temp.jpeg");
-                    file.delete();
-                    f.delete();
-                }
-                catch (IOException e)
-                {
-                    e.printStackTrace();
-                }
-                byte[] jData = baos.toByteArray();
-                // Convert to Bitmap
-                Bitmap bitmap = BitmapFactory.decodeByteArray(jData, 0, jData.length);
-                int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION,
-                        ExifInterface.ORIENTATION_UNDEFINED);
-                if (orientation == ExifInterface.ORIENTATION_ROTATE_90)
-                {
-                    bitmap = rotateImage(bitmap, 90);
-                }
-                else if (orientation == ExifInterface.ORIENTATION_ROTATE_180)
-                {
-                    bitmap = rotateImage(bitmap, 180);
-                }
-                else if (orientation == ExifInterface.ORIENTATION_ROTATE_270)
-                {
-                    bitmap = rotateImage(bitmap, 270);
-                }
-                bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
+                Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
                 handleImage(bitmap);
                 return null;
             }
@@ -382,19 +333,6 @@ public class CameraUIActivity extends AppCompatActivity
         cam.stopCamera();
         cam.startCamera();
         goToObjectDetail(recognizedText);
-    }
-
-    /**
-     * Rotate an image
-     * @param source - image
-     * @param angle - angle to rotate
-     * @return Returns the rotated image
-     */
-    public static Bitmap rotateImage(Bitmap source, float angle)
-    {
-        Matrix matrix = new Matrix();
-        matrix.postRotate(angle);
-        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix,true);
     }
 
     /**

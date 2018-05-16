@@ -226,12 +226,15 @@ public class PhotoFragment extends Fragment
                 final Activity PARENT_ACTIVITY = getActivity();
                 if (PARENT_ACTIVITY instanceof ObjectDetailActivity)
                 {
-                    final int EASTING = ((ObjectDetailActivity) PARENT_ACTIVITY).easting;
-                    final int NORTHING = ((ObjectDetailActivity) PARENT_ACTIVITY).northing;
-                    final int FIND_NUMBER = ((ObjectDetailActivity) PARENT_ACTIVITY).findNumber;
-                    String URL = globalWebServerURL + "/upload_file";
-                    AsyncHTTPWrapper.makeImageUpload(URL, DICT_ENTRY.getKey(), String.valueOf(EASTING),
-                            String.valueOf(NORTHING), String.valueOf(FIND_NUMBER), new AsyncHTTPCallbackWrapper() {
+                    String hemisphere = ((ObjectDetailActivity) PARENT_ACTIVITY).hemisphere;
+                    int zone = ((ObjectDetailActivity) PARENT_ACTIVITY).zone;
+                    int easting = ((ObjectDetailActivity) PARENT_ACTIVITY).easting;
+                    int northing = ((ObjectDetailActivity) PARENT_ACTIVITY).northing;
+                    int findNumber = ((ObjectDetailActivity) PARENT_ACTIVITY).findNumber;
+                    AsyncHTTPWrapper.makeImageUpload(globalWebServerURL + "/upload_file",
+                            DICT_ENTRY.getKey(), hemisphere, String.valueOf(zone),
+                            String.valueOf(easting), String.valueOf(northing), String.valueOf(findNumber),
+                            new AsyncHTTPCallbackWrapper() {
                         /**
                          * Connection succeeded
                          * @param response - HTTP response
@@ -241,10 +244,14 @@ public class PhotoFragment extends Fragment
                         {
                             super.onSuccessCallback(response);
                             dictOfPhotoSyncStatus.put(DICT_ENTRY.getKey(), SYNCED);
+                            Log.v("Uploading Image", response);
                             if (response.contains("https://") && !response.contains("form method"))
                             {
-                                Log.v("Uploading Image", response);
                                 Toast.makeText(PARENT_ACTIVITY, "Image Uploaded To Server", Toast.LENGTH_SHORT).show();
+                            }
+                            else
+                            {
+                                Toast.makeText(PARENT_ACTIVITY, "Upload failed", Toast.LENGTH_SHORT).show();
                             }
                             ((ObjectDetailActivity) PARENT_ACTIVITY).clearCurrentPhotosOnLayoutAndFetchPhotosAsync();
                         }

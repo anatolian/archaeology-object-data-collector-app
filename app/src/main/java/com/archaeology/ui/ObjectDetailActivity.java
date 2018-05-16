@@ -53,14 +53,20 @@ import static com.archaeology.services.VolleyStringWrapper.makeVolleyStringObjec
 import static com.archaeology.util.CheatSheet.deleteOriginalAndThumbnailPhoto;
 import static com.archaeology.util.CheatSheet.getOutputMediaFile;
 import static com.archaeology.util.CheatSheet.goToSettings;
+import static com.archaeology.util.CheatSheet.rotateImageIfRequired;
+import static com.archaeology.util.StateStatic.EASTING;
+import static com.archaeology.util.StateStatic.FIND_NUMBER;
+import static com.archaeology.util.StateStatic.HEMISPHERE;
 import static com.archaeology.util.StateStatic.LOG_TAG_BLUETOOTH;
 import static com.archaeology.util.StateStatic.MARKED_AS_ADDED;
 import static com.archaeology.util.StateStatic.MARKED_AS_TO_DOWNLOAD;
 import static com.archaeology.util.StateStatic.MESSAGE_STATUS_CHANGE;
 import static com.archaeology.util.StateStatic.MESSAGE_WEIGHT;
+import static com.archaeology.util.StateStatic.NORTHING;
 import static com.archaeology.util.StateStatic.REQUEST_ENABLE_BT;
 import static com.archaeology.util.StateStatic.REQUEST_IMAGE_CAPTURE;
 import static com.archaeology.util.StateStatic.REQUEST_REMOTE_IMAGE;
+import static com.archaeology.util.StateStatic.ZONE;
 import static com.archaeology.util.StateStatic.cameraIPAddress;
 import static com.archaeology.util.StateStatic.cameraMACAddress;
 import static com.archaeology.util.StateStatic.colorCorrectionEnabled;
@@ -105,7 +111,6 @@ public class ObjectDetailActivity extends AppCompatActivity
     int zone, easting, northing, findNumber, imageNumber;
     public BluetoothService bluetoothService;
     public BluetoothDevice device = null;
-    private Bitmap photo;
     private TextView findLabel;
     /**
      * Launch the activity
@@ -126,14 +131,14 @@ public class ObjectDetailActivity extends AppCompatActivity
         queue = Volley.newRequestQueue(this);
         // getting object data from previous activity
         Bundle myBundle = getIntent().getExtras();
-        hemisphere = myBundle.getString("hemispheres");
-        zone = Integer.parseInt(myBundle.getString("zone"));
-        easting = Integer.parseInt(myBundle.getString("easting"));
-        northing = Integer.parseInt(myBundle.getString("northing"));
-        findNumber = Integer.parseInt(myBundle.getString("find_number"));
+        hemisphere = myBundle.getString(HEMISPHERE);
+        zone = Integer.parseInt(myBundle.getString(ZONE));
+        easting = Integer.parseInt(myBundle.getString(EASTING));
+        northing = Integer.parseInt(myBundle.getString(NORTHING));
+        findNumber = Integer.parseInt(myBundle.getString(FIND_NUMBER));
         // adding info about object to text field in view
         findLabel = findViewById(R.id.find);
-        findLabel.setText(zone + "." + hemisphere + "." + easting + "." + northing + "." + findNumber);
+        findLabel.setText(hemisphere + "." + zone + "." + easting + "." + northing + "." + findNumber);
         findLabel.addTextChangedListener(new TextWatcher() {
             /**
              * Text changed
@@ -402,17 +407,21 @@ public class ObjectDetailActivity extends AppCompatActivity
                                     updateColorInDB(APPROVE_PHOTO_IMAGE.red, APPROVE_PHOTO_IMAGE.green,
                                             APPROVE_PHOTO_IMAGE.blue, APPROVE_PHOTO_IMAGE.location);
                                 }
+                                File folder = new File(Environment.getExternalStorageDirectory() + "/Archaeology");
+                                if (!folder.exists())
+                                {
+                                    folder.mkdirs();
+                                }
                                 String path = Environment.getExternalStorageDirectory() + "/Archaeology/temp.png";
-//                                File folder = new File(Environment.getExternalStorageDirectory() + "/Archaeology");
-//                                boolean success = true;
-//                                if (!folder.exists()) {
-//                                    success = folder.mkdirs();
-//                                }
-//                                if (!success)
-//                                {
-//                                    Toast.makeText(getApplicationContext(), "Directory creation failed", Toast.LENGTH_SHORT).show();
-//                                }
                                 Bitmap bmp = ((BitmapDrawable) APPROVE_PHOTO_IMAGE.getDrawable()).getBitmap();
+                                try
+                                {
+                                    bmp = rotateImageIfRequired(bmp, getApplicationContext(), FILE_URI);
+                                }
+                                catch (IOException e)
+                                {
+                                    e.printStackTrace();
+                                }
                                 FileOutputStream out = null;
                                 try
                                 {
@@ -471,7 +480,7 @@ public class ObjectDetailActivity extends AppCompatActivity
     }
 
     /**
-     * Breaks connections with nutriscale and connections with camera and other external devices
+     * Breaks connection with nutriscale
      */
     @Override
     protected void onDestroy()
@@ -712,7 +721,7 @@ public class ObjectDetailActivity extends AppCompatActivity
                     // utm_easting_meters, utm_northing_meters, material_general, material_specific,
                     // category_general, category_specific,  weight_kilograms
                     String[] obj = response.split("\n")[1].split(" \\| ");
-                    if (obj[8].equals("null") || obj[8].equals(""))
+                    if (obj[8].equals("null") || obj[8].equals("None") || obj[8].equals(""))
                     {
                         getWeightInputText().setText(getString(R.string.nil));
                     }
