@@ -108,36 +108,40 @@ public class MyWiFiActivity extends AppCompatActivity
                         String imageURL = response.getJSONArray("result").getString(0);
                         imageURL = imageURL.substring(2, imageURL.length() - 2);
                         final String LOCATION = imageURL.replace("\\", "");
-                        Log.v(LOG_TAG_WIFI_DIRECT, "imageURL: " + LOCATION);
-                        Callback onPhotoFetchedCallback = new Callback() {
-                            /**
-                             * Photo successfully fetched
-                             */
-                            @Override
-                            public void onSuccess()
-                            {
-//                                // convert URL into bitmap
-//                                ImageView takenPhoto = (ImageView) findViewById(R.id.sonyCameraPhoto);
-//                                Bitmap tmpBitmap = ((BitmapDrawable) takenPhoto.getDrawable()).getBitmap();
-//                                Log.v(LOG_TAG_WIFI_DIRECT, "Bitmap Size: " + tmpBitmap.getByteCount());
-                                Intent resultIntent = new Intent();
-                                resultIntent.putExtra("location", LOCATION);
-                                setResult(Activity.RESULT_OK, resultIntent);
-                                finish();
-                            }
-
-                            /**
-                             * Photo fetch failed
-                             */
-                            @Override
-                            public void onError()
-                            {
-                                Picasso.with(currentContext).cancelRequest((ImageView) findViewById(R.id.sonyCameraPhoto));
-                            }
-                        };
-                        Picasso.with(currentContext).load(LOCATION).placeholder(android.R.drawable.ic_delete)
-                                .error(android.R.drawable.ic_dialog_alert)
-                                .into((ImageView) findViewById(R.id.sonyCameraPhoto), onPhotoFetchedCallback);
+                        Log.v(LOG_TAG_WIFI_DIRECT, "Trimmed imageURL: " + LOCATION);
+                        Intent resultIntent = new Intent();
+                        resultIntent.putExtra("location", LOCATION);
+                        setResult(Activity.RESULT_OK, resultIntent);
+                        finish();
+//                        Callback onPhotoFetchedCallback = new Callback() {
+//                            /**
+//                             * Photo successfully fetched
+//                             */
+//                            @Override
+//                            public void onSuccess()
+//                            {
+////                                // convert URL into bitmap
+////                                ImageView takenPhoto = (ImageView) findViewById(R.id.sonyCameraPhoto);
+////                                Bitmap tmpBitmap = ((BitmapDrawable) takenPhoto.getDrawable()).getBitmap();
+////                                Log.v(LOG_TAG_WIFI_DIRECT, "Bitmap Size: " + tmpBitmap.getByteCount());
+//                                Intent resultIntent = new Intent();
+//                                resultIntent.putExtra("location", LOCATION);
+//                                setResult(Activity.RESULT_OK, resultIntent);
+//                                finish();
+//                            }
+//
+//                            /**
+//                             * Photo fetch failed
+//                             */
+//                            @Override
+//                            public void onError()
+//                            {
+//                                Picasso.with(currentContext).cancelRequest((ImageView) findViewById(R.id.sonyCameraPhoto));
+//                            }
+//                        };
+//                        Picasso.with(currentContext).load(LOCATION).placeholder(android.R.drawable.ic_delete)
+//                                .error(android.R.drawable.ic_dialog_alert)
+//                                .into((ImageView) findViewById(R.id.sonyCameraPhoto), onPhotoFetchedCallback);
                     }
                     catch (JSONException e)
                     {
@@ -192,6 +196,7 @@ public class MyWiFiActivity extends AppCompatActivity
                 {
                     try
                     {
+                        Log.v("Camera", response.toString());
                         final String LIVE_VIEW_URL = response.getJSONArray("result").getString(0);
                         runOnUiThread(new Runnable() {
                             /**

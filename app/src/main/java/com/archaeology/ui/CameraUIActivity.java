@@ -219,32 +219,33 @@ public class CameraUIActivity extends AppCompatActivity
      */
     public void takePic(View v)
     {
-        cam.getController().requestLiveData(new LiveDataProcessingCallback()
-        {
-            /**
-             * Process a frame
-             * @param data - frame
-             * @param width - frame width
-             * @param height - frame height
-             * @return Returns null
-             */
-            @Override
-            public Object onProcessCameraFrame(byte[] data, int width, int height)
-            {
-                Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
-                handleImage(bitmap);
-                return null;
-            }
-
-            /**
-             * Process processed frame
-             * @param data - frame
-             */
-            @Override
-            public void onReceiveProcessedCameraFrame(Object data)
-            {
-            }
-        });
+        goToObjectDetail("");
+//        cam.getController().requestLiveData(new LiveDataProcessingCallback()
+//        {
+//            /**
+//             * Process a frame
+//             * @param data - frame
+//             * @param width - frame width
+//             * @param height - frame height
+//             * @return Returns null
+//             */
+//            @Override
+//            public Object onProcessCameraFrame(byte[] data, int width, int height)
+//            {
+//                Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+//                handleImage(bitmap);
+//                return null;
+//            }
+//
+//            /**
+//             * Process processed frame
+//             * @param data - frame
+//             */
+//            @Override
+//            public void onReceiveProcessedCameraFrame(Object data)
+//            {
+//            }
+//        });
     }
 
     /**
@@ -259,6 +260,7 @@ public class CameraUIActivity extends AppCompatActivity
         {
             Toast.makeText(getApplicationContext(), "Invalid Code \"" + CODE + "\"", Toast.LENGTH_SHORT).show();
             startActivity(INPUT_INTENT);
+            return;
         }
         final Intent DETAIL_INTENT = new Intent(this, ObjectDetailActivity.class);
         DETAIL_INTENT.putExtra(EASTING, KEYS[2]);

@@ -327,8 +327,10 @@ public class ObjectDetailActivity extends AppCompatActivity
             return;
         }
         String captureFile = fileURI.toString();
+        Log.v("Result: ", captureFile);
         final Uri FILE_URI;
         String originalFileName = captureFile.substring(captureFile.lastIndexOf('/') + 1);
+        Log.v("Result: ", originalFileName);
         // action to be performed when request is sent to take photo
         if (requestCode == REQUEST_IMAGE_CAPTURE)
         {
@@ -527,9 +529,12 @@ public class ObjectDetailActivity extends AppCompatActivity
         {
             pickPeersDialog.dismiss();
         }
-        if (nutriScaleBroadcastReceiver != null)
+        try
         {
             unregisterReceiver(nutriScaleBroadcastReceiver);
+        }
+        catch (Exception e)
+        {
         }
     }
 
@@ -540,9 +545,12 @@ public class ObjectDetailActivity extends AppCompatActivity
     public void onPause()
     {
         super.onPause();
-        if (nutriScaleBroadcastReceiver != null)
+        try
         {
             unregisterReceiver(nutriScaleBroadcastReceiver);
+        }
+        catch (Exception e)
+        {
         }
     }
 

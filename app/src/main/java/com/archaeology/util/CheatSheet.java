@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.media.ExifInterface;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import java.io.BufferedReader;
@@ -27,21 +28,6 @@ import static com.archaeology.util.StateStatic.THUMBNAIL_EXTENSION_STRING;
 import static com.archaeology.util.StateStatic.getGlobalPhotoSavePath;
 public class CheatSheet
 {
-    /**
-     * Returns all the items in the spinner
-     * @param aSpinner - spinner to read
-     */
-    public static List<String> getSpinnerItems(Spinner aSpinner)
-    {
-        int itemCount = aSpinner.getCount();
-        List<String> items = new ArrayList<>(itemCount);
-        for (int i = 0; i < itemCount; i++)
-        {
-            items.add(aSpinner.getItemAtPosition(i).toString());
-        }
-        return items;
-    }
-
     /**
      * Set items to spinner
      * @param aContext - calling context
@@ -70,6 +56,7 @@ public class CheatSheet
             String line;
             while ((line = bufferedReader.readLine()) != null)
             {
+                Log.v("ARP FILE", line);
                 String[] splitted = line.split(" +");
                 if (splitted.length >= 4)
                 {

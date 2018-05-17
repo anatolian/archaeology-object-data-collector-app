@@ -17,11 +17,11 @@ public class StateStatic
     public static final int REQUEST_REMOTE_IMAGE = 302;
     public static final int MESSAGE_WEIGHT = 501;
     public static final int MESSAGE_STATUS_CHANGE = 502;
-    public static final int REQUEST_ENABLE_BT = 503;
     public static final String DEFAULT_WEB_SERVER_URL = "https://object-data-collector-service.herokuapp.com";
     // Default URL to connect to database to send photos back and forth
     public static final String DEFAULT_BUCKET_URL = "s3.console.aws.amazon.com/s3/buckets/pennmuseum/";
     public static final String DEFAULT_CAMERA_MAC = "fe:c2:de:31:0a:e1";
+//    public static final String DEFAULT_CAMERA_MAC = "b2:72:bf:cd:74:61";
     // 30 minutes
     public static final long DEFAULT_CALIBRATION_INTERVAL = 1800000;
     private static final String DEFAULT_PHOTO_PATH = "Archaeology";
