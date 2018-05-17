@@ -10,6 +10,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -36,10 +37,15 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
+
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Set;
 import com.archaeology.R;
@@ -314,6 +320,32 @@ public class ObjectDetailActivity extends AppCompatActivity
     }
 
     /**
+     * Load image from bitmap
+     * @param url - image URI
+     * @return Returns the bitmap
+     */
+    private Bitmap getImageBitmap(String url)
+    {
+        Bitmap bmp = null;
+        try
+        {
+            URL aURL = new URL(url);
+            URLConnection conn = aURL.openConnection();
+            conn.connect();
+            InputStream is = conn.getInputStream();
+            BufferedInputStream bis = new BufferedInputStream(is);
+            bmp = BitmapFactory.decodeStream(bis);
+            bis.close();
+            is.close();
+        }
+        catch (IOException e)
+        {
+            Log.e("Reading Image", "Error getting bitmap", e);
+        }
+        return bmp;
+    }
+
+    /**
      * Activity finished
      * @param requestCode - data request code
      * @param resultCode - result code
@@ -322,24 +354,23 @@ public class ObjectDetailActivity extends AppCompatActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
     {
-        if (fileURI == null)
-        {
-            return;
-        }
-        String captureFile = fileURI.toString();
-        Log.v("Result: ", captureFile);
         final Uri FILE_URI;
-        String originalFileName = captureFile.substring(captureFile.lastIndexOf('/') + 1);
-        Log.v("Result: ", originalFileName);
-        // action to be performed when request is sent to take photo
+        // Local camera request
         if (requestCode == REQUEST_IMAGE_CAPTURE)
         {
+            if (fileURI == null)
+            {
+                return;
+            }
+            String captureFile = fileURI.toString();
+            String originalFileName = captureFile.substring(captureFile.lastIndexOf('/') + 1);
             // creating URI to save photo to once taken
             FILE_URI = CheatSheet.getThumbnail(originalFileName);
         }
         else
         {
-            FILE_URI = Uri.parse(data.getStringExtra("location"));
+            FILE_URI = data.getData();
+            Log.v("Received URI: ", FILE_URI.toString());
         }
         if (resultCode == RESULT_OK)
         {
@@ -352,6 +383,7 @@ public class ObjectDetailActivity extends AppCompatActivity
             // view photo you are trying to approve
             final MagnifyingGlass APPROVE_PHOTO_IMAGE = approveDialog.findViewById(R.id.approvePhotoImage);
             APPROVE_PHOTO_IMAGE.setImageURI(FILE_URI);
+//            APPROVE_PHOTO_IMAGE.setImageBitmap(getImageBitmap(FILE_URI.toString()));
             final Button OK_BUTTON = approveDialog.findViewById(R.id.saveButton);
             if (colorCorrectionEnabled)
             {
@@ -402,13 +434,8 @@ public class ObjectDetailActivity extends AppCompatActivity
                             @Override
                             public void onClick(View view)
                             {
-                                Log.v("Color: ", "" + APPROVE_PHOTO_IMAGE.red);
                                 if (APPROVE_PHOTO_IMAGE.red != -1)
                                 {
-                                    Log.v("Color: ", "Calling update color");
-                                    Log.v("Color: ", "(" + APPROVE_PHOTO_IMAGE.red + ", "
-                                            + APPROVE_PHOTO_IMAGE.green + ", " + APPROVE_PHOTO_IMAGE.blue + ")");
-                                    Log.v("Color: ", APPROVE_PHOTO_IMAGE.location);
                                     updateColorInDB(APPROVE_PHOTO_IMAGE.red, APPROVE_PHOTO_IMAGE.green,
                                             APPROVE_PHOTO_IMAGE.blue, APPROVE_PHOTO_IMAGE.location);
                                 }

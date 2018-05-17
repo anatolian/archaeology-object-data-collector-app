@@ -23,52 +23,9 @@ public class VolleyWrapper
      * @throws JSONException if the JSON is malformed
      */
     public static void getAPIList(final String URL, RequestQueue queue, final int ID,
-                                  final JSONObjectResponseWrapper LAMBDA_WRAPPER)
-            throws JSONException
+                                  final JSONObjectResponseWrapper LAMBDA_WRAPPER) throws JSONException
     {
-        final String POST_BODY = new JSONObject().put("method", "getApi")
-                .put("params", new JSONArray()).put("id", ID).put("version", "1.0").toString();
-        JSONObject JSONPOSTBody = new JSONObject(POST_BODY);
-        JsonObjectRequest myRequest = new JsonObjectRequest(Method.POST, URL, JSONPOSTBody,
-                new Response.Listener<JSONObject>() {
-                    /**
-                     * Response received
-                     * @param response - database response
-                     */
-                    @Override
-                    public void onResponse(JSONObject response)
-                    {
-                        LAMBDA_WRAPPER.responseMethod(response);
-                    }
-                }, new Response.ErrorListener() {
-            /**
-             * Connection error
-             * @param error - failure
-             */
-            @Override
-            public void onErrorResponse(VolleyError error)
-            {
-                LAMBDA_WRAPPER.errorMethod(error);
-            }
-        });
-        myRequest.setRetryPolicy(new DefaultRetryPolicy(20000,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        queue.add(myRequest);
-    }
-
-    /**
-     * Get list of API methods
-     * @param URL - camera URL
-     * @param queue - request queue
-     * @param ID - request id
-     * @param LAMBDA_WRAPPER - request wrapper
-     * @throws JSONException if the JSON is malformed
-     */
-    public static void getExposureTimes(final String URL, RequestQueue queue, final int ID,
-                                        final JSONObjectResponseWrapper LAMBDA_WRAPPER)
-            throws JSONException
-    {
-        final String POST_BODY = new JSONObject().put("method", "getApi")
+        final String POST_BODY = new JSONObject().put("method", "getAvailableApiList")
                 .put("params", new JSONArray()).put("id", ID).put("version", "1.0").toString();
         JSONObject JSONPOSTBody = new JSONObject(POST_BODY);
         JsonObjectRequest myRequest = new JsonObjectRequest(Method.POST, URL, JSONPOSTBody,
@@ -83,6 +40,7 @@ public class VolleyWrapper
                 LAMBDA_WRAPPER.responseMethod(response);
             }
             }, new Response.ErrorListener() {
+
             /**
              * Connection error
              * @param error - failure
@@ -93,8 +51,92 @@ public class VolleyWrapper
                 LAMBDA_WRAPPER.errorMethod(error);
             }
         });
-        myRequest.setRetryPolicy(new DefaultRetryPolicy(20000,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        myRequest.setRetryPolicy(new DefaultRetryPolicy(20000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        queue.add(myRequest);
+    }
+
+    /**
+     * Get list of API methods
+     * @param URL - camera URL
+     * @param queue - request queue
+     * @param ID - request id
+     * @param LAMBDA_WRAPPER - request wrapper
+     * @throws JSONException if the JSON is malformed
+     */
+    public static void startRecMode(final String URL, RequestQueue queue, final int ID,
+                                    final JSONObjectResponseWrapper LAMBDA_WRAPPER) throws JSONException
+    {
+        final String POST_BODY = new JSONObject().put("method", "startRecMode")
+                .put("params", new JSONArray()).put("id", ID).put("version", "1.0").toString();
+        JSONObject JSONPOSTBody = new JSONObject(POST_BODY);
+        JsonObjectRequest myRequest = new JsonObjectRequest(Method.POST, URL, JSONPOSTBody,
+                new Response.Listener<JSONObject>() {
+            /**
+             * Response received
+             * @param response - database response
+             */
+            @Override
+            public void onResponse(JSONObject response)
+            {
+                LAMBDA_WRAPPER.responseMethod(response);
+            }
+            }, new Response.ErrorListener() {
+
+            /**
+             * Connection error
+             * @param error - failure
+             */
+            @Override
+            public void onErrorResponse(VolleyError error)
+            {
+                LAMBDA_WRAPPER.errorMethod(error);
+            }
+        });
+        myRequest.setRetryPolicy(new DefaultRetryPolicy(20000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        queue.add(myRequest);
+    }
+
+    /**
+     * Get list of API methods
+     * @param URL - camera URL
+     * @param queue - request queue
+     * @param ID - request id
+     * @param LAMBDA_WRAPPER - request wrapper
+     * @throws JSONException if the JSON is malformed
+     */
+    public static void stopRecMode(final String URL, RequestQueue queue, final int ID,
+                                    final JSONObjectResponseWrapper LAMBDA_WRAPPER) throws JSONException
+    {
+        final String POST_BODY = new JSONObject().put("method", "stopRecMode")
+                .put("params", new JSONArray()).put("id", ID).put("version", "1.0").toString();
+        JSONObject JSONPOSTBody = new JSONObject(POST_BODY);
+        JsonObjectRequest myRequest = new JsonObjectRequest(Method.POST, URL, JSONPOSTBody,
+                new Response.Listener<JSONObject>() {
+                    /**
+                     * Response received
+                     * @param response - database response
+                     */
+                    @Override
+                    public void onResponse(JSONObject response)
+                    {
+                        LAMBDA_WRAPPER.responseMethod(response);
+                    }
+                }, new Response.ErrorListener() {
+
+            /**
+             * Connection error
+             * @param error - failure
+             */
+            @Override
+            public void onErrorResponse(VolleyError error)
+            {
+                LAMBDA_WRAPPER.errorMethod(error);
+            }
+        });
+        myRequest.setRetryPolicy(new DefaultRetryPolicy(20000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         queue.add(myRequest);
     }
 
@@ -110,7 +152,7 @@ public class VolleyWrapper
                                                          final JSONObjectResponseWrapper LAMBDA_WRAPPER)
             throws JSONException
     {
-        final String POST_BODY = new JSONObject().put("method", "awaitTakePicture")
+        final String POST_BODY = new JSONObject().put("method", "actTakePicture")
                 .put("params", new JSONArray()).put("id", ID).put("version", "1.0").toString();
         JSONObject JSONPOSTBody = new JSONObject(POST_BODY);
         JsonObjectRequest myRequest = new JsonObjectRequest(Method.POST, URL, JSONPOSTBody,

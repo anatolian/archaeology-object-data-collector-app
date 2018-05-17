@@ -2,23 +2,19 @@
 // @author: msenol86, ygowda
 package com.archaeology.ui;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.Uri;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.Toast;
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
-import com.archaeology.util.CheatSheet;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.Picasso;
 import org.json.JSONException;
 import org.json.JSONObject;
 import com.archaeology.R;
@@ -27,7 +23,6 @@ import com.archaeology.services.VolleyWrapper;
 import com.archaeology.models.JSONObjectResponseWrapper;
 import static com.archaeology.util.StateStatic.LOG_TAG_WIFI_DIRECT;
 import static com.archaeology.util.StateStatic.cameraIPAddress;
-import static com.archaeology.util.StateStatic.cameraMACAddress;
 public class MyWiFiActivity extends AppCompatActivity
 {
     // helps to establish connection with peer devices
@@ -61,6 +56,87 @@ public class MyWiFiActivity extends AppCompatActivity
         mManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
         mChannel = mManager.initialize(this, getMainLooper(), null);
         disableAPIButtons();
+        // Enable the API if the camera needs it enabled
+        String URL = buildAPIURLFromIP(cameraIPAddress);
+        try
+        {
+            VolleyWrapper.getAPIList(URL, queue, requestID++, new JSONObjectResponseWrapper(this) {
+                /**
+                 * Response received
+                 * @param response - camera response
+                 */
+                @Override
+                public void responseMethod(JSONObject response)
+                {
+                    Log.v(LOG_TAG_WIFI_DIRECT, response.toString());
+                }
+
+                /**
+                 * Connection failed
+                 * @param error - failure
+                 */
+                @Override
+                public void errorMethod(VolleyError error)
+                {
+                    Log.v(LOG_TAG_WIFI_DIRECT, error.toString());
+                }
+            });
+            VolleyWrapper.startRecMode(URL, queue, requestID++, new JSONObjectResponseWrapper(this) {
+                /**
+                 * Response received
+                 * @param response - camera response
+                 */
+                @Override
+                public void responseMethod(JSONObject response)
+                {
+                    Log.v(LOG_TAG_WIFI_DIRECT, response.toString());
+                }
+
+                /**
+                 * Connection failed
+                 * @param error - failure
+                 */
+                @Override
+                public void errorMethod(VolleyError error)
+                {
+                    Log.v(LOG_TAG_WIFI_DIRECT, error.toString());
+                }
+            });
+            try
+            {
+                // Wait for the API to update
+                Thread.sleep(7000);
+            }
+            catch (InterruptedException e)
+            {
+                e.printStackTrace();
+            }
+            VolleyWrapper.getAPIList(URL, queue, requestID++, new JSONObjectResponseWrapper(this) {
+                /**
+                 * Response received
+                 * @param response - camera response
+                 */
+                @Override
+                public void responseMethod(JSONObject response)
+                {
+                    Log.v(LOG_TAG_WIFI_DIRECT, response.toString());
+                }
+
+                /**
+                 * Connection failed
+                 * @param error - failure
+                 */
+                @Override
+                public void errorMethod(VolleyError error)
+                {
+                    Log.v(LOG_TAG_WIFI_DIRECT, error.toString());
+                }
+            });
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -106,42 +182,12 @@ public class MyWiFiActivity extends AppCompatActivity
                     {
                         // creating image URL from response
                         String imageURL = response.getJSONArray("result").getString(0);
-                        imageURL = imageURL.substring(2, imageURL.length() - 2);
-                        final String LOCATION = imageURL.replace("\\", "");
-                        Log.v(LOG_TAG_WIFI_DIRECT, "Trimmed imageURL: " + LOCATION);
-                        Intent resultIntent = new Intent();
-                        resultIntent.putExtra("location", LOCATION);
-                        setResult(Activity.RESULT_OK, resultIntent);
+                        imageURL = imageURL.substring(2, imageURL.length() - 2).replace("\\", "");
+                        Log.v(LOG_TAG_WIFI_DIRECT, "Trimmed imageURL: " + imageURL);
+                        Intent data = new Intent();
+                        data.setData(Uri.parse(imageURL));
+                        setResult(Activity.RESULT_OK, data);
                         finish();
-//                        Callback onPhotoFetchedCallback = new Callback() {
-//                            /**
-//                             * Photo successfully fetched
-//                             */
-//                            @Override
-//                            public void onSuccess()
-//                            {
-////                                // convert URL into bitmap
-////                                ImageView takenPhoto = (ImageView) findViewById(R.id.sonyCameraPhoto);
-////                                Bitmap tmpBitmap = ((BitmapDrawable) takenPhoto.getDrawable()).getBitmap();
-////                                Log.v(LOG_TAG_WIFI_DIRECT, "Bitmap Size: " + tmpBitmap.getByteCount());
-//                                Intent resultIntent = new Intent();
-//                                resultIntent.putExtra("location", LOCATION);
-//                                setResult(Activity.RESULT_OK, resultIntent);
-//                                finish();
-//                            }
-//
-//                            /**
-//                             * Photo fetch failed
-//                             */
-//                            @Override
-//                            public void onError()
-//                            {
-//                                Picasso.with(currentContext).cancelRequest((ImageView) findViewById(R.id.sonyCameraPhoto));
-//                            }
-//                        };
-//                        Picasso.with(currentContext).load(LOCATION).placeholder(android.R.drawable.ic_delete)
-//                                .error(android.R.drawable.ic_dialog_alert)
-//                                .into((ImageView) findViewById(R.id.sonyCameraPhoto), onPhotoFetchedCallback);
                     }
                     catch (JSONException e)
                     {
@@ -390,6 +436,42 @@ public class MyWiFiActivity extends AppCompatActivity
         {
             e.printStackTrace();
             Toast.makeText(this, "Communication error", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /**
+     * The activity is finishing
+     */
+    @Override
+    public void onDestroy()
+    {
+        super.onDestroy();
+        final String URL = buildAPIURLFromIP(cameraIPAddress);
+        try
+        {
+            VolleyWrapper.stopRecMode(URL, queue, requestID++, new JSONObjectResponseWrapper(this) {
+                /**
+                 * Response received
+                 * @param response - camera response
+                 */
+                @Override
+                public void responseMethod(JSONObject response)
+                {
+                }
+
+                /**
+                 * Connection failed
+                 * @param error - failure
+                 */
+                @Override
+                public void errorMethod(VolleyError error)
+                {
+                }
+            });
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
         }
     }
 }

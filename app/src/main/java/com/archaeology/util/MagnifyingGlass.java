@@ -22,7 +22,7 @@ public class MagnifyingGlass extends AppCompatImageView
     private boolean zooming = false;
     public boolean correctedAlready = false;
     private Matrix matrix = new Matrix();
-    public String location = "Exterior";
+    public String location = "Exterior Surface";
     public int red = -1, green = -1, blue = -1;
     protected Bitmap correctedPhoto;
     /**

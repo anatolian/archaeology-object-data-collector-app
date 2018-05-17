@@ -20,8 +20,8 @@ public class StateStatic
     public static final String DEFAULT_WEB_SERVER_URL = "https://object-data-collector-service.herokuapp.com";
     // Default URL to connect to database to send photos back and forth
     public static final String DEFAULT_BUCKET_URL = "s3.console.aws.amazon.com/s3/buckets/pennmuseum/";
-    public static final String DEFAULT_CAMERA_MAC = "fe:c2:de:31:0a:e1";
-//    public static final String DEFAULT_CAMERA_MAC = "b2:72:bf:cd:74:61";
+//    public static final String DEFAULT_CAMERA_MAC = "fe:c2:de:31:0a:e1";
+    public static final String DEFAULT_CAMERA_MAC = "b2:72:bf:cd:74:61";
     // 30 minutes
     public static final long DEFAULT_CALIBRATION_INTERVAL = 1800000;
     private static final String DEFAULT_PHOTO_PATH = "Archaeology";
@@ -42,7 +42,7 @@ public class StateStatic
     public static String cameraMACAddress = DEFAULT_CAMERA_MAC;
     public static long remoteCameraCalibrationInterval = DEFAULT_CALIBRATION_INTERVAL;
     public static long tabletCameraCalibrationInterval = DEFAULT_CALIBRATION_INTERVAL;
-    public static final boolean DEFAULT_REMOTE_CAMERA_SELECTED = false;
+    public static final boolean DEFAULT_REMOTE_CAMERA_SELECTED = true;
     public static boolean isRemoteCameraSelected = DEFAULT_REMOTE_CAMERA_SELECTED;
     public static String cameraIPAddress = null;
     public static final boolean DEFAULT_CORRECTION_SELECTION = true;
