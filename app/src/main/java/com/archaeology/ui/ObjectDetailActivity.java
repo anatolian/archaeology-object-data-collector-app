@@ -1245,6 +1245,7 @@ public class ObjectDetailActivity extends AppCompatActivity
         if (cameraIPAddress == null)
         {
             Toast.makeText(getApplicationContext(), "Not connected to camera", Toast.LENGTH_LONG).show();
+            loading.setVisibility(View.INVISIBLE);
             return;
         }
         try

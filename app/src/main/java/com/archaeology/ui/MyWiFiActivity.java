@@ -38,7 +38,6 @@ import static com.archaeology.util.StateStatic.convertDPToPixel;
 public class MyWiFiActivity extends AppCompatActivity
 {
     // helps to establish connection with peer devices
-    public static String TAG = "WIFI P2P";
     WifiP2pManager mManager;
     WifiP2pManager.Channel mChannel;
     RequestQueue queue;

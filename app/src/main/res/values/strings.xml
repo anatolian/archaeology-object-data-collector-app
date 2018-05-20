@@ -14,6 +14,7 @@
     </string-array>
     <string name = "connecting_to_camera">Connecting to camera. Please wait&#8230;</string>
     <string name = "connecting_to_scale">Connecting to scale. Please wait&#8230;</string>
+    <string name = "selected_color">Selected Color: </string>
     <string name = "location">Location: </string>
     <string name = "hemisphere">Hemisphere</string>
     <string name = "zone">Zone</string>
