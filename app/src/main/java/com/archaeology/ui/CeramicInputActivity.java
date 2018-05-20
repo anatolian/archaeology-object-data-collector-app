@@ -1,5 +1,5 @@
 // Input a ceramic
-// @author: msenol86, ygowda
+// @author: Christopher Besser, msenol86, ygowda
 package com.archaeology.ui;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.Spinner;
+import android.widget.TextView;
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
@@ -231,6 +232,8 @@ public class CeramicInputActivity extends AppCompatActivity
     protected void onResume()
     {
         super.onResume();
+        TextView connecting = findViewById(R.id.connectingToScale);
+        connecting.setVisibility(View.INVISIBLE);
         if (allDataLoadInfo.get(LoadState.areaEasting) && allDataLoadInfo.get(LoadState.areaNorthing))
         {
             clearFindNumbersSpinner();
@@ -780,6 +783,8 @@ public class CeramicInputActivity extends AppCompatActivity
      */
     public void goToObjectDetail(View view)
     {
+        TextView connecting = findViewById(R.id.connectingToScale);
+        connecting.setVisibility(View.VISIBLE);
         cancelAllVolleyRequests(queue);
         Intent tmpIntent = new Intent(this, ObjectDetailActivity.class);
         tmpIntent.putExtra(HEMISPHERE, getSelectedHemisphere());

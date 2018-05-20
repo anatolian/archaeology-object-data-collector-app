@@ -1,5 +1,5 @@
 // Async HTTP wrapper
-// @author: msenol
+// @author: Christopher Besser and msenol
 package com.archaeology.models;
 import android.net.Uri;
 import com.loopj.android.http.AsyncHttpClient;

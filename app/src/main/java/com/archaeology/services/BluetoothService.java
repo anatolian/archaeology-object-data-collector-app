@@ -153,7 +153,7 @@ public class BluetoothService
             catch (IOException connectException)
             {
                 // Unable to connect; close the socket and return.
-                Toast.makeText(context, "Unable to connect. Check the scale is turned on and try again",
+                Toast.makeText(context, "Unable to connect to scale. Check the scale is turned on and try again",
                         Toast.LENGTH_SHORT).show();
                 try
                 {

@@ -1,5 +1,5 @@
 // URL communication wrapper
-// @author: msenol
+// @author: Christopher Besser and msenol
 package com.archaeology.services;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;

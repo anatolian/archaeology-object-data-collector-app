@@ -349,5 +349,14 @@
             android:layout_below="@+id/photoScrollWrapper"
             android:onClick="addPhotoAction"
             android:text="@string/add_photo" />
+        <TextView
+            android:id="@+id/connectingToCamera"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/button26"
+            android:gravity="center"
+            android:text="@string/connecting_to_camera"
+            android:visibility="invisible"
+            android:textColor="@android:color/holo_red_dark" />
     </RelativeLayout>
 </ScrollView>

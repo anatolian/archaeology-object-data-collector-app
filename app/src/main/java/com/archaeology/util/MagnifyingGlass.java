@@ -1,5 +1,5 @@
 // Custom image view for color corection
-// @author: Kevin Trinh
+// @author: Christopher Besser and Kevin Trinh
 package com.archaeology.util;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -13,7 +13,6 @@ import android.graphics.Shader;
 import android.graphics.drawable.BitmapDrawable;
 import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.ImageView;
 public class MagnifyingGlass extends AppCompatImageView
@@ -95,8 +94,7 @@ public class MagnifyingGlass extends AppCompatImageView
                     red = rgbValues[0];
                     green = rgbValues[1];
                     blue = rgbValues[2];
-                    Log.v("Getting pixels", "(" + red + ", " + green + ", " + blue + ")");
-                    Log.v("Current location", location);
+                    // TODO: Display selected color in the approve dialog
                 }
                 break;
             default:

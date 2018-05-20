@@ -1,10 +1,9 @@
 // Camera Interface Screen
-// Andrej Ilic, Ben Greenberg, Anton Relin, and Tristrum Tuttle
+// Andrej Ilic, Ben Greenberg, Anton Relin, Tristrum Tuttle, and Christopher Besser
 package com.archaeology.ui;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
@@ -29,7 +28,6 @@ import java.util.List;
 import com.archaeology.R;
 import eu.livotov.labs.android.camview.CameraLiveView;
 import eu.livotov.labs.android.camview.ScannerLiveView;
-import eu.livotov.labs.android.camview.camera.LiveDataProcessingCallback;
 import static com.archaeology.services.VolleyStringWrapper.makeVolleyStringObjectRequest;
 import static com.archaeology.util.StateStatic.ALL_FIND_NUMBER;
 import static com.archaeology.util.StateStatic.EASTING;
@@ -42,8 +40,7 @@ public class CameraUIActivity extends AppCompatActivity
     // Assets for OCR
     public static final String DATA_PATH = Environment.getExternalStorageDirectory().toString() + "/SimpleAndroidOCR/";
     public static final String LANG = "eng";
-    // camera view and scanner view stuff:
-    private float x1;
+    // camera view and scanner view stuff
     int flag = -1;
     private static final String TAG = "CameraUIActivity.java";
     private FloatingActionButton shutter;
@@ -94,12 +91,7 @@ public class CameraUIActivity extends AppCompatActivity
             {
                 if (!dir.mkdirs())
                 {
-                    Log.v(TAG, "ERROR: Creation of directory " + path + " on sdcard failed");
                     return;
-                }
-                else
-                {
-                    Log.v(TAG, "Created directory " + path + " on sdcard");
                 }
             }
         }
@@ -119,11 +111,10 @@ public class CameraUIActivity extends AppCompatActivity
                 }
                 in.close();
                 out.close();
-                Log.v(TAG, "Copied " + LANG + " trained data");
             }
             catch (IOException e)
             {
-                Log.e(TAG, "Was unable to copy " + LANG + " trained data " + e.toString());
+                Log.e(TAG, "Unable to copy " + LANG + " trained data " + e.toString());
             }
         }
         // setting up CameraView
@@ -314,28 +305,28 @@ public class CameraUIActivity extends AppCompatActivity
         startActivity(new Intent(this, CeramicInputActivity.class));
     }
 
-    /**
-     * Picture taken
-     * @param bitmap - image
-     */
-    private void handleImage(Bitmap bitmap)
-    {
-        Bitmap toSend = Bitmap.createScaledBitmap(bitmap, bitmap.getWidth() / 10,
-                bitmap.getHeight() / 10, false);
-        TessBaseAPI baseAPI = new TessBaseAPI();
-        baseAPI.setDebug(true);
-        baseAPI.init(DATA_PATH, LANG);
-        baseAPI.setImage(toSend);
-        String recognizedText = baseAPI.getUTF8Text();
-        baseAPI.end();
-        // You now have the text in recognizedText var, you can do anything with it.
-        // We will display a stripped out trimmed alpha-numeric version of it (if lang is eng)
-        // so that garbage doesn't make it to the display.
-        recognizedText = recognizedText.replaceAll("[^a-zA-Z0-9]+", "").trim();
-        cam.stopCamera();
-        cam.startCamera();
-        goToObjectDetail(recognizedText);
-    }
+//    /**
+//     * Picture taken
+//     * @param bitmap - image
+//     */
+//    private void handleImage(Bitmap bitmap)
+//    {
+//        Bitmap toSend = Bitmap.createScaledBitmap(bitmap, bitmap.getWidth() / 10,
+//                bitmap.getHeight() / 10, false);
+//        TessBaseAPI baseAPI = new TessBaseAPI();
+//        baseAPI.setDebug(true);
+//        baseAPI.init(DATA_PATH, LANG);
+//        baseAPI.setImage(toSend);
+//        String recognizedText = baseAPI.getUTF8Text();
+//        baseAPI.end();
+//        // You now have the text in recognizedText var, you can do anything with it.
+//        // We will display a stripped out trimmed alpha-numeric version of it (if lang is eng)
+//        // so that garbage doesn't make it to the display.
+//        recognizedText = recognizedText.replaceAll("[^a-zA-Z0-9]+", "").trim();
+//        cam.stopCamera();
+//        cam.startCamera();
+//        goToObjectDetail(recognizedText);
+//    }
 
     /**
      * Switch between QR reader and OCR

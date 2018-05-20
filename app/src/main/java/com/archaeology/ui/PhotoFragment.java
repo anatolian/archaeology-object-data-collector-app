@@ -242,7 +242,6 @@ public class PhotoFragment extends Fragment
                         {
                             super.onSuccessCallback(response);
                             dictOfPhotoSyncStatus.put(DICT_ENTRY.getKey(), SYNCED);
-                            Log.v("Uploading Image", response);
                             if (response.contains("https://") && !response.contains("form method"))
                             {
                                 Toast.makeText(PARENT_ACTIVITY, "Image Uploaded To Server", Toast.LENGTH_SHORT).show();

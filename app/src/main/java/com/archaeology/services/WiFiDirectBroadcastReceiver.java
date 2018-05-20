@@ -1,5 +1,5 @@
 // WiFi direct receiver
-// @author: msenol86, ygowda
+// @author: Christopher Besser, msenol86, ygowda
 package com.archaeology.services;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -9,11 +9,7 @@ import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pDeviceList;
 import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
-import android.util.Log;
-import com.archaeology.ui.MyWiFiActivity;
 import java.util.ArrayList;
-import static com.archaeology.util.StateStatic.LOG_TAG;
-import static com.archaeology.util.StateStatic.LOG_TAG_WIFI_DIRECT;
 public class WiFiDirectBroadcastReceiver extends BroadcastReceiver
 {
     public interface WifiDirectBroadcastReceivable
@@ -56,13 +52,6 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver
         @Override
         public void onConnectionInfoAvailable(final WifiP2pInfo info)
         {
-            Log.v(LOG_TAG_WIFI_DIRECT, "onConnectionInfoAvailable: WifiP2pInfo: " + info.toString());
-            // InetAddress from WifiP2pInfo struct.
-            NetworkInfo networkInfo = myIntent.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
-            if (networkInfo != null)
-            {
-                Log.v(LOG_TAG_WIFI_DIRECT, "networkInfo: " + networkInfo.toString());
-            }
             // After the group negotiation, we can determine the group owner.
             if (info.groupFormed && info.isGroupOwner)
             {
@@ -70,13 +59,11 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver
                 // server thread and accepting incoming connections.
                 isGroupOwner = true;
                 connectedToDevice = true;
-                Log.v(LOG_TAG, "the group has been formed and you found the owner");
             }
             else if (info.groupFormed)
             {
                 // The other device acts as the client. In this case, you'll want to create a
                 // client thread that connects to the group owner.
-                Log.v(LOG_TAG, "the group has been formed but you cannot find the owner");
                 connectedToDevice = true;
             }
         }
@@ -93,14 +80,9 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver
             // Out with the old, in with the new.
             peers.clear();
             peers.addAll(peerList.getDeviceList());
-//            ((WiFiPeerListAdapter) getListAdapter()).notifyDataSetChanged();
             // If an AdapterView is backed by this data, notify it of the change. For instance, if
             // you have a ListView of available peers, trigger an update.
-            if (peers.size() == 0)
-            {
-                Log.d(LOG_TAG_WIFI_DIRECT, "No devices found");
-            }
-            else
+            if (peers.size() > 0)
             {
                 mActivity.peersDiscovered(peers);
             }
@@ -132,39 +114,29 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver
     {
         myIntent = intent;
         String action = intent.getAction();
-        Log.v(LOG_TAG, "the action is " + action);
-        Log.v(LOG_TAG, "you are in the receive method");
-        Log.v(LOG_TAG, "have not gone into state changed if condition");
         if (WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION.equals(action))
         {
             int state = intent.getIntExtra(WifiP2pManager.EXTRA_WIFI_STATE, -1);
-            Log.v(LOG_TAG, "the state is " + String.valueOf(state));
             if (state == WifiP2pManager.WIFI_P2P_STATE_ENABLED)
             {
                 // Wifi P2P is enabled
                 mActivity.discoverPeers();
-                Log.v(LOG_TAG, "wifi state is enabled");
             }
             else
             {
-                mActivity.discoverPeers();
-                Log.v(LOG_TAG, "wifi state is not enabled");
                 // WiFi P2P is not enabled
+                mActivity.discoverPeers();
             }
         }
         else if (WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action))
         {
-            Log.v(LOG_TAG, "inside peers changed loop");
             if (mManager != null)
             {
                 mManager.requestPeers(mChannel, peerListListener);
             }
-            Log.d(MyWiFiActivity.TAG, "P2P peers changed");
             if (mActivity.isConnectedDialogVisible())
             {
-                Log.v(LOG_TAG, "peers changed and setting info listener");
                 int state = intent.getIntExtra(WifiP2pManager.EXTRA_WIFI_STATE, -1);
-                Log.v(LOG_TAG, "the state is " + String.valueOf(state));
                 if (state == WifiP2pManager.WIFI_P2P_STATE_ENABLED)
                 {
                     mManager.requestConnectionInfo(mChannel, mConnectionListener);
@@ -173,28 +145,18 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver
         }
         else if (WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action))
         {
-            Log.v(LOG_TAG, "you are inside connection changed action");
             if (mManager == null)
             {
-                Log.v(LOG_TAG, "mManager was equal to null");
                 return;
             }
             NetworkInfo networkInfo = intent.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
-            Log.v(LOG_TAG, String.valueOf(networkInfo.describeContents()));
             if (networkInfo.isConnected())
             {
-                // We are connected with the other device, request connection info to find group
-                // owner IP
-                Log.v(LOG_TAG, "you are connected with the device");
+                // We are connected with the other device, request connection info to find group owner IP
                 mManager.requestConnectionInfo(mChannel, mConnectionListener);
             }
-            Log.v(LOG_TAG_WIFI_DIRECT, "Wifi Direct Connection Status Changed");
             mActivity.connectionStatusChangedCallback(networkInfo);
             // Respond to new connection or disconnections
-        }
-        else if (WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION.equals(action))
-        {
-            Log.v(LOG_TAG_WIFI_DIRECT, "This device P2P changed");
         }
     }
 }

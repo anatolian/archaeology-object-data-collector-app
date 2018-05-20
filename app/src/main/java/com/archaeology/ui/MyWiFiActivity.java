@@ -1,11 +1,10 @@
 // Connect to Wifi
-// @author: msenol86, ygowda
+// @author: Christopher Besser, msenol86, ygowda
 package com.archaeology.ui;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
@@ -14,7 +13,6 @@ import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatImageView;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 import com.android.volley.RequestQueue;
@@ -23,26 +21,20 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONException;
 import org.json.JSONObject;
 import com.archaeology.R;
-import com.archaeology.services.PicassoWrapper;
 import com.archaeology.util.StateStatic;
 import com.archaeology.services.VolleyWrapper;
 import com.archaeology.models.JSONObjectResponseWrapper;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
-
 import java.io.ByteArrayOutputStream;
-
 import static com.archaeology.util.StateStatic.EASTING;
 import static com.archaeology.util.StateStatic.FIND_NUMBER;
 import static com.archaeology.util.StateStatic.HEMISPHERE;
-import static com.archaeology.util.StateStatic.LOG_TAG_WIFI_DIRECT;
-import static com.archaeology.util.StateStatic.MARKED_AS_ADDED;
 import static com.archaeology.util.StateStatic.NORTHING;
 import static com.archaeology.util.StateStatic.ZONE;
 import static com.archaeology.util.StateStatic.cameraIPAddress;
 import static com.archaeology.util.StateStatic.convertDPToPixel;
-
 public class MyWiFiActivity extends AppCompatActivity
 {
     // helps to establish connection with peer devices
@@ -91,7 +83,8 @@ public class MyWiFiActivity extends AppCompatActivity
         String URL = buildAPIURLFromIP(cameraIPAddress);
         try
         {
-            VolleyWrapper.getAPIList(URL, queue, requestID++, new JSONObjectResponseWrapper(this) {
+            // Check if the required API is enabled
+            VolleyWrapper.getAPIList(URL, queue, requestID++, new JSONObjectResponseWrapper() {
                 /**
                  * Response received
                  * @param response - camera response
@@ -99,7 +92,6 @@ public class MyWiFiActivity extends AppCompatActivity
                 @Override
                 public void responseMethod(JSONObject response)
                 {
-                    Log.v(LOG_TAG_WIFI_DIRECT, response.toString());
                 }
 
                 /**
@@ -109,10 +101,10 @@ public class MyWiFiActivity extends AppCompatActivity
                 @Override
                 public void errorMethod(VolleyError error)
                 {
-                    Log.v(LOG_TAG_WIFI_DIRECT, error.toString());
                 }
             });
-            VolleyWrapper.startRecMode(URL, queue, requestID++, new JSONObjectResponseWrapper(this) {
+            // Enable the required API
+            VolleyWrapper.startRecMode(URL, queue, requestID++, new JSONObjectResponseWrapper() {
                 /**
                  * Response received
                  * @param response - camera response
@@ -120,7 +112,6 @@ public class MyWiFiActivity extends AppCompatActivity
                 @Override
                 public void responseMethod(JSONObject response)
                 {
-                    Log.v(LOG_TAG_WIFI_DIRECT, response.toString());
                 }
 
                 /**
@@ -130,7 +121,6 @@ public class MyWiFiActivity extends AppCompatActivity
                 @Override
                 public void errorMethod(VolleyError error)
                 {
-                    Log.v(LOG_TAG_WIFI_DIRECT, error.toString());
                 }
             });
             try
@@ -142,7 +132,8 @@ public class MyWiFiActivity extends AppCompatActivity
             {
                 e.printStackTrace();
             }
-            VolleyWrapper.getAPIList(URL, queue, requestID++, new JSONObjectResponseWrapper(this) {
+            // Check that the required API is enabled
+            VolleyWrapper.getAPIList(URL, queue, requestID++, new JSONObjectResponseWrapper() {
                 /**
                  * Response received
                  * @param response - camera response
@@ -150,7 +141,6 @@ public class MyWiFiActivity extends AppCompatActivity
                 @Override
                 public void responseMethod(JSONObject response)
                 {
-                    Log.v(LOG_TAG_WIFI_DIRECT, response.toString());
                 }
 
                 /**
@@ -160,7 +150,6 @@ public class MyWiFiActivity extends AppCompatActivity
                 @Override
                 public void errorMethod(VolleyError error)
                 {
-                    Log.v(LOG_TAG_WIFI_DIRECT, error.toString());
                 }
             });
         }
@@ -199,8 +188,7 @@ public class MyWiFiActivity extends AppCompatActivity
         String URL = buildAPIURLFromIP(cameraIPAddress);
         try
         {
-            VolleyWrapper.makeVolleySonyAPITakePhotoRequest(URL, queue, requestID++,
-                    new JSONObjectResponseWrapper(this) {
+            VolleyWrapper.makeVolleySonyAPITakePhotoRequest(URL, queue, requestID++, new JSONObjectResponseWrapper() {
                 /**
                  * Response received
                  * @param response - camera response
@@ -208,13 +196,11 @@ public class MyWiFiActivity extends AppCompatActivity
                 @Override
                 public void responseMethod(JSONObject response)
                 {
-                    Log.v(LOG_TAG_WIFI_DIRECT, response.toString());
                     try
                     {
                         // creating image URL from response
                         String imageURI = response.getJSONArray("result").getString(0);
                         imageURI = imageURI.substring(2, imageURI.length() - 2).replace("\\", "");
-                        Log.v(LOG_TAG_WIFI_DIRECT, "Trimmed imageURL: " + imageURI);
                         loadPhotoIntoPhotoFragment(Uri.parse(imageURI));
                     }
                     catch (JSONException e)
@@ -230,7 +216,8 @@ public class MyWiFiActivity extends AppCompatActivity
                 @Override
                 public void errorMethod(VolleyError error)
                 {
-                    Log.v(LOG_TAG_WIFI_DIRECT, error.toString());
+                    error.printStackTrace();
+                    Toast.makeText(getApplicationContext(), "Camera error", Toast.LENGTH_SHORT).show();
                 }
             });
         }
@@ -247,11 +234,9 @@ public class MyWiFiActivity extends AppCompatActivity
      */
     public void loadPhotoIntoPhotoFragment(final Uri IMAGE_URI)
     {
-        Log.v("WifiDirect", "Loading photo fragment");
         // loading PhotoFragment class to add photo URIs
         if (capture != null)
         {
-            Log.v("WifiDirect", "Adding photo: " + IMAGE_URI.toString());
             // photo URIs are added to HashMap in PhotoFragment class
             Picasso.with(this).load(IMAGE_URI).transform(new Transformation() {
                 /**
@@ -300,7 +285,6 @@ public class MyWiFiActivity extends AppCompatActivity
                  */
                 public void onSuccess()
                 {
-                    Log.v("WifiDirect", "Success Method");
                     Intent data = new Intent();
                     data.setData(Uri.parse(IMAGE_URI.toString()));
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -317,13 +301,8 @@ public class MyWiFiActivity extends AppCompatActivity
                  */
                 public void onError()
                 {
-                    Log.v("WifiDirect", "Error method");
                 }
             });
-        }
-        else
-        {
-            Log.v("WifiDirect", "Null fragment");
         }
     }
 
@@ -345,8 +324,7 @@ public class MyWiFiActivity extends AppCompatActivity
         final String URL = buildAPIURLFromIP(cameraIPAddress);
         try
         {
-            VolleyWrapper.makeVolleySonyAPIStartLiveViewRequest(URL, queue, requestID++,
-                    new JSONObjectResponseWrapper(this) {
+            VolleyWrapper.makeVolleySonyAPIStartLiveViewRequest(URL, queue, requestID++, new JSONObjectResponseWrapper() {
                 /**
                  * Response received
                  * @param response - camera response
@@ -356,7 +334,6 @@ public class MyWiFiActivity extends AppCompatActivity
                 {
                     try
                     {
-                        Log.v("Camera", response.toString());
                         final String LIVE_VIEW_URL = response.getJSONArray("result").getString(0);
                         runOnUiThread(new Runnable() {
                             /**
@@ -413,8 +390,7 @@ public class MyWiFiActivity extends AppCompatActivity
         final String URL = buildAPIURLFromIP(cameraIPAddress);
         try
         {
-            VolleyWrapper.makeVolleySonyAPIStopLiveViewRequest(URL, queue, requestID++,
-                    new JSONObjectResponseWrapper(this) {
+            VolleyWrapper.makeVolleySonyAPIStopLiveViewRequest(URL, queue, requestID++, new JSONObjectResponseWrapper() {
                 /**
                  * Response received
                  * @param response - camera response
@@ -486,8 +462,7 @@ public class MyWiFiActivity extends AppCompatActivity
         final String URL = buildAPIURLFromIP(cameraIPAddress);
         try
         {
-            VolleyWrapper.makeVolleySonyAPIActZoomRequest("in", queue, URL, requestID++,
-                    new JSONObjectResponseWrapper(this) {
+            VolleyWrapper.makeVolleySonyAPIActZoomRequest("in", queue, URL, requestID++, new JSONObjectResponseWrapper() {
                 /**
                  * Response received
                  * @param response - camera response
@@ -525,7 +500,7 @@ public class MyWiFiActivity extends AppCompatActivity
         try
         {
             VolleyWrapper.makeVolleySonyAPIActZoomRequest("out", queue, URL, requestID++,
-                    new JSONObjectResponseWrapper(this) {
+                    new JSONObjectResponseWrapper() {
                 /**
                  * Response received
                  * @param response - camera response
@@ -563,7 +538,7 @@ public class MyWiFiActivity extends AppCompatActivity
         final String URL = buildAPIURLFromIP(cameraIPAddress);
         try
         {
-            VolleyWrapper.stopRecMode(URL, queue, requestID++, new JSONObjectResponseWrapper(this) {
+            VolleyWrapper.stopRecMode(URL, queue, requestID++, new JSONObjectResponseWrapper() {
                 /**
                  * Response received
                  * @param response - camera response

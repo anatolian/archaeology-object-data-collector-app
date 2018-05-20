@@ -1,5 +1,5 @@
 // CheatSheet contains commons methods that are used throughout the other classes
-// @author: msenol
+// @author: Christopher Besser, msenol
 package com.archaeology.util;
 import android.app.Activity;
 import android.content.Context;
@@ -13,7 +13,6 @@ import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.media.ExifInterface;
-import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import java.io.BufferedReader;
@@ -56,7 +55,6 @@ public class CheatSheet
             String line;
             while ((line = bufferedReader.readLine()) != null)
             {
-                Log.v("ARP FILE", line);
                 String[] splitted = line.split(" +");
                 if (splitted.length >= 4)
                 {
@@ -84,31 +82,6 @@ public class CheatSheet
             }
         }
         return IP;
-    }
-
-    /**
-     * Set items to spinner
-     * @param aContext - calling context
-     * @param aSpinner - spinner to fill
-     * @param items - spinner items
-     * @param selectedItem - default item
-     * @param spinnerItemLayout - ordering to items
-     */
-    public static void setSpinnerItems(Context aContext, Spinner aSpinner, List<String> items,
-                                       String selectedItem, int spinnerItemLayout)
-    {
-        int selectedItemIndex = 0;
-        for (int i = 0; i < items.size(); i++)
-        {
-            if (items.get(i).equals(selectedItem))
-            {
-                selectedItemIndex = i;
-            }
-        }
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(aContext, spinnerItemLayout, items);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        aSpinner.setAdapter(adapter);
-        aSpinner.setSelection(selectedItemIndex);
     }
 
     /**

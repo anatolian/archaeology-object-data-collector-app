@@ -1,5 +1,5 @@
 // Settings Screen
-// @author: msenol86, ygowda, JPT2, matthewliang, ashutosh56
+// @author: Christopher Besser, msenol86, ygowda, JPT2, matthewliang, ashutosh56
 package com.archaeology.ui;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;

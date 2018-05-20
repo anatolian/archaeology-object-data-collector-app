@@ -1,5 +1,5 @@
 // Picasso Wrapper
-// @author: msenol86, ygowda, and anatolian
+// @author: msenol86, ygowda
 package com.archaeology.services;
 import android.content.Context;
 import android.graphics.Bitmap;

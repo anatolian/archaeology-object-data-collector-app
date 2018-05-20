@@ -1,5 +1,5 @@
 // String JSON Object response
-// @author: msenol
+// @author: Christopher Besser and msenol
 package com.archaeology.models;
 import com.android.volley.VolleyError;
 public abstract class StringObjectResponseWrapper

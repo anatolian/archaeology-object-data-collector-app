@@ -1,5 +1,5 @@
 // Object information
-// @author: msenol86, ygowda
+// @author: Christopher Besser, msenol86, ygowda
 package com.archaeology.ui;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
@@ -80,25 +80,6 @@ public class ObjectDetailActivity extends AppCompatActivity
     IntentFilter mIntentFilter;
     // to handle python requests
     RequestQueue queue;
-    // handler used to process messages. will either set weight or inform of changes in bluetooth connection status
-    Handler handler = new Handler() {
-        /**
-         * Message received
-         * @param msg - message
-         */
-        @Override
-        public void handleMessage(Message msg)
-        {
-            if (msg.what == MESSAGE_WEIGHT)
-            {
-                setCurrentScaleWeight(Integer.parseInt(msg.obj.toString().trim()) + "");
-            }
-            else if (msg.what == MESSAGE_STATUS_CHANGE)
-            {
-                setBluetoothConnectionStatus(msg.obj.toString().trim());
-            }
-        }
-    };
     private String currentScaleWeight = "";
     private String bluetoothConnectionStatus = "";
     private Uri fileURI;
@@ -235,7 +216,24 @@ public class ObjectDetailActivity extends AppCompatActivity
         }
         else
         {
-            nutriScaleBroadcastReceiver = new NutriScaleBroadcastReceiver(handler);
+            nutriScaleBroadcastReceiver = new NutriScaleBroadcastReceiver(new Handler() {
+                /**
+                 * Message received
+                 * @param msg - message
+                 */
+                @Override
+                public void handleMessage(Message msg)
+                {
+                    if (msg.what == MESSAGE_WEIGHT)
+                    {
+                        setCurrentScaleWeight(Integer.parseInt(msg.obj.toString().trim()) + "");
+                    }
+                    else if (msg.what == MESSAGE_STATUS_CHANGE)
+                    {
+                        setBluetoothConnectionStatus(msg.obj.toString().trim());
+                    }
+                }
+            });
         }
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = this.getLayoutInflater();
@@ -368,7 +366,6 @@ public class ObjectDetailActivity extends AppCompatActivity
         // Remote camera request
         else
         {
-            Log.v("WifiDirect","Activity Result");
             FILE_URI = data.getData();
             byte[] byteArray = data.getByteArrayExtra("bitmap");
             Bitmap bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
@@ -528,6 +525,8 @@ public class ObjectDetailActivity extends AppCompatActivity
     protected void onResume()
     {
         super.onResume();
+        TextView connecting = findViewById(R.id.connectingToCamera);
+        connecting.setVisibility(View.INVISIBLE);
         if (nutriScaleBroadcastReceiver != null)
         {
             registerReceiver(nutriScaleBroadcastReceiver, mIntentFilter);
@@ -638,7 +637,6 @@ public class ObjectDetailActivity extends AppCompatActivity
             public void responseMethod(String response)
             {
                 Toast.makeText(getApplicationContext(), response, Toast.LENGTH_SHORT).show();
-                Log.v("Weight", response);
             }
 
             /**
@@ -709,7 +707,6 @@ public class ObjectDetailActivity extends AppCompatActivity
             {
                 try
                 {
-                    Log.v("Response", response);
                     String[] obj = response.split("\n")[1].split(" \\| ");
                     populateInteriorSurfaceFields(obj[0] + obj[1], obj[2], obj[3]);
                 }
@@ -1243,6 +1240,8 @@ public class ObjectDetailActivity extends AppCompatActivity
      */
     public void goToWiFiActivity()
     {
+        TextView loading = findViewById(R.id.connectingToCamera);
+        loading.setVisibility(View.VISIBLE);
         if (cameraIPAddress == null)
         {
             Toast.makeText(getApplicationContext(), "Not connected to camera", Toast.LENGTH_LONG).show();

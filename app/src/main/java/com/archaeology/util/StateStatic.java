@@ -1,5 +1,5 @@
 // Static stuff
-// @author: msenol
+// @author: Christopher Besser and msenol
 package com.archaeology.util;
 import android.bluetooth.BluetoothAdapter;
 import android.content.res.Resources;
@@ -10,8 +10,6 @@ import java.util.Locale;
 public class StateStatic
 {
     // This class holds global state variables. This class should be only used in a static way
-    public static final String LOG_TAG = "Ceramic App";
-    public static final String LOG_TAG_WIFI_DIRECT = "WIFIDIRECT";
     public static final String LOG_TAG_BLUETOOTH = "BLUETOOTH";
     public static final int REQUEST_IMAGE_CAPTURE = 301;
     public static final int REQUEST_REMOTE_IMAGE = 302;
