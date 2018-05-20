@@ -67,6 +67,12 @@
                 android:layout_below = "@+id/zoom_in_button"
                 android:layout_centerHorizontal = "true"
                 android:onClick = "zoomOut"/>
+            <android.support.v7.widget.AppCompatImageView
+                android:id="@+id/fragment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/zoom_out_button"
+                tools:layout="@layout/photo_fragment"/>
         </RelativeLayout>
     </ScrollView>
 </RelativeLayout>

@@ -29,7 +29,6 @@ import static com.archaeology.util.StateStatic.MARKED_AS_ADDED;
 import static com.archaeology.util.StateStatic.MARKED_AS_TO_DOWNLOAD;
 import static com.archaeology.util.StateStatic.SYNCED;
 import static com.archaeology.util.StateStatic.globalWebServerURL;
-
 public class PhotoFragment extends Fragment
 {
     public abstract class CustomPicassoCallback implements Callback
@@ -101,7 +100,6 @@ public class PhotoFragment extends Fragment
             {
                 tempImageView.setSelected(false);
                 selectedPhotoCount--;
-
             }
             else
             {

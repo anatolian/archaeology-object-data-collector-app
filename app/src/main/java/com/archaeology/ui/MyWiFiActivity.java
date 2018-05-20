@@ -1,14 +1,19 @@
 // Connect to Wifi
 // @author: msenol86, ygowda
 package com.archaeology.ui;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.graphics.RectF;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.AppCompatImageView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -18,11 +23,26 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONException;
 import org.json.JSONObject;
 import com.archaeology.R;
+import com.archaeology.services.PicassoWrapper;
 import com.archaeology.util.StateStatic;
 import com.archaeology.services.VolleyWrapper;
 import com.archaeology.models.JSONObjectResponseWrapper;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Transformation;
+
+import java.io.ByteArrayOutputStream;
+
+import static com.archaeology.util.StateStatic.EASTING;
+import static com.archaeology.util.StateStatic.FIND_NUMBER;
+import static com.archaeology.util.StateStatic.HEMISPHERE;
 import static com.archaeology.util.StateStatic.LOG_TAG_WIFI_DIRECT;
+import static com.archaeology.util.StateStatic.MARKED_AS_ADDED;
+import static com.archaeology.util.StateStatic.NORTHING;
+import static com.archaeology.util.StateStatic.ZONE;
 import static com.archaeology.util.StateStatic.cameraIPAddress;
+import static com.archaeology.util.StateStatic.convertDPToPixel;
+
 public class MyWiFiActivity extends AppCompatActivity
 {
     // helps to establish connection with peer devices
@@ -32,6 +52,9 @@ public class MyWiFiActivity extends AppCompatActivity
     RequestQueue queue;
     int requestID;
     IntentFilter mIntentFilter;
+    public String hemisphere;
+    public int zone, easting, northing, find;
+    AppCompatImageView capture;
     /**
      * Launch activity
      * @param savedInstanceState - state from memory
@@ -56,6 +79,14 @@ public class MyWiFiActivity extends AppCompatActivity
         mManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
         mChannel = mManager.initialize(this, getMainLooper(), null);
         disableAPIButtons();
+        // getting object data from previous activity
+        Bundle myBundle = getIntent().getExtras();
+        hemisphere = myBundle.getString(HEMISPHERE);
+        zone = myBundle.getInt(ZONE);
+        easting = myBundle.getInt(EASTING);
+        northing = myBundle.getInt(NORTHING);
+        find = myBundle.getInt(FIND_NUMBER);
+        capture = findViewById(R.id.fragment);
         // Enable the API if the camera needs it enabled
         String URL = buildAPIURLFromIP(cameraIPAddress);
         try
@@ -181,13 +212,10 @@ public class MyWiFiActivity extends AppCompatActivity
                     try
                     {
                         // creating image URL from response
-                        String imageURL = response.getJSONArray("result").getString(0);
-                        imageURL = imageURL.substring(2, imageURL.length() - 2).replace("\\", "");
-                        Log.v(LOG_TAG_WIFI_DIRECT, "Trimmed imageURL: " + imageURL);
-                        Intent data = new Intent();
-                        data.setData(Uri.parse(imageURL));
-                        setResult(Activity.RESULT_OK, data);
-                        finish();
+                        String imageURI = response.getJSONArray("result").getString(0);
+                        imageURI = imageURI.substring(2, imageURI.length() - 2).replace("\\", "");
+                        Log.v(LOG_TAG_WIFI_DIRECT, "Trimmed imageURL: " + imageURI);
+                        loadPhotoIntoPhotoFragment(Uri.parse(imageURI));
                     }
                     catch (JSONException e)
                     {
@@ -210,6 +238,92 @@ public class MyWiFiActivity extends AppCompatActivity
         {
             e.printStackTrace();
             Toast.makeText(this, "Camera error", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /**
+     * Fill photo fragment
+     * @param IMAGE_URI - image location
+     */
+    public void loadPhotoIntoPhotoFragment(final Uri IMAGE_URI)
+    {
+        Log.v("WifiDirect", "Loading photo fragment");
+        // loading PhotoFragment class to add photo URIs
+        if (capture != null)
+        {
+            Log.v("WifiDirect", "Adding photo: " + IMAGE_URI.toString());
+            // photo URIs are added to HashMap in PhotoFragment class
+            Picasso.with(this).load(IMAGE_URI).transform(new Transformation() {
+                /**
+                 * Alter the image
+                 * @param source - original image
+                 * @return Returns the new image
+                 */
+                @Override
+                public Bitmap transform(Bitmap source)
+                {
+                    int requestedHeight = convertDPToPixel(250);
+                    float ratio = source.getHeight() / requestedHeight;
+                    int width = Math.round(source.getWidth() / ratio);
+                    int height = Math.round(source.getHeight() / ratio);
+                    if (requestedHeight >= source.getHeight())
+                    {
+                        return source;
+                    }
+                    else
+                    {
+                        Matrix m = new Matrix();
+                        m.setRectToRect(new RectF(0, 0, source.getWidth(), source.getHeight()),
+                                new RectF(0, 0, width, height), Matrix.ScaleToFit.CENTER);
+                        Bitmap result = Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), m, true);
+                        if (result != source)
+                        {
+                            source.recycle();
+                        }
+                        return result;
+                    }
+                }
+
+                /**
+                 * Transformation key
+                 * @return - Returns square()
+                 */
+                @Override
+                public String key()
+                {
+                    return "square()";
+                }
+            }).placeholder(android.R.drawable.ic_delete).error(android.R.drawable.ic_dialog_alert)
+                    .into(capture, new Callback() {
+                /**
+                 * Image load succeeded
+                 */
+                public void onSuccess()
+                {
+                    Log.v("WifiDirect", "Success Method");
+                    Intent data = new Intent();
+                    data.setData(Uri.parse(IMAGE_URI.toString()));
+                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                    Bitmap bitmap = ((BitmapDrawable) capture.getDrawable()).getBitmap();
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                    byte[] byteArray = stream.toByteArray();
+                    data.putExtra("bitmap", byteArray);
+                    setResult(RESULT_OK, data);
+                    finish();
+                }
+
+                /**
+                 * Image load failed
+                 */
+                public void onError()
+                {
+                    Log.v("WifiDirect", "Error method");
+                }
+            });
+        }
+        else
+        {
+            Log.v("WifiDirect", "Null fragment");
         }
     }
 

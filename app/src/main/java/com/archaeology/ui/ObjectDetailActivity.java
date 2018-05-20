@@ -13,6 +13,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
+import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -37,15 +38,10 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
-
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Set;
 import com.archaeology.R;
@@ -112,11 +108,13 @@ public class ObjectDetailActivity extends AppCompatActivity
     // broadcast receiver objects used to receive messages from other devices
     BroadcastReceiver nutriScaleBroadcastReceiver = null;
     // correspond to columns in database associated with finds
-    String hemisphere;
-    int zone, easting, northing, findNumber, imageNumber;
+    public String hemisphere;
+    public int zone, easting, northing, findNumber, imageNumber, requestID;
     public BluetoothService bluetoothService;
     public BluetoothDevice device = null;
     private TextView findLabel;
+    WifiP2pManager mManager;
+    WifiP2pManager.Channel mChannel;
     /**
      * Launch the activity
      * @param savedInstanceState - activity from memory
@@ -129,6 +127,19 @@ public class ObjectDetailActivity extends AppCompatActivity
         if (bluetoothService != null)
         {
             bluetoothService.closeThread();
+        }
+        if (StateStatic.cameraIPAddress != null)
+        {
+            queue = Volley.newRequestQueue(this);
+            requestID = 55;
+            // setting up intent filter
+            mIntentFilter = new IntentFilter();
+            mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
+            mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
+            mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
+            mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
+            mManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
+            mChannel = mManager.initialize(this, getMainLooper(), null);
         }
         bluetoothService = null;
         device = null;
@@ -320,32 +331,6 @@ public class ObjectDetailActivity extends AppCompatActivity
     }
 
     /**
-     * Load image from bitmap
-     * @param url - image URI
-     * @return Returns the bitmap
-     */
-    private Bitmap getImageBitmap(String url)
-    {
-        Bitmap bmp = null;
-        try
-        {
-            URL aURL = new URL(url);
-            URLConnection conn = aURL.openConnection();
-            conn.connect();
-            InputStream is = conn.getInputStream();
-            BufferedInputStream bis = new BufferedInputStream(is);
-            bmp = BitmapFactory.decodeStream(bis);
-            bis.close();
-            is.close();
-        }
-        catch (IOException e)
-        {
-            Log.e("Reading Image", "Error getting bitmap", e);
-        }
-        return bmp;
-    }
-
-    /**
      * Activity finished
      * @param requestCode - data request code
      * @param resultCode - result code
@@ -354,6 +339,18 @@ public class ObjectDetailActivity extends AppCompatActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
     {
+        if (resultCode != RESULT_OK)
+        {
+            return;
+        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = this.getLayoutInflater();
+        builder.setView(inflater.inflate(R.layout.approve_photo_dialog,null));
+        // set up camera dialog
+        final AlertDialog approveDialog = builder.create();
+        approveDialog.show();
+        // view photo you are trying to approve
+        final MagnifyingGlass APPROVE_PHOTO_IMAGE = approveDialog.findViewById(R.id.approvePhotoImage);
         final Uri FILE_URI;
         // Local camera request
         if (requestCode == REQUEST_IMAGE_CAPTURE)
@@ -366,149 +363,141 @@ public class ObjectDetailActivity extends AppCompatActivity
             String originalFileName = captureFile.substring(captureFile.lastIndexOf('/') + 1);
             // creating URI to save photo to once taken
             FILE_URI = CheatSheet.getThumbnail(originalFileName);
+            APPROVE_PHOTO_IMAGE.setImageURI(FILE_URI);
         }
+        // Remote camera request
         else
         {
+            Log.v("WifiDirect","Activity Result");
             FILE_URI = data.getData();
-            Log.v("Received URI: ", FILE_URI.toString());
+            byte[] byteArray = data.getByteArrayExtra("bitmap");
+            Bitmap bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+            APPROVE_PHOTO_IMAGE.setImageBitmap(bmp);
         }
-        if (resultCode == RESULT_OK)
+        final Button OK_BUTTON = approveDialog.findViewById(R.id.saveButton);
+        if (colorCorrectionEnabled)
         {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            LayoutInflater inflater = this.getLayoutInflater();
-            builder.setView(inflater.inflate(R.layout.approve_photo_dialog,null));
-            // set up camera dialog
-            final AlertDialog approveDialog = builder.create();
-            approveDialog.show();
-            // view photo you are trying to approve
-            final MagnifyingGlass APPROVE_PHOTO_IMAGE = approveDialog.findViewById(R.id.approvePhotoImage);
-            APPROVE_PHOTO_IMAGE.setImageURI(FILE_URI);
-//            APPROVE_PHOTO_IMAGE.setImageBitmap(getImageBitmap(FILE_URI.toString()));
-            final Button OK_BUTTON = approveDialog.findViewById(R.id.saveButton);
-            if (colorCorrectionEnabled)
-            {
-                final TextView LABEL = approveDialog.findViewById(R.id.correctionLabel);
-                LABEL.setText(getString(R.string.tap_to_correct));
-                OK_BUTTON.setOnClickListener(new View.OnClickListener() {
-                    /**
-                     * User pressed save
-                     * @param view - the save button
-                     */
-                    @Override
-                    public void onClick(View view)
-                    {
-                        LABEL.setVisibility(View.INVISIBLE);
-                        APPROVE_PHOTO_IMAGE.correctedAlready = true;
-                        final Spinner LOCATIONS = approveDialog.findViewById(R.id.locationLabels);
-                        LOCATIONS.setVisibility(View.VISIBLE);
-                        TextView locationsLabel = approveDialog.findViewById(R.id.locationSpinnerLabel);
-                        locationsLabel.setVisibility(View.VISIBLE);
-                        LOCATIONS.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                            /**
-                             * Spinner item was selected
-                             * @param adapterView - container view
-                             * @param view - selected item
-                             * @param i - selected index
-                             * @param l - item id
-                             */
-                            @Override
-                            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l)
-                            {
-                                APPROVE_PHOTO_IMAGE.location = LOCATIONS.getSelectedItem().toString();
-                            }
-
-                            /**
-                             * Nothing was selected
-                             * @param adapterView - container view
-                             */
-                            @Override
-                            public void onNothingSelected(AdapterView<?> adapterView)
-                            {
-                            }
-                        });
-                        OK_BUTTON.setOnClickListener(new View.OnClickListener() {
-                            /**
-                             * User pressed save
-                             * @param view - save button
-                             */
-                            @Override
-                            public void onClick(View view)
-                            {
-                                if (APPROVE_PHOTO_IMAGE.red != -1)
-                                {
-                                    updateColorInDB(APPROVE_PHOTO_IMAGE.red, APPROVE_PHOTO_IMAGE.green,
-                                            APPROVE_PHOTO_IMAGE.blue, APPROVE_PHOTO_IMAGE.location);
-                                }
-                                File folder = new File(Environment.getExternalStorageDirectory() + "/Archaeology");
-                                if (!folder.exists())
-                                {
-                                    folder.mkdirs();
-                                }
-                                String path = Environment.getExternalStorageDirectory() + "/Archaeology/temp.png";
-                                Bitmap bmp = ((BitmapDrawable) APPROVE_PHOTO_IMAGE.getDrawable()).getBitmap();
-                                try
-                                {
-                                    bmp = rotateImageIfRequired(bmp, getApplicationContext(), FILE_URI);
-                                }
-                                catch (IOException e)
-                                {
-                                    e.printStackTrace();
-                                }
-                                FileOutputStream out = null;
-                                try
-                                {
-                                    out = new FileOutputStream(path);
-                                    bmp.compress(Bitmap.CompressFormat.PNG, 100, out);
-                                }
-                                catch (Exception e)
-                                {
-                                    Toast.makeText(getApplicationContext(), "Could not save image",
-                                            Toast.LENGTH_SHORT).show();
-                                    e.printStackTrace();
-                                }
-                                finally
-                                {
-                                    try
-                                    {
-                                        if (out != null)
-                                        {
-                                            out.close();
-                                        }
-                                    }
-                                    catch (IOException e)
-                                    {
-                                        Toast.makeText(getApplicationContext(),
-                                                "Could not save image", Toast.LENGTH_SHORT).show();
-                                        e.printStackTrace();
-                                    }
-                                }
-                                File tempFile = new File(path);
-                                // Have to convert java.net.URI to android.net.Uri
-                                URI tempURI = tempFile.toURI();
-                                Uri convertedURI = Uri.parse(tempURI.toString());
-                                // store image data into photo fragments
-                                loadPhotoIntoPhotoFragment(convertedURI, MARKED_AS_ADDED);
-                                approveDialog.dismiss();
-                                asyncPopulateFieldsFromDB(hemisphere, zone, easting, northing, findNumber);
-                            }
-                        });
-                    }
-                });
-            }
-            Button cancelButton = approveDialog.findViewById(R.id.cancelButton);
-            cancelButton.setOnClickListener(new View.OnClickListener() {
+            final TextView LABEL = approveDialog.findViewById(R.id.correctionLabel);
+            LABEL.setText(getString(R.string.tap_to_correct));
+            OK_BUTTON.setOnClickListener(new View.OnClickListener() {
                 /**
-                 * User cancelled image upload
-                 * @param view - the cancel button
+                 * User pressed save
+                 * @param view - the save button
                  */
                 @Override
                 public void onClick(View view)
                 {
-                    deleteOriginalAndThumbnailPhoto(FILE_URI);
-                    approveDialog.dismiss();
+                    LABEL.setVisibility(View.INVISIBLE);
+                    APPROVE_PHOTO_IMAGE.correctedAlready = true;
+                    final Spinner LOCATIONS = approveDialog.findViewById(R.id.locationLabels);
+                    LOCATIONS.setVisibility(View.VISIBLE);
+                    TextView locationsLabel = approveDialog.findViewById(R.id.locationSpinnerLabel);
+                    locationsLabel.setVisibility(View.VISIBLE);
+                    LOCATIONS.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                        /**
+                         * Spinner item was selected
+                         * @param adapterView - container view
+                         * @param view - selected item
+                         * @param i - selected index
+                         * @param l - item id
+                         */
+                        @Override
+                        public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l)
+                        {
+                            APPROVE_PHOTO_IMAGE.location = LOCATIONS.getSelectedItem().toString();
+                        }
+
+                        /**
+                         * Nothing was selected
+                         * @param adapterView - container view
+                         */
+                        @Override
+                        public void onNothingSelected(AdapterView<?> adapterView)
+                        {
+                        }
+                    });
+                    OK_BUTTON.setOnClickListener(new View.OnClickListener() {
+                        /**
+                         * User pressed save
+                         * @param view - save button
+                         */
+                        @Override
+                        public void onClick(View view)
+                        {
+                            if (APPROVE_PHOTO_IMAGE.red != -1)
+                            {
+                                updateColorInDB(APPROVE_PHOTO_IMAGE.red, APPROVE_PHOTO_IMAGE.green,
+                                        APPROVE_PHOTO_IMAGE.blue, APPROVE_PHOTO_IMAGE.location);
+                            }
+                            File folder = new File(Environment.getExternalStorageDirectory() + "/Archaeology");
+                            if (!folder.exists())
+                            {
+                                folder.mkdirs();
+                            }
+                            String path = Environment.getExternalStorageDirectory() + "/Archaeology/temp.png";
+                            Bitmap bmp = ((BitmapDrawable) APPROVE_PHOTO_IMAGE.getDrawable()).getBitmap();
+                            try
+                            {
+                                bmp = rotateImageIfRequired(bmp, getApplicationContext(), FILE_URI);
+                            }
+                            catch (IOException e)
+                            {
+                                e.printStackTrace();
+                            }
+                            FileOutputStream out = null;
+                            try
+                            {
+                                out = new FileOutputStream(path);
+                                bmp.compress(Bitmap.CompressFormat.PNG, 100, out);
+                            }
+                            catch (Exception e)
+                            {
+                                Toast.makeText(getApplicationContext(), "Could not save image",
+                                        Toast.LENGTH_SHORT).show();
+                                e.printStackTrace();
+                            }
+                            finally
+                            {
+                                try
+                                {
+                                    if (out != null)
+                                    {
+                                        out.close();
+                                    }
+                                }
+                                catch (IOException e)
+                                {
+                                    Toast.makeText(getApplicationContext(),"Could not save image",
+                                            Toast.LENGTH_SHORT).show();
+                                    e.printStackTrace();
+                                }
+                            }
+                            File tempFile = new File(path);
+                            // Have to convert java.net.URI to android.net.Uri
+                            URI tempURI = tempFile.toURI();
+                            Uri convertedURI = Uri.parse(tempURI.toString());
+                            // store image data into photo fragments
+                            loadPhotoIntoPhotoFragment(convertedURI, MARKED_AS_ADDED);
+                            approveDialog.dismiss();
+                            asyncPopulateFieldsFromDB(hemisphere, zone, easting, northing, findNumber);
+                        }
+                    });
                 }
             });
         }
+        Button cancelButton = approveDialog.findViewById(R.id.cancelButton);
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            /**
+             * User cancelled image upload
+             * @param view - the cancel button
+             */
+            @Override
+            public void onClick(View view)
+            {
+                deleteOriginalAndThumbnailPhoto(FILE_URI);
+                approveDialog.dismiss();
+            }
+        });
     }
 
     /**
@@ -562,6 +551,7 @@ public class ObjectDetailActivity extends AppCompatActivity
         }
         catch (Exception e)
         {
+            e.printStackTrace();
         }
     }
 
@@ -578,6 +568,7 @@ public class ObjectDetailActivity extends AppCompatActivity
         }
         catch (Exception e)
         {
+            e.printStackTrace();
         }
     }
 
@@ -1266,6 +1257,11 @@ public class ObjectDetailActivity extends AppCompatActivity
             Log.v(LOG_TAG_BLUETOOTH, "Trying to unregister non-registered receiver");
         }
         Intent wifiActivity = new Intent(this, MyWiFiActivity.class);
+        wifiActivity.putExtra(HEMISPHERE, hemisphere);
+        wifiActivity.putExtra(ZONE, zone);
+        wifiActivity.putExtra(EASTING, easting);
+        wifiActivity.putExtra(NORTHING, northing);
+        wifiActivity.putExtra(FIND_NUMBER, findNumber);
         startActivityForResult(wifiActivity, REQUEST_REMOTE_IMAGE);
     }
 }
