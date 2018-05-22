@@ -114,16 +114,16 @@ public class VolleyWrapper
         JSONObject JSONPOSTBody = new JSONObject(POST_BODY);
         JsonObjectRequest myRequest = new JsonObjectRequest(Method.POST, URL, JSONPOSTBody,
                 new Response.Listener<JSONObject>() {
-                    /**
-                     * Response received
-                     * @param response - database response
-                     */
-                    @Override
-                    public void onResponse(JSONObject response)
-                    {
-                        LAMBDA_WRAPPER.responseMethod(response);
-                    }
-                }, new Response.ErrorListener() {
+            /**
+             * Response received
+             * @param response - database response
+             */
+            @Override
+            public void onResponse(JSONObject response)
+            {
+                LAMBDA_WRAPPER.responseMethod(response);
+            }
+            }, new Response.ErrorListener() {
 
             /**
              * Connection error

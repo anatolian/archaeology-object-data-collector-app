@@ -350,6 +350,7 @@ public class ObjectDetailActivity extends AppCompatActivity
         // view photo you are trying to approve
         final MagnifyingGlass APPROVE_PHOTO_IMAGE = approveDialog.findViewById(R.id.approvePhotoImage);
         final Uri FILE_URI;
+        final Bitmap BMP;
         // Local camera request
         if (requestCode == REQUEST_IMAGE_CAPTURE)
         {
@@ -362,14 +363,24 @@ public class ObjectDetailActivity extends AppCompatActivity
             // creating URI to save photo to once taken
             FILE_URI = CheatSheet.getThumbnail(originalFileName);
             APPROVE_PHOTO_IMAGE.setImageURI(FILE_URI);
+            try
+            {
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), FILE_URI);
+                BMP = rotateImageIfRequired(bitmap, getApplicationContext(), FILE_URI);
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+                return;
+            }
         }
         // Remote camera request
         else
         {
             FILE_URI = data.getData();
             byte[] byteArray = data.getByteArrayExtra("bitmap");
-            Bitmap bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
-            APPROVE_PHOTO_IMAGE.setImageBitmap(bmp);
+            BMP = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+            APPROVE_PHOTO_IMAGE.setImageBitmap(BMP);
         }
         final Button OK_BUTTON = approveDialog.findViewById(R.id.saveButton);
         if (colorCorrectionEnabled)
@@ -431,21 +442,12 @@ public class ObjectDetailActivity extends AppCompatActivity
                             {
                                 folder.mkdirs();
                             }
-                            String path = Environment.getExternalStorageDirectory() + "/Archaeology/temp.png";
-                            Bitmap bmp = ((BitmapDrawable) APPROVE_PHOTO_IMAGE.getDrawable()).getBitmap();
-                            try
-                            {
-                                bmp = rotateImageIfRequired(bmp, getApplicationContext(), FILE_URI);
-                            }
-                            catch (IOException e)
-                            {
-                                e.printStackTrace();
-                            }
+                            String path = Environment.getExternalStorageDirectory() + "/Archaeology/temp.jpg";
                             FileOutputStream out = null;
                             try
                             {
                                 out = new FileOutputStream(path);
-                                bmp.compress(Bitmap.CompressFormat.PNG, 100, out);
+                                BMP.compress(Bitmap.CompressFormat.PNG, 100, out);
                             }
                             catch (Exception e)
                             {

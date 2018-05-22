@@ -13,6 +13,7 @@ import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatImageView;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 import com.android.volley.RequestQueue;
@@ -197,6 +198,7 @@ public class MyWiFiActivity extends AppCompatActivity
                 {
                     try
                     {
+                        Log.v("CAMERA", response.toString());
                         // creating image URL from response
                         String imageURI = response.getJSONArray("result").getString(0);
                         imageURI = imageURI.substring(2, imageURI.length() - 2).replace("\\", "");
@@ -233,7 +235,7 @@ public class MyWiFiActivity extends AppCompatActivity
      */
     public void loadPhotoIntoPhotoFragment(final Uri IMAGE_URI)
     {
-        // loading PhotoFragment class to add photo URIs
+        // Loading PhotoFragment class to add photo URIs
         if (capture != null)
         {
             // photo URIs are added to HashMap in PhotoFragment class
@@ -259,7 +261,8 @@ public class MyWiFiActivity extends AppCompatActivity
                         Matrix m = new Matrix();
                         m.setRectToRect(new RectF(0, 0, source.getWidth(), source.getHeight()),
                                 new RectF(0, 0, width, height), Matrix.ScaleToFit.CENTER);
-                        Bitmap result = Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), m, true);
+                        Bitmap result = Bitmap.createBitmap(source, 0, 0, source.getWidth(),
+                                source.getHeight(), m, true);
                         if (result != source)
                         {
                             source.recycle();
@@ -288,7 +291,7 @@ public class MyWiFiActivity extends AppCompatActivity
                     data.setData(Uri.parse(IMAGE_URI.toString()));
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
                     Bitmap bitmap = ((BitmapDrawable) capture.getDrawable()).getBitmap();
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
                     byte[] byteArray = stream.toByteArray();
                     data.putExtra("bitmap", byteArray);
                     setResult(RESULT_OK, data);
