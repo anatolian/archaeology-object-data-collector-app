@@ -39,8 +39,94 @@ public class VolleyWrapper
             {
                 LAMBDA_WRAPPER.responseMethod(response);
             }
-            }, new Response.ErrorListener() {
+        }, new Response.ErrorListener() {
+            /**
+             * Connection error
+             * @param error - failure
+             */
+            @Override
+            public void onErrorResponse(VolleyError error)
+            {
+                LAMBDA_WRAPPER.errorMethod(error);
+            }
+        });
+        myRequest.setRetryPolicy(new DefaultRetryPolicy(20000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        queue.add(myRequest);
+    }
 
+    /**
+     * Set the camera function
+     * @param URL - camera URL
+     * @param queue - request queue
+     * @param ID - request id
+     * @param function - function to enable
+     * @param LAMBDA_WRAPPER - request wrapper
+     * @throws JSONException if the JSON is malformed
+     */
+    public static void setCameraFunction(final String URL, RequestQueue queue, final int ID, String function,
+                                         final JSONObjectResponseWrapper LAMBDA_WRAPPER) throws JSONException
+    {
+        final String POST_BODY = new JSONObject().put("method", "setCameraFunction")
+                .put("params", new JSONArray().put(function)).put("id", ID)
+                .put("version", "1.0").toString();
+        JSONObject JSONPOSTBody = new JSONObject(POST_BODY);
+        JsonObjectRequest myRequest = new JsonObjectRequest(Method.POST, URL, JSONPOSTBody,
+                new Response.Listener<JSONObject>() {
+            /**
+             * Response received
+             * @param response - database response
+             */
+            @Override
+            public void onResponse(JSONObject response)
+            {
+                LAMBDA_WRAPPER.responseMethod(response);
+            }
+        }, new Response.ErrorListener() {
+            /**
+             * Connection error
+             * @param error - failure
+             */
+            @Override
+            public void onErrorResponse(VolleyError error)
+            {
+                LAMBDA_WRAPPER.errorMethod(error);
+            }
+        });
+        myRequest.setRetryPolicy(new DefaultRetryPolicy(20000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        queue.add(myRequest);
+    }
+
+    /**
+     * List the files on the camera
+     * @param URL - camera URL
+     * @param queue - request queue
+     * @param ID - request id
+     * @param LAMBDA_WRAPPER - request wrapper
+     * @throws JSONException if the JSON is malformed
+     */
+    public static void getContentList(final String URL, RequestQueue queue, final int ID,
+                                         final JSONObjectResponseWrapper LAMBDA_WRAPPER) throws JSONException
+    {
+        final String POST_BODY = new JSONObject().put("method", "setCameraFunction")
+                .put("params", new JSONArray().put(new JSONObject().put("uri", "storage:memoryCard1")
+                .put("stIdx", 0).put("cnt", 100).put("type", "still")
+                .put("view", "date").put("sort", "descending"))).put("id", ID)
+                .put("version", "1.0").toString();
+        JSONObject JSONPOSTBody = new JSONObject(POST_BODY);
+        JsonObjectRequest myRequest = new JsonObjectRequest(Method.POST, URL, JSONPOSTBody,
+                new Response.Listener<JSONObject>() {
+            /**
+             * Response received
+             * @param response - database response
+             */
+            @Override
+            public void onResponse(JSONObject response)
+            {
+                LAMBDA_WRAPPER.responseMethod(response);
+            }
+        }, new Response.ErrorListener() {
             /**
              * Connection error
              * @param error - failure
@@ -81,7 +167,7 @@ public class VolleyWrapper
             {
                 LAMBDA_WRAPPER.responseMethod(response);
             }
-            }, new Response.ErrorListener() {
+        }, new Response.ErrorListener() {
 
             /**
              * Connection error
@@ -123,7 +209,7 @@ public class VolleyWrapper
             {
                 LAMBDA_WRAPPER.responseMethod(response);
             }
-            }, new Response.ErrorListener() {
+        }, new Response.ErrorListener() {
 
             /**
              * Connection error
@@ -272,12 +358,6 @@ public class VolleyWrapper
 
     /**
      * Calls actZoom API to the target server. Request JSON data is such like as below.
-     * {
-     *   "method": "actZoom",
-     *   "params": ["in","stop"],
-     *   "id": 2,
-     *   "version": "1.0"
-     * }
      * @param direction - direction of zoom ("in" or "out")
      * @param queue - request queue
      * @param URL - camera URL
