@@ -5,11 +5,7 @@ and retrieve all stored information about the object. The app can communicate ov
 the weight. Users can also take pictures with their hardware camera or WiFi Direct enabled camera and upload them to the database. Users can also color correct their images through
 white-balancing.
 
-For artifacts stored on public webpages (e.g. The University of Pennsylvania Digital Archives https://www.penn.museum/collections/), users can fetch and display these pages in app by
-scanning a QR Code or entering an artifact key. Users outside of the Penn network will currently need to change the root URL (endResult[2] in https://github.com/anatolian/archaeology-object-data-collector-app/blob/master/app/src/main/java/com/archaeology/util/LocalRetriever.java) to that of their own pages, as well as modify the logic found in
-https://github.com/anatolian/archaeology-object-data-collector-app/tree/master/app/src/main/java/com/archaeology/services (see DatabaseUpdater.java's filename variable and UpdateDatabaseMuseum.java's FILE variable). Hopefully, this step will be refactored sousers can enter this URL upon initial launch rather than modifying the code.
-
-The corresponding PHP web services code can be found in the [archaeology-object-data-collector-service] repository. This code is designed to work with Heroku, but might be extended
+The corresponding Python web services code can be found in the [archaeology-object-data-collector-service] repository. This code is designed to work with Heroku, but might be extended
 to other data hosting platforms in the future.
 
 In order to better enable reuse of this code base for other projects and data structures, the intent of this documentation is to briefly overview the flow of the application. Readme files within certain important subfolders also help provide details on the files in those folders.
