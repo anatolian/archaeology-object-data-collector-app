@@ -4,7 +4,7 @@
     tools:context = "com.archaeology.ui.MyWiFiActivity">
     <view
         android:layout_width = "wrap_content"
-        android:layout_height = "200dp"
+        android:layout_height = "400dp"
         class = "com.archaeology.ui.SimpleStreamSurfaceView"
         android:id = "@+id/surfaceview_liveview"
         android:layout_centerHorizontal = "true"/>
@@ -72,7 +72,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/zoom_out_button"
-                tools:layout="@layout/photo_fragment"/>
+                tools:layout="@layout/photo_fragment"
+                android:visibility="invisible"/>
         </RelativeLayout>
     </ScrollView>
 </RelativeLayout>

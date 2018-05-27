@@ -56,6 +56,88 @@ public class VolleyWrapper
     }
 
     /**
+     * Get supported live view sizes
+     * @param URL - camera URL
+     * @param queue - request queue
+     * @param ID - request id
+     * @param LAMBDA_WRAPPER - request wrapper
+     * @throws JSONException if the JSON is malformed
+     */
+    public static void getSupportedLiveViewSize(final String URL, RequestQueue queue, final int ID,
+                                                final JSONObjectResponseWrapper LAMBDA_WRAPPER) throws JSONException
+    {
+        final String POST_BODY = new JSONObject().put("method", "getSupportedLiveviewSize")
+                .put("params", new JSONArray()).put("id", ID).put("version", "1.0").toString();
+        JSONObject JSONPOSTBody = new JSONObject(POST_BODY);
+        JsonObjectRequest myRequest = new JsonObjectRequest(Method.POST, URL, JSONPOSTBody,
+                new Response.Listener<JSONObject>() {
+            /**
+             * Response received
+             * @param response - database response
+             */
+            @Override
+            public void onResponse(JSONObject response)
+            {
+                LAMBDA_WRAPPER.responseMethod(response);
+            }
+        }, new Response.ErrorListener() {
+            /**
+             * Connection error
+             * @param error - failure
+             */
+            @Override
+            public void onErrorResponse(VolleyError error)
+            {
+                LAMBDA_WRAPPER.errorMethod(error);
+            }
+        });
+        myRequest.setRetryPolicy(new DefaultRetryPolicy(20000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        queue.add(myRequest);
+    }
+
+    /**
+     * Get available live view sizes
+     * @param URL - camera URL
+     * @param queue - request queue
+     * @param ID - request id
+     * @param LAMBDA_WRAPPER - request wrapper
+     * @throws JSONException if the JSON is malformed
+     */
+    public static void getAvailableLiveViewSize(final String URL, RequestQueue queue, final int ID,
+                                                final JSONObjectResponseWrapper LAMBDA_WRAPPER) throws JSONException
+    {
+        final String POST_BODY = new JSONObject().put("method", "getAvailableLiveviewSize")
+                .put("params", new JSONArray()).put("id", ID).put("version", "1.0").toString();
+        JSONObject JSONPOSTBody = new JSONObject(POST_BODY);
+        JsonObjectRequest myRequest = new JsonObjectRequest(Method.POST, URL, JSONPOSTBody,
+                new Response.Listener<JSONObject>() {
+            /**
+             * Response received
+             * @param response - database response
+             */
+            @Override
+            public void onResponse(JSONObject response)
+            {
+                LAMBDA_WRAPPER.responseMethod(response);
+            }
+        }, new Response.ErrorListener() {
+            /**
+             * Connection error
+             * @param error - failure
+             */
+            @Override
+            public void onErrorResponse(VolleyError error)
+            {
+                LAMBDA_WRAPPER.errorMethod(error);
+            }
+        });
+        myRequest.setRetryPolicy(new DefaultRetryPolicy(20000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        queue.add(myRequest);
+    }
+
+    /**
      * Set the camera function
      * @param URL - camera URL
      * @param queue - request queue
@@ -107,7 +189,7 @@ public class VolleyWrapper
      * @throws JSONException if the JSON is malformed
      */
     public static void getContentList(final String URL, RequestQueue queue, final int ID,
-                                         final JSONObjectResponseWrapper LAMBDA_WRAPPER) throws JSONException
+                                      final JSONObjectResponseWrapper LAMBDA_WRAPPER) throws JSONException
     {
         final String POST_BODY = new JSONObject().put("method", "setCameraFunction")
                 .put("params", new JSONArray().put(new JSONObject().put("uri", "storage:memoryCard1")
@@ -281,8 +363,8 @@ public class VolleyWrapper
             throws JSONException
     {
         // setting up with params for JSON object
-        final String POST_BODY = new JSONObject().put("method", "startLiveview")
-                .put("params", new JSONArray()).put("id", ID).put("version","1.0").toString();
+        final String POST_BODY = new JSONObject().put("method", "startLiveviewWithSize")
+                .put("params", new JSONArray().put("L")).put("id", ID).put("version","1.0").toString();
         JSONObject JSONPOSTBody = new JSONObject(POST_BODY);
         // making request
         JsonObjectRequest myRequest = new JsonObjectRequest(Method.POST, URL, JSONPOSTBody,

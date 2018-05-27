@@ -11,7 +11,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
@@ -41,7 +40,6 @@ import com.android.volley.toolbox.Volley;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Set;
 import com.archaeology.R;
@@ -473,8 +471,7 @@ public class ObjectDetailActivity extends AppCompatActivity
                             }
                             File tempFile = new File(path);
                             // Have to convert java.net.URI to android.net.Uri
-                            URI tempURI = tempFile.toURI();
-                            Uri convertedURI = Uri.parse(tempURI.toString());
+                            Uri convertedURI = Uri.parse(tempFile.toURI().toString());
                             // store image data into photo fragments
                             loadPhotoIntoPhotoFragment(convertedURI, MARKED_AS_ADDED);
                             approveDialog.dismiss();
