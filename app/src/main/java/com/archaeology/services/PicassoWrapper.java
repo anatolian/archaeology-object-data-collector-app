@@ -10,6 +10,8 @@ import android.support.v7.widget.AppCompatImageView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import com.squareup.picasso.MemoryPolicy;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
 import com.archaeology.ui.PhotoFragment;
@@ -78,7 +80,8 @@ public class PicassoWrapper
                 LinearLayout.LayoutParams.WRAP_CONTENT);
         layoutParams.setMargins(0, 0, 40, 0);
         ON_PHOTO_FETCHED_CALLBACK.setActualImageView(PHOTO_VIEW);
-        Picasso.with(A_CONTEXT).load(REMOTE_IMAGE_URL).transform(new ResizeAccordingToSpecificHeightTransformation())
+        Picasso.with(A_CONTEXT).load(REMOTE_IMAGE_URL).memoryPolicy(MemoryPolicy.NO_CACHE)
+                .networkPolicy(NetworkPolicy.NO_CACHE).transform(new ResizeAccordingToSpecificHeightTransformation())
                 .placeholder(android.R.drawable.ic_delete).error(android.R.drawable.ic_dialog_alert)
                 .into(PHOTO_VIEW, ON_PHOTO_FETCHED_CALLBACK);
         PHOTO_VIEW.setOnClickListener(anOnClickListener);

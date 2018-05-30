@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -66,6 +67,7 @@ import static com.archaeology.util.StateStatic.MESSAGE_WEIGHT;
 import static com.archaeology.util.StateStatic.NORTHING;
 import static com.archaeology.util.StateStatic.REQUEST_IMAGE_CAPTURE;
 import static com.archaeology.util.StateStatic.REQUEST_REMOTE_IMAGE;
+import static com.archaeology.util.StateStatic.SAVE_TO_ONE_DRIVE;
 import static com.archaeology.util.StateStatic.ZONE;
 import static com.archaeology.util.StateStatic.cameraIPAddress;
 import static com.archaeology.util.StateStatic.cameraMACAddress;
@@ -74,10 +76,11 @@ import static com.archaeology.util.StateStatic.getTimeStamp;
 import static com.archaeology.util.StateStatic.globalWebServerURL;
 import static com.archaeology.util.StateStatic.isBluetoothEnabled;
 import static com.archaeology.util.StateStatic.isRemoteCameraSelected;
-import android.view.View.OnClickListener;
 import com.microsoft.onedrivesdk.picker.*;
 import com.microsoft.onedrivesdk.saver.ISaver;
 import com.microsoft.onedrivesdk.saver.Saver;
+import com.microsoft.onedrivesdk.saver.SaverException;
+import com.squareup.picasso.Picasso;
 
 public class ObjectDetailActivity extends AppCompatActivity
 {
@@ -100,17 +103,8 @@ public class ObjectDetailActivity extends AppCompatActivity
     private TextView findLabel;
     WifiP2pManager mManager;
     WifiP2pManager.Channel mChannel;
-    private IPicker mPicker;
     private String ONEDRIVE_APP_ID = StateStatic.ONEDRIVE_APP_ID;
-    // The onClickListener that will start the OneDrive picker
-    private final OnClickListener mStartPickingListener = new OnClickListener() {
-        @Override
-        public void onClick(final View v)
-        {
-            mPicker = Picker.createPicker(ONEDRIVE_APP_ID);
-            mPicker.startPicking((Activity) v.getContext(), LinkType.WebViewLink);
-        }
-    };
+    private ISaver mSaver = Saver.createSaver(ONEDRIVE_APP_ID);
     /**
      * Launch the activity
      * @param savedInstanceState - activity from memory
@@ -120,6 +114,7 @@ public class ObjectDetailActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_object_detail);
+        mSaver.setRequestCode(SAVE_TO_ONE_DRIVE);
         if (bluetoothService != null)
         {
             bluetoothService.closeThread();
@@ -352,7 +347,39 @@ public class ObjectDetailActivity extends AppCompatActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
     {
-        if (resultCode != RESULT_OK)
+        if (requestCode == SAVE_TO_ONE_DRIVE)
+        {
+            try
+            {
+                mSaver.handleSave(requestCode, resultCode, data);
+            }
+            catch (final SaverException e)
+            {
+                Log.e("OneDriveSaver", e.getErrorType().toString());
+                try
+                {
+                    Log.d("OneDriveSaver", e.getDebugErrorInfo());
+                }
+                catch (Exception e2)
+                {
+                    e2.printStackTrace();
+                }
+                switch (e.getErrorType())
+                {
+                    case OutOfQuota:
+                        Toast.makeText(getApplicationContext(), "Out of OneDrive quota", Toast.LENGTH_SHORT).show();
+                        break;
+                    case NoNetworkConnectivity:
+                        Toast.makeText(getApplicationContext(), "Disconnected from internet while uploading to OneDrive",
+                                Toast.LENGTH_SHORT).show();
+                        break;
+                    default:
+                        Toast.makeText(getApplicationContext(), "Error uploading to OneDrive", Toast.LENGTH_SHORT).show();
+                }
+            }
+            return;
+        }
+        else if (resultCode != RESULT_OK)
         {
             return;
         }
@@ -486,10 +513,11 @@ public class ObjectDetailActivity extends AppCompatActivity
                         }
                         File tempFile = new File(path);
                         Uri convertedURI = Uri.fromFile(tempFile);
+                        saveToOneDrive(tempFile.getPath(), convertedURI);
                         // store image data into photo fragments
                         loadPhotoIntoPhotoFragment(convertedURI, MARKED_AS_ADDED);
-//                        ISaver mSaver = Saver.createSaver(ONEDRIVE_APP_ID);
-//                        mSaver.startSaving((Activity) getApplicationContext(), path, convertedURI);
+                        // Invalidate the cache in case the image was deleted prior
+                        Picasso.with(getApplicationContext()).invalidate(fileURI);
                         approveDialog.dismiss();
                         asyncPopulateFieldsFromDB(hemisphere, zone, easting, northing, findNumber);
                     }
@@ -534,6 +562,18 @@ public class ObjectDetailActivity extends AppCompatActivity
         {
             Log.v(LOG_TAG_BLUETOOTH, "Trying to unregister non-registered receiver");
         }
+    }
+
+    /**
+     * Save image to OneDrive
+     * @param path - location of file
+     * @param uri - location of file
+     */
+    private void saveToOneDrive(String path, Uri uri)
+    {
+        mSaver.startSaving(this, path, uri);
+        Log.v("One Drive", uri.toString());
+        Log.v("One Drive", path);
     }
 
     /**
@@ -929,6 +969,7 @@ public class ObjectDetailActivity extends AppCompatActivity
                 {
                     loadPhotoIntoPhotoFragment(Uri.parse(photoURL), MARKED_AS_TO_DOWNLOAD);
                 }
+                imageNumber = photoList.size();
             }
 
             /**
@@ -1119,7 +1160,6 @@ public class ObjectDetailActivity extends AppCompatActivity
      */
     public void addPhotoAction(View view)
     {
-        imageNumber++;
         if (isRemoteCameraSelected)
         {
             // Just connect to found IP

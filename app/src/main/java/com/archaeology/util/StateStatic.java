@@ -13,6 +13,7 @@ public class StateStatic
     public static final String LOG_TAG_BLUETOOTH = "BLUETOOTH";
     public static final int REQUEST_IMAGE_CAPTURE = 301;
     public static final int REQUEST_REMOTE_IMAGE = 302;
+    public static final int SAVE_TO_ONE_DRIVE = 303;
     public static final int MESSAGE_WEIGHT = 501;
     public static final int MESSAGE_STATUS_CHANGE = 502;
     public static final String DEFAULT_WEB_SERVER_URL = "https://object-data-collector-service.herokuapp.com";
@@ -41,7 +42,7 @@ public class StateStatic
     public static String cameraMACAddress = DEFAULT_CAMERA_MAC;
     public static long remoteCameraCalibrationInterval = DEFAULT_CALIBRATION_INTERVAL;
     public static long tabletCameraCalibrationInterval = DEFAULT_CALIBRATION_INTERVAL;
-    public static final boolean DEFAULT_REMOTE_CAMERA_SELECTED = true;
+    public static final boolean DEFAULT_REMOTE_CAMERA_SELECTED = false;
     public static boolean isRemoteCameraSelected = DEFAULT_REMOTE_CAMERA_SELECTED;
     public static String cameraIPAddress = null;
     public static final boolean DEFAULT_CORRECTION_SELECTION = true;
