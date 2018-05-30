@@ -1,6 +1,7 @@
 // Object information
 // @author: Christopher Besser, msenol86, ygowda
 package com.archaeology.ui;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -73,6 +74,11 @@ import static com.archaeology.util.StateStatic.getTimeStamp;
 import static com.archaeology.util.StateStatic.globalWebServerURL;
 import static com.archaeology.util.StateStatic.isBluetoothEnabled;
 import static com.archaeology.util.StateStatic.isRemoteCameraSelected;
+import android.view.View.OnClickListener;
+import com.microsoft.onedrivesdk.picker.*;
+import com.microsoft.onedrivesdk.saver.ISaver;
+import com.microsoft.onedrivesdk.saver.Saver;
+
 public class ObjectDetailActivity extends AppCompatActivity
 {
     IntentFilter mIntentFilter;
@@ -94,6 +100,17 @@ public class ObjectDetailActivity extends AppCompatActivity
     private TextView findLabel;
     WifiP2pManager mManager;
     WifiP2pManager.Channel mChannel;
+    private IPicker mPicker;
+    private String ONEDRIVE_APP_ID = StateStatic.ONEDRIVE_APP_ID;
+    // The onClickListener that will start the OneDrive picker
+    private final OnClickListener mStartPickingListener = new OnClickListener() {
+        @Override
+        public void onClick(final View v)
+        {
+            mPicker = Picker.createPicker(ONEDRIVE_APP_ID);
+            mPicker.startPicking((Activity) v.getContext(), LinkType.WebViewLink);
+        }
+    };
     /**
      * Launch the activity
      * @param savedInstanceState - activity from memory
@@ -381,106 +398,104 @@ public class ObjectDetailActivity extends AppCompatActivity
             APPROVE_PHOTO_IMAGE.setImageBitmap(BMP);
         }
         final Button OK_BUTTON = approveDialog.findViewById(R.id.saveButton);
-        if (colorCorrectionEnabled)
-        {
-            final TextView LABEL = approveDialog.findViewById(R.id.correctionLabel);
-            LABEL.setText(getString(R.string.tap_to_correct));
-            OK_BUTTON.setOnClickListener(new View.OnClickListener() {
-                /**
-                 * User pressed save
-                 * @param view - the save button
-                 */
-                @Override
-                public void onClick(View view)
-                {
-                    LABEL.setVisibility(View.INVISIBLE);
-                    APPROVE_PHOTO_IMAGE.correctedAlready = true;
-                    final Spinner LOCATIONS = approveDialog.findViewById(R.id.locationLabels);
-                    LOCATIONS.setVisibility(View.VISIBLE);
-                    TextView locationsLabel = approveDialog.findViewById(R.id.locationSpinnerLabel);
-                    locationsLabel.setVisibility(View.VISIBLE);
-                    LOCATIONS.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                        /**
-                         * Spinner item was selected
-                         * @param adapterView - container view
-                         * @param view - selected item
-                         * @param i - selected index
-                         * @param l - item id
-                         */
-                        @Override
-                        public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l)
-                        {
-                            APPROVE_PHOTO_IMAGE.location = LOCATIONS.getSelectedItem().toString();
-                        }
+        final TextView LABEL = approveDialog.findViewById(R.id.correctionLabel);
+        LABEL.setText(getString(R.string.tap_to_correct));
+        OK_BUTTON.setOnClickListener(new View.OnClickListener() {
+            /**
+             * User pressed save
+             * @param view - the save button
+             */
+            @Override
+            public void onClick(View view)
+            {
+                LABEL.setVisibility(View.INVISIBLE);
+                APPROVE_PHOTO_IMAGE.correctedAlready = true;
+                final Spinner LOCATIONS = approveDialog.findViewById(R.id.locationLabels);
+                LOCATIONS.setVisibility(View.VISIBLE);
+                TextView locationsLabel = approveDialog.findViewById(R.id.locationSpinnerLabel);
+                locationsLabel.setVisibility(View.VISIBLE);
+                LOCATIONS.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    /**
+                     * Spinner item was selected
+                     * @param adapterView - container view
+                     * @param view - selected item
+                     * @param i - selected index
+                     * @param l - item id
+                     */
+                    @Override
+                    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l)
+                    {
+                        APPROVE_PHOTO_IMAGE.location = LOCATIONS.getSelectedItem().toString();
+                    }
 
-                        /**
-                         * Nothing was selected
-                         * @param adapterView - container view
-                         */
-                        @Override
-                        public void onNothingSelected(AdapterView<?> adapterView)
+                    /**
+                     * Nothing was selected
+                     * @param adapterView - container view
+                     */
+                    @Override
+                    public void onNothingSelected(AdapterView<?> adapterView)
+                    {
+                    }
+                });
+                OK_BUTTON.setOnClickListener(new View.OnClickListener() {
+                    /**
+                     * User pressed save
+                     * @param view - save button
+                     */
+                    @Override
+                    public void onClick(View view)
+                    {
+                        if (APPROVE_PHOTO_IMAGE.red != -1)
                         {
+                            updateColorInDB(APPROVE_PHOTO_IMAGE.red, APPROVE_PHOTO_IMAGE.green,
+                                    APPROVE_PHOTO_IMAGE.blue, APPROVE_PHOTO_IMAGE.location);
                         }
-                    });
-                    OK_BUTTON.setOnClickListener(new View.OnClickListener() {
-                        /**
-                         * User pressed save
-                         * @param view - save button
-                         */
-                        @Override
-                        public void onClick(View view)
+                        File folder = new File(Environment.getExternalStorageDirectory() + "/Archaeology");
+                        if (!folder.exists())
                         {
-                            if (APPROVE_PHOTO_IMAGE.red != -1)
-                            {
-                                updateColorInDB(APPROVE_PHOTO_IMAGE.red, APPROVE_PHOTO_IMAGE.green,
-                                        APPROVE_PHOTO_IMAGE.blue, APPROVE_PHOTO_IMAGE.location);
-                            }
-                            File folder = new File(Environment.getExternalStorageDirectory() + "/Archaeology");
-                            if (!folder.exists())
-                            {
-                                folder.mkdirs();
-                            }
-                            String path = Environment.getExternalStorageDirectory() + "/Archaeology/temp.jpg";
-                            FileOutputStream out = null;
+                            folder.mkdirs();
+                        }
+                        String path = Environment.getExternalStorageDirectory() + "/Archaeology/temp.jpg";
+                        FileOutputStream out = null;
+                        try
+                        {
+                            out = new FileOutputStream(path);
+                            BMP.compress(Bitmap.CompressFormat.JPEG, 100, out);
+                        }
+                        catch (Exception e)
+                        {
+                            Toast.makeText(getApplicationContext(), "Could not save image",
+                                    Toast.LENGTH_SHORT).show();
+                            e.printStackTrace();
+                        }
+                        finally
+                        {
                             try
                             {
-                                out = new FileOutputStream(path);
-                                BMP.compress(Bitmap.CompressFormat.PNG, 100, out);
+                                if (out != null)
+                                {
+                                    out.close();
+                                }
                             }
-                            catch (Exception e)
+                            catch (IOException e)
                             {
-                                Toast.makeText(getApplicationContext(), "Could not save image",
+                                Toast.makeText(getApplicationContext(),"Could not save image",
                                         Toast.LENGTH_SHORT).show();
                                 e.printStackTrace();
                             }
-                            finally
-                            {
-                                try
-                                {
-                                    if (out != null)
-                                    {
-                                        out.close();
-                                    }
-                                }
-                                catch (IOException e)
-                                {
-                                    Toast.makeText(getApplicationContext(),"Could not save image",
-                                            Toast.LENGTH_SHORT).show();
-                                    e.printStackTrace();
-                                }
-                            }
-                            File tempFile = new File(path);
-                            // Have to convert java.net.URI to android.net.Uri
-                            Uri convertedURI = Uri.parse(tempFile.toURI().toString());
-                            // store image data into photo fragments
-                            loadPhotoIntoPhotoFragment(convertedURI, MARKED_AS_ADDED);
-                            approveDialog.dismiss();
-                            asyncPopulateFieldsFromDB(hemisphere, zone, easting, northing, findNumber);
                         }
-                    });
-                }
-            });
-        }
+                        File tempFile = new File(path);
+                        Uri convertedURI = Uri.fromFile(tempFile);
+                        // store image data into photo fragments
+                        loadPhotoIntoPhotoFragment(convertedURI, MARKED_AS_ADDED);
+//                        ISaver mSaver = Saver.createSaver(ONEDRIVE_APP_ID);
+//                        mSaver.startSaving((Activity) getApplicationContext(), path, convertedURI);
+                        approveDialog.dismiss();
+                        asyncPopulateFieldsFromDB(hemisphere, zone, easting, northing, findNumber);
+                    }
+                });
+            }
+        });
         Button cancelButton = approveDialog.findViewById(R.id.cancelButton);
         cancelButton.setOnClickListener(new View.OnClickListener() {
             /**
@@ -494,6 +509,10 @@ public class ObjectDetailActivity extends AppCompatActivity
                 approveDialog.dismiss();
             }
         });
+        if (!colorCorrectionEnabled)
+        {
+            OK_BUTTON.performClick();
+        }
     }
 
     /**
@@ -594,6 +613,7 @@ public class ObjectDetailActivity extends AppCompatActivity
                 if (response.contains("Error"))
                 {
                     Toast.makeText(getApplicationContext(), "Updating color failed", Toast.LENGTH_SHORT).show();
+                    Log.v("Color ", response);
                 }
                 else
                 {

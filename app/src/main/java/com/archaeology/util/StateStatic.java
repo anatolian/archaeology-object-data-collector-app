@@ -18,6 +18,7 @@ public class StateStatic
     public static final String DEFAULT_WEB_SERVER_URL = "https://object-data-collector-service.herokuapp.com";
     // Default URL to connect to database to send photos back and forth
     public static final String DEFAULT_BUCKET_URL = "s3.console.aws.amazon.com/s3/buckets/pennmuseum/";
+    public static final String ONEDRIVE_APP_ID = "3b220830-dc0a-4101-a6bd-c0a17a3992ed";
 //    public static final String DEFAULT_CAMERA_MAC = "fe:c2:de:31:0a:e1";
     public static final String DEFAULT_CAMERA_MAC = "b2:72:bf:cd:74:61";
     // 30 minutes
