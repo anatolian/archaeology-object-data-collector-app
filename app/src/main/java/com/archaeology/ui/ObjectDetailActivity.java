@@ -1,7 +1,6 @@
 // Object information
 // @author: Christopher Besser, msenol86, ygowda
 package com.archaeology.ui;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -10,7 +9,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -76,12 +74,9 @@ import static com.archaeology.util.StateStatic.getTimeStamp;
 import static com.archaeology.util.StateStatic.globalWebServerURL;
 import static com.archaeology.util.StateStatic.isBluetoothEnabled;
 import static com.archaeology.util.StateStatic.isRemoteCameraSelected;
-import com.microsoft.onedrivesdk.picker.*;
 import com.microsoft.onedrivesdk.saver.ISaver;
 import com.microsoft.onedrivesdk.saver.Saver;
 import com.microsoft.onedrivesdk.saver.SaverException;
-import com.squareup.picasso.Picasso;
-
 public class ObjectDetailActivity extends AppCompatActivity
 {
     IntentFilter mIntentFilter;
@@ -513,11 +508,10 @@ public class ObjectDetailActivity extends AppCompatActivity
                         }
                         File tempFile = new File(path);
                         Uri convertedURI = Uri.fromFile(tempFile);
-                        saveToOneDrive(tempFile.getPath(), convertedURI);
+                        saveToOneDrive("temp.jpg", convertedURI);
                         // store image data into photo fragments
                         loadPhotoIntoPhotoFragment(convertedURI, MARKED_AS_ADDED);
                         // Invalidate the cache in case the image was deleted prior
-                        Picasso.with(getApplicationContext()).invalidate(fileURI);
                         approveDialog.dismiss();
                         asyncPopulateFieldsFromDB(hemisphere, zone, easting, northing, findNumber);
                     }
