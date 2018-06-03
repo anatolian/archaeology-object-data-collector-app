@@ -1,9 +1,13 @@
 // Retrieve a raw image
 // @author Christopher Besser
-package com.archaeology.models;
+package com.archaeology.services;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
+
+import com.archaeology.services.AsyncHTTPCallbackWrapper;
+import com.archaeology.services.AsyncHerokuHTTPWrapper;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -76,7 +80,7 @@ public class RetrieveRawTask extends AsyncTask<String, Void, Uri>
      */
     protected void onPostExecute(Uri rawURI)
     {
-        AsyncHTTPWrapper.makeImageUpload(globalWebServerURL + "/upload_file", rawURI, hemisphere,
+        AsyncHerokuHTTPWrapper.makeImageUpload(globalWebServerURL + "/upload_file", rawURI, hemisphere,
                 zone, easting, northing, find, new AsyncHTTPCallbackWrapper() {
             /**
              * Connection succeeded

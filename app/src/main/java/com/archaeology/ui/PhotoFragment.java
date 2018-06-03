@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatImageView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,8 +21,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import com.archaeology.services.PicassoWrapper;
 import com.archaeology.R;
-import com.archaeology.models.AsyncHTTPCallbackWrapper;
-import com.archaeology.models.AsyncHTTPWrapper;
+import com.archaeology.services.AsyncHTTPCallbackWrapper;
+import com.archaeology.services.AsyncHerokuHTTPWrapper;
 import com.archaeology.util.CheatSheet;
 import static com.archaeology.util.StateStatic.MARKED_AS_ADDED;
 import static com.archaeology.util.StateStatic.MARKED_AS_TO_DOWNLOAD;
@@ -229,7 +228,7 @@ public class PhotoFragment extends Fragment
                     int easting = ((ObjectDetailActivity) PARENT_ACTIVITY).easting;
                     int northing = ((ObjectDetailActivity) PARENT_ACTIVITY).northing;
                     int findNumber = ((ObjectDetailActivity) PARENT_ACTIVITY).findNumber;
-                    AsyncHTTPWrapper.makeImageUpload(globalWebServerURL + "/upload_file",
+                    AsyncHerokuHTTPWrapper.makeImageUpload(globalWebServerURL + "/upload_file",
                             DICT_ENTRY.getKey(), hemisphere, String.valueOf(zone),
                             String.valueOf(easting), String.valueOf(northing), String.valueOf(findNumber),
                             new AsyncHTTPCallbackWrapper() {

@@ -37,6 +37,7 @@ public class StateStatic
     public static final String FIND_NUMBER = "find_number";
     public static final String ALL_FIND_NUMBER = "all_available_find_number";
     public static String deviceName = "nutriscale_1910";
+    public static final String ONE_DRIVE_URL = "https://penno365-my.sharepoint.com/personal/cobbp_upenn_edu/_api/v2.0/drive";
     public static String globalWebServerURL = DEFAULT_WEB_SERVER_URL;
     public static String globalBucketURL = DEFAULT_BUCKET_URL;
     public static String cameraMACAddress = DEFAULT_CAMERA_MAC;

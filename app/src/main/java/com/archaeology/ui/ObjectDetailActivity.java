@@ -44,6 +44,8 @@ import java.util.ArrayList;
 import java.util.Set;
 import com.archaeology.R;
 import com.archaeology.models.StringObjectResponseWrapper;
+import com.archaeology.services.AsyncHTTPCallbackWrapper;
+import com.archaeology.services.AsyncOneDriveHTTPWrapper;
 import com.archaeology.services.BluetoothService;
 import com.archaeology.services.NutriScaleBroadcastReceiver;
 import com.archaeology.util.CheatSheet;
@@ -477,7 +479,8 @@ public class ObjectDetailActivity extends AppCompatActivity
                         {
                             folder.mkdirs();
                         }
-                        String path = Environment.getExternalStorageDirectory() + "/Archaeology/temp.jpg";
+                        String path = Environment.getExternalStorageDirectory() + "/Archaeology/"
+                                + hemisphere + "_" + zone + "_" + easting + "_" + northing + "_" + findNumber + ".jpg";
                         FileOutputStream out = null;
                         try
                         {
@@ -508,9 +511,9 @@ public class ObjectDetailActivity extends AppCompatActivity
                         }
                         File tempFile = new File(path);
                         Uri convertedURI = Uri.fromFile(tempFile);
-                        saveToOneDrive("temp.jpg", convertedURI);
+                        saveToOneDrive(tempFile);
                         // store image data into photo fragments
-                        loadPhotoIntoPhotoFragment(convertedURI, MARKED_AS_ADDED);
+//                        loadPhotoIntoPhotoFragment(convertedURI, MARKED_AS_ADDED);
                         // Invalidate the cache in case the image was deleted prior
                         approveDialog.dismiss();
                         asyncPopulateFieldsFromDB(hemisphere, zone, easting, northing, findNumber);
@@ -560,14 +563,20 @@ public class ObjectDetailActivity extends AppCompatActivity
 
     /**
      * Save image to OneDrive
-     * @param path - location of file
-     * @param uri - location of file
+     * @param temp - file to upload
      */
-    private void saveToOneDrive(String path, Uri uri)
+    private void saveToOneDrive(File temp)
     {
-        mSaver.startSaving(this, path, uri);
+        Context context = getApplicationContext();
+        Uri uri = FileProvider.getUriForFile(context, context.getPackageName()
+                + ".my.package.name.provider", temp);
+        Intent intentOD = new Intent(Intent.ACTION_SEND);
+        intentOD.setType("text/*");
+        intentOD.setPackage("com.microsoft.skydrive");
+        intentOD.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        intentOD.putExtra(Intent.EXTRA_STREAM, uri);
+        context.startActivity(Intent.createChooser(intentOD, "title"));
         Log.v("One Drive", uri.toString());
-        Log.v("One Drive", path);
     }
 
     /**
@@ -1309,7 +1318,7 @@ public class ObjectDetailActivity extends AppCompatActivity
         {
             Log.v(LOG_TAG_BLUETOOTH, "Trying to unregister non-registered receiver");
         }
-        Intent wifiActivity = new Intent(this, MyWiFiActivity.class);
+        Intent wifiActivity = new Intent(this, RemoteCameraActivity.class);
         wifiActivity.putExtra(HEMISPHERE, hemisphere);
         wifiActivity.putExtra(ZONE, zone);
         wifiActivity.putExtra(EASTING, easting);

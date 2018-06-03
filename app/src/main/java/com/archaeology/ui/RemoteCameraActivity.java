@@ -22,7 +22,7 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONException;
 import org.json.JSONObject;
 import com.archaeology.R;
-import com.archaeology.models.RetrieveRawTask;
+import com.archaeology.services.RetrieveRawTask;
 import com.archaeology.util.StateStatic;
 import com.archaeology.services.VolleyWrapper;
 import com.archaeology.models.JSONObjectResponseWrapper;
@@ -30,7 +30,6 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
 import java.io.ByteArrayOutputStream;
-
 import static com.archaeology.util.StateStatic.EASTING;
 import static com.archaeology.util.StateStatic.FIND_NUMBER;
 import static com.archaeology.util.StateStatic.HEMISPHERE;
@@ -38,7 +37,7 @@ import static com.archaeology.util.StateStatic.NORTHING;
 import static com.archaeology.util.StateStatic.ZONE;
 import static com.archaeology.util.StateStatic.cameraIPAddress;
 import static com.archaeology.util.StateStatic.convertDPToPixel;
-public class MyWiFiActivity extends AppCompatActivity
+public class RemoteCameraActivity extends AppCompatActivity
 {
     // helps to establish connection with peer devices
     WifiP2pManager mManager;
@@ -56,7 +55,7 @@ public class MyWiFiActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_my_wi_fi);
+        setContentView(R.layout.activity_remote_camera);
         if (StateStatic.cameraIPAddress == null)
         {
             Toast.makeText(this, "Not Connected to Camera", Toast.LENGTH_SHORT).show();

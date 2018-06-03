@@ -1,6 +1,6 @@
 // to be implemented when communicating with server
 // @author: msenol
-package com.archaeology.models;
+package com.archaeology.services;
 abstract public class AsyncHTTPCallbackWrapper
 {
     /**
