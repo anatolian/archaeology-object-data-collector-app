@@ -71,6 +71,7 @@ import com.google.android.gms.drive.DriveContents;
 import com.google.android.gms.drive.DriveFolder;
 import com.google.android.gms.drive.DriveId;
 import com.google.android.gms.drive.DriveResourceClient;
+import com.google.android.gms.drive.Metadata;
 import com.google.android.gms.drive.MetadataChangeSet;
 import com.google.android.gms.drive.query.Filters;
 import com.google.android.gms.drive.query.Query;
@@ -615,29 +616,40 @@ public class ObjectDetailActivity extends AppCompatActivity
                                             try
                                             {
                                                 DriveFolder findFolder = findBuffer.get(0).getDriveId().asDriveFolder();
-                                                Task<DriveContents> createContentsTask = mDriveResourceClient.createContents();
-                                                createContentsTask.continueWithTask(task -> {
-                                                    DriveContents contents = task.getResult();
-                                                    OutputStream outputStream = contents.getOutputStream();
-                                                    bmp.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
-                                                    MetadataChangeSet changeSet = new MetadataChangeSet.Builder().setTitle(imageNumber + ".png")
-                                                            .setMimeType("image/png").setStarred(false).build();
-                                                    CreateFileActivityOptions createOptions = new CreateFileActivityOptions.Builder()
-                                                            .setInitialDriveContents(contents).setInitialMetadata(changeSet)
-                                                            .setActivityStartFolder(findFolder.getDriveId()).build();
-                                                    return mDriveClient.newCreateFileActivityIntentSender(createOptions);
-                                                }).addOnSuccessListener(this, intentSender -> {
-                                                    try
+                                                Query query5 = new Query.Builder().addFilter(
+                                                        Filters.eq(SearchableField.TRASHED, false)).build();
+                                                mDriveResourceClient.queryChildren(findFolder, query5)
+                                                        .addOnSuccessListener(this, imageBuffer -> {
+                                                    imageNumber = 0;
+                                                    for (Metadata d: imageBuffer)
                                                     {
-                                                        startIntentSenderForResult(intentSender, REQUEST_CODE_CREATE_FILE,
-                                                                null, 0, 0, 0);
+                                                        imageNumber++;
                                                     }
-                                                    catch (IntentSender.SendIntentException e2)
-                                                    {
-                                                        Toast.makeText(getApplicationContext(), "Error uploading to Drive",
-                                                                Toast.LENGTH_SHORT).show();
-                                                        finish();
-                                                    }
+                                                    Task<DriveContents> createContentsTask = mDriveResourceClient.createContents();
+                                                    createContentsTask.continueWithTask(task -> {
+                                                        DriveContents contents = task.getResult();
+                                                        OutputStream outputStream = contents.getOutputStream();
+                                                        bmp.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+                                                        MetadataChangeSet changeSet = new MetadataChangeSet
+                                                                .Builder().setTitle(imageNumber + ".png")
+                                                                .setMimeType("image/png").setStarred(false).build();
+                                                        CreateFileActivityOptions createOptions = new CreateFileActivityOptions.Builder()
+                                                                .setInitialDriveContents(contents).setInitialMetadata(changeSet)
+                                                                .setActivityStartFolder(findFolder.getDriveId()).build();
+                                                        return mDriveClient.newCreateFileActivityIntentSender(createOptions);
+                                                    }).addOnSuccessListener(this, intentSender -> {
+                                                        try
+                                                        {
+                                                            startIntentSenderForResult(intentSender, REQUEST_CODE_CREATE_FILE,
+                                                                    null, 0, 0, 0);
+                                                        }
+                                                        catch (IntentSender.SendIntentException e2)
+                                                        {
+                                                            Toast.makeText(getApplicationContext(), "Error uploading to Drive",
+                                                                    Toast.LENGTH_SHORT).show();
+                                                            finish();
+                                                        }
+                                                    });
                                                 });
                                             }
                                             // Find folder not found
