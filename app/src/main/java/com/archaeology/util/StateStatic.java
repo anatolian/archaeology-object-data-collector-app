@@ -13,13 +13,13 @@ public class StateStatic
     public static final String LOG_TAG_BLUETOOTH = "BLUETOOTH";
     public static final int REQUEST_IMAGE_CAPTURE = 301;
     public static final int REQUEST_REMOTE_IMAGE = 302;
-    public static final int SAVE_TO_ONE_DRIVE = 303;
+    public static final int REQUEST_CODE_CREATE_FILE = 303;
+    public static final int GOOGLE_PLAY_SIGN_IN = 304;
     public static final int MESSAGE_WEIGHT = 501;
     public static final int MESSAGE_STATUS_CHANGE = 502;
     public static final String DEFAULT_WEB_SERVER_URL = "https://object-data-collector-service.herokuapp.com";
     // Default URL to connect to database to send photos back and forth
     public static final String DEFAULT_BUCKET_URL = "s3.console.aws.amazon.com/s3/buckets/pennmuseum/";
-    public static final String ONEDRIVE_APP_ID = "3b220830-dc0a-4101-a6bd-c0a17a3992ed";
 //    public static final String DEFAULT_CAMERA_MAC = "fe:c2:de:31:0a:e1";
     public static final String DEFAULT_CAMERA_MAC = "b2:72:bf:cd:74:61";
     // 30 minutes
@@ -37,7 +37,6 @@ public class StateStatic
     public static final String FIND_NUMBER = "find_number";
     public static final String ALL_FIND_NUMBER = "all_available_find_number";
     public static String deviceName = "nutriscale_1910";
-    public static final String ONE_DRIVE_URL = "https://penno365-my.sharepoint.com/personal/cobbp_upenn_edu/_api/v2.0/drive";
     public static String globalWebServerURL = DEFAULT_WEB_SERVER_URL;
     public static String globalBucketURL = DEFAULT_BUCKET_URL;
     public static String cameraMACAddress = DEFAULT_CAMERA_MAC;

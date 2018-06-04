@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.IntentSender;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -18,6 +19,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -37,20 +39,43 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Set;
 import com.archaeology.R;
 import com.archaeology.models.StringObjectResponseWrapper;
-import com.archaeology.services.AsyncHTTPCallbackWrapper;
-import com.archaeology.services.AsyncOneDriveHTTPWrapper;
 import com.archaeology.services.BluetoothService;
 import com.archaeology.services.NutriScaleBroadcastReceiver;
 import com.archaeology.util.CheatSheet;
 import com.archaeology.util.MagnifyingGlass;
 import com.archaeology.util.StateStatic;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.drive.CreateFileActivityOptions;
+import com.google.android.gms.drive.Drive;
+import com.google.android.gms.drive.DriveClient;
+import com.google.android.gms.drive.DriveContents;
+import com.google.android.gms.drive.DriveFolder;
+import com.google.android.gms.drive.DriveId;
+import com.google.android.gms.drive.DriveResourceClient;
+import com.google.android.gms.drive.MetadataChangeSet;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import static com.archaeology.services.VolleyStringWrapper.makeVolleyStringObjectRequest;
 import static com.archaeology.util.CheatSheet.deleteOriginalAndThumbnailPhoto;
 import static com.archaeology.util.CheatSheet.getOutputMediaFile;
@@ -58,6 +83,7 @@ import static com.archaeology.util.CheatSheet.goToSettings;
 import static com.archaeology.util.CheatSheet.rotateImageIfRequired;
 import static com.archaeology.util.StateStatic.EASTING;
 import static com.archaeology.util.StateStatic.FIND_NUMBER;
+import static com.archaeology.util.StateStatic.GOOGLE_PLAY_SIGN_IN;
 import static com.archaeology.util.StateStatic.HEMISPHERE;
 import static com.archaeology.util.StateStatic.LOG_TAG_BLUETOOTH;
 import static com.archaeology.util.StateStatic.MARKED_AS_ADDED;
@@ -65,9 +91,9 @@ import static com.archaeology.util.StateStatic.MARKED_AS_TO_DOWNLOAD;
 import static com.archaeology.util.StateStatic.MESSAGE_STATUS_CHANGE;
 import static com.archaeology.util.StateStatic.MESSAGE_WEIGHT;
 import static com.archaeology.util.StateStatic.NORTHING;
+import static com.archaeology.util.StateStatic.REQUEST_CODE_CREATE_FILE;
 import static com.archaeology.util.StateStatic.REQUEST_IMAGE_CAPTURE;
 import static com.archaeology.util.StateStatic.REQUEST_REMOTE_IMAGE;
-import static com.archaeology.util.StateStatic.SAVE_TO_ONE_DRIVE;
 import static com.archaeology.util.StateStatic.ZONE;
 import static com.archaeology.util.StateStatic.cameraIPAddress;
 import static com.archaeology.util.StateStatic.cameraMACAddress;
@@ -76,9 +102,6 @@ import static com.archaeology.util.StateStatic.getTimeStamp;
 import static com.archaeology.util.StateStatic.globalWebServerURL;
 import static com.archaeology.util.StateStatic.isBluetoothEnabled;
 import static com.archaeology.util.StateStatic.isRemoteCameraSelected;
-import com.microsoft.onedrivesdk.saver.ISaver;
-import com.microsoft.onedrivesdk.saver.Saver;
-import com.microsoft.onedrivesdk.saver.SaverException;
 public class ObjectDetailActivity extends AppCompatActivity
 {
     IntentFilter mIntentFilter;
@@ -100,8 +123,19 @@ public class ObjectDetailActivity extends AppCompatActivity
     private TextView findLabel;
     WifiP2pManager mManager;
     WifiP2pManager.Channel mChannel;
-    private String ONEDRIVE_APP_ID = StateStatic.ONEDRIVE_APP_ID;
-    private ISaver mSaver = Saver.createSaver(ONEDRIVE_APP_ID);
+    DriveClient mDriveClient = null;
+    DriveResourceClient mDriveResourceClient = null;
+    /**
+     * Sign into google
+     * @return Returns the sign in client
+     */
+    private GoogleSignInClient buildGoogleSignInClient()
+    {
+        GoogleSignInOptions signInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestScopes(Drive.SCOPE_FILE).build();
+        return GoogleSignIn.getClient(this, signInOptions);
+    }
+
     /**
      * Launch the activity
      * @param savedInstanceState - activity from memory
@@ -111,7 +145,8 @@ public class ObjectDetailActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_object_detail);
-        mSaver.setRequestCode(SAVE_TO_ONE_DRIVE);
+        GoogleSignInClient mGoogleSignInClient = buildGoogleSignInClient();
+        startActivityForResult(mGoogleSignInClient.getSignInIntent(), GOOGLE_PLAY_SIGN_IN);
         if (bluetoothService != null)
         {
             bluetoothService.closeThread();
@@ -344,35 +379,30 @@ public class ObjectDetailActivity extends AppCompatActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
     {
-        if (requestCode == SAVE_TO_ONE_DRIVE)
+        if (requestCode == GOOGLE_PLAY_SIGN_IN)
         {
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             try
             {
-                mSaver.handleSave(requestCode, resultCode, data);
+                GoogleSignInAccount account = task.getResult(ApiException.class);
+                mDriveClient = Drive.getDriveClient(getApplicationContext(), account);
+                mDriveResourceClient = Drive.getDriveResourceClient(getApplicationContext(), account);
             }
-            catch (final SaverException e)
+            catch (ApiException e)
             {
-                Log.e("OneDriveSaver", e.getErrorType().toString());
-                try
-                {
-                    Log.d("OneDriveSaver", e.getDebugErrorInfo());
-                }
-                catch (Exception e2)
-                {
-                    e2.printStackTrace();
-                }
-                switch (e.getErrorType())
-                {
-                    case OutOfQuota:
-                        Toast.makeText(getApplicationContext(), "Out of OneDrive quota", Toast.LENGTH_SHORT).show();
-                        break;
-                    case NoNetworkConnectivity:
-                        Toast.makeText(getApplicationContext(), "Disconnected from internet while uploading to OneDrive",
-                                Toast.LENGTH_SHORT).show();
-                        break;
-                    default:
-                        Toast.makeText(getApplicationContext(), "Error uploading to OneDrive", Toast.LENGTH_SHORT).show();
-                }
+                Log.w("Sign in", "signInResult:failed code=" + e.getStatusCode());
+            }
+            return;
+        }
+        else if (requestCode == REQUEST_CODE_CREATE_FILE)
+        {
+            if (resultCode == RESULT_OK)
+            {
+                Toast.makeText(getApplicationContext(), "Image saved to Drive", Toast.LENGTH_SHORT).show();
+            }
+            else
+            {
+                Toast.makeText(getApplicationContext(), "Saving to Drive failed", Toast.LENGTH_SHORT).show();
             }
             return;
         }
@@ -480,12 +510,12 @@ public class ObjectDetailActivity extends AppCompatActivity
                             folder.mkdirs();
                         }
                         String path = Environment.getExternalStorageDirectory() + "/Archaeology/"
-                                + hemisphere + "_" + zone + "_" + easting + "_" + northing + "_" + findNumber + ".jpg";
+                                + hemisphere + "_" + zone + "_" + easting + "_" + northing + "_" + findNumber + ".png";
                         FileOutputStream out = null;
                         try
                         {
                             out = new FileOutputStream(path);
-                            BMP.compress(Bitmap.CompressFormat.JPEG, 100, out);
+                            BMP.compress(Bitmap.CompressFormat.PNG, 100, out);
                         }
                         catch (Exception e)
                         {
@@ -511,10 +541,9 @@ public class ObjectDetailActivity extends AppCompatActivity
                         }
                         File tempFile = new File(path);
                         Uri convertedURI = Uri.fromFile(tempFile);
-                        saveToOneDrive(tempFile);
+                        uploadToDrive(BMP);
                         // store image data into photo fragments
 //                        loadPhotoIntoPhotoFragment(convertedURI, MARKED_AS_ADDED);
-                        // Invalidate the cache in case the image was deleted prior
                         approveDialog.dismiss();
                         asyncPopulateFieldsFromDB(hemisphere, zone, easting, northing, findNumber);
                     }
@@ -541,6 +570,41 @@ public class ObjectDetailActivity extends AppCompatActivity
     }
 
     /**
+     * Upload an image to Box
+     * @image image file to upload
+     */
+    private void uploadToDrive(Bitmap bmp)
+    {
+        Task<DriveContents> createContentsTask = mDriveResourceClient.createContents();
+        createContentsTask.continueWithTask(task -> {
+            DriveContents contents = task.getResult();
+            OutputStream outputStream = contents.getOutputStream();
+            bmp.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+            MetadataChangeSet changeSet = new MetadataChangeSet.Builder().setTitle(imageNumber + ".png")
+                    .setMimeType("image/png").setStarred(false).build();
+            CreateFileActivityOptions createOptions = new CreateFileActivityOptions.Builder()
+                    .setInitialDriveContents(contents).setInitialMetadata(changeSet).build();
+            return mDriveClient.newCreateFileActivityIntentSender(createOptions);
+        }).addOnSuccessListener(this, intentSender -> {
+            try
+            {
+                startIntentSenderForResult(intentSender, REQUEST_CODE_CREATE_FILE, null,
+                        0, 0, 0);
+            }
+            catch (IntentSender.SendIntentException e)
+            {
+                Log.e("Google Drive", "Unable to create file", e);
+                Toast.makeText(getApplicationContext(), "Uploaded image to Drive", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        }).addOnFailureListener(this, e -> {
+            Log.e("Google Drive", "Unable to create file", e);
+            Toast.makeText(getApplicationContext(), "Error uploading image", Toast.LENGTH_SHORT).show();
+            finish();
+        });
+    }
+
+    /**
      * Breaks connection with nutriscale
      */
     @Override
@@ -559,24 +623,6 @@ public class ObjectDetailActivity extends AppCompatActivity
         {
             Log.v(LOG_TAG_BLUETOOTH, "Trying to unregister non-registered receiver");
         }
-    }
-
-    /**
-     * Save image to OneDrive
-     * @param temp - file to upload
-     */
-    private void saveToOneDrive(File temp)
-    {
-        Context context = getApplicationContext();
-        Uri uri = FileProvider.getUriForFile(context, context.getPackageName()
-                + ".my.package.name.provider", temp);
-        Intent intentOD = new Intent(Intent.ACTION_SEND);
-        intentOD.setType("text/*");
-        intentOD.setPackage("com.microsoft.skydrive");
-        intentOD.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        intentOD.putExtra(Intent.EXTRA_STREAM, uri);
-        context.startActivity(Intent.createChooser(intentOD, "title"));
-        Log.v("One Drive", uri.toString());
     }
 
     /**
@@ -611,7 +657,7 @@ public class ObjectDetailActivity extends AppCompatActivity
         }
         catch (Exception e)
         {
-            e.printStackTrace();
+            Log.v("Bluetooth", "Trying to unregister non-registered receiver");
         }
     }
 
@@ -628,7 +674,7 @@ public class ObjectDetailActivity extends AppCompatActivity
         }
         catch (Exception e)
         {
-            e.printStackTrace();
+            Log.v("Bluetooth", "Trying to unregister non-registered receiver");
         }
     }
 

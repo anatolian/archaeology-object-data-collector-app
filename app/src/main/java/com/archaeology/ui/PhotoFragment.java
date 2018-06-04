@@ -229,9 +229,8 @@ public class PhotoFragment extends Fragment
                     int northing = ((ObjectDetailActivity) PARENT_ACTIVITY).northing;
                     int findNumber = ((ObjectDetailActivity) PARENT_ACTIVITY).findNumber;
                     AsyncHerokuHTTPWrapper.makeImageUpload(globalWebServerURL + "/upload_file",
-                            DICT_ENTRY.getKey(), hemisphere, String.valueOf(zone),
-                            String.valueOf(easting), String.valueOf(northing), String.valueOf(findNumber),
-                            new AsyncHTTPCallbackWrapper() {
+                            DICT_ENTRY.getKey(), hemisphere, "" + zone, "" + easting,
+                            "" + northing, "" + findNumber, new AsyncHTTPCallbackWrapper() {
                         /**
                          * Connection succeeded
                          * @param response - HTTP response

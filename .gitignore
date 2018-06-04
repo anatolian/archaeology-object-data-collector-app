@@ -9,3 +9,4 @@
 .externalNativeBuild
 lookupDB
 app/src/main/res/raw/
+client_id.json

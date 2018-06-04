@@ -344,7 +344,7 @@ public class RemoteCameraActivity extends AppCompatActivity
                     data.setData(Uri.parse(IMAGE_URI.toString()));
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
                     Bitmap bitmap = ((BitmapDrawable) capture.getDrawable()).getBitmap();
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
                     byte[] byteArray = stream.toByteArray();
                     data.putExtra("bitmap", byteArray);
                     setResult(RESULT_OK, data);
