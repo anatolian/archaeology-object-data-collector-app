@@ -4,6 +4,7 @@ package com.archaeology.ui;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.RectF;
@@ -56,6 +57,7 @@ public class RemoteCameraActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_remote_camera);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         if (StateStatic.cameraIPAddress == null)
         {
             Toast.makeText(this, "Not Connected to Camera", Toast.LENGTH_SHORT).show();

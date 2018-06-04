@@ -50,8 +50,10 @@
             android:name="com.archaeology.ui.CameraUIActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity android:name="com.archaeology.ui.CeramicInputActivity" />
-        <activity android:name="com.archaeology.ui.ObjectDetailActivity" />
-        <activity android:name="com.archaeology.ui.MyWiFiActivity"
-            android:windowSoftInputMode = "stateHidden"/>
+        <activity android:name="com.archaeology.ui.ObjectDetailActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name="com.archaeology.ui.RemoteCameraActivity"
+            android:windowSoftInputMode = "stateHidden"
+            android:screenOrientation="portrait"/>
     </application>
 </manifest>
