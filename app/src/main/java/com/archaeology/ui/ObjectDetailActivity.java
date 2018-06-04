@@ -539,8 +539,8 @@ public class ObjectDetailActivity extends AppCompatActivity
                                 e.printStackTrace();
                             }
                         }
-                        File tempFile = new File(path);
-                        Uri convertedURI = Uri.fromFile(tempFile);
+//                        File tempFile = new File(path);
+//                        Uri convertedURI = Uri.fromFile(tempFile);
                         uploadToDrive(BMP);
                         // store image data into photo fragments
 //                        loadPhotoIntoPhotoFragment(convertedURI, MARKED_AS_ADDED);
@@ -571,35 +571,60 @@ public class ObjectDetailActivity extends AppCompatActivity
 
     /**
      * Upload an image to Box
-     * @image image file to upload
+     * @param bmp file to upload
      */
     private void uploadToDrive(Bitmap bmp)
     {
-        Task<DriveContents> createContentsTask = mDriveResourceClient.createContents();
-        createContentsTask.continueWithTask(task -> {
-            DriveContents contents = task.getResult();
-            OutputStream outputStream = contents.getOutputStream();
-            bmp.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
-            MetadataChangeSet changeSet = new MetadataChangeSet.Builder().setTitle(imageNumber + ".png")
-                    .setMimeType("image/png").setStarred(false).build();
-            CreateFileActivityOptions createOptions = new CreateFileActivityOptions.Builder()
-                    .setInitialDriveContents(contents).setInitialMetadata(changeSet).build();
-            return mDriveClient.newCreateFileActivityIntentSender(createOptions);
-        }).addOnSuccessListener(this, intentSender -> {
-            try
-            {
-                startIntentSenderForResult(intentSender, REQUEST_CODE_CREATE_FILE, null,
-                        0, 0, 0);
-            }
-            catch (IntentSender.SendIntentException e)
-            {
-                Log.e("Google Drive", "Unable to create file", e);
-                Toast.makeText(getApplicationContext(), "Uploaded image to Drive", Toast.LENGTH_SHORT).show();
-                finish();
-            }
+        mDriveResourceClient.getRootFolder().continueWithTask(task -> {
+            DriveFolder parentFolder = task.getResult();
+            MetadataChangeSet changeSet = new MetadataChangeSet.Builder().setTitle(hemisphere)
+                    .setMimeType(DriveFolder.MIME_TYPE).setStarred(true).build();
+            return mDriveResourceClient.createFolder(parentFolder, changeSet);
+        }).addOnSuccessListener(this, hemisphereFolder -> {
+            MetadataChangeSet set0 = new MetadataChangeSet.Builder().setTitle("" + zone)
+                    .setMimeType(DriveFolder.MIME_TYPE).setStarred(true).build();
+            mDriveResourceClient.createFolder(hemisphereFolder, set0).addOnSuccessListener(this, zoneFolder -> {
+                MetadataChangeSet set1 = new MetadataChangeSet.Builder().setTitle("" + easting)
+                        .setMimeType(DriveFolder.MIME_TYPE).setStarred(true).build();
+                mDriveResourceClient.createFolder(zoneFolder, set1).addOnSuccessListener(this, eastingFolder -> {
+                    MetadataChangeSet set2 = new MetadataChangeSet.Builder().setTitle("" + northing)
+                            .setMimeType(DriveFolder.MIME_TYPE).setStarred(true).build();
+                    mDriveResourceClient.createFolder(eastingFolder, set2).addOnSuccessListener(this, northingFolder -> {
+                        MetadataChangeSet set3 = new MetadataChangeSet.Builder().setTitle("" + findNumber)
+                                .setMimeType(DriveFolder.MIME_TYPE).setStarred(true).build();
+                        mDriveResourceClient.createFolder(northingFolder, set3).addOnSuccessListener(this, findFolder -> {
+                            Task<DriveContents> createContentsTask = mDriveResourceClient.createContents();
+                            createContentsTask.continueWithTask(task -> {
+                                DriveContents contents = task.getResult();
+                                OutputStream outputStream = contents.getOutputStream();
+                                bmp.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+                                MetadataChangeSet changeSet = new MetadataChangeSet.Builder().setTitle(imageNumber + ".png")
+                                        .setMimeType("image/png").setStarred(false).build();
+                                CreateFileActivityOptions createOptions = new CreateFileActivityOptions.Builder()
+                                        .setInitialDriveContents(contents).setInitialMetadata(changeSet)
+                                        .setActivityStartFolder(findFolder.getDriveId()).build();
+                                return mDriveClient.newCreateFileActivityIntentSender(createOptions);
+                            }).addOnSuccessListener(this, intentSender -> {
+                                try
+                                {
+                                    startIntentSenderForResult(intentSender, REQUEST_CODE_CREATE_FILE, null,
+                                            0, 0, 0);
+                                }
+                                catch (IntentSender.SendIntentException e)
+                                {
+                                    Log.e("Google Drive", "Unable to create file", e);
+                                    Toast.makeText(getApplicationContext(), "Uploaded image to Drive", Toast.LENGTH_SHORT).show();
+                                }
+                            }).addOnFailureListener(this, e -> {
+                                Log.e("Google Drive", "Unable to create file", e);
+                                Toast.makeText(getApplicationContext(), "Error uploading image", Toast.LENGTH_SHORT).show();
+                            });
+                        });
+                    });
+                });
+            });
         }).addOnFailureListener(this, e -> {
-            Log.e("Google Drive", "Unable to create file", e);
-            Toast.makeText(getApplicationContext(), "Error uploading image", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Unable to create hemisphere folder", Toast.LENGTH_SHORT).show();
             finish();
         });
     }
