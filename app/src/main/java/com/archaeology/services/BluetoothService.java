@@ -57,7 +57,6 @@ public class BluetoothService
         else
         {
             connectedThread.run();
-            Toast.makeText(context, "Update successful", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -213,6 +212,7 @@ public class BluetoothService
                 {
                     numBytes = mmInStream.read(mmBuffer);
                     currWeight = parseBytesNutriScale(mmBuffer, numBytes);
+                    Toast.makeText(context, "Update successful", Toast.LENGTH_SHORT).show();
                 }
                 else
                 {

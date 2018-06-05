@@ -42,7 +42,7 @@ public class StateStatic
     public static String cameraMACAddress = DEFAULT_CAMERA_MAC;
     public static long remoteCameraCalibrationInterval = DEFAULT_CALIBRATION_INTERVAL;
     public static long tabletCameraCalibrationInterval = DEFAULT_CALIBRATION_INTERVAL;
-    public static final boolean DEFAULT_REMOTE_CAMERA_SELECTED = false;
+    public static final boolean DEFAULT_REMOTE_CAMERA_SELECTED = true;
     public static boolean isRemoteCameraSelected = DEFAULT_REMOTE_CAMERA_SELECTED;
     public static String cameraIPAddress = null;
     public static final boolean DEFAULT_CORRECTION_SELECTION = true;

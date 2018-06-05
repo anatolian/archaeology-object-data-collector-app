@@ -22,6 +22,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.archaeology.R;
 import com.archaeology.ui.SettingsActivity;
 import static com.archaeology.util.StateStatic.THUMBNAIL_EXTENSION_STRING;
 import static com.archaeology.util.StateStatic.getGlobalPhotoSavePath;
@@ -36,7 +38,7 @@ public class CheatSheet
     public static void setSpinnerItems(Context aContext, Spinner aSpinner, List<String> items)
     {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(aContext,
-                android.R.layout.simple_spinner_item, items);
+                R.layout.spinner_item, items);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         aSpinner.setAdapter(adapter);
     }
@@ -109,7 +111,7 @@ public class CheatSheet
         try
         {
             FileOutputStream fos = new FileOutputStream(thumbFile);
-            thumbImage.compress(Bitmap.CompressFormat.JPEG, 90, fos);
+            thumbImage.compress(Bitmap.CompressFormat.PNG, 90, fos);
             fos.close();
         }
         catch (Exception ex)

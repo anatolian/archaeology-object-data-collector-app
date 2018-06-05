@@ -6,4 +6,5 @@
     android:gravity = "start"
     android:background = "#d7c474"
     android:textAppearance = "?android:attr/textAppearanceLarge"
-    android:textStyle = "bold"/>
+    android:textStyle = "bold"
+    android:textSize="30sp"/>

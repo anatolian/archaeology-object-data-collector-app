@@ -4,7 +4,6 @@ package com.archaeology.ui;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.RectF;
@@ -57,7 +56,6 @@ public class RemoteCameraActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_remote_camera);
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         if (StateStatic.cameraIPAddress == null)
         {
             Toast.makeText(this, "Not Connected to Camera", Toast.LENGTH_SHORT).show();
@@ -294,48 +292,48 @@ public class RemoteCameraActivity extends AppCompatActivity
         if (capture != null)
         {
             // photo URIs are added to HashMap in PhotoFragment class
-            Picasso.with(this).load(IMAGE_URI).transform(new Transformation() {
-                /**
-                 * Alter the image
-                 * @param source - original image
-                 * @return Returns the new image
-                 */
-                @Override
-                public Bitmap transform(Bitmap source)
-                {
-                    int requestedHeight = convertDPToPixel(250);
-                    float ratio = source.getHeight() / requestedHeight;
-                    int width = Math.round(source.getWidth() / ratio);
-                    int height = Math.round(source.getHeight() / ratio);
-                    if (requestedHeight >= source.getHeight())
-                    {
-                        return source;
-                    }
-                    else
-                    {
-                        Matrix m = new Matrix();
-                        m.setRectToRect(new RectF(0, 0, source.getWidth(), source.getHeight()),
-                                new RectF(0, 0, width, height), Matrix.ScaleToFit.CENTER);
-                        Bitmap result = Bitmap.createBitmap(source, 0, 0, source.getWidth(),
-                                source.getHeight(), m, true);
-                        if (result != source)
-                        {
-                            source.recycle();
-                        }
-                        return result;
-                    }
-                }
+            Picasso.with(this).load(IMAGE_URI)//.transform(new Transformation() {
+//                /**
+//                 * Alter the image
+//                 * @param source - original image
+//                 * @return Returns the new image
+//                 */
+//                @Override
+//                public Bitmap transform(Bitmap source)
+//                {
+//                    int requestedHeight = convertDPToPixel(250);
+//                    float ratio = source.getHeight() / requestedHeight;
+//                    int width = Math.round(source.getWidth() / ratio);
+//                    int height = Math.round(source.getHeight() / ratio);
+//                    if (requestedHeight >= source.getHeight())
+//                    {
+//                        return source;
+//                    }
+//                    else
+//                    {
+//                        Matrix m = new Matrix();
+//                        m.setRectToRect(new RectF(0, 0, source.getWidth(), source.getHeight()),
+//                                new RectF(0, 0, width, height), Matrix.ScaleToFit.CENTER);
+//                        Bitmap result = Bitmap.createBitmap(source, 0, 0, source.getWidth(),
+//                                source.getHeight(), m, true);
+//                        if (result != source)
+//                        {
+//                            source.recycle();
+//                        }
+//                        return result;
+//                    }
+//                }
 
-                /**
-                 * Transformation key
-                 * @return - Returns square()
-                 */
-                @Override
-                public String key()
-                {
-                    return "square()";
-                }
-            }).placeholder(android.R.drawable.ic_delete).error(android.R.drawable.ic_dialog_alert)
+//                /**
+//                 * Transformation key
+//                 * @return - Returns square()
+//                 */
+//                @Override
+//                public String key()
+//                {
+//                    return "square()";
+//                }
+            /*})*/.placeholder(android.R.drawable.ic_delete).error(android.R.drawable.ic_dialog_alert)
                     .into(capture, new Callback() {
                 /**
                  * Image load succeeded

@@ -21,11 +21,12 @@
                 android:text="@string/hemisphere"
                 android:textAlignment="gravity"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@android:color/black" />
+                android:textColor="@android:color/black"
+                android:textSize="30sp"/>
             <Spinner
                 android:layout_height = "wrap_content"
                 android:id = "@+id/hemisphere"
-                android:gravity="end"/>
+                android:gravity="end" />
         </TableRow>
         <TableRow
             android:layout_width = "match_parent"
@@ -38,7 +39,8 @@
                 android:text="@string/zone"
                 android:textAlignment="gravity"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@android:color/black" />
+                android:textColor="@android:color/black"
+                android:textSize="30sp"/>
             <Spinner
                 android:layout_height = "wrap_content"
                 android:id = "@+id/zone"
@@ -55,7 +57,8 @@
                 android:text="@string/easting"
                 android:textAlignment="gravity"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@android:color/black" />
+                android:textColor="@android:color/black"
+                android:textSize="30sp"/>
             <Spinner
                 android:layout_height = "wrap_content"
                 android:id = "@+id/major_easting"
@@ -76,7 +79,8 @@
                 android:text="@string/northing"
                 android:textAlignment="gravity"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@android:color/black" />
+                android:textColor="@android:color/black"
+                android:textSize="30sp"/>
             <Spinner
                 android:layout_height = "wrap_content"
                 android:id = "@+id/major_northing"
@@ -97,7 +101,8 @@
                 android:text="@string/find_number"
                 android:textAlignment="gravity"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@android:color/black" />
+                android:textColor="@android:color/black"
+                android:textSize="30sp"/>
             <Spinner
                 android:layout_height = "wrap_content"
                 android:id = "@+id/find_spinner"

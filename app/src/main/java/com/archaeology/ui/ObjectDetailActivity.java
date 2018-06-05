@@ -138,12 +138,13 @@ public class ObjectDetailActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_object_detail);
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         GoogleSignInClient mGoogleSignInClient = buildGoogleSignInClient();
         startActivityForResult(mGoogleSignInClient.getSignInIntent(), GOOGLE_PLAY_SIGN_IN);
         if (bluetoothService != null)
         {
             bluetoothService.closeThread();
+            bluetoothService = null;
+            device = null;
         }
         if (StateStatic.cameraIPAddress != null)
         {
@@ -158,8 +159,6 @@ public class ObjectDetailActivity extends AppCompatActivity
             mManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
             mChannel = mManager.initialize(this, getMainLooper(), null);
         }
-        bluetoothService = null;
-        device = null;
         mIntentFilter = new IntentFilter();
         queue = Volley.newRequestQueue(this);
         // getting object data from previous activity
@@ -330,6 +329,10 @@ public class ObjectDetailActivity extends AppCompatActivity
         if (cameraIPAddress != null)
         {
             ((TextView) findViewById(R.id.connectToCameraText)).setText(getString(R.string.ip_connection, cameraIPAddress));
+        }
+        if (nutriScaleBroadcastReceiver != null)
+        {
+            registerReceiver(nutriScaleBroadcastReceiver, mIntentFilter);
         }
     }
 
