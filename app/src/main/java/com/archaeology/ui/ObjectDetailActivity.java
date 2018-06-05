@@ -10,7 +10,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentSender;
-import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -617,7 +616,7 @@ public class ObjectDetailActivity extends AppCompatActivity
                                                         OutputStream outputStream = contents.getOutputStream();
                                                         bmp.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
                                                         MetadataChangeSet changeSet = new MetadataChangeSet
-                                                                .Builder().setTitle(imageNumber + ".png")
+                                                                .Builder().setTitle(imageNumber + 1 + ".png")
                                                                 .setMimeType("image/png").setStarred(false).build();
                                                         CreateFileActivityOptions createOptions = new CreateFileActivityOptions.Builder()
                                                                 .setInitialDriveContents(contents).setInitialMetadata(changeSet)
@@ -650,7 +649,7 @@ public class ObjectDetailActivity extends AppCompatActivity
                                                         DriveContents contents = task.getResult();
                                                         OutputStream outputStream = contents.getOutputStream();
                                                         bmp.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
-                                                        MetadataChangeSet changeSet = new MetadataChangeSet.Builder().setTitle(imageNumber + ".png")
+                                                        MetadataChangeSet changeSet = new MetadataChangeSet.Builder().setTitle(imageNumber + 1 + ".png")
                                                                 .setMimeType("image/png").setStarred(false).build();
                                                         CreateFileActivityOptions createOptions = new CreateFileActivityOptions.Builder()
                                                                 .setInitialDriveContents(contents).setInitialMetadata(changeSet)
@@ -689,7 +688,7 @@ public class ObjectDetailActivity extends AppCompatActivity
                                                     DriveContents contents = task.getResult();
                                                     OutputStream outputStream = contents.getOutputStream();
                                                     bmp.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
-                                                    MetadataChangeSet changeSet = new MetadataChangeSet.Builder().setTitle(imageNumber + ".png")
+                                                    MetadataChangeSet changeSet = new MetadataChangeSet.Builder().setTitle(imageNumber + 1 + ".png")
                                                             .setMimeType("image/png").setStarred(false).build();
                                                     CreateFileActivityOptions createOptions = new CreateFileActivityOptions.Builder()
                                                             .setInitialDriveContents(contents).setInitialMetadata(changeSet)
@@ -730,7 +729,7 @@ public class ObjectDetailActivity extends AppCompatActivity
                                                 DriveContents contents = task.getResult();
                                                 OutputStream outputStream = contents.getOutputStream();
                                                 bmp.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
-                                                MetadataChangeSet changeSet = new MetadataChangeSet.Builder().setTitle(imageNumber + ".png")
+                                                MetadataChangeSet changeSet = new MetadataChangeSet.Builder().setTitle(imageNumber + 1 + ".png")
                                                         .setMimeType("image/png").setStarred(false).build();
                                                 CreateFileActivityOptions createOptions = new CreateFileActivityOptions.Builder()
                                                         .setInitialDriveContents(contents).setInitialMetadata(changeSet)
@@ -775,7 +774,7 @@ public class ObjectDetailActivity extends AppCompatActivity
                                             DriveContents contents = task.getResult();
                                             OutputStream outputStream = contents.getOutputStream();
                                             bmp.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
-                                            MetadataChangeSet changeSet = new MetadataChangeSet.Builder().setTitle(imageNumber + ".png")
+                                            MetadataChangeSet changeSet = new MetadataChangeSet.Builder().setTitle(imageNumber + 1 + ".png")
                                                     .setMimeType("image/png").setStarred(false).build();
                                             CreateFileActivityOptions createOptions = new CreateFileActivityOptions.Builder()
                                                     .setInitialDriveContents(contents).setInitialMetadata(changeSet)
@@ -830,7 +829,7 @@ public class ObjectDetailActivity extends AppCompatActivity
                                         DriveContents contents = task.getResult();
                                         OutputStream outputStream = contents.getOutputStream();
                                         bmp.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
-                                        MetadataChangeSet changeSet = new MetadataChangeSet.Builder().setTitle(imageNumber + ".png")
+                                        MetadataChangeSet changeSet = new MetadataChangeSet.Builder().setTitle(imageNumber + 1 + ".png")
                                                 .setMimeType("image/png").setStarred(false).build();
                                         CreateFileActivityOptions createOptions = new CreateFileActivityOptions.Builder()
                                                 .setInitialDriveContents(contents).setInitialMetadata(changeSet)
