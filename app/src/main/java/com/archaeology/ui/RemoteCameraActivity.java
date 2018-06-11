@@ -59,6 +59,7 @@ public class RemoteCameraActivity extends AppCompatActivity
         if (StateStatic.cameraIPAddress == null)
         {
             Toast.makeText(this, "Not Connected to Camera", Toast.LENGTH_SHORT).show();
+            finish();
         }
         queue = Volley.newRequestQueue(this);
         requestID = 55;
@@ -79,146 +80,8 @@ public class RemoteCameraActivity extends AppCompatActivity
         capture = findViewById(R.id.fragment);
         // Enable the API if the camera needs it enabled
         String URL = "http://" + cameraIPAddress + ":8080/sony/camera";
-        try
-        {
-            // Check supported API
-            VolleyWrapper.getAPIList(URL, queue, requestID++, new JSONObjectResponseWrapper() {
-                /**
-                 * Response received
-                 * @param response - camera response
-                 */
-                @Override
-                public void responseMethod(JSONObject response)
-                {
-                    Log.v("API", response.toString());
-                }
-
-                /**
-                 * Connection failed
-                 * @param error - failure
-                 */
-                @Override
-                public void errorMethod(VolleyError error)
-                {
-                }
-            });
-            // Check if the required API is enabled
-            VolleyWrapper.setCameraFunction(URL, queue, requestID++, "Remote Shooting",
-                    new JSONObjectResponseWrapper() {
-                /**
-                 * Response received
-                 * @param response - camera response
-                 */
-                @Override
-                public void responseMethod(JSONObject response)
-                {
-                }
-
-                /**
-                 * Connection failed
-                 * @param error - failure
-                 */
-                @Override
-                public void errorMethod(VolleyError error)
-                {
-                }
-            });
-            // Enable the required API
-            VolleyWrapper.startRecMode(URL, queue, requestID++, new JSONObjectResponseWrapper() {
-                /**
-                 * Response received
-                 * @param response - camera response
-                 */
-                @Override
-                public void responseMethod(JSONObject response)
-                {
-                }
-
-                /**
-                 * Connection failed
-                 * @param error - failure
-                 */
-                @Override
-                public void errorMethod(VolleyError error)
-                {
-                }
-            });
-            try
-            {
-                // Wait for the API to update
-                Thread.sleep(8000);
-            }
-            catch (InterruptedException e)
-            {
-                e.printStackTrace();
-            }
-            VolleyWrapper.getAPIList(URL, queue, requestID++, new JSONObjectResponseWrapper() {
-                /**
-                 * Response received
-                 * @param response - camera response
-                 */
-                @Override
-                public void responseMethod(JSONObject response)
-                {
-                    Log.v("API", response.toString());
-                }
-
-                /**
-                 * Connection failed
-                 * @param error - failure
-                 */
-                @Override
-                public void errorMethod(VolleyError error)
-                {
-                }
-            });
-            // Check live view sizes
-            VolleyWrapper.getSupportedLiveViewSize(URL, queue, requestID++, new JSONObjectResponseWrapper() {
-                /**
-                 * Response received
-                 * @param response - camera response
-                 */
-                @Override
-                public void responseMethod(JSONObject response)
-                {
-                    Log.v("Supported", response.toString());
-                }
-
-                /**
-                 * Connection failed
-                 * @param error - failure
-                 */
-                @Override
-                public void errorMethod(VolleyError error)
-                {
-                }
-            });
-            VolleyWrapper.getAvailableLiveViewSize(URL, queue, requestID++, new JSONObjectResponseWrapper() {
-                /**
-                 * Response received
-                 * @param response - camera response
-                 */
-                @Override
-                public void responseMethod(JSONObject response)
-                {
-                    Log.v("Available", response.toString());
-                }
-
-                /**
-                 * Connection failed
-                 * @param error - failure
-                 */
-                @Override
-                public void errorMethod(VolleyError error)
-                {
-                }
-            });
-        }
-        catch (JSONException e)
-        {
-            e.printStackTrace();
-        }
-        startLiveView(findViewById(R.id.start_live_view_button));
+        listAPI(URL);
+        getSupportedLiveViewSizes(URL);
     }
 
     /**
@@ -229,6 +92,297 @@ public class RemoteCameraActivity extends AppCompatActivity
     {
         super.onResume();
         startLiveView(findViewById(R.id.start_live_view_button));
+    }
+
+    /**
+     * Get camera status (for debugging)
+     * @param URL - camera URL
+     */
+    private void getEvent(String URL)
+    {
+        try
+        {
+            // Check the camera status with any available camera API versions
+            // NOTE: If the camera is changed, this version number may need updated. Consult the API
+            VolleyWrapper.getEvent(URL, queue, requestID++, "1.2", new JSONObjectResponseWrapper() {
+                /**
+                 * Response received
+                 * @param response - camera response
+                 */
+                @Override
+                public void responseMethod(JSONObject response)
+                {
+                    try
+                    {
+                        Log.v("Camera Event", response.toString(4));
+                    }
+                    catch (JSONException e)
+                    {
+                        e.printStackTrace();
+                    }
+                }
+
+                /**
+                 * Connection failed
+                 * @param error - failure
+                 */
+                @Override
+                public void errorMethod(VolleyError error)
+                {
+                    Log.v("Camera Error", error.toString());
+                }
+            });
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Get the supported live view sizes
+     * @param URL - camera URL
+     */
+    private void getSupportedLiveViewSizes(String URL)
+    {
+        try
+        {
+            // Check live view sizes
+            VolleyWrapper.getSupportedLiveViewSize(URL, queue, requestID++, new JSONObjectResponseWrapper() {
+                /**
+                 * Response received
+                 * @param response - camera response
+                 */
+                @Override
+                public void responseMethod(JSONObject response)
+                {
+                    Log.v("Camera Supported", response.toString());
+                    getAvailableLiveViewSizes(URL);
+                }
+
+                /**
+                 * Connection failed
+                 * @param error - failure
+                 */
+                @Override
+                public void errorMethod(VolleyError error)
+                {
+                    error.printStackTrace();
+                }
+            });
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Get available live view sizes
+     * @param URL - camera URL
+     */
+    private void getAvailableLiveViewSizes(String URL)
+    {
+        try
+        {
+            VolleyWrapper.getAvailableLiveViewSize(URL, queue, requestID++, new JSONObjectResponseWrapper() {
+                /**
+                 * Response received
+                 * @param response - camera response
+                 */
+                @Override
+                public void responseMethod(JSONObject response)
+                {
+                    Log.v("Camera Available", response.toString());
+                }
+
+                /**
+                 * Connection failed
+                 * @param error - failure
+                 */
+                @Override
+                public void errorMethod(VolleyError error)
+                {
+                    Log.v("Camera Error", error.toString());
+                }
+            });
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * List API functions
+     * @param URL - camera URL
+     */
+    private void listAPI(String URL)
+    {
+        try
+        {
+            // Check supported API
+            VolleyWrapper.getAPIList(URL, queue, requestID++, new JSONObjectResponseWrapper() {
+                /**
+                 * Response received
+                 *
+                 * @param response - camera response
+                 */
+                @Override
+                public void responseMethod(JSONObject response)
+                {
+                    Log.v("API", response.toString());
+                    if (response.toString().contains("getCameraFunction"))
+                    {
+                        getCameraFunction(URL);
+                    }
+                    if (response.toString().contains("startRecMode"))
+                    {
+                        startRecMode(URL);
+                        // Wait for the API to update
+                        try
+                        {
+                            Thread.sleep(8000);
+                        }
+                        catch (InterruptedException e)
+                        {
+                            e.printStackTrace();
+                        }
+                        listAPI(URL);
+                    }
+                }
+
+                /**
+                 * Connection failed
+                 *
+                 * @param error - failure
+                 */
+                @Override
+                public void errorMethod(VolleyError error)
+                {
+                    Log.v("Camera Error", error.toString());
+                }
+            });
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Start recording mode
+     * @param URL - camera URL
+     */
+    private void startRecMode(String URL)
+    {
+        try
+        {
+            // Enable the required API
+            VolleyWrapper.startRecMode(URL, queue, requestID++, new JSONObjectResponseWrapper() {
+                /**
+                 * Response received
+                 * @param response - camera response
+                 */
+                @Override
+                public void responseMethod(JSONObject response)
+                {
+                    Log.v("Camera Rec Mode", response.toString());
+                }
+
+                /**
+                 * Connection failed
+                 * @param error - failure
+                 */
+                @Override
+                public void errorMethod(VolleyError error)
+                {
+                    Log.v("Camera Error", error.toString());
+                }
+            });
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Get the current camera mode
+     * @param URL - camera URL
+     */
+    private void getCameraFunction(String URL)
+    {
+        try
+        {
+            // Check supported API
+            VolleyWrapper.getCameraFunction(URL, queue, requestID++, new JSONObjectResponseWrapper() {
+                /**
+                 * Response received
+                 * @param response - camera response
+                 */
+                @Override
+                public void responseMethod(JSONObject response)
+                {
+                    Log.v("Get Function", response.toString());
+                    if (response.toString().contains("Remote Shooting"))
+                    {
+                        setCameraFunction(URL);
+                    }
+                }
+
+                /**
+                 * Connection failed
+                 * @param error - failure
+                 */
+                @Override
+                public void errorMethod(VolleyError error)
+                {
+                    Log.v("Camera Error", error.toString());
+                }
+            });
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Set the camera function
+     * @param URL - camera URL
+     */
+    private void setCameraFunction(String URL)
+    {
+        try
+        {
+            // Check if the required API is enabled
+            VolleyWrapper.setCameraFunction(URL, queue, requestID++, "Remote Shooting", new JSONObjectResponseWrapper() {
+                /**
+                 * Response received
+                 * @param response - camera response
+                 */
+                @Override
+                public void responseMethod(JSONObject response)
+                {
+                    Log.v("Set Function", response.toString());
+                }
+
+                /**
+                 * Connection failed
+                 * @param error - failure
+                 */
+                @Override
+                public void errorMethod(VolleyError error)
+                {
+                    Log.v("Camera Error", error.toString());
+                }
+            });
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -254,7 +408,8 @@ public class RemoteCameraActivity extends AppCompatActivity
                         String imageURI = response.getJSONArray("result").getString(0);
                         imageURI = imageURI.substring(2, imageURI.length() - 2).replace("\\", "");
                         String rawURI = imageURI.substring(0, imageURI.length() - 4) + ".arw";
-                        downloadRaw(rawURI);
+                        downloadFile(imageURI);
+                        downloadFile(rawURI);
                         loadPhotoIntoPhotoFragment(Uri.parse(imageURI));
                     }
                     catch (JSONException e)
@@ -270,7 +425,7 @@ public class RemoteCameraActivity extends AppCompatActivity
                 @Override
                 public void errorMethod(VolleyError error)
                 {
-                    error.printStackTrace();
+                    Log.v("Camera Error", error.toString());
                     Toast.makeText(getApplicationContext(), "Camera error", Toast.LENGTH_SHORT).show();
                 }
             });
@@ -292,48 +447,48 @@ public class RemoteCameraActivity extends AppCompatActivity
         if (capture != null)
         {
             // photo URIs are added to HashMap in PhotoFragment class
-            Picasso.with(this).load(IMAGE_URI)//.transform(new Transformation() {
-//                /**
-//                 * Alter the image
-//                 * @param source - original image
-//                 * @return Returns the new image
-//                 */
-//                @Override
-//                public Bitmap transform(Bitmap source)
-//                {
-//                    int requestedHeight = convertDPToPixel(250);
-//                    float ratio = source.getHeight() / requestedHeight;
-//                    int width = Math.round(source.getWidth() / ratio);
-//                    int height = Math.round(source.getHeight() / ratio);
-//                    if (requestedHeight >= source.getHeight())
-//                    {
-//                        return source;
-//                    }
-//                    else
-//                    {
-//                        Matrix m = new Matrix();
-//                        m.setRectToRect(new RectF(0, 0, source.getWidth(), source.getHeight()),
-//                                new RectF(0, 0, width, height), Matrix.ScaleToFit.CENTER);
-//                        Bitmap result = Bitmap.createBitmap(source, 0, 0, source.getWidth(),
-//                                source.getHeight(), m, true);
-//                        if (result != source)
-//                        {
-//                            source.recycle();
-//                        }
-//                        return result;
-//                    }
-//                }
+            Picasso.with(this).load(IMAGE_URI).transform(new Transformation() {
+                /**
+                 * Alter the image
+                 * @param source - original image
+                 * @return Returns the new image
+                 */
+                @Override
+                public Bitmap transform(Bitmap source)
+                {
+                    int requestedHeight = convertDPToPixel(250);
+                    float ratio = source.getHeight() / requestedHeight;
+                    int width = Math.round(source.getWidth() / ratio);
+                    int height = Math.round(source.getHeight() / ratio);
+                    if (requestedHeight >= source.getHeight())
+                    {
+                        return source;
+                    }
+                    else
+                    {
+                        Matrix m = new Matrix();
+                        m.setRectToRect(new RectF(0, 0, source.getWidth(), source.getHeight()),
+                                new RectF(0, 0, width, height), Matrix.ScaleToFit.CENTER);
+                        Bitmap result = Bitmap.createBitmap(source, 0, 0, source.getWidth(),
+                                source.getHeight(), m, true);
+                        if (result != source)
+                        {
+                            source.recycle();
+                        }
+                        return result;
+                    }
+                }
 
-//                /**
-//                 * Transformation key
-//                 * @return - Returns square()
-//                 */
-//                @Override
-//                public String key()
-//                {
-//                    return "square()";
-//                }
-            /*})*/.placeholder(android.R.drawable.ic_delete).error(android.R.drawable.ic_dialog_alert)
+                /**
+                 * Transformation key
+                 * @return - Returns square()
+                 */
+                @Override
+                public String key()
+                {
+                    return "square()";
+                }
+            }).placeholder(android.R.drawable.ic_delete).error(android.R.drawable.ic_dialog_alert)
                     .into(capture, new Callback() {
                 /**
                  * Image load succeeded
@@ -362,10 +517,10 @@ public class RemoteCameraActivity extends AppCompatActivity
     }
 
     /**
-     * Download a raw image
-     * @param URI - raw image's URI
+     * Download a file from the camera
+     * @param URI - camera image's URI
      */
-    private void downloadRaw(String URI)
+    private void downloadFile(String URI)
     {
         String URL = "http://" + cameraIPAddress + ":8080/sony/camera";
         try
@@ -379,7 +534,16 @@ public class RemoteCameraActivity extends AppCompatActivity
                 @Override
                 public void responseMethod(JSONObject response)
                 {
-                    Log.v("Wifi Direct", response.toString());
+                    Log.v("Camera download", response.toString());
+                    Log.v("To Download", URI);
+                    try
+                    {
+                        new RetrieveRawTask().execute(hemisphere, zone, easting, northing, find, URI);
+                    }
+                    catch (Exception e)
+                    {
+                        e.printStackTrace();
+                    }
                 }
 
                 /**
@@ -394,15 +558,6 @@ public class RemoteCameraActivity extends AppCompatActivity
             });
         }
         catch (JSONException e)
-        {
-            e.printStackTrace();
-        }
-        Log.v("To Download", URI);
-        try
-        {
-            new RetrieveRawTask().execute(hemisphere, zone, easting, northing, find, URI);
-        }
-        catch (Exception e)
         {
             e.printStackTrace();
         }
@@ -437,7 +592,7 @@ public class RemoteCameraActivity extends AppCompatActivity
                 {
                     try
                     {
-                        Log.v("Wifi Direct", response.toString());
+                        Log.v("Camera live view", response.toString());
                         final String LIVE_VIEW_URL = response.getJSONArray("result").getString(0);
                         runOnUiThread(new Runnable() {
                             /**
@@ -455,6 +610,7 @@ public class RemoteCameraActivity extends AppCompatActivity
                                     public void onError(StreamErrorReason reason)
                                     {
                                         stopLiveView(VIEW);
+                                        getEvent(URL);
                                     }
                                 });
                                 enableAPIButtons();
@@ -463,7 +619,7 @@ public class RemoteCameraActivity extends AppCompatActivity
                     }
                     catch (JSONException e)
                     {
-                        e.printStackTrace();
+                        getEvent(URL);
                     }
                 }
 
@@ -639,32 +795,32 @@ public class RemoteCameraActivity extends AppCompatActivity
     public void onDestroy()
     {
         super.onDestroy();
-        final String URL = "http://" + cameraIPAddress + ":8080/sony/camera";
-        try
-        {
-            VolleyWrapper.stopRecMode(URL, queue, requestID++, new JSONObjectResponseWrapper() {
-                /**
-                 * Response received
-                 * @param response - camera response
-                 */
-                @Override
-                public void responseMethod(JSONObject response)
-                {
-                }
-
-                /**
-                 * Connection failed
-                 * @param error - failure
-                 */
-                @Override
-                public void errorMethod(VolleyError error)
-                {
-                }
-            });
-        }
-        catch (JSONException e)
-        {
-            e.printStackTrace();
-        }
+//        final String URL = "http://" + cameraIPAddress + ":8080/sony/camera";
+//        try
+//        {
+//            VolleyWrapper.stopRecMode(URL, queue, requestID++, new JSONObjectResponseWrapper() {
+//                /**
+//                 * Response received
+//                 * @param response - camera response
+//                 */
+//                @Override
+//                public void responseMethod(JSONObject response)
+//                {
+//                }
+//
+//                /**
+//                 * Connection failed
+//                 * @param error - failure
+//                 */
+//                @Override
+//                public void errorMethod(VolleyError error)
+//                {
+//                }
+//            });
+//        }
+//        catch (JSONException e)
+//        {
+//            e.printStackTrace();
+//        }
     }
 }

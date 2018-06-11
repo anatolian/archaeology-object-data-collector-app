@@ -56,6 +56,48 @@ public class VolleyWrapper
     }
 
     /**
+     * Get camera status
+     * @param URL - camera URL
+     * @param queue - request queue
+     * @param ID - request id
+     * @param VERSION - version number
+     * @param LAMBDA_WRAPPER - request wrapper
+     * @throws JSONException if the JSON is malformed
+     */
+    public static void getEvent(final String URL, RequestQueue queue, final int ID, final String VERSION,
+                                final JSONObjectResponseWrapper LAMBDA_WRAPPER) throws JSONException
+    {
+        final String POST_BODY = new JSONObject().put("method", "getEvent")
+                .put("params", new JSONArray().put(false)).put("id", ID).put("version", VERSION).toString();
+        JSONObject JSONPOSTBody = new JSONObject(POST_BODY);
+        JsonObjectRequest myRequest = new JsonObjectRequest(Method.POST, URL, JSONPOSTBody,
+                new Response.Listener<JSONObject>() {
+                    /**
+                     * Response received
+                     * @param response - database response
+                     */
+                    @Override
+                    public void onResponse(JSONObject response)
+                    {
+                        LAMBDA_WRAPPER.responseMethod(response);
+                    }
+                }, new Response.ErrorListener() {
+            /**
+             * Connection error
+             * @param error - failure
+             */
+            @Override
+            public void onErrorResponse(VolleyError error)
+            {
+                LAMBDA_WRAPPER.errorMethod(error);
+            }
+        });
+        myRequest.setRetryPolicy(new DefaultRetryPolicy(20000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        queue.add(myRequest);
+    }
+
+    /**
      * Get supported live view sizes
      * @param URL - camera URL
      * @param queue - request queue
@@ -152,6 +194,47 @@ public class VolleyWrapper
         final String POST_BODY = new JSONObject().put("method", "setCameraFunction")
                 .put("params", new JSONArray().put(function)).put("id", ID)
                 .put("version", "1.0").toString();
+        JSONObject JSONPOSTBody = new JSONObject(POST_BODY);
+        JsonObjectRequest myRequest = new JsonObjectRequest(Method.POST, URL, JSONPOSTBody,
+                new Response.Listener<JSONObject>() {
+            /**
+             * Response received
+             * @param response - database response
+             */
+            @Override
+            public void onResponse(JSONObject response)
+            {
+                LAMBDA_WRAPPER.responseMethod(response);
+            }
+        }, new Response.ErrorListener() {
+            /**
+             * Connection error
+             * @param error - failure
+             */
+            @Override
+            public void onErrorResponse(VolleyError error)
+            {
+                LAMBDA_WRAPPER.errorMethod(error);
+            }
+        });
+        myRequest.setRetryPolicy(new DefaultRetryPolicy(20000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        queue.add(myRequest);
+    }
+
+    /**
+     * Set the camera function
+     * @param URL - camera URL
+     * @param queue - request queue
+     * @param ID - request id
+     * @param LAMBDA_WRAPPER - request wrapper
+     * @throws JSONException if the JSON is malformed
+     */
+    public static void getCameraFunction(final String URL, RequestQueue queue, final int ID,
+                                         final JSONObjectResponseWrapper LAMBDA_WRAPPER) throws JSONException
+    {
+        final String POST_BODY = new JSONObject().put("method", "getCameraFunction")
+                .put("params", new JSONArray()).put("id", ID).put("version", "1.0").toString();
         JSONObject JSONPOSTBody = new JSONObject(POST_BODY);
         JsonObjectRequest myRequest = new JsonObjectRequest(Method.POST, URL, JSONPOSTBody,
                 new Response.Listener<JSONObject>() {
@@ -390,7 +473,7 @@ public class VolleyWrapper
             }
         });
         // setting up retry policy in case of failure
-        myRequest.setRetryPolicy(new DefaultRetryPolicy(5000,
+        myRequest.setRetryPolicy(new DefaultRetryPolicy(20000,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         queue.add(myRequest);
     }

@@ -3,7 +3,6 @@
 package com.archaeology.ui;
 import android.content.Intent;
 import android.content.res.AssetManager;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
@@ -17,7 +16,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 import com.archaeology.models.StringObjectResponseWrapper;
 import com.archaeology.util.CheatSheet;
-import com.googlecode.tesseract.android.TessBaseAPI;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;

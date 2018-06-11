@@ -61,7 +61,7 @@
     <string name="find_number">Find Number</string>
     <string name="northing">Northing</string>
     <string name="easting">Easting</string>
-    <string name = "find_frmt">35.N.%s.%s.%s</string>
+    <string name = "find_frmt">%s.%d.%d.%d.%d</string>
     <string name="long_frmt">%d</string>
     <string name="default_settings">Default Settings</string>
     <string name="save_settings">Save Settings</string>
