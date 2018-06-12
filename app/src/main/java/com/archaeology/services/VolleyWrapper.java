@@ -505,7 +505,6 @@ public class VolleyWrapper
             @Override
             public void onResponse(Bitmap bitmap)
             {
-//                        mImageView.setImageBitmap(bitmap);
                 LAMBDA_WRAPPER.responseMethod(bitmap);
             }
         }, 0, 0, ImageView.ScaleType.CENTER, Bitmap.Config.ARGB_8888, new Response.ErrorListener() {
@@ -515,7 +514,6 @@ public class VolleyWrapper
              */
             public void onErrorResponse(VolleyError error)
             {
-//                        mImageView.setImageResource(R.drawable.image_load_error);
                 LAMBDA_WRAPPER.errorMethod(error);
             }
         });

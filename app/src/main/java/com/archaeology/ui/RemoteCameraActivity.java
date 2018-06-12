@@ -328,6 +328,11 @@ public abstract class RemoteCameraActivity extends AppCompatActivity
                 Log.v("Download", "Image loaded");
                 try
                 {
+                    File tmpDir = new File(Environment.getExternalStorageDirectory() + "/Archaeology/");
+                    if (!tmpDir.exists())
+                    {
+                        tmpDir.mkdirs();
+                    }
                     File tmpFile = new File(Environment.getExternalStorageDirectory() + "/Archaeology/temp.jpg");
                     // writing data from file to output stream to be stored into a bitmap
                     tmpStream = new FileOutputStream(tmpFile);
