@@ -10,7 +10,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
@@ -38,7 +37,6 @@ import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Set;
@@ -71,7 +69,9 @@ import static com.archaeology.util.StateStatic.colorCorrectionEnabled;
 import static com.archaeology.util.StateStatic.getTimeStamp;
 import static com.archaeology.util.StateStatic.globalWebServerURL;
 import static com.archaeology.util.StateStatic.isBluetoothEnabled;
-import static com.archaeology.util.StateStatic.isRemoteCameraSelected;
+import static com.archaeology.util.StateStatic.selectedCameraName;
+import static com.archaeology.util.StateStatic.selectedCameraPosition;
+
 public class ObjectDetailActivity extends AppCompatActivity
 {
     IntentFilter mIntentFilter;
@@ -352,6 +352,7 @@ public class ObjectDetailActivity extends AppCompatActivity
         final MagnifyingGlass APPROVE_PHOTO_IMAGE = approveDialog.findViewById(R.id.approvePhotoImage);
         final Uri FILE_URI;
         final Bitmap BMP;
+        String captureFile;
         // Local camera request
         if (requestCode == REQUEST_IMAGE_CAPTURE)
         {
@@ -359,11 +360,10 @@ public class ObjectDetailActivity extends AppCompatActivity
             {
                 return;
             }
-            String captureFile = fileURI.toString();
+            captureFile = fileURI.toString();
             String originalFileName = captureFile.substring(captureFile.lastIndexOf('/') + 1);
             // creating URI to save photo to once taken
             FILE_URI = CheatSheet.getThumbnail(originalFileName);
-            APPROVE_PHOTO_IMAGE.setImageURI(FILE_URI);
             try
             {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), FILE_URI);
@@ -378,11 +378,21 @@ public class ObjectDetailActivity extends AppCompatActivity
         // Remote camera request
         else
         {
+            // Returned URI from RemoteCameraActivity is a thumbnail
             FILE_URI = data.getData();
-            byte[] byteArray = data.getByteArrayExtra("bitmap");
-            BMP = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
-            APPROVE_PHOTO_IMAGE.setImageBitmap(BMP);
+            fileURI = Uri.parse(Environment.getExternalStorageDirectory() + "/Archaeology/temp.jpg");
+            try
+            {
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), FILE_URI);
+                BMP = rotateImageIfRequired(bitmap, getApplicationContext(), FILE_URI);
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+                return;
+            }
         }
+        APPROVE_PHOTO_IMAGE.setImageBitmap(BMP);
         final Button OK_BUTTON = approveDialog.findViewById(R.id.saveButton);
         final TextView LABEL = approveDialog.findViewById(R.id.correctionLabel);
         LABEL.setText(getString(R.string.tap_to_correct));
@@ -436,41 +446,45 @@ public class ObjectDetailActivity extends AppCompatActivity
                             updateColorInDB(APPROVE_PHOTO_IMAGE.red, APPROVE_PHOTO_IMAGE.green,
                                     APPROVE_PHOTO_IMAGE.blue, APPROVE_PHOTO_IMAGE.location);
                         }
-                        File folder = new File(Environment.getExternalStorageDirectory() + "/Archaeology");
+                        String dirPath = Environment.getExternalStorageDirectory() + "/Archaeology/" + hemisphere
+                                + "/" + zone + "/" + easting + "/" + northing + "/" + findNumber + "/photos/lab/";
+                        String thumbDirPath = Environment.getExternalStorageDirectory() + "/Thumbnails/";
+                        File folder = new File(dirPath);
+                        File thumbFolder = new File(thumbDirPath);
                         if (!folder.exists())
                         {
                             folder.mkdirs();
                         }
-                        String path = Environment.getExternalStorageDirectory() + "/Archaeology/"
-                                + hemisphere + "_" + zone + "_" + easting + "_" + northing + "_" + findNumber + ".png";
-                        FileOutputStream out = null;
-                        try
+                        if (!thumbFolder.exists())
                         {
-                            out = new FileOutputStream(path);
-                            BMP.compress(Bitmap.CompressFormat.PNG, 100, out);
+                            thumbFolder.mkdirs();
                         }
-                        catch (Exception e)
+                        String thumbName = hemisphere + "_" + zone + "_" + easting + "_" + northing + "_" + findNumber;
+                        int photoNum = 1;
+                        for (File child: thumbFolder.listFiles())
                         {
-                            Toast.makeText(getApplicationContext(), "Could not save image",
-                                    Toast.LENGTH_SHORT).show();
-                            e.printStackTrace();
-                        }
-                        finally
-                        {
+                            String name = child.getName();
+                            if (!name.startsWith(thumbName))
+                            {
+                                continue;
+                            }
                             try
                             {
-                                if (out != null)
+                                int num = Integer.parseInt(name.substring(name.lastIndexOf("_") + 1, name.indexOf(".")));
+                                if (num >= photoNum)
                                 {
-                                    out.close();
+                                    photoNum = num + 1;
                                 }
                             }
-                            catch (IOException e)
+                            catch (NumberFormatException e)
                             {
-                                Toast.makeText(getApplicationContext(),"Could not save image",
-                                        Toast.LENGTH_SHORT).show();
-                                e.printStackTrace();
+                                // do nothing
                             }
                         }
+                        String path = dirPath + photoNum + ".jpg";
+                        String thumbPath = thumbDirPath + thumbName + "_" + photoNum + ".jpg";
+                        new File(fileURI.getPath()).renameTo(new File(path));
+                        new File(FILE_URI.getPath()).renameTo(new File(thumbPath));
 //                        File tempFile = new File(path);
 //                        Uri convertedURI = Uri.fromFile(tempFile);
                         // store image data into photo fragments
@@ -684,7 +698,7 @@ public class ObjectDetailActivity extends AppCompatActivity
                 }
                 catch (ArrayIndexOutOfBoundsException e)
                 {
-                    e.printStackTrace();
+                    // Do nothing
                 }
             }
 
@@ -716,7 +730,7 @@ public class ObjectDetailActivity extends AppCompatActivity
                 }
                 catch (ArrayIndexOutOfBoundsException e)
                 {
-                    e.printStackTrace();
+                    // Do nothing
                 }
             }
 
@@ -748,7 +762,7 @@ public class ObjectDetailActivity extends AppCompatActivity
                 }
                 catch (ArrayIndexOutOfBoundsException e)
                 {
-                    e.printStackTrace();
+                    // Do nothing
                 }
             }
 
@@ -780,7 +794,7 @@ public class ObjectDetailActivity extends AppCompatActivity
                 }
                 catch (ArrayIndexOutOfBoundsException e)
                 {
-                    e.printStackTrace();
+                    // Do nothing
                 }
             }
 
@@ -812,7 +826,7 @@ public class ObjectDetailActivity extends AppCompatActivity
                 }
                 catch (ArrayIndexOutOfBoundsException e)
                 {
-                    e.printStackTrace();
+                    // Do nothing
                 }
             }
 
@@ -1105,15 +1119,15 @@ public class ObjectDetailActivity extends AppCompatActivity
      */
     public void addPhotoAction(View view)
     {
-        if (isRemoteCameraSelected)
+        if (selectedCameraPosition == 0)
+        {
+            startLocalCameraIntent();
+        }
+        else
         {
             // Just connect to found IP
             cameraIPAddress = CheatSheet.findIPFromMAC(cameraMACAddress);
             goToWiFiActivity();
-        }
-        else
-        {
-            startLocalCameraIntent();
         }
     }
 
@@ -1260,7 +1274,8 @@ public class ObjectDetailActivity extends AppCompatActivity
         {
             Log.v(LOG_TAG_BLUETOOTH, "Trying to unregister non-registered receiver");
         }
-        Intent wifiActivity = new Intent(this, RemoteCameraActivity.class);
+        RemoteCameraActivity activity = RemoteCameraActivityFactory.getRemoteCameraActivity(selectedCameraName);
+        Intent wifiActivity = new Intent(this, RemoteSonyQX1Activity.class);
         wifiActivity.putExtra(HEMISPHERE, hemisphere);
         wifiActivity.putExtra(ZONE, "" + zone);
         wifiActivity.putExtra(EASTING, "" + easting);

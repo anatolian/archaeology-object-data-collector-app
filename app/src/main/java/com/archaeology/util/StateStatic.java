@@ -13,23 +13,18 @@ public class StateStatic
     public static final String LOG_TAG_BLUETOOTH = "BLUETOOTH";
     public static final int REQUEST_IMAGE_CAPTURE = 301;
     public static final int REQUEST_REMOTE_IMAGE = 302;
-    public static final int REQUEST_CODE_CREATE_FILE = 303;
-    public static final int GOOGLE_PLAY_SIGN_IN = 304;
     public static final int MESSAGE_WEIGHT = 501;
     public static final int MESSAGE_STATUS_CHANGE = 502;
     public static final String DEFAULT_WEB_SERVER_URL = "https://object-data-collector-service.herokuapp.com";
-    // Default URL to connect to database to send photos back and forth
-    public static final String DEFAULT_BUCKET_URL = "s3.console.aws.amazon.com/s3/buckets/pennmuseum/";
     // Peter's camera
-    public static final String DEFAULT_CAMERA_MAC = "fe:c2:de:31:0a:e1";
+    public static final String SONY_QX1_MAC_ADDRESS = "fe:c2:de:31:0a:e1";
     // Library's alpha 7
-//    public static final String DEFAULT_CAMERA_MAC = "b2:72:bf:cd:74:61";
+    public static final String SONY_ALPHA_7_MAC_ADDRESS = "b2:72:bf:cd:74:61";
     // 30 minutes
     public static final long DEFAULT_CALIBRATION_INTERVAL = 1800000;
     private static final String DEFAULT_PHOTO_PATH = "Archaeology";
     public static final String THUMBNAIL_EXTENSION_STRING = "thumb.jpg";
     public static final int DEFAULT_VOLLEY_TIMEOUT = 7000;
-    public static final String SYNCED = "S";
     public static final String MARKED_AS_ADDED = "A";
     public static final String MARKED_AS_TO_DOWNLOAD = "D";
     public static final String HEMISPHERE = "hemisphere";
@@ -40,12 +35,13 @@ public class StateStatic
     public static final String ALL_FIND_NUMBER = "all_available_find_number";
     public static String deviceName = "nutriscale_1910";
     public static String globalWebServerURL = DEFAULT_WEB_SERVER_URL;
-    public static String globalBucketURL = DEFAULT_BUCKET_URL;
-    public static String cameraMACAddress = DEFAULT_CAMERA_MAC;
+    public static String cameraMACAddress = SONY_QX1_MAC_ADDRESS;
     public static long remoteCameraCalibrationInterval = DEFAULT_CALIBRATION_INTERVAL;
     public static long tabletCameraCalibrationInterval = DEFAULT_CALIBRATION_INTERVAL;
-    public static final boolean DEFAULT_REMOTE_CAMERA_SELECTED = true;
-    public static boolean isRemoteCameraSelected = DEFAULT_REMOTE_CAMERA_SELECTED;
+    public static final int DEFAULT_SELECTED_CAMERA_POSITION = 1;
+    public static int selectedCameraPosition = DEFAULT_SELECTED_CAMERA_POSITION;
+    public static String DEFAULT_SELECTED_CAMERA = "Sony QX1";
+    public static String selectedCameraName = DEFAULT_SELECTED_CAMERA;
     public static String cameraIPAddress = null;
     public static final boolean DEFAULT_CORRECTION_SELECTION = true;
     public static boolean colorCorrectionEnabled = DEFAULT_CORRECTION_SELECTION;

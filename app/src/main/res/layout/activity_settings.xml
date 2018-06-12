@@ -37,30 +37,6 @@
                 android:hint = "@string/base_url"
                 android:textAppearance = "?android:attr/textAppearanceMedium"/>
             <TextView
-                android:id="@+id/textView7"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/settingsWebServiceUrl"
-                android:layout_alignStart="@+id/settingsBucketUrl"
-                android:minWidth="400dp"
-                android:text="@string/bucket_url"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@android:color/black" />
-            <EditText
-                android:id="@+id/settingsBucketUrl"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/textView7"
-                android:layout_centerHorizontal="true"
-                android:text="@string/default_bucket_url"
-                android:inputType="textUri"
-                android:lines="1"
-                android:maxLines="3"
-                android:minWidth="400dp"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@android:color/black"
-                android:hint="@string/bucket_url"/>
-            <TextView
                 android:id="@+id/textView6"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -106,7 +82,7 @@
                 android:id="@+id/textView11"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/settingsBucketUrl"
+                android:layout_below="@+id/settingsWebServiceUrl"
                 android:layout_centerHorizontal="true"
                 android:minWidth="400dp"
                 android:text="@string/select_camera"

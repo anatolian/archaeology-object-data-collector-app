@@ -13,7 +13,6 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.Volley;
 import com.archaeology.models.StringObjectResponseWrapper;
 import com.archaeology.util.CheatSheet;
 import java.io.File;
@@ -31,7 +30,6 @@ import static com.archaeology.util.StateStatic.ALL_FIND_NUMBER;
 import static com.archaeology.util.StateStatic.EASTING;
 import static com.archaeology.util.StateStatic.NORTHING;
 import static com.archaeology.util.StateStatic.FIND_NUMBER;
-import static com.archaeology.util.StateStatic.globalBucketURL;
 import static com.archaeology.util.StateStatic.globalWebServerURL;
 public class CameraUIActivity extends AppCompatActivity
 {
@@ -56,30 +54,6 @@ public class CameraUIActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera_ui);
-        String URL = globalWebServerURL + "/get_property/?key=bucket_url";
-        queue = Volley.newRequestQueue(this);
-        makeVolleyStringObjectRequest(URL, queue, new StringObjectResponseWrapper() {
-            /**
-             * Response received
-             * @param response - database response
-             */
-            @Override
-            public void responseMethod(String response)
-            {
-                globalBucketURL = response;
-            }
-
-            /**
-             * Connection failed
-             * @param error - failure
-             */
-            @Override
-            public void errorMethod(VolleyError error)
-            {
-                Toast.makeText(getApplicationContext(), "Bucket URL could not be found. Go to Settings to change it.",
-                        Toast.LENGTH_LONG).show();
-            }
-        });
         // OCR-only stuff
         String[] paths = new String[]{DATA_PATH, DATA_PATH + "tessdata/"};
         for (String path: paths)

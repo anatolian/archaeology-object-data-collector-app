@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.squareup.picasso.Callback;
@@ -21,13 +20,9 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import com.archaeology.services.PicassoWrapper;
 import com.archaeology.R;
-import com.archaeology.services.AsyncHTTPCallbackWrapper;
-import com.archaeology.services.AsyncHerokuHTTPWrapper;
 import com.archaeology.util.CheatSheet;
 import static com.archaeology.util.StateStatic.MARKED_AS_ADDED;
 import static com.archaeology.util.StateStatic.MARKED_AS_TO_DOWNLOAD;
-import static com.archaeology.util.StateStatic.SYNCED;
-import static com.archaeology.util.StateStatic.globalWebServerURL;
 public class PhotoFragment extends Fragment
 {
     public abstract class CustomPicassoCallback implements Callback
@@ -211,47 +206,10 @@ public class PhotoFragment extends Fragment
     {
         for (final Map.Entry<Uri, String> DICT_ENTRY: dictOfPhotoSyncStatus.entrySet())
         {
-            if (DICT_ENTRY.getValue().equals(MARKED_AS_TO_DOWNLOAD))
+            if (DICT_ENTRY.getValue().equals(MARKED_AS_TO_DOWNLOAD) || DICT_ENTRY.getValue().equals(MARKED_AS_ADDED))
             {
                 PICASSO_SINGLETON.fetchAndInsertImage((LinearLayout) inflatedView, DICT_ENTRY.getKey(),
                         getActivity(), new PhotoOnClickListener(), PICASSO_CALLBACK);
-            }
-            else if (DICT_ENTRY.getValue().equals(MARKED_AS_ADDED))
-            {
-                PICASSO_SINGLETON.fetchAndInsertImage((LinearLayout) inflatedView, DICT_ENTRY.getKey(),
-                        getActivity(), new PhotoOnClickListener(), PICASSO_CALLBACK);
-                final Activity PARENT_ACTIVITY = getActivity();
-                if (PARENT_ACTIVITY instanceof ObjectDetailActivity)
-                {
-                    String hemisphere = ((ObjectDetailActivity) PARENT_ACTIVITY).hemisphere;
-                    int zone = ((ObjectDetailActivity) PARENT_ACTIVITY).zone;
-                    int easting = ((ObjectDetailActivity) PARENT_ACTIVITY).easting;
-                    int northing = ((ObjectDetailActivity) PARENT_ACTIVITY).northing;
-                    int findNumber = ((ObjectDetailActivity) PARENT_ACTIVITY).findNumber;
-                    AsyncHerokuHTTPWrapper.makeImageUpload(globalWebServerURL + "/upload_file",
-                            DICT_ENTRY.getKey(), hemisphere, "" + zone, "" + easting,
-                            "" + northing, "" + findNumber, new AsyncHTTPCallbackWrapper() {
-                        /**
-                         * Connection succeeded
-                         * @param response - HTTP response
-                         */
-                        @Override
-                        public void onSuccessCallback(String response)
-                        {
-                            super.onSuccessCallback(response);
-                            dictOfPhotoSyncStatus.put(DICT_ENTRY.getKey(), SYNCED);
-                            if (response.contains("https://") && !response.contains("form method"))
-                            {
-                                Toast.makeText(PARENT_ACTIVITY, "Image Uploaded To Server", Toast.LENGTH_SHORT).show();
-                            }
-                            else
-                            {
-                                Toast.makeText(PARENT_ACTIVITY, "Upload failed", Toast.LENGTH_SHORT).show();
-                            }
-                            ((ObjectDetailActivity) PARENT_ACTIVITY).clearCurrentPhotosOnLayoutAndFetchPhotosAsync();
-                        }
-                    });
-                }
             }
         }
     }

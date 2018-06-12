@@ -49,10 +49,11 @@
         <activity
             android:name="com.archaeology.ui.CameraUIActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
+        <activity android:name="com.archaeology.ui.RemoteCameraActivityFactory" />
         <activity android:name="com.archaeology.ui.CeramicInputActivity" />
         <activity android:name="com.archaeology.ui.ObjectDetailActivity"
             android:screenOrientation="portrait"/>
-        <activity android:name="com.archaeology.ui.RemoteCameraActivity"
+        <activity android:name="com.archaeology.ui.RemoteSonyQX1Activity"
             android:windowSoftInputMode = "stateHidden"
             android:screenOrientation="portrait"/>
     </application>

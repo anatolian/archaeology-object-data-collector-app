@@ -3,7 +3,8 @@
     <string name="action_settings">Settings</string>
     <string-array name="camera_list">
         <item>Tablet Camera</item>
-        <item>Remote Camera</item>
+        <item>Sony QX1</item>
+        <item>Sony Alpha 7</item>
     </string-array>
     <string-array name="location_labels">
         <item>Exterior Surface</item>

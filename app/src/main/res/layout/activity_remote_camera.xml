@@ -1,7 +1,7 @@
 <RelativeLayout xmlns:android = "http://schemas.android.com/apk/res/android"
     xmlns:tools = "http://schemas.android.com/tools" android:layout_width = "match_parent"
     android:layout_height = "match_parent"
-    tools:context = "com.archaeology.ui.RemoteCameraActivity">
+    tools:context = "com.archaeology.ui.RemoteSonyQX1Activity">
     <view
         android:layout_width = "wrap_content"
         android:layout_height = "400dp"
@@ -67,13 +67,6 @@
                 android:layout_below = "@+id/zoom_in_button"
                 android:layout_centerHorizontal = "true"
                 android:onClick = "zoomOut"/>
-            <android.support.v7.widget.AppCompatImageView
-                android:id="@+id/fragment"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/zoom_out_button"
-                tools:layout="@layout/photo_fragment"
-                android:visibility="invisible"/>
         </RelativeLayout>
     </ScrollView>
 </RelativeLayout>

@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.media.ExifInterface;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import java.io.BufferedReader;
@@ -93,9 +94,9 @@ public class CheatSheet
      */
     public static Uri getThumbnail(String inputFileName)
     {
-        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES), getGlobalPhotoSavePath());
+        File mediaStorageDir = new File(Environment.getExternalStorageDirectory() + "/Archaeology/");
         String originalFilePath = mediaStorageDir.getPath() + File.separator + inputFileName;
+        Log.v("Original Location", originalFilePath);
         String thumbPath = mediaStorageDir.getPath() + File.separator + THUMBNAIL_EXTENSION_STRING;
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
@@ -105,20 +106,19 @@ public class CheatSheet
         int height = options.outHeight;
         File thumbFile = new File(thumbPath);
         // creating a thumbnail image and setting the bounds of the thumbnail
-        Bitmap thumbImage = ThumbnailUtils.extractThumbnail(BitmapFactory
-                        .decodeFile(originalFilePath), Math.round(width / 4.1f),
-                Math.round(height / 4.1f));
+        Bitmap thumbImage = ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(originalFilePath),
+                Math.round(width / 4.1f), Math.round(height / 4.1f));
         try
         {
             FileOutputStream fos = new FileOutputStream(thumbFile);
-            thumbImage.compress(Bitmap.CompressFormat.PNG, 90, fos);
+            thumbImage.compress(Bitmap.CompressFormat.JPEG, 100, fos);
             fos.close();
         }
         catch (Exception ex)
         {
-            // e.getMessage is returning a null value
             ex.printStackTrace();
         }
+        Log.v("Thumbnail", Uri.fromFile(thumbFile).toString());
         return Uri.fromFile(thumbFile);
     }
 
@@ -157,7 +157,8 @@ public class CheatSheet
             }
             return img;
         }
-        else {
+        else
+        {
             ExifInterface ei = new ExifInterface(selectedImage.getPath());
             int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
             switch (orientation)
@@ -247,13 +248,7 @@ public class CheatSheet
      */
     public static File getOutputMediaFile(String fileName)
     {
-        // To be safe, you should check that the SDCard is mounted using
-        // Environment.getExternalStorageState() before doing this.
-        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES), getGlobalPhotoSavePath());
-        // This location works best if you want the created images to be shared between
-        // applications and persist after your app has been uninstalled. Create the storage
-        // directory if it does not exist
+        File mediaStorageDir = new File(Environment.getExternalStorageDirectory() + "/Archaeology/");
         if (!mediaStorageDir.isDirectory())
         {
             if (!mediaStorageDir.mkdirs())
@@ -262,8 +257,7 @@ public class CheatSheet
             }
         }
         // Create a media file name
-        String path = mediaStorageDir.getPath() + File.separator + fileName +".jpg";
-        return new File(path);
+        return new File(mediaStorageDir.getPath() + File.separator + fileName +".jpg");
     }
 
     /**
