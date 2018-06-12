@@ -1,12 +1,13 @@
 // Photo fragment
 // @author: msenol
 package com.archaeology.ui;
-import android.app.Activity;
 import android.app.Fragment;
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatImageView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,13 +17,9 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.squareup.picasso.Callback;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import com.archaeology.services.PicassoWrapper;
+import java.util.LinkedList;
 import com.archaeology.R;
 import com.archaeology.util.CheatSheet;
-import static com.archaeology.util.StateStatic.MARKED_AS_ADDED;
-import static com.archaeology.util.StateStatic.MARKED_AS_TO_DOWNLOAD;
 public class PhotoFragment extends Fragment
 {
     public abstract class CustomPicassoCallback implements Callback
@@ -37,72 +34,11 @@ public class PhotoFragment extends Fragment
             this.actualImageView = actualImageView;
         }
     }
-    private static final String PHOTO_DICT = "pd";
+    private static final String PHOTOS = "photos";
     View inflatedView;
-    LinkedHashMap<Uri, String> dictOfPhotoSyncStatus;
+    LinkedList<Uri> files;
     ArrayList<AppCompatImageView> loadedPhotos;
-    final PicassoWrapper PICASSO_SINGLETON = new PicassoWrapper();
-    final CustomPicassoCallback PICASSO_CALLBACK = new CustomPicassoCallback() {
-        /**
-         * Connection succeeded
-         */
-        @Override
-        public void onSuccess()
-        {
-            photoLoadedSemaphore--;
-            if (photoLoadedSemaphore == 0)
-            {
-                // changed from getActivity()
-                PhotoLoadDeleteInterface containerActivity = (PhotoLoadDeleteInterface) getActivity();
-                if (containerActivity != null)
-                {
-                    containerActivity.setAllPhotosLoaded();
-                }
-            }
-        }
-
-        /**
-         * Connection failed
-         */
-        @Override
-        public void onError()
-        {
-            photoLoadedSemaphore++;
-        }
-    };
-    public int selectedPhotoCount = 0;
-    public int photoLoadedSemaphore = 0;
     RequestQueue queue;
-    public interface PhotoLoadDeleteInterface
-    {
-        /**
-         * All photos loaded
-         */
-        void setAllPhotosLoaded();
-    }
-    public class PhotoOnClickListener implements View.OnClickListener
-    {
-        /**
-         * User pressed photo
-         * @param v - photo view
-         */
-        @Override
-        public void onClick(View v)
-        {
-            ImageView tempImageView = (ImageView) v;
-            if (tempImageView.isSelected())
-            {
-                tempImageView.setSelected(false);
-                selectedPhotoCount--;
-            }
-            else
-            {
-                selectedPhotoCount++;
-                tempImageView.setSelected(true);
-            }
-        }
-    }
-
     /**
      * Constructor
      */
@@ -121,37 +57,12 @@ public class PhotoFragment extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        this.dictOfPhotoSyncStatus = new LinkedHashMap<>();
+        this.files = new LinkedList<>();
         this.loadedPhotos = new ArrayList<>();
         this.inflatedView = inflater.inflate(R.layout.photo_fragment, container, false);
         // changed from getActivity
         this.queue = Volley.newRequestQueue(getActivity());
         return inflatedView;
-    }
-
-    /**
-     * Attach the fragment
-     * @param activity - activity to attach to
-     */
-    @Override
-    public void onAttach(Activity activity)
-    {
-        super.onAttach(activity);
-    }
-
-    /**
-     * Activity created
-     * @param savedInstanceState - state from memory
-     */
-    @SuppressWarnings("unchecked")
-    public void onActivityCreated(Bundle savedInstanceState)
-    {
-        super.onActivityCreated(savedInstanceState);
-        if (savedInstanceState != null)
-        {
-            dictOfPhotoSyncStatus = (LinkedHashMap<Uri, String>) savedInstanceState.getSerializable(PHOTO_DICT);
-            syncPhotos();
-        }
     }
 
     /**
@@ -162,7 +73,7 @@ public class PhotoFragment extends Fragment
     public void onSaveInstanceState(Bundle outState)
     {
         super.onSaveInstanceState(outState);
-        outState.putSerializable(PHOTO_DICT, dictOfPhotoSyncStatus);
+        outState.putSerializable(PHOTOS, files);
     }
 
     /**
@@ -177,40 +88,40 @@ public class PhotoFragment extends Fragment
     /**
      * Add photo
      * @param fileURI - photo location
-     * @param SYNC_STATUS - status of sync
+     * @param context - calling context
      */
-    public void addPhoto(Uri fileURI, final String SYNC_STATUS)
+    public void addPhoto(Uri fileURI, Context context)
     {
-        dictOfPhotoSyncStatus.put(fileURI, SYNC_STATUS);
+        files.addFirst(fileURI);
         clearPhotosFromLayout();
-        syncPhotos();
+        syncPhotos(context);
     }
 
     /**
      * Create fragment
+     * @param context - calling context
      */
-    public void prepareFragmentForNewPhotosFromNewItem()
+    public void prepareFragmentForNewPhotosFromNewItem(Context context)
     {
         CheatSheet.clearThePhotosDirectory();
-        this.dictOfPhotoSyncStatus = new LinkedHashMap<>();
+        this.files = new LinkedList<>();
         this.loadedPhotos = new ArrayList<>();
         this.queue = Volley.newRequestQueue(getActivity());
         clearPhotosFromLayout();
-        syncPhotos();
+        syncPhotos(context);
     }
 
     /**
      * Sync the photos
+     * @param context - calling context
      */
-    private void syncPhotos()
+    private void syncPhotos(Context context)
     {
-        for (final Map.Entry<Uri, String> DICT_ENTRY: dictOfPhotoSyncStatus.entrySet())
+        for (Uri file: files)
         {
-            if (DICT_ENTRY.getValue().equals(MARKED_AS_TO_DOWNLOAD) || DICT_ENTRY.getValue().equals(MARKED_AS_ADDED))
-            {
-                PICASSO_SINGLETON.fetchAndInsertImage((LinearLayout) inflatedView, DICT_ENTRY.getKey(),
-                        getActivity(), new PhotoOnClickListener(), PICASSO_CALLBACK);
-            }
+            ImageView elem = new ImageView(context);
+            elem.setImageURI(file);
+            ((LinearLayout) inflatedView).addView(elem);
         }
     }
 }

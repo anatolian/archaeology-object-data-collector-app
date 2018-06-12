@@ -96,7 +96,6 @@ public class CheatSheet
     {
         File mediaStorageDir = new File(Environment.getExternalStorageDirectory() + "/Archaeology/");
         String originalFilePath = mediaStorageDir.getPath() + File.separator + inputFileName;
-        Log.v("Original Location", originalFilePath);
         String thumbPath = mediaStorageDir.getPath() + File.separator + THUMBNAIL_EXTENSION_STRING;
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
@@ -118,7 +117,6 @@ public class CheatSheet
         {
             ex.printStackTrace();
         }
-        Log.v("Thumbnail", Uri.fromFile(thumbFile).toString());
         return Uri.fromFile(thumbFile);
     }
 
@@ -217,24 +215,6 @@ public class CheatSheet
         for (int i = 0; i < links; i++)
         {
             response = response.substring(response.indexOf("?") + 1);
-            String URL = response.substring(0, response.indexOf("\'"));
-            tmpArray.add(URL.substring(URL.lastIndexOf("=") + 1));
-        }
-        return tmpArray;
-    }
-
-    /**
-     * Takes incoming image link list and converts to an ArrayList
-     * @param response - response HTML to convert
-     * @return Returns an ArrayList of the link list
-     */
-    public static ArrayList<String> convertImageLinkListToArray(String response)
-    {
-        int links = countLinks(response);
-        ArrayList<String> tmpArray = new ArrayList<>(links);
-        for (int i = 0; i < links; i++)
-        {
-            response = response.substring(response.indexOf("a href") + 10);
             String URL = response.substring(0, response.indexOf("\'"));
             tmpArray.add(URL.substring(URL.lastIndexOf("=") + 1));
         }

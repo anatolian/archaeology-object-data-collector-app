@@ -38,7 +38,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Set;
 import com.archaeology.R;
 import com.archaeology.models.StringObjectResponseWrapper;
@@ -48,7 +47,6 @@ import com.archaeology.util.CheatSheet;
 import com.archaeology.util.MagnifyingGlass;
 import com.archaeology.util.StateStatic;
 import static com.archaeology.services.VolleyStringWrapper.makeVolleyStringObjectRequest;
-import static com.archaeology.util.CheatSheet.deleteOriginalAndThumbnailPhoto;
 import static com.archaeology.util.CheatSheet.getOutputMediaFile;
 import static com.archaeology.util.CheatSheet.goToSettings;
 import static com.archaeology.util.CheatSheet.rotateImageIfRequired;
@@ -56,7 +54,6 @@ import static com.archaeology.util.StateStatic.EASTING;
 import static com.archaeology.util.StateStatic.FIND_NUMBER;
 import static com.archaeology.util.StateStatic.HEMISPHERE;
 import static com.archaeology.util.StateStatic.LOG_TAG_BLUETOOTH;
-import static com.archaeology.util.StateStatic.MARKED_AS_TO_DOWNLOAD;
 import static com.archaeology.util.StateStatic.MESSAGE_STATUS_CHANGE;
 import static com.archaeology.util.StateStatic.MESSAGE_WEIGHT;
 import static com.archaeology.util.StateStatic.NORTHING;
@@ -71,7 +68,6 @@ import static com.archaeology.util.StateStatic.globalWebServerURL;
 import static com.archaeology.util.StateStatic.isBluetoothEnabled;
 import static com.archaeology.util.StateStatic.selectedCameraName;
 import static com.archaeology.util.StateStatic.selectedCameraPosition;
-
 public class ObjectDetailActivity extends AppCompatActivity
 {
     IntentFilter mIntentFilter;
@@ -87,7 +83,7 @@ public class ObjectDetailActivity extends AppCompatActivity
     BroadcastReceiver nutriScaleBroadcastReceiver = null;
     // correspond to columns in database associated with finds
     public String hemisphere;
-    public int zone, easting, northing, findNumber, imageNumber, requestID;
+    public int zone, easting, northing, findNumber, requestID;
     public BluetoothService bluetoothService;
     public BluetoothDevice device = null;
     private TextView findLabel;
@@ -200,7 +196,6 @@ public class ObjectDetailActivity extends AppCompatActivity
         });
         // populate fields with information about object
         asyncPopulateFieldsFromDB(hemisphere, zone, easting, northing, findNumber);
-        asyncPopulatePhotos();
         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         // check to see if bluetooth is enabled
         if (mBluetoothAdapter == null)
@@ -285,8 +280,9 @@ public class ObjectDetailActivity extends AppCompatActivity
         PhotoFragment photoFragment = (PhotoFragment) getFragmentManager().findFragmentById(R.id.fragment);
         if (savedInstanceState == null)
         {
-            photoFragment.prepareFragmentForNewPhotosFromNewItem();
+            photoFragment.prepareFragmentForNewPhotosFromNewItem(getApplicationContext());
         }
+        clearCurrentPhotosOnLayoutAndFetchPhotosAsync();
         cameraIPAddress = CheatSheet.findIPFromMAC(cameraMACAddress);
         if (cameraIPAddress != null)
         {
@@ -362,6 +358,7 @@ public class ObjectDetailActivity extends AppCompatActivity
             }
             captureFile = fileURI.toString();
             String originalFileName = captureFile.substring(captureFile.lastIndexOf('/') + 1);
+            fileURI = Uri.parse(Environment.getExternalStorageDirectory() + "/Archaeology/" + originalFileName);
             // creating URI to save photo to once taken
             FILE_URI = CheatSheet.getThumbnail(originalFileName);
             try
@@ -481,14 +478,12 @@ public class ObjectDetailActivity extends AppCompatActivity
                                 // do nothing
                             }
                         }
-                        String path = dirPath + photoNum + ".jpg";
-                        String thumbPath = thumbDirPath + thumbName + "_" + photoNum + ".jpg";
+                        String path = dirPath + photoNum + ".JPG";
+                        String thumbPath = thumbDirPath + thumbName + "_" + photoNum + ".JPG";
+                        File thumbFile = new File(thumbPath);
                         new File(fileURI.getPath()).renameTo(new File(path));
-                        new File(FILE_URI.getPath()).renameTo(new File(thumbPath));
-//                        File tempFile = new File(path);
-//                        Uri convertedURI = Uri.fromFile(tempFile);
-                        // store image data into photo fragments
-//                        loadPhotoIntoPhotoFragment(convertedURI, MARKED_AS_ADDED);
+                        new File(FILE_URI.getPath()).renameTo(thumbFile);
+                        loadPhotoIntoPhotoFragment(Uri.fromFile(thumbFile));
                         approveDialog.dismiss();
                         asyncPopulateFieldsFromDB(hemisphere, zone, easting, northing, findNumber);
                     }
@@ -504,7 +499,8 @@ public class ObjectDetailActivity extends AppCompatActivity
             @Override
             public void onClick(View view)
             {
-                deleteOriginalAndThumbnailPhoto(FILE_URI);
+                new File(fileURI.getPath()).delete();
+                new File(FILE_URI.getPath()).delete();
                 approveDialog.dismiss();
             }
         });
@@ -612,7 +608,6 @@ public class ObjectDetailActivity extends AppCompatActivity
                 if (response.contains("Error"))
                 {
                     Toast.makeText(getApplicationContext(), "Updating color failed", Toast.LENGTH_SHORT).show();
-                    Log.v("Color ", response);
                 }
                 else
                 {
@@ -912,35 +907,20 @@ public class ObjectDetailActivity extends AppCompatActivity
      */
     public void asyncPopulatePhotos()
     {
-        String URL = globalWebServerURL + "/get_image_urls/?hemisphere=" + hemisphere + "&zone="
-                + zone + "&easting=" + easting + "&northing=" + northing + "&find=" + findNumber;
-        makeVolleyStringObjectRequest(URL, queue, new StringObjectResponseWrapper() {
-            /**
-             * Database response
-             * @param response - response received
-             */
-            @Override
-            public void responseMethod(String response)
+        File folder = new File(Environment.getExternalStorageDirectory() + "/Thumbnails/");
+        if (!folder.exists())
+        {
+            return;
+        }
+        String prefix = hemisphere + "_" + zone + "_" + easting + "_" + northing + "_" + findNumber;
+        for (File child: folder.listFiles())
+        {
+            String name = child.getName();
+            if (name.startsWith(prefix))
             {
-                // get images from response array
-                ArrayList<String> photoList = CheatSheet.convertImageLinkListToArray(response);
-                for (String photoURL: photoList)
-                {
-                    loadPhotoIntoPhotoFragment(Uri.parse(photoURL), MARKED_AS_TO_DOWNLOAD);
-                }
-                imageNumber = photoList.size();
+                loadPhotoIntoPhotoFragment(Uri.fromFile(child));
             }
-
-            /**
-             * Connection failed
-             * @param error - failure
-             */
-            @Override
-            public void errorMethod(VolleyError error)
-            {
-                error.printStackTrace();
-            }
-        });
+        }
     }
 
     /**
@@ -1168,16 +1148,15 @@ public class ObjectDetailActivity extends AppCompatActivity
     /**
      * Fill photo fragment
      * @param imageURI - image location
-     * @param SYNC_STATUS - how the camera is syncing
      */
-    public void loadPhotoIntoPhotoFragment(Uri imageURI, final String SYNC_STATUS)
+    public void loadPhotoIntoPhotoFragment(Uri imageURI)
     {
         // loading PhotoFragment class to add photo URIs
         PhotoFragment photoFragment = (PhotoFragment) getFragmentManager().findFragmentById(R.id.fragment);
         if (photoFragment != null)
         {
             // photo URIs are added to hashmap in PhotoFragment class
-            photoFragment.addPhoto(imageURI, SYNC_STATUS);
+            photoFragment.addPhoto(imageURI, getApplicationContext());
         }
     }
 
@@ -1187,7 +1166,7 @@ public class ObjectDetailActivity extends AppCompatActivity
     public void clearCurrentPhotosOnLayoutAndFetchPhotosAsync()
     {
         PhotoFragment photoFragment = (PhotoFragment) getFragmentManager().findFragmentById(R.id.fragment);
-        photoFragment.prepareFragmentForNewPhotosFromNewItem();
+        photoFragment.prepareFragmentForNewPhotosFromNewItem(getApplicationContext());
         asyncPopulatePhotos();
     }
 
