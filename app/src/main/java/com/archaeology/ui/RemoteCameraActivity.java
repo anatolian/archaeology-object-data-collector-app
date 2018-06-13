@@ -1,4 +1,4 @@
-// Remote Camera Activity
+// Base Remote Camera Activity
 // @author: Christopher Besser
 package com.archaeology.ui;
 import android.content.Intent;
@@ -509,6 +509,14 @@ public abstract class RemoteCameraActivity extends AppCompatActivity
                 public void responseMethod(JSONObject response)
                 {
                     Log.v("Camera setPostViewSize", response.toString());
+                    try
+                    {
+                        Thread.sleep(1000);
+                    }
+                    catch (InterruptedException e)
+                    {
+                        // Do nothing
+                    }
                 }
 
                 /**

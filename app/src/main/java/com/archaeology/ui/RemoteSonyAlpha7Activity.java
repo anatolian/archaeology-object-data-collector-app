@@ -1,4 +1,4 @@
-// Connect to Sony QX1 Wifi camera
+// Connect to Wifi
 // @author: Christopher Besser, msenol86, ygowda
 package com.archaeology.ui;
 import android.content.Context;
@@ -22,7 +22,7 @@ import static com.archaeology.util.StateStatic.HEMISPHERE;
 import static com.archaeology.util.StateStatic.NORTHING;
 import static com.archaeology.util.StateStatic.ZONE;
 import static com.archaeology.util.StateStatic.cameraIPAddress;
-public class RemoteSonyQX1Activity extends RemoteCameraActivity
+public class RemoteSonyAlpha7Activity extends RemoteCameraActivity
 {
     /**
      * Launch activity
@@ -63,7 +63,6 @@ public class RemoteSonyQX1Activity extends RemoteCameraActivity
      * Start long series of API calls to start live view
      * @param URL - camera URL
      */
-    @Override
     protected void initiateStartLiveView(String URL)
     {
         try
@@ -126,7 +125,6 @@ public class RemoteSonyQX1Activity extends RemoteCameraActivity
      * Take a picture
      * @param view - camera view
      */
-    @Override
     public void takePhoto(View view)
     {
         String URL = "http://" + cameraIPAddress + ":8080/sony/camera";

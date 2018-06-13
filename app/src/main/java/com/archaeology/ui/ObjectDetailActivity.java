@@ -128,7 +128,7 @@ public class ObjectDetailActivity extends AppCompatActivity
         findNumber = Integer.parseInt(myBundle.getString(FIND_NUMBER));
         // adding info about object to text field in view
         findLabel = findViewById(R.id.find);
-        findLabel.setText(hemisphere + "." + zone + "." + easting + "." + northing + "." + findNumber);
+        findLabel.setText(getString(R.string.find_frmt, hemisphere, zone, easting, northing, findNumber));
         findLabel.addTextChangedListener(new TextWatcher() {
             /**
              * Text changed
@@ -1107,7 +1107,7 @@ public class ObjectDetailActivity extends AppCompatActivity
         {
             // Just connect to found IP
             cameraIPAddress = CheatSheet.findIPFromMAC(cameraMACAddress);
-            goToWiFiActivity();
+            goToRemoteCameraActivity();
         }
     }
 
@@ -1235,7 +1235,7 @@ public class ObjectDetailActivity extends AppCompatActivity
     /**
      * Go to remote controlling camera
      */
-    public void goToWiFiActivity()
+    public void goToRemoteCameraActivity()
     {
         TextView loading = findViewById(R.id.connectingToCamera);
         loading.setVisibility(View.VISIBLE);
@@ -1254,7 +1254,7 @@ public class ObjectDetailActivity extends AppCompatActivity
             Log.v(LOG_TAG_BLUETOOTH, "Trying to unregister non-registered receiver");
         }
         RemoteCameraActivity activity = RemoteCameraActivityFactory.getRemoteCameraActivity(selectedCameraName);
-        Intent wifiActivity = new Intent(this, RemoteSonyQX1Activity.class);
+        Intent wifiActivity = new Intent(this, activity.getClass());
         wifiActivity.putExtra(HEMISPHERE, hemisphere);
         wifiActivity.putExtra(ZONE, "" + zone);
         wifiActivity.putExtra(EASTING, "" + easting);

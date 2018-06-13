@@ -16,7 +16,7 @@ public class RemoteCameraActivityFactory extends AppCompatActivity
         }
         else if (selectedCamera.equals("Sony Alpha 7"))
         {
-//            TODO: return new RemoteSonyAlpha7Activity();
+            return new RemoteSonyAlpha7Activity();
         }
         return null;
     }
