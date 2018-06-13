@@ -1,13 +1,11 @@
 // Remote Camera Activity
 // @author: Christopher Besser
 package com.archaeology.ui;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.net.wifi.p2p.WifiP2pManager;
-import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -15,12 +13,10 @@ import android.view.View;
 import android.widget.Toast;
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.Volley;
 import com.archaeology.R;
 import com.archaeology.models.ImageResponseWrapper;
 import com.archaeology.models.JSONObjectResponseWrapper;
 import com.archaeology.services.VolleyWrapper;
-import com.archaeology.util.StateStatic;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.File;
@@ -28,11 +24,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import static com.archaeology.util.CheatSheet.getThumbnail;
-import static com.archaeology.util.StateStatic.EASTING;
-import static com.archaeology.util.StateStatic.FIND_NUMBER;
-import static com.archaeology.util.StateStatic.HEMISPHERE;
-import static com.archaeology.util.StateStatic.NORTHING;
-import static com.archaeology.util.StateStatic.ZONE;
 import static com.archaeology.util.StateStatic.cameraIPAddress;
 public abstract class RemoteCameraActivity extends AppCompatActivity
 {
@@ -380,6 +371,161 @@ public abstract class RemoteCameraActivity extends AppCompatActivity
                 startLiveView(findViewById(R.id.start_live_view_button));
             }
         });
+    }
+
+    /**
+     * Get post view image size
+     * @param URL - camera URL
+     */
+    public void getPostViewImageSize(String URL)
+    {
+        try
+        {
+            VolleyWrapper.getPostViewImageSize(URL, queue, requestID++, new JSONObjectResponseWrapper() {
+                /**
+                 * Response received
+                 * @param response - camera response
+                 */
+                @Override
+                public void responseMethod(JSONObject response)
+                {
+                    Log.v("Camera getPostViewSize", response.toString());
+                    if (!response.toString().contains("Original"))
+                    {
+                        getSupportedPostViewImageSizes(URL);
+                    }
+                }
+
+                /**
+                 * Connection failed
+                 * @param error - failure
+                 */
+                @Override
+                public void errorMethod(VolleyError error)
+                {
+                    error.printStackTrace();
+                }
+            });
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Get supported post view image sizes
+     * @param URL - camera URL
+     */
+    public void getSupportedPostViewImageSizes(String URL)
+    {
+        try
+        {
+            VolleyWrapper.getSupportedPostViewImageSize(URL, queue, requestID++, new JSONObjectResponseWrapper() {
+                /**
+                 * Response received
+                 * @param response - camera response
+                 */
+                @Override
+                public void responseMethod(JSONObject response)
+                {
+                    Log.v("Camera getSuppPostSize", response.toString());
+                    if (response.toString().contains("Original"))
+                    {
+                        getAvailablePostViewImageSizes(URL);
+                    }
+                }
+
+                /**
+                 * Connection failed
+                 * @param error - failure
+                 */
+                @Override
+                public void errorMethod(VolleyError error)
+                {
+                }
+            });
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Get available post view image sizes
+     * @param URL - camera URL
+     */
+    public void getAvailablePostViewImageSizes(String URL)
+    {
+        try
+        {
+            VolleyWrapper.getAvailablePostViewImageSize(URL, queue, requestID++, new JSONObjectResponseWrapper() {
+                /**
+                 * Response received
+                 * @param response - camera response
+                 */
+                @Override
+                public void responseMethod(JSONObject response)
+                {
+                    Log.v("Camera getAvailPostSize", response.toString());
+                    if (response.toString().contains("Original"))
+                    {
+                        setPostViewImageSizeToOriginal(URL);
+                    }
+                }
+
+                /**
+                 * Connection failed
+                 * @param error - failure
+                 */
+                @Override
+                public void errorMethod(VolleyError error)
+                {
+                    error.printStackTrace();
+                }
+            });
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Set post view image size to original
+     * @param URL - camera URL
+     */
+    public void setPostViewImageSizeToOriginal(String URL)
+    {
+        try
+        {
+            VolleyWrapper.setPostViewImageSize(URL, queue, requestID++, "Original", new JSONObjectResponseWrapper() {
+                /**
+                 * Response received
+                 * @param response - camera response
+                 */
+                @Override
+                public void responseMethod(JSONObject response)
+                {
+                    Log.v("Camera setPostViewSize", response.toString());
+                }
+
+                /**
+                 * Connection failed
+                 * @param error - failure
+                 */
+                @Override
+                public void errorMethod(VolleyError error)
+                {
+                    error.printStackTrace();
+                }
+            });
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
     }
 
     /**

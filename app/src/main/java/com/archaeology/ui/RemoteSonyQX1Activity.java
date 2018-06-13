@@ -98,11 +98,14 @@ public class RemoteSonyQX1Activity extends RemoteCameraActivity
                     {
                         getSupportedLiveViewSizes(URL);
                     }
+                    if (response.toString().contains("getPostviewImageSize"))
+                    {
+                        getPostViewImageSize(URL);
+                    }
                 }
 
                 /**
                  * Connection failed
-                 *
                  * @param error - failure
                  */
                 @Override

@@ -13,7 +13,6 @@ import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.media.ExifInterface;
-import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import java.io.BufferedReader;
@@ -23,7 +22,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 import com.archaeology.R;
 import com.archaeology.ui.SettingsActivity;
 import static com.archaeology.util.StateStatic.THUMBNAIL_EXTENSION_STRING;
@@ -101,12 +99,10 @@ public class CheatSheet
         options.inJustDecodeBounds = true;
         // Returns null, sizes are in the options variable
         BitmapFactory.decodeFile(originalFilePath, options);
-        int width = options.outWidth;
-        int height = options.outHeight;
         File thumbFile = new File(thumbPath);
         // creating a thumbnail image and setting the bounds of the thumbnail
         Bitmap thumbImage = ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(originalFilePath),
-                Math.round(width / 4.1f), Math.round(height / 4.1f));
+                600, 500);
         try
         {
             FileOutputStream fos = new FileOutputStream(thumbFile);
@@ -118,19 +114,6 @@ public class CheatSheet
             ex.printStackTrace();
         }
         return Uri.fromFile(thumbFile);
-    }
-
-    /**
-     * Returns the URI of the original image
-     * @param thumbnailURI - thumbnail location
-     * @return Returns the original's location
-     */
-    private static Uri getOriginalImageURI(Uri thumbnailURI)
-    {
-        String thumbnailURIString = thumbnailURI.toString();
-        String x = thumbnailURIString.substring(0, thumbnailURIString.length()
-                - THUMBNAIL_EXTENSION_STRING.length());
-        return Uri.parse(x);
     }
 
     /**
@@ -254,19 +237,6 @@ public class CheatSheet
                 file.delete();
             }
         }
-    }
-
-    /**
-     * Uses thumbnail to get original file and deletes both
-     * @param thumbnailURI - thumbnail location
-     */
-    public static void deleteOriginalAndThumbnailPhoto(Uri thumbnailURI)
-    {
-        Uri originalImageURI = getOriginalImageURI(thumbnailURI);
-        File thumbnailFile = new File(thumbnailURI.getPath());
-        File originalFile = new File(originalImageURI.getPath());
-        thumbnailFile.delete();
-        originalFile.delete();
     }
 
     /**
