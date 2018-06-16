@@ -13,7 +13,6 @@ import android.graphics.Shader;
 import android.graphics.drawable.BitmapDrawable;
 import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.ImageView;
 import com.archaeology.util.StateStatic;
@@ -27,6 +26,7 @@ public class MagnifyingGlass extends AppCompatImageView
     public int red = -1, green = -1, blue = -1;
     protected Bitmap correctedPhoto;
     public ImageView selectedColor;
+    private Paint paint = new Paint();
     /**
      * Constructor
      * @param context - calling context
@@ -68,71 +68,78 @@ public class MagnifyingGlass extends AppCompatImageView
         int action = event.getAction();
         zoomPos.x = event.getX();
         zoomPos.y = event.getY();
-        Bitmap oldPhoto = ((BitmapDrawable) getDrawable()).getBitmap();
-        // Adjust X to have 0 at the left border of the image view
-        int adjustedX = (int) zoomPos.x - 220;
-        int adjustedY = (int) zoomPos.y - 20;
         switch (action)
         {
             case MotionEvent.ACTION_DOWN:
             case MotionEvent.ACTION_MOVE:
                 zooming = true;
                 this.invalidate();
-                Log.v("Zoom pos x", "" + adjustedX);
-                Log.v("Zoom pos y", "" + adjustedY);
                 break;
             case MotionEvent.ACTION_UP:
-                zooming = false;
-                this.invalidate();
-                // Ignore out of bounds taps
-                if (adjustedX < 0 || adjustedY < 0 || adjustedX >= oldPhoto.getWidth() || adjustedY >= oldPhoto.getHeight())
-                {
-                    return true;
-                }
-                // White balance
-                if (StateStatic.colorCorrectionEnabled && !correctedAlready)
-                {
-                    int pixel = oldPhoto.getPixel(adjustedX, adjustedY);
-                    int[] rgbValues = new int[] {Color.red(pixel), Color.green(pixel), Color.blue(pixel)};
-                    correctedAlready = true;
-                    float[] correctionMatrix = calcColorCorrectionMatrix(rgbValues, maxChannelIndex(rgbValues));
-                    whiteBalance(oldPhoto.copy(Bitmap.Config.ARGB_8888, true), correctionMatrix);
-                    this.setImageBitmap(correctedPhoto);
-                    this.setScaleType(ImageView.ScaleType.FIT_CENTER);
-                    this.invalidate();
-                }
-                else
-                {
-                    red = 0;
-                    green = 0;
-                    blue = 0;
-                    int count = 0;
-                    Log.v("Left bound:", "" + Math.max(0, (int) zoomPos.x - 10));
-                    Log.v("Right bound:", "" + Math.min(oldPhoto.getWidth() - 1, (int) zoomPos.x + 10));
-                    Log.v("Top bound:", "" + Math.max(0, (int) zoomPos.y - 10));
-                    Log.v("Bottom bound:", "" + Math.min(oldPhoto.getHeight() - 1, (int) zoomPos.y + 10));
-                    for (int i = Math.max(0, adjustedX - 10); i < Math.min(oldPhoto.getWidth(), adjustedX + 10); i++)
-                    {
-                        for (int j = Math.max(0, adjustedY - 10); j < Math.min(oldPhoto.getHeight(), adjustedY + 10); j++)
-                        {
-                            int pixel = oldPhoto.getPixel(i, j);
-                            red += Color.red(pixel);
-                            green += Color.green(pixel);
-                            blue += Color.blue(pixel);
-                            count++;
-                        }
-                    }
-                    red /= count;
-                    green /= count;
-                    blue /= count;
-                    int redComp = (red << 16) & 0x00FF0000;
-                    int greenComp = (green << 8) & 0x0000FF00;
-                    int blueComp = blue & 0x000000FF;
-                    selectedColor.setBackgroundColor(0xFF000000 | redComp | greenComp | blueComp);
-                }
+                performClick();
                 break;
             default:
                 break;
+        }
+        return true;
+    }
+
+    /**
+     * Perform a click
+     * @return Returns whether the click was handled
+     */
+    @Override
+    public boolean performClick()
+    {
+        super.performClick();
+        Bitmap oldPhoto = ((BitmapDrawable) getDrawable()).getBitmap();
+        // Adjust X to have 0 at the left border of the image view
+        int adjustedX = (int) zoomPos.x - 220;
+        int adjustedY = (int) zoomPos.y - 20;
+        zooming = false;
+        this.invalidate();
+        // Ignore out of bounds taps
+        if (adjustedX < 0 || adjustedY < 0 || adjustedX >= oldPhoto.getWidth() ||
+                adjustedY >= oldPhoto.getHeight())
+        {
+            return true;
+        }
+        // White balance
+        if (StateStatic.colorCorrectionEnabled && !correctedAlready)
+        {
+            int pixel = oldPhoto.getPixel(adjustedX, adjustedY);
+            int[] rgbValues = new int[] {Color.red(pixel), Color.green(pixel), Color.blue(pixel)};
+            correctedAlready = true;
+            float[] correctionMatrix = calcColorCorrectionMatrix(rgbValues, maxChannelIndex(rgbValues));
+            whiteBalance(oldPhoto.copy(Bitmap.Config.ARGB_8888, true), correctionMatrix);
+            this.setImageBitmap(correctedPhoto);
+            this.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            this.invalidate();
+        }
+        else
+        {
+            red = 0;
+            green = 0;
+            blue = 0;
+            int count = 0;
+            for (int i = Math.max(0, adjustedX - 10); i < Math.min(oldPhoto.getWidth(), adjustedX + 10); i++)
+            {
+                for (int j = Math.max(0, adjustedY - 10); j < Math.min(oldPhoto.getHeight(), adjustedY + 10); j++)
+                {
+                    int pixel = oldPhoto.getPixel(i, j);
+                    red += Color.red(pixel);
+                    green += Color.green(pixel);
+                    blue += Color.blue(pixel);
+                    count++;
+                }
+            }
+            red /= count;
+            green /= count;
+            blue /= count;
+            int redComp = (red << 16) & 0x00FF0000;
+            int greenComp = (green << 8) & 0x0000FF00;
+            int blueComp = blue & 0x000000FF;
+            selectedColor.setBackgroundColor(0xFF000000 | redComp | greenComp | blueComp);
         }
         return true;
     }
@@ -151,9 +158,7 @@ public class MagnifyingGlass extends AppCompatImageView
         }
         else
         {
-            Bitmap bitmap = getDrawingCache();
-            BitmapShader shader = new BitmapShader(bitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
-            Paint paint = new Paint();
+            BitmapShader shader = new BitmapShader(getDrawingCache(), Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
             paint.setShader(shader);
             matrix.reset();
             matrix.postScale(4f, 4f, zoomPos.x, zoomPos.y);
@@ -167,9 +172,8 @@ public class MagnifyingGlass extends AppCompatImageView
      * matrix. This URL wasn't used, but might be an interesting thing to look at:
      * https://github.com/pushd/colorpal
      * @param correctionMatrix - corrections
-     * @return Returns the corrected image
      */
-    public Bitmap whiteBalance(Bitmap photo, float[] correctionMatrix)
+    public void whiteBalance(Bitmap photo, float[] correctionMatrix)
     {
         // copies(?) the original photo
         correctedPhoto = photo;
@@ -190,7 +194,6 @@ public class MagnifyingGlass extends AppCompatImageView
                 correctedPhoto.setPixel(x, y, correctPixelColor);
             }
         }
-        return correctedPhoto;
     }
 
     /**

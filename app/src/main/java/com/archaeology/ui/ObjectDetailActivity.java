@@ -2,6 +2,7 @@
 // @author: Christopher Besser, msenol86, ygowda
 package com.archaeology.ui;
 import android.app.AlertDialog;
+import android.app.DialogFragment;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
@@ -394,6 +395,17 @@ public class ObjectDetailActivity extends AppCompatActivity
         approvePhotoImage.setImageBitmap(bmp);
         Button OKButton = approveDialog.findViewById(R.id.saveButton);
         TextView label = approveDialog.findViewById(R.id.correctionLabel);
+        approveDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            /**
+             * User dismissed dialog
+             * @param f - interface
+             */
+            public void onDismiss(DialogInterface f)
+            {
+                new File(fileURI.getPath()).delete();
+                new File(thumbnailURI.getPath()).delete();
+            }
+        });
         label.setText(getString(R.string.tap_to_correct));
         OKButton.setOnClickListener(new View.OnClickListener() {
             /**
