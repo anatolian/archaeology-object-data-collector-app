@@ -78,4 +78,6 @@
     <string name = "save">Save</string>
     <string name = "tap_to_correct">Tap a white pixel to color correct the image</string>
     <string name = "cancel">Cancel</string>
+    <string name = "selected_color_none">Selected Color: None</string>
+    <string name = "selected_color_frmt">Selected Color: (%d, %d, %d)</string>
 </resources>

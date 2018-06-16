@@ -29,6 +29,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -44,7 +45,6 @@ import com.archaeology.models.StringObjectResponseWrapper;
 import com.archaeology.services.BluetoothService;
 import com.archaeology.services.NutriScaleBroadcastReceiver;
 import com.archaeology.util.CheatSheet;
-import com.archaeology.util.MagnifyingGlass;
 import com.archaeology.util.StateStatic;
 import static com.archaeology.services.VolleyStringWrapper.makeVolleyStringObjectRequest;
 import static com.archaeology.util.CheatSheet.getOutputMediaFile;
@@ -342,12 +342,14 @@ public class ObjectDetailActivity extends AppCompatActivity
         LayoutInflater inflater = this.getLayoutInflater();
         builder.setView(inflater.inflate(R.layout.approve_photo_dialog,null));
         // set up camera dialog
-        final AlertDialog approveDialog = builder.create();
+        AlertDialog approveDialog = builder.create();
         approveDialog.show();
         // view photo you are trying to approve
-        final MagnifyingGlass APPROVE_PHOTO_IMAGE = approveDialog.findViewById(R.id.approvePhotoImage);
-        final Uri FILE_URI;
-        final Bitmap BMP;
+        MagnifyingGlass approvePhotoImage = approveDialog.findViewById(R.id.approvePhotoImage);
+        ImageView selectedColor = approveDialog.findViewById(R.id.selectedColor);
+        approvePhotoImage.selectedColor = selectedColor;
+        Uri thumbnailURI;
+        Bitmap bmp;
         String captureFile;
         // Local camera request
         if (requestCode == REQUEST_IMAGE_CAPTURE)
@@ -360,11 +362,11 @@ public class ObjectDetailActivity extends AppCompatActivity
             String originalFileName = captureFile.substring(captureFile.lastIndexOf('/') + 1);
             fileURI = Uri.parse(Environment.getExternalStorageDirectory() + "/Archaeology/" + originalFileName);
             // creating URI to save photo to once taken
-            FILE_URI = CheatSheet.getThumbnail(originalFileName);
+            thumbnailURI = CheatSheet.getThumbnail(originalFileName);
             try
             {
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), FILE_URI);
-                BMP = rotateImageIfRequired(bitmap, getApplicationContext(), FILE_URI);
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), thumbnailURI);
+                bmp = rotateImageIfRequired(bitmap, getApplicationContext(), thumbnailURI);
             }
             catch (IOException e)
             {
@@ -376,12 +378,12 @@ public class ObjectDetailActivity extends AppCompatActivity
         else
         {
             // Returned URI from RemoteCameraActivity is a thumbnail
-            FILE_URI = data.getData();
+            thumbnailURI = data.getData();
             fileURI = Uri.parse(Environment.getExternalStorageDirectory() + "/Archaeology/temp.jpg");
             try
             {
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), FILE_URI);
-                BMP = rotateImageIfRequired(bitmap, getApplicationContext(), FILE_URI);
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), thumbnailURI);
+                bmp = rotateImageIfRequired(bitmap, getApplicationContext(), thumbnailURI);
             }
             catch (IOException e)
             {
@@ -389,11 +391,11 @@ public class ObjectDetailActivity extends AppCompatActivity
                 return;
             }
         }
-        APPROVE_PHOTO_IMAGE.setImageBitmap(BMP);
-        final Button OK_BUTTON = approveDialog.findViewById(R.id.saveButton);
-        final TextView LABEL = approveDialog.findViewById(R.id.correctionLabel);
-        LABEL.setText(getString(R.string.tap_to_correct));
-        OK_BUTTON.setOnClickListener(new View.OnClickListener() {
+        approvePhotoImage.setImageBitmap(bmp);
+        Button OKButton = approveDialog.findViewById(R.id.saveButton);
+        TextView label = approveDialog.findViewById(R.id.correctionLabel);
+        label.setText(getString(R.string.tap_to_correct));
+        OKButton.setOnClickListener(new View.OnClickListener() {
             /**
              * User pressed save
              * @param view - the save button
@@ -401,13 +403,16 @@ public class ObjectDetailActivity extends AppCompatActivity
             @Override
             public void onClick(View view)
             {
-                LABEL.setVisibility(View.INVISIBLE);
-                APPROVE_PHOTO_IMAGE.correctedAlready = true;
-                final Spinner LOCATIONS = approveDialog.findViewById(R.id.locationLabels);
-                LOCATIONS.setVisibility(View.VISIBLE);
+                label.setVisibility(View.INVISIBLE);
+                approvePhotoImage.correctedAlready = true;
+                Spinner locations = approveDialog.findViewById(R.id.locationLabels);
+                locations.setVisibility(View.VISIBLE);
                 TextView locationsLabel = approveDialog.findViewById(R.id.locationSpinnerLabel);
                 locationsLabel.setVisibility(View.VISIBLE);
-                LOCATIONS.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                selectedColor.setVisibility(View.VISIBLE);
+                TextView selectedColorLabel = approveDialog.findViewById(R.id.selectedColorLabel);
+                selectedColorLabel.setVisibility(View.VISIBLE);
+                locations.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     /**
                      * Spinner item was selected
                      * @param adapterView - container view
@@ -418,7 +423,7 @@ public class ObjectDetailActivity extends AppCompatActivity
                     @Override
                     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l)
                     {
-                        APPROVE_PHOTO_IMAGE.location = LOCATIONS.getSelectedItem().toString();
+                        approvePhotoImage.location = locations.getSelectedItem().toString();
                     }
 
                     /**
@@ -430,7 +435,7 @@ public class ObjectDetailActivity extends AppCompatActivity
                     {
                     }
                 });
-                OK_BUTTON.setOnClickListener(new View.OnClickListener() {
+                OKButton.setOnClickListener(new View.OnClickListener() {
                     /**
                      * User pressed save
                      * @param view - save button
@@ -438,10 +443,10 @@ public class ObjectDetailActivity extends AppCompatActivity
                     @Override
                     public void onClick(View view)
                     {
-                        if (APPROVE_PHOTO_IMAGE.red != -1)
+                        if (approvePhotoImage.red != -1)
                         {
-                            updateColorInDB(APPROVE_PHOTO_IMAGE.red, APPROVE_PHOTO_IMAGE.green,
-                                    APPROVE_PHOTO_IMAGE.blue, APPROVE_PHOTO_IMAGE.location);
+                            updateColorInDB(approvePhotoImage.red, approvePhotoImage.green,
+                                    approvePhotoImage.blue, approvePhotoImage.location);
                         }
                         String dirPath = Environment.getExternalStorageDirectory() + "/Archaeology/" + hemisphere
                                 + "/" + zone + "/" + easting + "/" + northing + "/" + findNumber + "/photos/lab/";
@@ -482,7 +487,7 @@ public class ObjectDetailActivity extends AppCompatActivity
                         String thumbPath = thumbDirPath + thumbName + "_" + photoNum + ".JPG";
                         File thumbFile = new File(thumbPath);
                         new File(fileURI.getPath()).renameTo(new File(path));
-                        new File(FILE_URI.getPath()).renameTo(thumbFile);
+                        new File(thumbnailURI.getPath()).renameTo(thumbFile);
                         loadPhotoIntoPhotoFragment(Uri.fromFile(thumbFile));
                         approveDialog.dismiss();
                         asyncPopulateFieldsFromDB(hemisphere, zone, easting, northing, findNumber);
@@ -500,13 +505,13 @@ public class ObjectDetailActivity extends AppCompatActivity
             public void onClick(View view)
             {
                 new File(fileURI.getPath()).delete();
-                new File(FILE_URI.getPath()).delete();
+                new File(thumbnailURI.getPath()).delete();
                 approveDialog.dismiss();
             }
         });
         if (!colorCorrectionEnabled)
         {
-            OK_BUTTON.performClick();
+            OKButton.performClick();
         }
     }
 

@@ -12,6 +12,8 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
@@ -786,12 +788,19 @@ public class CeramicInputActivity extends AppCompatActivity
         TextView connecting = findViewById(R.id.connectingToScale);
         connecting.setVisibility(View.VISIBLE);
         cancelAllVolleyRequests(queue);
-        Intent tmpIntent = new Intent(this, ObjectDetailActivity.class);
-        tmpIntent.putExtra(HEMISPHERE, getSelectedHemisphere());
-        tmpIntent.putExtra(ZONE, getSelectedZone());
-        tmpIntent.putExtra(EASTING, getSelectedMajorEasting() + getSelectedMinorEasting());
-        tmpIntent.putExtra(NORTHING, getSelectedMajorNorthing() + getSelectedMinorNorthing());
-        tmpIntent.putExtra(FIND_NUMBER, getSelectedFindNumber());
-        startActivity(tmpIntent);
+        try
+        {
+            Intent tmpIntent = new Intent(this, ObjectDetailActivity.class);
+            tmpIntent.putExtra(HEMISPHERE, getSelectedHemisphere());
+            tmpIntent.putExtra(ZONE, getSelectedZone());
+            tmpIntent.putExtra(EASTING, getSelectedMajorEasting() + getSelectedMinorEasting());
+            tmpIntent.putExtra(NORTHING, getSelectedMajorNorthing() + getSelectedMinorNorthing());
+            tmpIntent.putExtra(FIND_NUMBER, getSelectedFindNumber());
+            startActivity(tmpIntent);
+        }
+        catch (NullPointerException e)
+        {
+            Toast.makeText(getApplicationContext(), "Please select an option in all spinners", Toast.LENGTH_SHORT).show();
+        }
     }
 }

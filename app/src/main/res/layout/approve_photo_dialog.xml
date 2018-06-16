@@ -6,9 +6,11 @@
         android:id="@+id/correctionLabel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_marginStart="20dp"
-        android:textColor="@android:color/background_dark" />
+        android:textColor="@android:color/background_dark"
+        android:paddingTop="10dp"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:paddingBottom="10dp"/>
     <TextView
         android:id = "@+id/locationSpinnerLabel"
         android:layout_width="wrap_content"
@@ -17,8 +19,8 @@
         android:paddingEnd="10dp"
         android:paddingStart="10dp"
         android:textColor="@android:color/background_dark"
-        android:paddingBottom="20dp"
-        android:paddingTop="20dp"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp"
         android:visibility="gone"/>
     <Spinner
         android:id="@+id/locationLabels"
@@ -27,16 +29,35 @@
         android:layout_toEndOf="@+id/locationSpinnerLabel"
         android:visibility="gone"
         android:entries = "@array/location_labels"
-        android:paddingBottom="20dp"
-        android:paddingTop="20dp"/>
-    <com.archaeology.util.MagnifyingGlass
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp"/>
+    <TextView
+        android:id="@+id/selectedColorLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/locationLabels"
+        android:text="@string/selected_color"
+        android:textColor="@android:color/black"
+        android:visibility="invisible"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"/>
+    <ImageView
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:contentDescription="@string/selected_color"
+        android:layout_toEndOf="@+id/selectedColorLabel"
+        android:id="@+id/selectedColor"
+        android:visibility="invisible"
+        android:padding="1dp"
+        android:background="#ffffff"
+        android:layout_alignBottom="@+id/selectedColorLabel"/>
+    <com.archaeology.ui.MagnifyingGlass
         android:layout_width = "fill_parent"
         android:layout_height = "wrap_content"
-        android:layout_below="@+id/correctionLabel"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="20dp"
+        android:layout_below="@+id/selectedColorLabel"
         android:id = "@+id/approvePhotoImage"
         android:layout_gravity = "center_horizontal"
+        android:paddingTop="10dp"
         android:contentDescription="@string/correct_color"/>
     <LinearLayout
         android:layout_width="match_parent"

@@ -334,6 +334,9 @@ public abstract class RemoteCameraActivity extends AppCompatActivity
                     data.setData(thumb);
                     Log.v("Camera", "Returning image URI " + thumb.toString());
                     setResult(RESULT_OK, data);
+                    bitmap.recycle();
+                    bitmap = null;
+                    System.gc();
                     finish();
                 }
                 catch (FileNotFoundException e)

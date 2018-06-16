@@ -54,9 +54,7 @@ public class RemoteSonyAlpha7Activity extends RemoteCameraActivity
         northing = getIntent().getStringExtra(NORTHING);
         find = getIntent().getStringExtra(FIND_NUMBER);
         disableAPIButtons();
-        // Enable the API if the camera needs it enabled
-        String URL = "http://" + cameraIPAddress + ":8080/sony/camera";
-        initiateStartLiveView(URL);
+        initiateStartLiveView("http://" + cameraIPAddress + ":8080/sony/camera");
     }
 
     /**
@@ -64,6 +62,16 @@ public class RemoteSonyAlpha7Activity extends RemoteCameraActivity
      * @param URL - camera URL
      */
     protected void initiateStartLiveView(String URL)
+    {
+        initiateStartLiveView(URL, true);
+    }
+
+    /**
+     * Start long series of API calls to start live view
+     * @param URL - camera URL
+     * @param pollSetRecMode - if true, check for setRecMode
+     */
+    protected void initiateStartLiveView(String URL, boolean pollSetRecMode)
     {
         try
         {
@@ -81,13 +89,15 @@ public class RemoteSonyAlpha7Activity extends RemoteCameraActivity
                     {
                         getCameraFunction(URL);
                     }
-                    if (response.toString().contains("startRecMode"))
+                    if (pollSetRecMode && response.toString().contains("startRecMode"))
                     {
                         startRecMode(URL);
                         // Wait for the API to update
                         try
                         {
                             Thread.sleep(5000);
+                            initiateStartLiveView(URL, false);
+                            return;
                         }
                         catch (InterruptedException e)
                         {
