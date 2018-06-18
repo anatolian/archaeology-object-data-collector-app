@@ -25,7 +25,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import static com.archaeology.util.CheatSheet.getThumbnail;
 import static com.archaeology.util.StateStatic.cameraIPAddress;
-public abstract class RemoteCameraActivity extends AppCompatActivity
+public abstract class RemoteSonyCameraActivity extends AppCompatActivity
 {
     // helps to establish connection with peer devices
     WifiP2pManager mManager;
@@ -33,7 +33,6 @@ public abstract class RemoteCameraActivity extends AppCompatActivity
     RequestQueue queue;
     int requestID;
     IntentFilter mIntentFilter;
-    String hemisphere, zone, easting, northing, find;
     /**
      * Start recording mode
      * @param URL - camera URL

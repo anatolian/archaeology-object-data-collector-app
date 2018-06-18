@@ -790,7 +790,7 @@ public class CeramicInputActivity extends AppCompatActivity
         cancelAllVolleyRequests(queue);
         try
         {
-            Intent tmpIntent = new Intent(this, ObjectDetailActivity.class);
+            Intent tmpIntent = new Intent(this, UTMObjectDetailActivity.class);
             tmpIntent.putExtra(HEMISPHERE, getSelectedHemisphere());
             tmpIntent.putExtra(ZONE, getSelectedZone());
             tmpIntent.putExtra(EASTING, getSelectedMajorEasting() + getSelectedMinorEasting());

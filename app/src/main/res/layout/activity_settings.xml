@@ -85,6 +85,24 @@
                 android:layout_below="@+id/settingsWebServiceUrl"
                 android:layout_centerHorizontal="true"
                 android:minWidth="400dp"
+                android:text="@string/select_schema"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@android:color/black" />
+            <Spinner
+                android:layout_width = "wrap_content"
+                android:layout_height = "wrap_content"
+                android:id = "@+id/schemaSelectBox"
+                android:layout_below = "@+id/textView11"
+                android:layout_centerHorizontal = "true"
+                android:minWidth = "400dp"
+                android:entries = "@array/schema_list"/>
+            <TextView
+                android:id="@+id/textView13"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/schemaSelectBox"
+                android:layout_centerHorizontal="true"
+                android:minWidth="400dp"
                 android:text="@string/select_camera"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="@android:color/black" />
@@ -92,7 +110,7 @@
                 android:layout_width = "wrap_content"
                 android:layout_height = "wrap_content"
                 android:id = "@+id/cameraSelectBox"
-                android:layout_below = "@+id/textView11"
+                android:layout_below = "@+id/textView13"
                 android:layout_centerHorizontal = "true"
                 android:minWidth = "400dp"
                 android:entries = "@array/camera_list"/>

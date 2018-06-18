@@ -3,6 +3,8 @@
 package com.archaeology.ui;
 import android.content.Intent;
 import android.content.res.AssetManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
@@ -21,16 +23,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.List;
 import com.archaeology.R;
+import com.googlecode.tesseract.android.TessBaseAPI;
 import eu.livotov.labs.android.camview.CameraLiveView;
 import eu.livotov.labs.android.camview.ScannerLiveView;
+import eu.livotov.labs.android.camview.camera.LiveDataProcessingCallback;
 import static com.archaeology.services.VolleyStringWrapper.makeVolleyStringObjectRequest;
-import static com.archaeology.util.StateStatic.ALL_FIND_NUMBER;
 import static com.archaeology.util.StateStatic.EASTING;
 import static com.archaeology.util.StateStatic.NORTHING;
 import static com.archaeology.util.StateStatic.FIND_NUMBER;
 import static com.archaeology.util.StateStatic.globalWebServerURL;
+import static com.archaeology.util.StateStatic.selectedSchema;
 public class CameraUIActivity extends AppCompatActivity
 {
     // Assets for OCR
@@ -183,54 +186,59 @@ public class CameraUIActivity extends AppCompatActivity
     public void takePic(View v)
     {
         goToObjectDetail("");
-//        cam.getController().requestLiveData(new LiveDataProcessingCallback()
-//        {
-//            /**
-//             * Process a frame
-//             * @param data - frame
-//             * @param width - frame width
-//             * @param height - frame height
-//             * @return Returns null
-//             */
-//            @Override
-//            public Object onProcessCameraFrame(byte[] data, int width, int height)
-//            {
-//                Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
-//                handleImage(bitmap);
-//                return null;
-//            }
-//
-//            /**
-//             * Process processed frame
-//             * @param data - frame
-//             */
-//            @Override
-//            public void onReceiveProcessedCameraFrame(Object data)
-//            {
-//            }
-//        });
+        cam.getController().requestLiveData(new LiveDataProcessingCallback()
+        {
+            /**
+             * Process a frame
+             * @param data - frame
+             * @param width - frame width
+             * @param height - frame height
+             * @return Returns null
+             */
+            @Override
+            public Object onProcessCameraFrame(byte[] data, int width, int height)
+            {
+                Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+                handleImage(bitmap);
+                return null;
+            }
+
+            /**
+             * Process processed frame
+             * @param data - frame
+             */
+            @Override
+            public void onReceiveProcessedCameraFrame(Object data)
+            {
+            }
+        });
     }
 
     /**
      * Go to ObjectDetailActivity from scanned QR code
-     * @param CODE - QR code data
+     * @param code - QR code data
      */
-    private void goToObjectDetail(final String CODE)
+    private void goToObjectDetail(String code)
     {
-        final String[] KEYS = CODE.split("\\.");
-        final Intent INPUT_INTENT = new Intent(this, CeramicInputActivity.class);
-        if (KEYS.length != 5)
+        Log.v("Schema", selectedSchema);
+        if (selectedSchema.equals("Archon.Find"))
         {
-            Toast.makeText(getApplicationContext(), "Invalid Code \"" + CODE + "\"", Toast.LENGTH_SHORT).show();
-            startActivity(INPUT_INTENT);
+            startActivity(new Intent(this, ArchonObjectDetailActivity.class));
             return;
         }
-        final Intent DETAIL_INTENT = new Intent(this, ObjectDetailActivity.class);
-        DETAIL_INTENT.putExtra(EASTING, KEYS[2]);
-        DETAIL_INTENT.putExtra(NORTHING, KEYS[3]);
-        DETAIL_INTENT.putExtra(FIND_NUMBER, KEYS[4]);
-        final List<String> FIND_NUMBERS = new ArrayList<>();
-        String URL = globalWebServerURL + "/get_finds/?easting=" + KEYS[2] + "&northing=" + KEYS[3];
+        String[] keys = code.split("\\.");
+        Intent inputIntent = new Intent(this, CeramicInputActivity.class);
+        if (keys.length != 5)
+        {
+            Toast.makeText(getApplicationContext(), "Invalid Code \"" + code + "\"", Toast.LENGTH_SHORT).show();
+            startActivity(inputIntent);
+            return;
+        }
+        Intent detailIntent = new Intent(this, UTMObjectDetailActivity.class);
+        detailIntent.putExtra(EASTING, keys[2]);
+        detailIntent.putExtra(NORTHING, keys[3]);
+        detailIntent.putExtra(FIND_NUMBER, keys[4]);
+        String URL = globalWebServerURL + "/get_finds/?easting=" + keys[2] + "&northing=" + keys[3];
         makeVolleyStringObjectRequest(URL, queue, new StringObjectResponseWrapper() {
             /**
              * Database response
@@ -243,16 +251,14 @@ public class CameraUIActivity extends AppCompatActivity
                 ArrayList<String> finds = CheatSheet.convertLinkListToArray(response);
                 // If the easting, northing, or find are not found, this will be false
                 // (nothing returned at all if any of the prior 3 are not found)
-                if (finds.contains(KEYS[4]))
+                if (finds.contains(keys[4]))
                 {
-                    FIND_NUMBERS.addAll(finds);
-                    DETAIL_INTENT.putExtra(ALL_FIND_NUMBER, FIND_NUMBERS.toArray(new String[FIND_NUMBERS.size()]));
-                    startActivity(DETAIL_INTENT);
+                    startActivity(detailIntent);
                 }
                 else
                 {
-                    Toast.makeText(getApplicationContext(), "Find " + CODE + " not found", Toast.LENGTH_LONG).show();
-                    startActivity(INPUT_INTENT);
+                    Toast.makeText(getApplicationContext(), "Find " + code + " not found", Toast.LENGTH_LONG).show();
+                    startActivity(inputIntent);
                 }
             }
 
@@ -274,31 +280,36 @@ public class CameraUIActivity extends AppCompatActivity
      */
     public void goToManual(View view)
     {
+        Log.v("Schema", selectedSchema);
+        if (selectedSchema.equals("Archon.Find"))
+        {
+            startActivity(new Intent(this, ArchonObjectDetailActivity.class));
+            return;
+        }
         startActivity(new Intent(this, CeramicInputActivity.class));
     }
 
-//    /**
-//     * Picture taken
-//     * @param bitmap - image
-//     */
-//    private void handleImage(Bitmap bitmap)
-//    {
-//        Bitmap toSend = Bitmap.createScaledBitmap(bitmap, bitmap.getWidth() / 10,
-//                bitmap.getHeight() / 10, false);
-//        TessBaseAPI baseAPI = new TessBaseAPI();
-//        baseAPI.setDebug(true);
-//        baseAPI.init(DATA_PATH, LANG);
-//        baseAPI.setImage(toSend);
-//        String recognizedText = baseAPI.getUTF8Text();
-//        baseAPI.end();
-//        // You now have the text in recognizedText var, you can do anything with it.
-//        // We will display a stripped out trimmed alpha-numeric version of it (if lang is eng)
-//        // so that garbage doesn't make it to the display.
-//        recognizedText = recognizedText.replaceAll("[^a-zA-Z0-9]+", "").trim();
-//        cam.stopCamera();
-//        cam.startCamera();
-//        goToObjectDetail(recognizedText);
-//    }
+    /**
+     * Picture taken
+     * @param bitmap - image
+     */
+    private void handleImage(Bitmap bitmap)
+    {
+        Bitmap toSend = Bitmap.createScaledBitmap(bitmap, bitmap.getWidth() / 10, bitmap.getHeight() / 10, false);
+        TessBaseAPI baseAPI = new TessBaseAPI();
+        baseAPI.setDebug(true);
+        baseAPI.init(DATA_PATH, LANG);
+        baseAPI.setImage(toSend);
+        String recognizedText = baseAPI.getUTF8Text();
+        baseAPI.end();
+        // You now have the text in recognizedText var, you can do anything with it.
+        // We will display a stripped out trimmed alpha-numeric version of it (if lang is eng)
+        // so that garbage doesn't make it to the display.
+        recognizedText = recognizedText.replaceAll("[^a-zA-Z0-9]+", "").trim();
+        cam.stopCamera();
+        cam.startCamera();
+        goToObjectDetail(recognizedText);
+    }
 
     /**
      * Switch between QR reader and OCR
@@ -318,13 +329,5 @@ public class CameraUIActivity extends AppCompatActivity
             fab.setImageResource(R.drawable.qr);
             flag *= -1;
         }
-    }
-
-    /**
-     * User pressed back
-     */
-    @Override
-    public void onBackPressed()
-    {
     }
 }

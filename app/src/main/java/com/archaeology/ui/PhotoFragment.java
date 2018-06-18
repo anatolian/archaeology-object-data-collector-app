@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatImageView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +18,6 @@ import com.squareup.picasso.Callback;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import com.archaeology.R;
-import com.archaeology.util.CheatSheet;
 public class PhotoFragment extends Fragment
 {
     public abstract class CustomPicassoCallback implements Callback
@@ -103,7 +101,6 @@ public class PhotoFragment extends Fragment
      */
     public void prepareFragmentForNewPhotosFromNewItem(Context context)
     {
-        CheatSheet.clearThePhotosDirectory();
         this.files = new LinkedList<>();
         this.loadedPhotos = new ArrayList<>();
         this.queue = Volley.newRequestQueue(getActivity());

@@ -106,7 +106,6 @@ public class BluetoothService
             UUID defaultUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
             try
             {
-                // Use the UUID of the device that discovered. TODO Maybe need extra device object
                 if (MM_DEVICE != null)
                 {
                     try

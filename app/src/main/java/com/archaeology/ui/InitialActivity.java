@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,6 +28,8 @@ import com.archaeology.models.StringObjectResponseWrapper;
 import static com.archaeology.services.VolleyStringWrapper.makeVolleyStringObjectRequest;
 import static com.archaeology.util.StateStatic.globalWebServerURL;
 import static com.archaeology.services.VolleyWrapper.cancelAllVolleyRequests;
+import static com.archaeology.util.StateStatic.selectedSchema;
+
 public class InitialActivity extends AppCompatActivity
 {
     RequestQueue queue;
@@ -87,7 +90,9 @@ public class InitialActivity extends AppCompatActivity
     {
         super.onResume();
         mWebServer.setText(globalWebServerURL);
-        testConnection(null);
+        Log.v("Preferences", selectedSchema);
+//        testConnection(null);
+        connectionTestFailedCallback();
     }
 
     /**
@@ -108,10 +113,6 @@ public class InitialActivity extends AppCompatActivity
     {
         Intent tmpIntent = new Intent(this, CameraUIActivity.class);
         globalWebServerURL = mWebServer.getText().toString().trim();
-        final ProgressDialog BAR_PROGRESS_DIALOG = new ProgressDialog(this);
-        BAR_PROGRESS_DIALOG.setTitle("Connecting to Server ...");
-        BAR_PROGRESS_DIALOG.setIndeterminate(true);
-        BAR_PROGRESS_DIALOG.show();
         cancelAllVolleyRequests(queue);
         startActivity(tmpIntent);
     }
@@ -122,10 +123,10 @@ public class InitialActivity extends AppCompatActivity
      */
     public void testConnection(View aView)
     {
-        final ProgressDialog BAR_PROGRESS_DIALOG = new ProgressDialog(this);
-        BAR_PROGRESS_DIALOG.setTitle("Connecting to Server ...");
-        BAR_PROGRESS_DIALOG.setIndeterminate(true);
-        BAR_PROGRESS_DIALOG.show();
+        ProgressDialog barProgressDialog = new ProgressDialog(this);
+        barProgressDialog.setTitle("Connecting to Server ...");
+        barProgressDialog.setIndeterminate(true);
+        barProgressDialog.show();
         cancelAllVolleyRequests(queue);
         makeVolleyStringObjectRequest(mWebServer.getText().toString().trim() + "/test_connection/",
                 queue, new StringObjectResponseWrapper() {
@@ -137,7 +138,7 @@ public class InitialActivity extends AppCompatActivity
             public void responseMethod(String response)
             {
                 // If the connection failed then an error message returns instead
-                BAR_PROGRESS_DIALOG.dismiss();
+                barProgressDialog.dismiss();
                 if (response.contains("Error"))
                 {
                     connectionTestFailedCallback();
@@ -176,7 +177,7 @@ public class InitialActivity extends AppCompatActivity
                 {
                     Toast.makeText(getApplicationContext(), "Time Out Error", Toast.LENGTH_SHORT).show();
                 }
-                BAR_PROGRESS_DIALOG.dismiss();
+                barProgressDialog.dismiss();
                 connectionTestFailedCallback();
             }
         });

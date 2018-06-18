@@ -22,7 +22,7 @@ import static com.archaeology.util.StateStatic.HEMISPHERE;
 import static com.archaeology.util.StateStatic.NORTHING;
 import static com.archaeology.util.StateStatic.ZONE;
 import static com.archaeology.util.StateStatic.cameraIPAddress;
-public class RemoteSonyQX1Activity extends RemoteCameraActivity
+public class RemoteSonyQX1Activity extends RemoteSonyCameraActivity
 {
     /**
      * Launch activity
@@ -48,11 +48,6 @@ public class RemoteSonyQX1Activity extends RemoteCameraActivity
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
         mManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
         mChannel = mManager.initialize(this, getMainLooper(), null);
-        hemisphere = getIntent().getStringExtra(HEMISPHERE);
-        zone = getIntent().getStringExtra(ZONE);
-        easting = getIntent().getStringExtra(EASTING);
-        northing = getIntent().getStringExtra(NORTHING);
-        find = getIntent().getStringExtra(FIND_NUMBER);
         disableAPIButtons();
         // Enable the API if the camera needs it enabled
         String URL = "http://" + cameraIPAddress + ":8080/sony/camera";

@@ -1,14 +1,13 @@
 // Construct different remote camera activities based on selected device
 // @author Christopher Besser
 package com.archaeology.ui;
-import android.support.v7.app.AppCompatActivity;
-public class RemoteCameraActivityFactory extends AppCompatActivity
+public class RemoteSonyCameraActivityFactory
 {
     /**
      * Constructor
      * @param selectedCamera - camera selected in options menu
      */
-    public static RemoteCameraActivity getRemoteCameraActivity(String selectedCamera)
+    public static RemoteSonyCameraActivity getRemoteSonyCameraActivity(String selectedCamera)
     {
         if (selectedCamera.equals("Sony QX1"))
         {

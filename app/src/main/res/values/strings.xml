@@ -6,6 +6,10 @@
         <item>Sony QX1</item>
         <item>Sony Alpha 7</item>
     </string-array>
+    <string-array name="schema_list">
+        <item>Hemisphere.Zone.Northing.Easting.Find</item>
+        <item>Archon.Find</item>
+    </string-array>
     <string-array name="location_labels">
         <item>Exterior Surface</item>
         <item>Interior Surface</item>
@@ -80,4 +84,5 @@
     <string name = "cancel">Cancel</string>
     <string name = "selected_color_none">Selected Color: None</string>
     <string name = "selected_color_frmt">Selected Color: (%d, %d, %d)</string>
+    <string name = "select_schema">Select Schema</string>
 </resources>

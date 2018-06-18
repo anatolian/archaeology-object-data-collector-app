@@ -25,7 +25,8 @@ import java.util.List;
 import com.archaeology.R;
 import com.archaeology.ui.SettingsActivity;
 import static com.archaeology.util.StateStatic.THUMBNAIL_EXTENSION_STRING;
-import static com.archaeology.util.StateStatic.getGlobalPhotoSavePath;
+import static com.archaeology.util.StateStatic.selectedSchema;
+
 public class CheatSheet
 {
     /**
@@ -36,8 +37,7 @@ public class CheatSheet
      */
     public static void setSpinnerItems(Context aContext, Spinner aSpinner, List<String> items)
     {
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(aContext,
-                R.layout.spinner_item, items);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(aContext, R.layout.spinner_item, items);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         aSpinner.setAdapter(adapter);
     }
@@ -92,7 +92,12 @@ public class CheatSheet
      */
     public static Uri getThumbnail(String inputFileName)
     {
-        File mediaStorageDir = new File(Environment.getExternalStorageDirectory() + "/Archaeology/");
+        String dir = "/Archaeology/";
+        if (selectedSchema.equals("Archon.Find"))
+        {
+            dir = "/FloridaArchaeology/";
+        }
+        File mediaStorageDir = new File(Environment.getExternalStorageDirectory() + dir);
         String originalFilePath = mediaStorageDir.getPath() + File.separator + inputFileName;
         String thumbPath = mediaStorageDir.getPath() + File.separator + THUMBNAIL_EXTENSION_STRING;
         BitmapFactory.Options options = new BitmapFactory.Options();
@@ -129,7 +134,8 @@ public class CheatSheet
         if (selectedImage.getScheme().equals("content"))
         {
             String[] projection = {MediaStore.Images.ImageColumns.ORIENTATION};
-            Cursor c = context.getContentResolver().query(selectedImage, projection, null, null, null);
+            Cursor c = context.getContentResolver().query(selectedImage, projection, null,
+                    null, null);
             if (c.moveToFirst())
             {
                 final int rotation = c.getInt(0);
@@ -220,23 +226,7 @@ public class CheatSheet
             }
         }
         // Create a media file name
-        return new File(mediaStorageDir.getPath() + File.separator + fileName +".jpg");
-    }
-
-    /**
-     * Deletes photos from external storage public directory
-     */
-    public static void clearThePhotosDirectory()
-    {
-        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES), getGlobalPhotoSavePath());
-        if (mediaStorageDir.isDirectory())
-        {
-            for (File file: mediaStorageDir.listFiles())
-            {
-                file.delete();
-            }
-        }
+        return new File(mediaStorageDir.getPath() + File.separator + fileName + ".jpg");
     }
 
     /**
