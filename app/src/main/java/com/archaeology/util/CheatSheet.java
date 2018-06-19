@@ -26,6 +26,7 @@ import com.archaeology.R;
 import com.archaeology.ui.SettingsActivity;
 import static com.archaeology.util.StateStatic.THUMBNAIL_EXTENSION_STRING;
 import static com.archaeology.util.StateStatic.selectedSchema;
+import static com.archaeology.util.StateStatic.selectedSchemaPosition;
 
 public class CheatSheet
 {
@@ -119,6 +120,19 @@ public class CheatSheet
             ex.printStackTrace();
         }
         return Uri.fromFile(thumbFile);
+    }
+
+    /**
+     * Get the full size image directory
+     * @return Returns the full size image directory
+     */
+    public static String getDirectory()
+    {
+        if (selectedSchemaPosition == 1)
+        {
+            return "/FloridaArchaeology/";
+        }
+        return "/Archaeology/";
     }
 
     /**

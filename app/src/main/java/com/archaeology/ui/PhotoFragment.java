@@ -5,19 +5,21 @@ import android.app.Fragment;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatImageView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.squareup.picasso.Callback;
-import java.util.ArrayList;
+import java.io.File;
 import java.util.LinkedList;
 import com.archaeology.R;
+import static com.archaeology.util.CheatSheet.getDirectory;
 public class PhotoFragment extends Fragment
 {
     public abstract class CustomPicassoCallback implements Callback
@@ -35,7 +37,6 @@ public class PhotoFragment extends Fragment
     private static final String PHOTOS = "photos";
     View inflatedView;
     LinkedList<Uri> files;
-    ArrayList<AppCompatImageView> loadedPhotos;
     RequestQueue queue;
     /**
      * Constructor
@@ -56,7 +57,6 @@ public class PhotoFragment extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         this.files = new LinkedList<>();
-        this.loadedPhotos = new ArrayList<>();
         this.inflatedView = inflater.inflate(R.layout.photo_fragment, container, false);
         // changed from getActivity
         this.queue = Volley.newRequestQueue(getActivity());
@@ -96,13 +96,33 @@ public class PhotoFragment extends Fragment
     }
 
     /**
+     * Remove an image from the container
+     * @param fileURI - image to remove
+     * @param context - calling context
+     */
+    public void removePhoto(Uri fileURI, Context context)
+    {
+        files.remove(fileURI);
+        String path = fileURI.getPath();
+        new File(path).delete();
+        Log.v("Deleting file ", path);
+        String structure = path.substring(path.lastIndexOf("/") + 1);
+        structure = structure.replaceAll("_", "/");
+        structure = structure.substring(0, structure.lastIndexOf("/")) + "/photos/lab/"
+                + structure.substring(structure.lastIndexOf("/"));
+        Log.v("Deleting file ", Environment.getExternalStorageDirectory() + getDirectory() + structure);
+        new File(Environment.getExternalStorageDirectory() + getDirectory() + structure).delete();
+        clearPhotosFromLayout();
+        syncPhotos(context);
+    }
+
+    /**
      * Create fragment
      * @param context - calling context
      */
     public void prepareFragmentForNewPhotosFromNewItem(Context context)
     {
         this.files = new LinkedList<>();
-        this.loadedPhotos = new ArrayList<>();
         this.queue = Volley.newRequestQueue(getActivity());
         clearPhotosFromLayout();
         syncPhotos(context);
@@ -116,7 +136,7 @@ public class PhotoFragment extends Fragment
     {
         for (Uri file: files)
         {
-            ImageView elem = new ImageView(context);
+            AppCompatImageView elem = new AppCompatImageView(context);
             elem.setImageURI(file);
             ((LinearLayout) inflatedView).addView(elem);
         }

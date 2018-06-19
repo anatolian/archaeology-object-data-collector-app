@@ -32,7 +32,6 @@ import android.widget.Toast;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.Volley;
 import java.io.File;
 import java.io.IOException;
 import java.util.Set;
@@ -63,9 +62,6 @@ import static com.archaeology.util.StateStatic.selectedCameraName;
 import static com.archaeology.util.StateStatic.selectedCameraPosition;
 public class UTMObjectDetailActivity extends ObjectDetailActivity
 {
-    IntentFilter mIntentFilter;
-    // to handle python requests
-    RequestQueue queue;
     private String currentScaleWeight = "", bluetoothConnectionStatus = "";
     boolean dialogVisible = false;
     // dialogs set up in order to provide interface to interact with other devices
@@ -74,12 +70,10 @@ public class UTMObjectDetailActivity extends ObjectDetailActivity
     BroadcastReceiver nutriScaleBroadcastReceiver = null;
     // correspond to columns in database associated with finds
     public String hemisphere;
-    public int zone, easting, northing, findNumber, requestID;
+    public int zone, easting, northing, findNumber;
     public BluetoothService bluetoothService;
     public BluetoothDevice device = null;
     private TextView findLabel;
-    WifiP2pManager mManager;
-    WifiP2pManager.Channel mChannel;
     /**
      * Launch the activity
      * @param savedInstanceState - activity from memory
@@ -95,21 +89,6 @@ public class UTMObjectDetailActivity extends ObjectDetailActivity
             bluetoothService = null;
             device = null;
         }
-        if (StateStatic.cameraIPAddress != null)
-        {
-            queue = Volley.newRequestQueue(this);
-            requestID = 55;
-            // setting up intent filter
-            mIntentFilter = new IntentFilter();
-            mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
-            mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
-            mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
-            mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
-            mManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
-            mChannel = mManager.initialize(this, getMainLooper(), null);
-        }
-        mIntentFilter = new IntentFilter();
-        queue = Volley.newRequestQueue(this);
         // getting object data from previous activity
         Bundle myBundle = getIntent().getExtras();
         hemisphere = myBundle.getString(HEMISPHERE);
@@ -274,11 +253,6 @@ public class UTMObjectDetailActivity extends ObjectDetailActivity
             photoFragment.prepareFragmentForNewPhotosFromNewItem(getApplicationContext());
         }
         clearCurrentPhotosOnLayoutAndFetchPhotosAsync();
-        cameraIPAddress = CheatSheet.findIPFromMAC(cameraMACAddress);
-        if (cameraIPAddress != null)
-        {
-            ((TextView) findViewById(R.id.connectToCameraText)).setText(getString(R.string.ip_connection, cameraIPAddress));
-        }
         if (nutriScaleBroadcastReceiver != null)
         {
             registerReceiver(nutriScaleBroadcastReceiver, mIntentFilter);
@@ -614,10 +588,9 @@ public class UTMObjectDetailActivity extends ObjectDetailActivity
     {
         double weightInKg = weightInGrams / 1000.0;
         // making Python request to call the update method with updated params
-        makeVolleyStringObjectRequest(globalWebServerURL + "/set_weight/?hemisphere="
-                        + hemisphere + "&zone=" + zone + "&easting=" + easting + "&northing="
-                        + northing + "&find=" + findNumber + "&weight=" + weightInKg, queue,
-                new StringObjectResponseWrapper() {
+        makeVolleyStringObjectRequest(globalWebServerURL + "/set_weight/?hemisphere=" + hemisphere
+                        + "&zone=" + zone + "&easting=" + easting + "&northing=" + northing + "&find="
+                        + findNumber + "&weight=" + weightInKg, queue, new StringObjectResponseWrapper() {
             /**
              * Response received
              * @param response - database response
@@ -649,10 +622,9 @@ public class UTMObjectDetailActivity extends ObjectDetailActivity
     public void asyncPopulateFieldsFromDB(String hemisphere, int zone, int easting, int northing, int findNumber)
     {
         clearFields();
-        makeVolleyStringObjectRequest(globalWebServerURL + "/get_find_colors/?hemisphere="
-                        + hemisphere + "&zone=" + zone + "&easting=" + easting + "&northing="
-                        + northing + "&find=" + findNumber + "&location=exterior%20surface", queue,
-                new StringObjectResponseWrapper() {
+        makeVolleyStringObjectRequest(globalWebServerURL + "/get_find_colors/?hemisphere=" + hemisphere
+                        + "&zone=" + zone + "&easting=" + easting + "&northing=" + northing + "&find="
+                        + findNumber + "&location=exterior%20surface", queue, new StringObjectResponseWrapper() {
             /**
              * Response received
              * @param response - database response
@@ -683,10 +655,9 @@ public class UTMObjectDetailActivity extends ObjectDetailActivity
                 error.printStackTrace();
             }
         });
-        makeVolleyStringObjectRequest(globalWebServerURL + "/get_find_colors/?hemisphere="
-                        + hemisphere + "&zone=" + zone + "&easting=" + easting + "&northing="
-                        + northing + "&find=" + findNumber + "&location=interior%20surface", queue,
-                new StringObjectResponseWrapper() {
+        makeVolleyStringObjectRequest(globalWebServerURL + "/get_find_colors/?hemisphere=" + hemisphere
+                        + "&zone=" + zone + "&easting=" + easting + "&northing=" + northing + "&find="
+                        + findNumber + "&location=interior%20surface", queue, new StringObjectResponseWrapper() {
             /**
              * Response received
              * @param response - database response
@@ -715,10 +686,9 @@ public class UTMObjectDetailActivity extends ObjectDetailActivity
                 error.printStackTrace();
             }
         });
-        makeVolleyStringObjectRequest(globalWebServerURL + "/get_find_colors/?hemisphere="
-                        + hemisphere + "&zone=" + zone + "&easting=" + easting + "&northing="
-                        + northing + "&find=" + findNumber + "&location=core", queue,
-                new StringObjectResponseWrapper() {
+        makeVolleyStringObjectRequest(globalWebServerURL + "/get_find_colors/?hemisphere=" + hemisphere
+                        + "&zone=" + zone + "&easting=" + easting + "&northing=" + northing + "&find="
+                        + findNumber + "&location=core", queue, new StringObjectResponseWrapper() {
             /**
              * Response received
              * @param response - database response
@@ -747,10 +717,9 @@ public class UTMObjectDetailActivity extends ObjectDetailActivity
                 error.printStackTrace();
             }
         });
-        makeVolleyStringObjectRequest(globalWebServerURL + "/get_find_colors/?hemisphere="
-                        + hemisphere + "&zone=" + zone + "&easting=" + easting + "&northing="
-                        + northing + "&find=" + findNumber + "&location=interior%20slip", queue,
-                new StringObjectResponseWrapper() {
+        makeVolleyStringObjectRequest(globalWebServerURL + "/get_find_colors/?hemisphere=" + hemisphere
+                        + "&zone=" + zone + "&easting=" + easting + "&northing=" + northing + "&find="
+                        + findNumber + "&location=interior%20slip", queue, new StringObjectResponseWrapper() {
             /**
              * Response received
              * @param response - database response
@@ -779,10 +748,9 @@ public class UTMObjectDetailActivity extends ObjectDetailActivity
                 error.printStackTrace();
             }
         });
-        makeVolleyStringObjectRequest(globalWebServerURL + "/get_find_colors/?hemisphere="
-                        + hemisphere + "&zone=" + zone + "&easting=" + easting + "&northing="
-                        + northing + "&find=" + findNumber + "&location=exterior%20slip", queue,
-                new StringObjectResponseWrapper() {
+        makeVolleyStringObjectRequest(globalWebServerURL + "/get_find_colors/?hemisphere=" + hemisphere
+                        + "&zone=" + zone + "&easting=" + easting + "&northing=" + northing + "&find="
+                        + findNumber + "&location=exterior%20slip", queue, new StringObjectResponseWrapper() {
             /**
              * Response received
              * @param response - database response
@@ -812,8 +780,8 @@ public class UTMObjectDetailActivity extends ObjectDetailActivity
             }
         });
         makeVolleyStringObjectRequest(globalWebServerURL + "/get_find/?hemisphere=" + hemisphere
-                + "&zone=" + zone + "&easting=" + easting + "&northing=" + northing + "&find="
-                + findNumber, queue, new StringObjectResponseWrapper() {
+                + "&zone=" + zone + "&easting=" + easting + "&northing=" + northing + "&find=" + findNumber,
+                queue, new StringObjectResponseWrapper() {
             /**
              * Response received
              * @param response - database response
