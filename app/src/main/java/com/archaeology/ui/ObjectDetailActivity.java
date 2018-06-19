@@ -19,13 +19,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.archaeology.R;
 import com.archaeology.util.CheatSheet;
 import com.archaeology.util.StateStatic;
-
 import static com.archaeology.util.CheatSheet.getOutputMediaFile;
 import static com.archaeology.util.CheatSheet.goToSettings;
 import static com.archaeology.util.StateStatic.REQUEST_IMAGE_CAPTURE;

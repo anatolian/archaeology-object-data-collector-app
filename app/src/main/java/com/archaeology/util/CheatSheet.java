@@ -231,7 +231,7 @@ public class CheatSheet
      */
     public static File getOutputMediaFile(String fileName)
     {
-        File mediaStorageDir = new File(Environment.getExternalStorageDirectory() + "/Archaeology/");
+        File mediaStorageDir = new File(Environment.getExternalStorageDirectory() + getDirectory());
         if (!mediaStorageDir.isDirectory())
         {
             if (!mediaStorageDir.mkdirs())

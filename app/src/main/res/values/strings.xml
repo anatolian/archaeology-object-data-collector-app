@@ -33,7 +33,8 @@
     <string name="pick_photo">Pick photo from gallery</string>
     <string name="connection">Connection Status:</string>
     <string name="correct_color">Correct Color</string>
-    <string name="add_photo">Add Photo</string>
+    <string name="add_photo">Take Photo</string>
+    <string name="gallery">Load from Gallery</string>
     <string name="no_remote_camera">No Remote Camera Detected</string>
     <string name="interior_surface">Interior Surface</string>
     <string name="exterior_surface">Exterior Surface</string>

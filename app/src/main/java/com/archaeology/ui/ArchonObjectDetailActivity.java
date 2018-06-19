@@ -252,8 +252,14 @@ public class ArchonObjectDetailActivity extends ObjectDetailActivity
     {
         try
         {
-            archon = Integer.parseInt(mArchonField.getText().toString());
-            find = Integer.parseInt(mFindField.getText().toString());
+            int tempArchon = Integer.parseInt(mArchonField.getText().toString());
+            int tempFind = Integer.parseInt(mFindField.getText().toString());
+            if (tempArchon != archon || tempFind != find)
+            {
+                archon = tempArchon;
+                find = tempFind;
+                clearCurrentPhotosOnLayoutAndFetchPhotosAsync();
+            }
         }
         catch (NumberFormatException e)
         {

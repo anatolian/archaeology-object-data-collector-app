@@ -32,21 +32,25 @@
         android:text="@string/find_label"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:layout_alignTop="@+id/findNumberField"/>
+
     <EditText
         android:id="@+id/findNumberField"
-        android:layout_width="304dp"
+        android:layout_width="276dp"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_below="@+id/archonField"
         android:hint="@string/find_label"
         android:inputType="number"
         android:textAppearance="?android:attr/textAppearanceLarge" />
+
     <HorizontalScrollView
         android:id="@+id/photoScrollWrapper"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="174dp"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/findNumberLabel">
+        android:layout_below="@+id/findNumberLabel"
+        android:layout_marginTop="25dp">
+
         <fragment
             android:id="@+id/fragment"
             android:name="com.archaeology.ui.PhotoFragment"

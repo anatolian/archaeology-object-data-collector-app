@@ -116,7 +116,8 @@ public class MagnifyingGlass extends AppCompatImageView
             this.setScaleType(ImageView.ScaleType.FIT_CENTER);
             this.invalidate();
         }
-        else
+        // Interpret color (if using UTM schema)
+        else if (StateStatic.selectedSchemaPosition == 0)
         {
             red = 0;
             green = 0;
