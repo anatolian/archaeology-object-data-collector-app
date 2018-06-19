@@ -16,11 +16,6 @@ import com.archaeology.R;
 import com.archaeology.services.VolleyWrapper;
 import com.archaeology.models.JSONObjectResponseWrapper;
 import com.archaeology.util.StateStatic;
-import static com.archaeology.util.StateStatic.EASTING;
-import static com.archaeology.util.StateStatic.FIND_NUMBER;
-import static com.archaeology.util.StateStatic.HEMISPHERE;
-import static com.archaeology.util.StateStatic.NORTHING;
-import static com.archaeology.util.StateStatic.ZONE;
 import static com.archaeology.util.StateStatic.cameraIPAddress;
 public class RemoteSonyQX1Activity extends RemoteSonyCameraActivity
 {

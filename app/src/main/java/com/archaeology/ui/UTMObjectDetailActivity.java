@@ -60,6 +60,7 @@ import static com.archaeology.util.StateStatic.colorCorrectionEnabled;
 import static com.archaeology.util.StateStatic.globalWebServerURL;
 import static com.archaeology.util.StateStatic.isBluetoothEnabled;
 import static com.archaeology.util.StateStatic.selectedCameraName;
+import static com.archaeology.util.StateStatic.selectedCameraPosition;
 public class UTMObjectDetailActivity extends ObjectDetailActivity
 {
     IntentFilter mIntentFilter;
@@ -87,7 +88,7 @@ public class UTMObjectDetailActivity extends ObjectDetailActivity
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_object_detail);
+        setContentView(R.layout.activity_utm_object_detail);
         if (bluetoothService != null)
         {
             bluetoothService.closeThread();
@@ -1005,6 +1006,26 @@ public class UTMObjectDetailActivity extends ObjectDetailActivity
         catch (NumberFormatException e)
         {
             Toast.makeText(getApplicationContext(), "Invalid Weight", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /**
+     * Called from add photo button. shows remoteCameraDialog, which is used to open camera view
+     * and take picture
+     * @param view - add photo button
+     */
+    @Override
+    public void addPhotoAction(View view)
+    {
+        if (selectedCameraPosition == 0)
+        {
+            startLocalCameraIntent();
+        }
+        else
+        {
+            // Just connect to found IP
+            cameraIPAddress = CheatSheet.findIPFromMAC(cameraMACAddress);
+            goToRemoteCameraActivity();
         }
     }
 

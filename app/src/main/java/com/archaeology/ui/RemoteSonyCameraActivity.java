@@ -25,6 +25,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import static com.archaeology.util.CheatSheet.getThumbnail;
 import static com.archaeology.util.StateStatic.cameraIPAddress;
+import static com.archaeology.util.StateStatic.selectedSchema;
+
 public abstract class RemoteSonyCameraActivity extends AppCompatActivity
 {
     // helps to establish connection with peer devices
@@ -315,15 +317,19 @@ public abstract class RemoteSonyCameraActivity extends AppCompatActivity
             public void responseMethod(Bitmap bitmap)
             {
                 FileOutputStream tmpStream = null;
-                Log.v("Download", "Image loaded");
                 try
                 {
-                    File tmpDir = new File(Environment.getExternalStorageDirectory() + "/Archaeology/");
+                    String dir = "/Archaeology/";
+                    if (selectedSchema.equals("Archon.Find"))
+                    {
+                        dir = "/FloridaArchaeology/";
+                    }
+                    File tmpDir = new File(Environment.getExternalStorageDirectory() + dir);
                     if (!tmpDir.exists())
                     {
                         tmpDir.mkdirs();
                     }
-                    File tmpFile = new File(Environment.getExternalStorageDirectory() + "/Archaeology/temp.jpg");
+                    File tmpFile = new File(Environment.getExternalStorageDirectory() + dir + "temp.jpg");
                     // writing data from file to output stream to be stored into a bitmap
                     tmpStream = new FileOutputStream(tmpFile);
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 100, tmpStream);
@@ -331,7 +337,6 @@ public abstract class RemoteSonyCameraActivity extends AppCompatActivity
                     Intent data = new Intent();
                     Uri thumb = getThumbnail(tmpFile.getName());
                     data.setData(thumb);
-                    Log.v("Camera", "Returning image URI " + thumb.toString());
                     setResult(RESULT_OK, data);
                     bitmap.recycle();
                     bitmap = null;

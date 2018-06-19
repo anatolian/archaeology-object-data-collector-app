@@ -54,23 +54,10 @@ public abstract class ObjectDetailActivity extends AppCompatActivity
     }
 
     /**
-     * Called from add photo button. shows remoteCameraDialog, which is used to open camera view
-     * and take picture
+     * Add a photo
      * @param view - add photo button
      */
-    public void addPhotoAction(View view)
-    {
-        if (selectedCameraPosition == 0)
-        {
-            startLocalCameraIntent();
-        }
-        else
-        {
-            // Just connect to found IP
-            cameraIPAddress = CheatSheet.findIPFromMAC(cameraMACAddress);
-            goToRemoteCameraActivity();
-        }
-    }
+    public abstract void addPhotoAction(View view);
 
     /**
      * Starts the local camera

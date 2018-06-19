@@ -6,31 +6,44 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.Spinner;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.archaeology.R;
 import com.archaeology.util.CheatSheet;
-
 import java.io.File;
 import java.io.IOException;
-
 import static com.archaeology.util.CheatSheet.rotateImageIfRequired;
 import static com.archaeology.util.StateStatic.REQUEST_IMAGE_CAPTURE;
 import static com.archaeology.util.StateStatic.REQUEST_REMOTE_IMAGE;
 import static com.archaeology.util.StateStatic.cameraIPAddress;
+import static com.archaeology.util.StateStatic.cameraMACAddress;
 import static com.archaeology.util.StateStatic.colorCorrectionEnabled;
 import static com.archaeology.util.StateStatic.selectedCameraName;
+import static com.archaeology.util.StateStatic.selectedCameraPosition;
 public class ArchonObjectDetailActivity extends ObjectDetailActivity
 {
     public int archon, find;
+    private EditText mArchonField, mFindField;
+    /**
+     * Launch activity
+     * @param savedInstanceState - state from memory
+     */
+    @Override
+    protected void onCreate(Bundle savedInstanceState)
+    {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_archon_object_detail);
+        mArchonField = findViewById(R.id.archonField);
+        mFindField = findViewById(R.id.findNumberField);
+    }
+
     /**
      * Handle intent result
      * @param requestCode - activity request code
@@ -52,8 +65,6 @@ public class ArchonObjectDetailActivity extends ObjectDetailActivity
         approveDialog.show();
         // view photo you are trying to approve
         MagnifyingGlass approvePhotoImage = approveDialog.findViewById(R.id.approvePhotoImage);
-        ImageView selectedColor = approveDialog.findViewById(R.id.selectedColor);
-        approvePhotoImage.selectedColor = selectedColor;
         Uri thumbnailURI;
         Bitmap bmp;
         String captureFile;
@@ -191,7 +202,7 @@ public class ArchonObjectDetailActivity extends ObjectDetailActivity
     @Override
     public void asyncPopulatePhotos()
     {
-        File folder = new File(Environment.getExternalStorageDirectory() + "/Thumbnails/");
+        File folder = new File(Environment.getExternalStorageDirectory() + "/FloridaThumbnails/");
         if (!folder.exists())
         {
             return;
@@ -224,5 +235,34 @@ public class ArchonObjectDetailActivity extends ObjectDetailActivity
         RemoteSonyCameraActivity activity = RemoteSonyCameraActivityFactory.getRemoteSonyCameraActivity(selectedCameraName);
         Intent wifiActivity = new Intent(this, activity.getClass());
         startActivityForResult(wifiActivity, REQUEST_REMOTE_IMAGE);
+    }
+
+    /**
+     * Called from add photo button. shows remoteCameraDialog, which is used to open camera view
+     * and take picture
+     * @param view - add photo button
+     */
+    public void addPhotoAction(View view)
+    {
+        try
+        {
+            archon = Integer.parseInt(mArchonField.getText().toString());
+            find = Integer.parseInt(mFindField.getText().toString());
+        }
+        catch (NumberFormatException e)
+        {
+            Toast.makeText(getApplicationContext(), "Archon and Find must be integers", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (selectedCameraPosition == 0)
+        {
+            startLocalCameraIntent();
+        }
+        else
+        {
+            // Just connect to found IP
+            cameraIPAddress = CheatSheet.findIPFromMAC(cameraMACAddress);
+            goToRemoteCameraActivity();
+        }
     }
 }
