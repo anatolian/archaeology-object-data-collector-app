@@ -13,6 +13,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.Toast;
+
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.squareup.picasso.Callback;
@@ -105,13 +107,35 @@ public class PhotoFragment extends Fragment
         files.remove(fileURI);
         String path = fileURI.getPath();
         new File(path).delete();
-        Log.v("Deleting file ", path);
         String structure = path.substring(path.lastIndexOf("/") + 1);
         structure = structure.replaceAll("_", "/");
         structure = structure.substring(0, structure.lastIndexOf("/")) + "/photos/lab"
                 + structure.substring(structure.lastIndexOf("/"));
-        Log.v("Deleting file ", Environment.getExternalStorageDirectory() + getDirectory() + structure);
         new File(Environment.getExternalStorageDirectory() + getDirectory() + structure).delete();
+        structure = structure.substring(0, structure.lastIndexOf("/"));
+        // Delete empty directories up to the top directory
+        while (true)
+        {
+            File dir = new File(Environment.getExternalStorageDirectory() + getDirectory() + structure);
+            File[] children = dir.listFiles();
+            if (children == null || children.length == 0)
+            {
+                if (!dir.delete())
+                {
+                    Log.v("Deleting files ", "Error deleting file");
+                    break;
+                }
+                else if (structure.lastIndexOf("/") <= 0)
+                {
+                    break;
+                }
+                structure = structure.substring(0, structure.lastIndexOf("/"));
+            }
+            else
+            {
+                break;
+            }
+        }
         clearPhotosFromLayout();
         syncPhotos(context);
     }
