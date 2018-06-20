@@ -34,6 +34,8 @@ import static com.archaeology.util.StateStatic.NORTHING;
 import static com.archaeology.util.StateStatic.FIND_NUMBER;
 import static com.archaeology.util.StateStatic.globalWebServerURL;
 import static com.archaeology.util.StateStatic.selectedSchema;
+import static com.archaeology.util.StateStatic.selectedSchemaPosition;
+
 public class CameraUIActivity extends AppCompatActivity
 {
     // Assets for OCR

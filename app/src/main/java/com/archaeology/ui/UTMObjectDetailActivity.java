@@ -5,13 +5,10 @@ import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -164,6 +161,12 @@ public class UTMObjectDetailActivity extends ObjectDetailActivity
                 }
             }
         });
+        cameraIPAddress = CheatSheet.findIPFromMAC(cameraMACAddress);
+        if (cameraIPAddress != null)
+        {
+            ((TextView) findViewById(R.id.connectingToCamera)).setText(getString(R.string.ip_connection,
+                    cameraIPAddress));
+        }
         // populate fields with information about object
         asyncPopulateFieldsFromDB(hemisphere, zone, easting, northing, findNumber);
         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();

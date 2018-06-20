@@ -108,7 +108,7 @@ public class PhotoFragment extends Fragment
         Log.v("Deleting file ", path);
         String structure = path.substring(path.lastIndexOf("/") + 1);
         structure = structure.replaceAll("_", "/");
-        structure = structure.substring(0, structure.lastIndexOf("/")) + "/photos/lab/"
+        structure = structure.substring(0, structure.lastIndexOf("/")) + "/photos/lab"
                 + structure.substring(structure.lastIndexOf("/"));
         Log.v("Deleting file ", Environment.getExternalStorageDirectory() + getDirectory() + structure);
         new File(Environment.getExternalStorageDirectory() + getDirectory() + structure).delete();

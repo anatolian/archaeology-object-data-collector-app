@@ -60,12 +60,6 @@ public abstract class ObjectDetailActivity extends AppCompatActivity
         }
         mIntentFilter = new IntentFilter();
         queue = Volley.newRequestQueue(this);
-        cameraIPAddress = CheatSheet.findIPFromMAC(cameraMACAddress);
-        if (cameraIPAddress != null)
-        {
-            ((TextView) findViewById(R.id.connectToCameraText)).setText(getString(R.string.ip_connection,
-                    cameraIPAddress));
-        }
     }
 
     /**

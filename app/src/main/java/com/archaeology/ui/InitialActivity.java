@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.Toast;
 import com.android.volley.AuthFailureError;
@@ -29,6 +30,7 @@ import static com.archaeology.services.VolleyStringWrapper.makeVolleyStringObjec
 import static com.archaeology.util.StateStatic.globalWebServerURL;
 import static com.archaeology.services.VolleyWrapper.cancelAllVolleyRequests;
 import static com.archaeology.util.StateStatic.selectedSchema;
+import static com.archaeology.util.StateStatic.selectedSchemaPosition;
 
 public class InitialActivity extends AppCompatActivity
 {
@@ -43,6 +45,7 @@ public class InitialActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_initial);
+        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         Cache cache = new DiskBasedCache(getCacheDir(), 1024 * 1024);
         Network network = new BasicNetwork(new HurlStack());
         queue = new RequestQueue(cache, network);
@@ -91,7 +94,6 @@ public class InitialActivity extends AppCompatActivity
         super.onResume();
         mWebServer.setText(globalWebServerURL);
         Log.v("Preferences", selectedSchema);
-//        testConnection(null);
         connectionTestFailedCallback();
     }
 
@@ -115,6 +117,17 @@ public class InitialActivity extends AppCompatActivity
         globalWebServerURL = mWebServer.getText().toString().trim();
         cancelAllVolleyRequests(queue);
         startActivity(tmpIntent);
+    }
+
+    /**
+     * Launch florida photo activity
+     */
+    public void goToArchonObjectDetail()
+    {
+        Intent intent = new Intent(this, ArchonObjectDetailActivity.class);
+        globalWebServerURL = mWebServer.getText().toString().trim();
+        cancelAllVolleyRequests(queue);
+        startActivity(intent);
     }
 
     /**
@@ -197,6 +210,13 @@ public class InitialActivity extends AppCompatActivity
      */
     public void connectionTestSucceedCallback()
     {
-        goToLookup();
+        if (selectedSchemaPosition == 0)
+        {
+            goToLookup();
+        }
+        else
+        {
+            goToArchonObjectDetail();
+        }
     }
 }

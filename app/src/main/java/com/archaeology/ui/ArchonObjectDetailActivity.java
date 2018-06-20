@@ -4,10 +4,8 @@ package com.archaeology.ui;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -17,8 +15,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.android.volley.RequestQueue;
 import com.archaeology.R;
 import com.archaeology.util.CheatSheet;
 import java.io.File;
@@ -49,6 +45,12 @@ public class ArchonObjectDetailActivity extends ObjectDetailActivity
         TextView loading = findViewById(R.id.connectingToCamera);
         loading.setVisibility(View.VISIBLE);
         loading.setText(getString(R.string.no_remote_camera));
+        cameraIPAddress = CheatSheet.findIPFromMAC(cameraMACAddress);
+        if (cameraIPAddress != null)
+        {
+            ((TextView) findViewById(R.id.connectingToCamera)).setText(getString(R.string.ip_connection,
+                    cameraIPAddress));
+        }
     }
 
     /**
@@ -140,7 +142,7 @@ public class ArchonObjectDetailActivity extends ObjectDetailActivity
             public void onClick(View view)
             {
                 String dirPath = Environment.getExternalStorageDirectory() + "/FloridaArchaeology/"
-                        + archon + "/" + find + "/";
+                        + archon + "/" + find + "/photos/lab/";
                 String thumbDirPath = Environment.getExternalStorageDirectory() + "/FloridaThumbnails/";
                 File folder = new File(dirPath);
                 File thumbFolder = new File(thumbDirPath);
@@ -248,6 +250,7 @@ public class ArchonObjectDetailActivity extends ObjectDetailActivity
      * and take picture
      * @param view - add photo button
      */
+    @Override
     public void addPhotoAction(View view)
     {
         try
