@@ -29,21 +29,32 @@
         android:text="@string/default_base_url"
         android:hint="@string/base_url"
         android:inputType="textUri"/>
-    <LinearLayout
-        android:orientation = "horizontal"
-        android:layout_width = "match_parent"
+    <TextView
+        android:id="@+id/textView11"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentStart="true"
+        android:minWidth="400dp"
+        android:text="@string/select_schema"
+        android:layout_below="@+id/urlText"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@android:color/black" />
+    <Spinner
+        android:layout_width = "wrap_content"
         android:layout_height = "wrap_content"
-        android:layout_alignParentBottom = "true"
+        android:id = "@+id/schemaSelectBox"
+        android:layout_below = "@+id/textView11"
         android:layout_centerHorizontal = "true"
-        android:weightSum = "2"
-        android:id = "@+id/linearLayout4">
-    </LinearLayout>
+        android:layout_alignParentStart="true"
+        android:minWidth = "400dp"
+        android:entries = "@array/schema_list"/>
     <Button
         android:layout_width = "match_parent"
         android:layout_height = "wrap_content"
         android:text = "@string/connect"
         android:id = "@+id/connectButton"
-        android:layout_alignBottom = "@+id/linearLayout4"
+        android:layout_alignParentBottom="true"
         android:layout_centerHorizontal = "true"
         android:enabled = "false"
         android:onClick = "testConnection"/>

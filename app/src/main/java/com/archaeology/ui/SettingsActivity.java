@@ -26,28 +26,23 @@ import com.archaeology.util.CheatSheet;
 import com.archaeology.util.StateStatic;
 import static com.archaeology.util.StateStatic.DEFAULT_CALIBRATION_INTERVAL;
 import static com.archaeology.util.StateStatic.DEFAULT_CORRECTION_SELECTION;
-import static com.archaeology.util.StateStatic.DEFAULT_SCHEMA;
 import static com.archaeology.util.StateStatic.DEFAULT_SELECTED_CAMERA;
 import static com.archaeology.util.StateStatic.DEFAULT_SELECTED_CAMERA_POSITION;
-import static com.archaeology.util.StateStatic.DEFAULT_WEB_SERVER_URL;
 import static com.archaeology.util.StateStatic.SONY_ALPHA_7_MAC_ADDRESS;
 import static com.archaeology.util.StateStatic.SONY_QX1_MAC_ADDRESS;
 import static com.archaeology.util.StateStatic.cameraIPAddress;
 import static com.archaeology.util.StateStatic.cameraMACAddress;
 import static com.archaeology.util.StateStatic.colorCorrectionEnabled;
-import static com.archaeology.util.StateStatic.globalWebServerURL;
 import static com.archaeology.util.StateStatic.remoteCameraCalibrationInterval;
 import static com.archaeology.util.StateStatic.selectedCameraName;
 import static com.archaeology.util.StateStatic.selectedCameraPosition;
-import static com.archaeology.util.StateStatic.selectedSchemaPosition;
 import static com.archaeology.util.StateStatic.setGlobalCameraMAC;
 import static com.archaeology.util.StateStatic.tabletCameraCalibrationInterval;
-import static com.archaeology.util.StateStatic.selectedSchema;
 public class SettingsActivity extends AppCompatActivity
 {
     String[] devices;
-    EditText mWebServerEditText, mCameraMAC, mCalibrationInterval;
-    Spinner mCameraSelectBox, mSchemaSelectBox;
+    EditText mCameraMAC, mCalibrationInterval;
+    Spinner mCameraSelectBox;
     CheckBox mCorrectionBox;
     /**
      * Launch the activity
@@ -95,7 +90,6 @@ public class SettingsActivity extends AppCompatActivity
                 }
             });
         }
-        mWebServerEditText = findViewById(R.id.settingsWebServiceUrl);
         mCameraMAC = findViewById(R.id.settingsCameraMAC);
         mCalibrationInterval = findViewById(R.id.calibrationInterval);
         mCameraSelectBox = findViewById(R.id.cameraSelectBox);
@@ -122,33 +116,7 @@ public class SettingsActivity extends AppCompatActivity
             {
             }
         });
-        mSchemaSelectBox = findViewById(R.id.schemaSelectBox);
-        mSchemaSelectBox.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            /**
-             * User selected item
-             * @param parent - spinner
-             * @param view - selected item
-             * @param position - item position
-             * @param id - item id
-             */
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
-            {
-                schemaSelected();
-            }
-
-            /**
-             * Nothing selected
-             * @param parent - spinner
-             */
-            @Override
-            public void onNothingSelected(AdapterView<?> parent)
-            {
-            }
-        });
         mCameraSelectBox.setSelection(selectedCameraPosition);
-        mSchemaSelectBox.setSelection(selectedSchemaPosition);
-        mWebServerEditText.setText(globalWebServerURL);
         mCameraMAC.setText(cameraMACAddress);
         mCalibrationInterval.setText(getString(R.string.long_frmt, remoteCameraCalibrationInterval));
         mCorrectionBox = findViewById(R.id.colorCorrectionBox);
@@ -183,7 +151,6 @@ public class SettingsActivity extends AppCompatActivity
      */
     public void saveSettings(View view)
     {
-        globalWebServerURL = mWebServerEditText.getText().toString().trim();
         if (mCameraSelectBox.getSelectedItemPosition() == 0)
         {
             tabletCameraCalibrationInterval = Long.parseLong(mCalibrationInterval.getText().toString().trim());
@@ -195,7 +162,6 @@ public class SettingsActivity extends AppCompatActivity
             cameraIPAddress = CheatSheet.findIPFromMAC(cameraMACAddress);
         }
         colorCorrectionEnabled = mCorrectionBox.isChecked();
-        selectedSchema = (String) mSchemaSelectBox.getSelectedItem();
         Cache cache = new DiskBasedCache(getCacheDir(),1024 * 1024);
         Network network = new BasicNetwork(new HurlStack());
         RequestQueue queue = new RequestQueue(cache, network);
@@ -209,18 +175,14 @@ public class SettingsActivity extends AppCompatActivity
      */
     public void setDefaultSettings(View view)
     {
-        globalWebServerURL = DEFAULT_WEB_SERVER_URL;
         setGlobalCameraMAC(SONY_QX1_MAC_ADDRESS);
         remoteCameraCalibrationInterval = DEFAULT_CALIBRATION_INTERVAL;
         tabletCameraCalibrationInterval = DEFAULT_CALIBRATION_INTERVAL;
         selectedCameraPosition = DEFAULT_SELECTED_CAMERA_POSITION;
         colorCorrectionEnabled = DEFAULT_CORRECTION_SELECTION;
         selectedCameraName = DEFAULT_SELECTED_CAMERA;
-        selectedSchema = DEFAULT_SCHEMA;
-        mWebServerEditText.setText(DEFAULT_WEB_SERVER_URL);
-        mCameraSelectBox.setSelection(0);
-        mSchemaSelectBox.setSelection(0);
-        mCameraMAC.setText(getString(R.string.camera_MAC));
+        mCameraSelectBox.setSelection(1);
+        mCameraMAC.setText(SONY_QX1_MAC_ADDRESS);
         mCalibrationInterval.setText(getString(R.string.long_frmt, DEFAULT_CALIBRATION_INTERVAL));
         mCorrectionBox.setChecked(DEFAULT_CORRECTION_SELECTION);
     }
@@ -249,15 +211,6 @@ public class SettingsActivity extends AppCompatActivity
         {
             cameraMACAddress = SONY_ALPHA_7_MAC_ADDRESS;
         }
-    }
-
-    /**
-     * Schema selected
-     */
-    public void schemaSelected()
-    {
-        selectedSchema = (String) mSchemaSelectBox.getSelectedItem();
-        selectedSchemaPosition = mSchemaSelectBox.getSelectedItemPosition();
     }
 
     /**

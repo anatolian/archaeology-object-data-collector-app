@@ -16,29 +16,6 @@
             android:layout_width = "match_parent"
             android:layout_height = "wrap_content">
             <TextView
-                android:id="@+id/textView5"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_alignStart="@+id/settingsWebServiceUrl"
-                android:layout_alignParentStart="true"
-                android:minWidth="400dp"
-                android:text="@string/base_url"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@android:color/black"/>
-            <EditText
-                android:layout_width = "wrap_content"
-                android:layout_height = "wrap_content"
-                android:id = "@+id/settingsWebServiceUrl"
-                android:inputType="textUri"
-                android:layout_below = "@+id/textView5"
-                android:layout_centerHorizontal = "true"
-                android:minWidth = "400dp"
-                android:maxLines = "3"
-                android:lines = "1"
-                android:hint = "@string/base_url"
-                android:textAppearance = "?android:attr/textAppearanceMedium"/>
-            <TextView
                 android:id="@+id/textView6"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -47,7 +24,8 @@
                 android:minWidth="400dp"
                 android:text="@string/camera_MAC"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@android:color/black" />
+                android:textColor="@android:color/black"
+                android:layout_alignParentStart="true"/>
             <EditText
                 android:layout_width = "wrap_content"
                 android:layout_height = "wrap_content"
@@ -59,7 +37,8 @@
                 android:maxLines = "1"
                 android:hint = "@string/camera_MAC"
                 android:inputType="none"
-                android:textAppearance = "?android:attr/textAppearanceMedium"/>
+                android:textAppearance = "?android:attr/textAppearanceMedium"
+                android:layout_alignParentStart="true"/>
             <TextView
                 android:id="@+id/textView10"
                 android:layout_width="wrap_content"
@@ -69,7 +48,8 @@
                 android:minWidth="400dp"
                 android:text="@string/camera_calibration"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@android:color/black" />
+                android:textColor="@android:color/black"
+                android:layout_alignParentStart="true"/>
             <EditText
                 android:id="@+id/calibrationInterval"
                 android:layout_width="349dp"
@@ -79,35 +59,18 @@
                 android:hint="@string/camera_calibration"
                 android:minWidth="400dp"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:inputType="number"/>
-            <TextView
-                android:id="@+id/textView11"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/settingsWebServiceUrl"
-                android:layout_centerHorizontal="true"
-                android:minWidth="400dp"
-                android:text="@string/select_schema"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@android:color/black" />
-            <Spinner
-                android:layout_width = "wrap_content"
-                android:layout_height = "wrap_content"
-                android:id = "@+id/schemaSelectBox"
-                android:layout_below = "@+id/textView11"
-                android:layout_centerHorizontal = "true"
-                android:minWidth = "400dp"
-                android:entries = "@array/schema_list"/>
+                android:inputType="number"
+                android:layout_alignParentStart="true"/>
             <TextView
                 android:id="@+id/textView13"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/schemaSelectBox"
                 android:layout_centerHorizontal="true"
                 android:minWidth="400dp"
                 android:text="@string/select_camera"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@android:color/black" />
+                android:textColor="@android:color/black"
+                android:layout_alignParentStart="true"/>
             <Spinner
                 android:layout_width = "wrap_content"
                 android:layout_height = "wrap_content"
@@ -115,7 +78,8 @@
                 android:layout_below = "@+id/textView13"
                 android:layout_centerHorizontal = "true"
                 android:minWidth = "400dp"
-                android:entries = "@array/camera_list"/>
+                android:entries = "@array/camera_list"
+                android:layout_alignParentStart="true"/>
             <TextView
                 android:id="@+id/textView12"
                 android:layout_width="wrap_content"
@@ -124,7 +88,8 @@
                 android:minWidth="400dp"
                 android:text="@string/correct_color"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@android:color/black"/>
+                android:textColor="@android:color/black"
+                android:layout_alignParentStart="true"/>
             <CheckBox
                 android:id="@+id/colorCorrectionBox"
                 android:layout_height="wrap_content"
@@ -167,7 +132,7 @@
         android:layout_height = "wrap_content"
         android:layout_alignParentBottom = "true"
         android:layout_centerHorizontal = "true"
-        android:weightSum = "3"
+        android:weightSum = "2"
         android:id = "@+id/linearLayout3">
         <Button
             android:layout_width = "wrap_content"

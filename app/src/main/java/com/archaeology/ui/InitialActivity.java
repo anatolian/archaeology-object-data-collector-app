@@ -10,7 +10,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Cache;
@@ -31,11 +33,11 @@ import static com.archaeology.util.StateStatic.globalWebServerURL;
 import static com.archaeology.services.VolleyWrapper.cancelAllVolleyRequests;
 import static com.archaeology.util.StateStatic.selectedSchema;
 import static com.archaeology.util.StateStatic.selectedSchemaPosition;
-
 public class InitialActivity extends AppCompatActivity
 {
     RequestQueue queue;
     EditText mWebServer;
+    private Spinner mSchemaSelectBox;
     /**
      * Launch the activity
      * @param savedInstanceState - state from memory
@@ -52,6 +54,40 @@ public class InitialActivity extends AppCompatActivity
         queue.start();
         mWebServer = findViewById(R.id.urlText);
         mWebServer.setText(globalWebServerURL);
+        mSchemaSelectBox = findViewById(R.id.schemaSelectBox);
+        mSchemaSelectBox.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            /**
+             * User selected item
+             * @param parent - spinner
+             * @param view - selected item
+             * @param position - item position
+             * @param id - item id
+             */
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
+            {
+                schemaSelected();
+            }
+
+            /**
+             * Nothing selected
+             * @param parent - spinner
+             */
+            @Override
+            public void onNothingSelected(AdapterView<?> parent)
+            {
+            }
+        });
+        mSchemaSelectBox.setSelection(selectedSchemaPosition);
+    }
+
+    /**
+     * Schema selected
+     */
+    public void schemaSelected()
+    {
+        selectedSchema = (String) mSchemaSelectBox.getSelectedItem();
+        selectedSchemaPosition = mSchemaSelectBox.getSelectedItemPosition();
     }
 
     /**
@@ -210,6 +246,8 @@ public class InitialActivity extends AppCompatActivity
      */
     public void connectionTestSucceedCallback()
     {
+        selectedSchemaPosition = mSchemaSelectBox.getSelectedItemPosition();
+        selectedSchema = (String) mSchemaSelectBox.getSelectedItem();
         if (selectedSchemaPosition == 0)
         {
             goToLookup();
