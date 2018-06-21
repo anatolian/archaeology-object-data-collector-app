@@ -21,7 +21,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Toast;
-
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.archaeology.R;
@@ -59,6 +58,16 @@ public abstract class ObjectDetailActivity extends AppCompatActivity implements 
         }
         mIntentFilter = new IntentFilter();
         queue = Volley.newRequestQueue(this);
+    }
+
+    /**
+     * Activity resumed
+     */
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+        clearCurrentPhotosOnLayoutAndFetchPhotosAsync();
     }
 
     /**
@@ -215,15 +224,11 @@ public abstract class ObjectDetailActivity extends AppCompatActivity implements 
         Toast t = Toast.makeText(getApplicationContext(), "Phone memory is running low. Exiting screen to free space.",
                 Toast.LENGTH_SHORT);
         t.setGravity(Gravity.TOP, 0, 0);
-        Toast t2 = Toast.makeText(getApplicationContext(), "App switched off memory. Memory intensive images freed.",
-                Toast.LENGTH_SHORT);
-        t2.setGravity(Gravity.TOP, 0, 0);
         // Determine which lifecycle or system event was raised.
         switch (level)
         {
             // App was switched off of foreground
             case ComponentCallbacks2.TRIM_MEMORY_UI_HIDDEN:
-                t2.show();
                 PhotoFragment photoFragment = (PhotoFragment) getFragmentManager().findFragmentById(R.id.fragment);
                 photoFragment.clearPhotosFromLayout();
                 break;

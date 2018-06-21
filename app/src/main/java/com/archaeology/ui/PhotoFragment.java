@@ -160,7 +160,7 @@ public class PhotoFragment extends Fragment
      * Sync the photos
      * @param context - calling context
      */
-    private void syncPhotos(Context context)
+    public void syncPhotos(Context context)
     {
         for (Uri file: files)
         {
