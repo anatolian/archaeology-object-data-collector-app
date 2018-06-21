@@ -15,6 +15,7 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatImageView;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -211,13 +212,18 @@ public abstract class ObjectDetailActivity extends AppCompatActivity implements 
      */
     public void onTrimMemory(int level)
     {
+        Toast t = Toast.makeText(getApplicationContext(), "Phone memory is running low. Exiting screen to free space.",
+                Toast.LENGTH_SHORT);
+        t.setGravity(Gravity.TOP, 0, 0);
+        Toast t2 = Toast.makeText(getApplicationContext(), "App switched off memory. Memory intensive images freed.",
+                Toast.LENGTH_SHORT);
+        t2.setGravity(Gravity.TOP, 0, 0);
         // Determine which lifecycle or system event was raised.
         switch (level)
         {
             // App was switched off of foreground
             case ComponentCallbacks2.TRIM_MEMORY_UI_HIDDEN:
-                Toast.makeText(getApplicationContext(), "App switched off memory. Memory intensive images freed.",
-                        Toast.LENGTH_SHORT).show();
+                t2.show();
                 PhotoFragment photoFragment = (PhotoFragment) getFragmentManager().findFragmentById(R.id.fragment);
                 photoFragment.clearPhotosFromLayout();
                 break;
@@ -226,9 +232,7 @@ public abstract class ObjectDetailActivity extends AppCompatActivity implements 
             // Memory is low while app is in foreground
             case ComponentCallbacks2.TRIM_MEMORY_RUNNING_LOW:
             case ComponentCallbacks2.TRIM_MEMORY_RUNNING_CRITICAL:
-                // TODO: See if this helps
-                Toast.makeText(getApplicationContext(), "Phone memory is running low. Exiting screen to free space.",
-                        Toast.LENGTH_SHORT).show();
+                t.show();
                 finish();
                 break;
             // App is LRU and system is low on memory
@@ -240,9 +244,7 @@ public abstract class ObjectDetailActivity extends AppCompatActivity implements 
                 break;
             // Generic low memory warning
             default:
-                // TODO: See if this helps
-                Toast.makeText(getApplicationContext(), "Phone memory is running low. Exiting screen to free space.",
-                        Toast.LENGTH_SHORT).show();
+                t.show();
                 finish();
                 break;
         }
