@@ -5,7 +5,6 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -129,7 +128,6 @@ public class InitialActivity extends AppCompatActivity
     {
         super.onResume();
         mWebServer.setText(globalWebServerURL);
-        Log.v("Preferences", selectedSchema);
         connectionTestFailedCallback();
     }
 

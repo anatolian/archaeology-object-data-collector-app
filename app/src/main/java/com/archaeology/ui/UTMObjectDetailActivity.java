@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
+import android.content.ComponentCallbacks2;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;

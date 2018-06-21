@@ -1,6 +1,7 @@
 // Abstract Activity for viewing object details
 // @author: Christopher Besser
 package com.archaeology.ui;
+import android.content.ComponentCallbacks2;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -18,22 +19,19 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.widget.Toast;
+
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.archaeology.R;
-import com.archaeology.util.CheatSheet;
 import com.archaeology.util.StateStatic;
 import static com.archaeology.util.CheatSheet.getOutputMediaFile;
 import static com.archaeology.util.CheatSheet.goToSettings;
 import static com.archaeology.util.StateStatic.REQUEST_IMAGE_CAPTURE;
-import static com.archaeology.util.StateStatic.cameraIPAddress;
-import static com.archaeology.util.StateStatic.cameraMACAddress;
 import static com.archaeology.util.StateStatic.getTimeStamp;
-public abstract class ObjectDetailActivity extends AppCompatActivity
+public abstract class ObjectDetailActivity extends AppCompatActivity implements ComponentCallbacks2
 {
     protected Uri fileURI;
-    protected int requestID = 55;
     protected IntentFilter mIntentFilter;
     protected RequestQueue queue;
     protected WifiP2pManager mManager;
@@ -97,6 +95,7 @@ public abstract class ObjectDetailActivity extends AppCompatActivity
      * Add a photo
      * @param view - add photo button
      */
+    @SuppressWarnings("unused")
     public abstract void addPhotoAction(View view);
 
     /**
@@ -184,6 +183,7 @@ public abstract class ObjectDetailActivity extends AppCompatActivity
         PhotoFragment photoFragment = (PhotoFragment) getFragmentManager().findFragmentById(R.id.fragment);
         photoFragment.prepareFragmentForNewPhotosFromNewItem(getApplicationContext());
         asyncPopulatePhotos();
+        System.gc();
     }
 
     /**
@@ -204,4 +204,47 @@ public abstract class ObjectDetailActivity extends AppCompatActivity
      */
     @Override
     protected abstract void onActivityResult(int requestCode, int resultCode, Intent data);
+
+    /**
+     * Release memory when the UI becomes hidden or when system resources become low.
+     * @param level the memory-related event that was raised.
+     */
+    public void onTrimMemory(int level)
+    {
+        // Determine which lifecycle or system event was raised.
+        switch (level)
+        {
+            // App was switched off of foreground
+            case ComponentCallbacks2.TRIM_MEMORY_UI_HIDDEN:
+                Toast.makeText(getApplicationContext(), "App switched off memory. Memory intensive images freed.",
+                        Toast.LENGTH_SHORT).show();
+                PhotoFragment photoFragment = (PhotoFragment) getFragmentManager().findFragmentById(R.id.fragment);
+                photoFragment.clearPhotosFromLayout();
+                break;
+            case ComponentCallbacks2.TRIM_MEMORY_RUNNING_MODERATE:
+                break;
+            // Memory is low while app is in foreground
+            case ComponentCallbacks2.TRIM_MEMORY_RUNNING_LOW:
+            case ComponentCallbacks2.TRIM_MEMORY_RUNNING_CRITICAL:
+                // TODO: See if this helps
+                Toast.makeText(getApplicationContext(), "Phone memory is running low. Exiting screen to free space.",
+                        Toast.LENGTH_SHORT).show();
+                finish();
+                break;
+            // App is LRU and system is low on memory
+            case ComponentCallbacks2.TRIM_MEMORY_BACKGROUND:
+            case ComponentCallbacks2.TRIM_MEMORY_MODERATE:
+            case ComponentCallbacks2.TRIM_MEMORY_COMPLETE:
+                finish();
+                System.exit(0);
+                break;
+            // Generic low memory warning
+            default:
+                // TODO: See if this helps
+                Toast.makeText(getApplicationContext(), "Phone memory is running low. Exiting screen to free space.",
+                        Toast.LENGTH_SHORT).show();
+                finish();
+                break;
+        }
+    }
 }

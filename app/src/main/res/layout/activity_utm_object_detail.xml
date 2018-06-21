@@ -38,17 +38,18 @@
             android:layout_below="@+id/find"
             android:paddingTop="10dp"
             android:orientation="horizontal"
-            android:id="@+id/cycle_button_container">
+            android:id="@+id/cycle_button_container"
+            android:weightSum="2">
             <Button
                 android:id="@+id/previousObjectButton"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:onClick="goToPreviousItemIfAvailable"
                 android:text="@string/previous" />
             <Button
                 android:id="@+id/nextObjectButton"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:onClick="goToNextItemIfAvailable"
