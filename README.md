@@ -1,11 +1,11 @@
 # Archaeological Artifact Recording - Android App
 
-This Android app is designed to facilitate recording weights and images of archaeological artifacts stored in a Heroku database. The user can lookup an artifact by primary key(s)
+This Android app is designed to facilitate recording weights and colors stored in a Heroku database and downloading images of archaeological artifacts from a remote camera to the device's storage. The user can lookup an artifact by primary key(s)
 and retrieve all stored information about the object. The app can communicate over Bluetooth with a Bluetooth enabled scale, measure the weight of their artifact, and store/update
-the weight. Users can also take pictures with their hardware camera or WiFi Direct enabled camera and upload them to the database. Users can also color correct their images through
+the weight. Users can also take pictures with their hardware camera or Sony WiFi Direct API enabled camera and upload them to the database. Users can also color correct their images through
 white-balancing.
 
-The corresponding Python web services code can be found in the [archaeology-object-data-collector-service] repository. This code is designed to work with Heroku, but might be extended
+The corresponding Python web services code can be found in the [archaeology-data-service] repository. This code is designed to work with Heroku, but might be extended
 to other data hosting platforms in the future.
 
 In order to better enable reuse of this code base for other projects and data structures, the intent of this documentation is to briefly overview the flow of the application. Readme files within certain important subfolders also help provide details on the files in those folders.
