@@ -40,29 +40,20 @@ To change a string, it would have to be changed in all strings.xml for every lan
 
 The XML layouts for all the screens are contained here.
 
-Splash screen
-  - activity_download.xml and activity_initial.xml correspond to the initial screen
-  
-Public archive lookup
-  - activity_camera_ui.xml - the main camera screen the user sees after connecting to Heroku in activity_initial.xml
-  - activity_favorite.xml - the user's favorites screen reached by swiping right from the camera ui
-  - activity_history.xml - the user's lookup history reached by swiping left from the camera ui
-  - activity_manual.xml - the page where the user can manually enter an artifact number or correct the OCRed number from the preview
-  - activity_search.xml - a container activity for rendering archive webpages
-  - list_item.xml - container view for an item in a list. Used to render the history and favorites screens.
-  - photo_fragment.xml - container view to hold artifact photo fetched from the webpage.
-
 App Settings
   - activity_settings.xml - settings screen where the user can change the database URL, connect to a scale, and change the camera address
 
 Data lookup and modification
-  - activity_ceramic_input.xml - screen for user to select primary keys of the artifact they want to find. Currently hardcoded for primary keys easting, northing, context, sample. Hopefully will be dynamically generated after the user enters their primary keys.
-  - activity_object_detail.xml - screen that displays object information fetched from Heroku
-  - activity_photos.xml - screen that allows users to color correct photos
+  - activity_ceramic_input.xml - screen for user to select primary keys of the artifact they want to find based on UTM schema (Hemisphere, Zone, Easting, Northing, Find).
+  - activity_utm_object_detail.xml - screen that displays object information fetched from Heroku on UTM schema finds
+  - activity_archon_object_detail.xml - screen for photographing objects under the Archon.Find schema
   - approve_photo_dialog.xml - dialog box asking user to confirm that the picture they took looks fine
   - record_weight_dialog.xml - dialog box for reading object weights from the scale or inputting them manually
-  - remote_camera_layout.xml - container view for the remote camera live view
-  - activity_my_wi_fi.xml - interface for interacting with the remote camera
+  - activity_remote_camera.xml - interface for interacting with the remote camera
+  - activity_camera_ui.xml - the main camera screen the user sees after connecting to Heroku in activity_initial.xml
+  - list_item.xml - container view for an item in a list.
+  - photo_fragment.xml - container view to hold artifact photo fetched from the webpage.
+  - spinner_item.xml - entry in a spinner
   
 ## XML directory
 
